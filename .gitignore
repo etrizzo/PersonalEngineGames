@@ -98,3 +98,7 @@ data/log/
 data/screenshot/
 *.log
 data/config/user.config
+*.ipch
+**/.vs/
+**/Temporary/
+
