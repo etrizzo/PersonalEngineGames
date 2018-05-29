@@ -28,6 +28,7 @@
 *.exe
 *.out
 *.app
+!**/Run_Win32/*.exe
 
 #codedatabases
 *.db
