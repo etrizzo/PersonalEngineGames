@@ -13,7 +13,7 @@
 *.so
 *.dylib
 *.dll
-!data/*.dll
+!Run_Win32/*.dll
 
 # Fortran module files
 *.mod
@@ -23,6 +23,7 @@
 *.la
 *.a
 *.lib
+
 
 # Executables
 *.exe
@@ -101,5 +102,7 @@ data/screenshot/
 data/config/user.config
 *.ipch
 **/.vs/
-**/Temporary/
+
+**/Temporary/**/*.*
+!**/ThirdParty/**/*.*
 
