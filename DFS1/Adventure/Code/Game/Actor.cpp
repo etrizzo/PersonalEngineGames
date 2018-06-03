@@ -1,0 +1,322 @@
+#include "Actor.hpp"
+#include "ActorDefinition.hpp"
+#include "Game.hpp"
+#include "Map.hpp"
+#include "Player.hpp"
+#include "Item.hpp"
+#include "ItemDefinition.hpp"
+
+Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, float initialRotation)
+	:Entity((EntityDefinition*)definition, entityMap, initialPos, initialRotation)
+{
+	m_definition = definition;
+	m_faction = definition->m_startingFaction;
+	m_timeLastUpdatedDirection = GetRandomFloatInRange(-1.f,1.f);
+	m_lastAttacked = 0.f;
+	m_facing = Vector2::MakeDirectionAtDegrees(GetRandomFloatInRange(-180.f,180.f));
+	GetRandomStatsFromDefinition();
+}
+
+Actor::~Actor()
+{
+	
+
+}
+
+void Actor::Update(float deltaSeconds)
+{
+	Entity::Update(deltaSeconds);
+	RunSimpleAI(deltaSeconds);
+
+}
+
+void Actor::Render()
+{
+	Entity::Render();
+	Entity::RenderHealthBar();
+	Entity::RenderName();
+}
+
+std::string Actor::GetAnimName()
+{
+	Vector2 dir = m_facing.GetNormalized();
+	std::string direction = "South";
+	if (DotProduct(dir, DIRECTION_NORTH) >= .7f){
+		direction = "North";
+	} else if (DotProduct(dir, DIRECTION_SOUTH) >=.7f){
+		direction = "South";
+	} else {
+		if (dir.x > 0.f){
+			direction = "East";
+		} else {
+			direction = "West";
+		}
+	}
+	std::string action = "Idle";
+	if (m_moving){
+		//Vector2 dir = Vector2::MakeDirectionAtDegrees(controller->GetLeftThumbstickAngle()).GetNormalized();
+		action = "Move";
+	}
+
+	return action + direction;
+}
+
+void Actor::RunCorrectivePhysics()
+{
+	if (!m_noClipMode){
+		RunWorldPhysics();
+		RunEntityPhysics();
+	}
+}
+
+void Actor::RunWorldPhysics()
+{
+	//Get Tile
+	Tile* currentTile = m_map->TileAtFloat(m_position);
+	//Get Neighbors
+	Tile neighbors[8];
+	m_map->GetNeighbors(currentTile, neighbors);
+	Vector2 tileCenter = currentTile->GetCenter();
+
+	//If a neighbor is solid, check if overlapping
+
+
+
+	if (!CanEnterTile(neighbors[0])){
+		CheckTileForCollisions(neighbors[0], tileCenter + Vector2(-.5f,.5f));
+	}
+	if (!CanEnterTile(neighbors[1])){
+		CheckTileForCollisions(neighbors[1], Vector2(m_position.x, tileCenter.y + .5f));
+	}
+	if (!CanEnterTile(neighbors[2])){
+		CheckTileForCollisions(neighbors[2], tileCenter + Vector2(.5f,.5f));
+	}
+	if (!CanEnterTile(neighbors[3])){
+		CheckTileForCollisions(neighbors[3], Vector2(tileCenter.x - .5f, m_position.y));
+	}
+	if (!CanEnterTile(neighbors[4])){
+		CheckTileForCollisions(neighbors[4], Vector2(tileCenter.x + .5f, m_position.y));
+	}
+	if (!CanEnterTile(neighbors[5])){
+		CheckTileForCollisions(neighbors[5], tileCenter + Vector2(-.5f,-.5f));
+	}
+	if (!CanEnterTile(neighbors[6])){
+		CheckTileForCollisions(neighbors[6], Vector2(m_position.x, tileCenter.y - .5f));
+	}
+	if (!CanEnterTile(neighbors[7])){
+		CheckTileForCollisions(neighbors[7], tileCenter + Vector2(.5f,-.5f));
+	}
+}
+
+void Actor::RunEntityPhysics()
+{
+	for (int actorIndex = 0; actorIndex < (int) m_map->m_allActors.size(); actorIndex++){
+		Actor* collidingActor = (Actor*) m_map->m_allActors[actorIndex];
+		if (collidingActor->m_position != m_position){
+			CheckActorForCollision(collidingActor);
+		}
+	}
+}
+
+void Actor::SetPosition(Vector2 newPos, Map * newMap)
+{
+	if (newMap != nullptr){
+		m_map->RemoveActorFromMap(this);
+		m_map = newMap;
+		m_map->AddActorToMap(this);
+	}
+	Entity::SetPosition(newPos);
+}
+
+void Actor::EnterTile(Tile * tile)
+{
+	Entity::EnterTile(tile);
+}
+
+void Actor::TakeDamage(int dmg)
+{
+	int damageToTake = dmg - m_stats.GetStat(STAT_DEFENSE);
+	if (damageToTake < 0){
+		damageToTake = 0;
+	}
+	m_health -= damageToTake;
+	if (m_health <=0){
+		m_aboutToBeDeleted = true;
+	}
+}
+
+void Actor::EquipOrUnequipItem(Item * itemToEquip)
+{
+	EQUIPMENT_SLOT slotToEquipIn = itemToEquip->m_definition->m_equipSlot;
+	if (slotToEquipIn != NOT_EQUIPPABLE){
+		if (itemToEquip->m_currentlyEquipped){		//unequip item
+			m_equippedItems[slotToEquipIn] = nullptr;
+			itemToEquip->m_currentlyEquipped = false;
+		} else {
+			if (m_equippedItems[slotToEquipIn] == nullptr){		//equip to empty slot	
+				m_equippedItems[slotToEquipIn] = itemToEquip;
+			} else {
+				m_equippedItems[slotToEquipIn]->m_currentlyEquipped = false;		//unequip item in slot, and equip selected item
+				m_equippedItems[slotToEquipIn] = itemToEquip;
+			}
+			itemToEquip->m_currentlyEquipped = true;
+		}
+		UpdateStats();
+	}
+}
+
+//void Actor::RunEntityPhysics()
+//{
+//	for (int actorIndex = 0; actorIndex < (int) m_map->m_allActors.size(); actorIndex++){
+//		Actor* collidingActor = (Actor*) m_map->m_allActors[actorIndex];
+//		CheckActorForCollision(collidingActor);
+//	}
+//}
+
+std::string Actor::GetEquipSlotByID(EQUIPMENT_SLOT equipID)
+{
+	if (equipID == EQUIP_SLOT_HEAD){
+		return "Head";
+	}
+	if (equipID == EQUIP_SLOT_CHEST){
+		return "Chest";
+	}
+	if (equipID == EQUIP_SLOT_LEGS){
+		return "Legs";
+	}
+	if (equipID == EQUIP_SLOT_WEAPON){
+		return "Weapon";
+	}
+	if (equipID == NOT_EQUIPPABLE){
+		return "Not Equippable";
+	}
+
+	ERROR_AND_DIE("No equip slot for equipID");
+}
+
+void Actor::UpdateWithController(float deltaSeconds)
+{
+	if (g_primaryController->GetLeftThumbstickMagnitude() > 0){
+		m_moving = true;
+		float mag = g_primaryController->GetLeftThumbstickMagnitude();
+		Vector2 direction = m_facing;
+		m_position+= (direction * mag * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+		//m_rotationDegrees = controller->GetLeftThumbstickAngle();
+		m_rotationDegrees = 0.f;
+		m_facing = Vector2::MakeDirectionAtDegrees(g_primaryController->GetLeftThumbstickAngle()).GetNormalized() * .5f;
+	} else {
+		Vector2 arrowDirections = Vector2(0.f,0.f);
+		if (g_theInput->IsKeyDown(VK_LEFT)){
+			arrowDirections += Vector2(-.5f,0.f);
+		}
+		if (g_theInput->IsKeyDown(VK_RIGHT)){
+			arrowDirections += Vector2(.5f,0.f);
+		}
+		if (g_theInput->IsKeyDown(VK_DOWN)){
+			arrowDirections += Vector2(0.f, -.5f);
+		}
+		if (g_theInput->IsKeyDown(VK_UP)){
+			arrowDirections += Vector2(0.f, .5f);
+		}
+
+		if (arrowDirections != Vector2(0.f,0.f)){
+			m_moving = true;
+			m_position+= (arrowDirections * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+			m_rotationDegrees = 0.f;
+			m_facing = arrowDirections;
+		} else {
+			m_moving = false;
+		}
+
+	}
+}
+
+void Actor::RunSimpleAI(float deltaSeconds)
+{
+	if (g_theGame->m_player == nullptr){
+		Wander(deltaSeconds);
+	} else {
+		Vector2 playerPos = g_theGame->m_player->m_position;
+		//RaycastResult2D raycast = m_map->Raycast(m_position, playerPos - m_position, m_definition->m_range);
+		//Vector2 hitPos = raycast.m_impactPosition;
+		//if the player is visible, update target
+		if (g_theGame->m_player->m_dead){
+			Wander(deltaSeconds);
+		} else if (m_map->HasLineOfSight(m_position, playerPos, m_definition->m_range)){
+			//pursue target
+			Vector2 distance = playerPos - m_position;
+			m_facing = distance.GetNormalized();
+			if (distance.GetLengthSquared() > 4){
+				m_position+= (m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+			}
+			FireArrow();
+		} else {
+			Wander(deltaSeconds);
+		}
+		//m_facing = Vector2::MakeDirectionAtDegrees(m_rotationDegrees).GetNormalized() * .3f;
+	}
+}
+void Actor::Wander(float deltaSeconds)
+{
+	float diff = m_ageInSeconds - m_timeLastUpdatedDirection;
+	if (diff < 5.f ){
+		m_position+= (m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+	}
+	if (diff > 5.f && diff < 7.5f){
+		if (m_moving){
+			m_moving = false;
+		}
+	}
+	if (diff > 7.5f){
+		m_moving = true;
+		//m_facing = Vector2::MakeDirectionAtDegrees(GetRandomFloatInRange(-180.f,180.f));
+		m_facing = m_facing - (2 * m_facing);
+		m_timeLastUpdatedDirection = m_ageInSeconds;
+	}
+}
+
+void Actor::FireArrow()
+{
+	if (m_ageInSeconds - m_lastAttacked > 2.f){
+		Vector2 facingScaled = m_facing * .5f;
+		m_map->SpawnNewProjectile("Arrow", m_position + facingScaled, facingScaled.GetOrientationDegrees(), m_faction, m_stats.GetStat(STAT_STRENGTH));
+		m_lastAttacked = m_ageInSeconds;
+	}
+}
+
+void Actor::CheckActorForCollision(Actor * actor)
+{
+	if (DoDiscsOverlap(m_physicsDisc, actor->m_physicsDisc)){
+		Vector2 distance = m_position - actor->m_position;
+		Vector2 midPoint = m_position - (distance * .5f);
+		Vector2 myPushTo = m_physicsDisc.PushOutOfPoint(midPoint);
+		Vector2 entityPushTo = actor->m_physicsDisc.PushOutOfPoint(midPoint);
+		
+		SetPosition(myPushTo);
+		actor->SetPosition(entityPushTo);
+		distance = m_position - actor->m_position;
+	}
+}
+
+void Actor::GetRandomStatsFromDefinition()
+{
+	m_stats = Stats();
+	for (int i = 0; i < NUM_STAT_IDS; i++){
+		STAT_ID statID = (STAT_ID) i;
+		int randomStatValue = GetRandomIntInRange(m_definition->m_minStats.GetStat(statID), m_definition->m_maxStats.GetStat(statID));
+		m_stats.SetStat(statID, randomStatValue);
+		m_baseStats.SetStat(statID, randomStatValue);
+	}
+}
+
+void Actor::UpdateStats()
+{
+	m_stats = Stats(m_baseStats);
+	for (int slotNum = 0; slotNum < NUM_EQUIP_SLOTS; slotNum++){
+		Item* equippedItem = m_equippedItems[slotNum];
+		if (equippedItem != nullptr){
+			m_stats.Add(equippedItem->m_stats);
+		}
+	}
+}
+

@@ -1,0 +1,39 @@
+<AdventureDefinitions>
+
+  <AdventureDefinition name="Balrog" title="Kill the Balrog">
+    <StartConditions startMap="The Village" startOnTileType="Grass"/>
+    <VictoryConditions>
+      <KillActor actorToKill="Goblin" numToKill="3"/>
+      <KillActor actorToKill="Balrog" numToKill="1"/>
+    </VictoryConditions>
+    <Map name="The Village" mapDefinition="SmallVillage">
+      <Item type="Leather Chestpiece" onTileType="Wood"/>
+      <Item type="Leather Leggings" onTileType="Wood"/>
+      <Item type="Greatbow" onTileType="Wood"/>
+      <Portal type="StairsDown" onTileType="Grass" toMap="The Cave"
+                  toTileType="DarkDirt" reciprocalType="StairsUp"/>
+      <Portal type="StairsDown" onTileType="Wood" toMap="The Cellar"
+                  toTileType="StoneBrick" reciprocalType="StairsUp"/>
+    </Map>
+
+    <Map name="The Cellar" mapDefinition="Cellar">
+      <Actor type="Balrog" onTileType="MossyStoneBrick"/>
+    </Map>
+    
+    <Map name="The Cave" mapDefinition="Cave">
+      <Item type="Platemail Chestpiece" onTileType="DarkDirt"/>
+      <Item type="Platemail Leggings" onTileType="DarkDirt"/>
+      <Item type="Platemail Helmet" onTileType="DarkDirt"/>
+    </Map>
+
+
+    <Map name="The Island" mapDefinition="Island">
+      <Actor type="Goblin" onTileType="Sand"/>
+    </Map>
+    <Map name="My ZOO :^)" mapDefinition="Zoo">
+      <Actor type="Goblin" onTileType="Grass"/>
+      <Item type="Platemail Chestpiece" onTileType="Grass"/>
+    </Map>
+  </AdventureDefinition>
+
+</AdventureDefinitions>

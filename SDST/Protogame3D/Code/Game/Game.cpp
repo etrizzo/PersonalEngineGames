@@ -28,8 +28,6 @@ Game::Game()
 	m_gameTime = 0.f;
 	m_currentMap = nullptr;
 
-
-
 	LoadMapDefinitions();
 	
 	m_mainCamera = new PerspectiveCamera();
@@ -85,8 +83,8 @@ void Game::PostStartup()
 	m_scene->AddRenderable(m_thaMiku->m_renderable);
 
 
-	m_scene->AddNewPointLight(Vector3::ZERO, RGBA::WHITE);
-	//m_scene->AddNewSpotLight(Vector3(0.f, 4.f, -5.f), RGBA::WHITE, 20.f, 23.f);		//camera light
+	//m_scene->AddNewPointLight(Vector3::ZERO, RGBA::WHITE);
+	m_scene->AddNewSpotLight(Vector3(0.f, 4.f, -5.f), RGBA::WHITE, 20.f, 23.f);		//camera light
 	m_scene->AddNewSpotLight(Vector3(0.f, 5.f, 5.f), RGBA(255,255,128,255));			//orbiting light
 	m_scene->AddNewPointLight(Vector3(0.f, 5.f, 15.f), RGBA(255, 128, 70,255));		//reddish point light
 	m_scene->AddNewDirectionalLight(Vector3(-10.f, 0.f, -10.f), RGBA::WHITE, Vector3(0.f, -90.f, -10.f));		//bluish directional light
@@ -111,8 +109,9 @@ void Game::Update()
 		m_orbitLight->LookAt(pos, Vector3::ZERO);
 		m_thaMiku->Rotate(Vector3(0.f,1.f,0.f));
 
-
-		m_cameraLight->SetTransform(m_currentCamera->m_transform	);
+		if (m_cameraLight != nullptr){
+			m_cameraLight->SetTransform(m_currentCamera->m_transform	);
+		}
 	}
 	
 	m_couchMaterial->SetProperty("SPECULAR_AMOUNT", m_specAmount);
@@ -308,6 +307,15 @@ void Game::AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotation)
 
 void Game::RemoveLight(int idx)
 {
+	if (m_lights.size() > idx){
+		Light* del = m_lights[idx];
+		if (del == m_cameraLight){
+			m_cameraLight = nullptr;
+		}
+		if (del == m_orbitLight){
+			m_orbitLight = nullptr;
+		}
+	}
 	m_scene->RemoveLight(idx);
 }
 

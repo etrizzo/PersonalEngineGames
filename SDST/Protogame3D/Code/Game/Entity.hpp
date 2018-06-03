@@ -1,6 +1,5 @@
 #pragma once
 #include "Game/GameCommon.hpp"
-#include "Game/Tile.hpp"
 #include "Engine/Math/Transform.hpp"
 #include "Engine/Renderer/Renderable.hpp"
 
@@ -20,6 +19,7 @@ public:
 
 	void SetDiffuseTexture(std::string texPath);
 	void SetMaterial(int index, std::string diffusePath, std::string normalPath = "NONE");
+	void SetMaterial(Material* mat, int index = 0);
 
 	virtual bool IsAboutToBeDeleted();
 
@@ -34,10 +34,20 @@ public:
 	void Translate(Vector3 translation);
 	void Rotate(Vector3 rotation);
 	void SetPosition(Vector3 newPos);
+	void SetScale(Vector3 scale);
+
+
+	//Getters
+	inline Vector3 GetForward() const { return m_renderable->m_transform.GetForward(); }
+	inline Vector3 GetUp() const { return m_renderable->m_transform.GetUp(); }
+	inline Vector3 GetRight() const { return m_renderable->m_transform.GetRight(); }
+
+	inline Transform GetTransform() const { return m_renderable->m_transform; };
+	inline Vector3 GetPosition() const { return m_renderable->GetPosition(); };
 
 	bool IsPointInForwardView(Vector3 point);
 
-	
+
 	//Transform m_transform;
 	//Mesh* m_mesh;
 	//Texture* m_texture;

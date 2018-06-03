@@ -12,7 +12,7 @@ void RenderScene::AddLight(Light * l)
 
 void RenderScene::AddCamera(Camera * c)
 {
-	m_cameras.clear();		//only allow one camera for now
+	//m_cameras.clear();		//only allow one camera for now
 	m_cameras.push_back(c);
 }
 
@@ -117,7 +117,7 @@ void RenderScene::AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotati
 
 void RenderScene::RemoveLight(int idx)
 {
-	if (m_lights.size() > 0){
+	if (m_lights.size() > idx){
 		if (m_lights.size() > 1){
 			Light* del = m_lights[idx];
 			m_lights[idx] = m_lights[m_lights.size()-1];

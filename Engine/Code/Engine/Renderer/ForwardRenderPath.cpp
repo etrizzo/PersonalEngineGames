@@ -35,8 +35,7 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 		for (int i = 0; i < r->m_mesh->m_subMeshes.size(); i++){
 			DrawCall dc;
 			//set up the draw call for this renderable :)
-			// the layer/queue comes from the shader! that's what the sort order is on forseth's shit
-			//...
+			// the layer/queue comes from the shader!
 			dc.m_mesh = r->m_mesh->m_subMeshes[i];
 			dc.m_model = r->m_transform.GetWorldMatrix();
 			dc.m_material = r->GetEditableMaterial(i);
@@ -44,7 +43,7 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 			dc.m_queue = 0;
 
 			if (r->GetEditableMaterial(i)->UsesLights()){
-				//this would be the slowest step if you have a lot of lights
+				//compute most contributing lights based on renderable's position and puts them in the draw calls lights
 				ComputeMostContributingLights(dc,
 					r->GetPosition(), scene->m_lights);
 			}
@@ -64,8 +63,8 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 		m_renderer->DrawMesh(dc.m_mesh);
 	}
 
-
-	////what about post-processing? it go here
+	TODO("Add post-processing to forward render path");
+	////post-processing? it go here
 	//for(Material * effect in cam-> m_effects){
 	//	m_renderer->ApplyEffect( effect );
 	//}

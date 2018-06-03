@@ -1,0 +1,61 @@
+<ItemDefinitions>
+  <ItemDefinition name="Bow" equipSlot="weapon">
+    <Stats baseMovement="1~3" baseStrength="2~4" baseDefense="0" />
+    <SpriteAnimSet spriteSheet="bows.png" spriteLayout="16,5">
+      <SpriteAnim name="Idle" spriteIndexes="48"/>
+    </SpriteAnimSet>
+  </ItemDefinition>
+
+  <ItemDefinition name="Greatbow" equipSlot="weapon">
+    <Stats baseMovement="1~5" baseStrength="4~7" baseDefense="0~1" />
+    <SpriteAnimSet spriteSheet="bows.png" spriteLayout="16,5">
+      <SpriteAnim name="Idle" spriteIndexes="65"/>
+    </SpriteAnimSet>
+  </ItemDefinition>
+  
+  
+
+  <ItemDefinition name="Platemail Chestpiece" equipSlot="chest">
+    <Stats baseMovement="0" baseStrength="0~1" baseDefense="3~5" />
+    <SpriteAnimSet spriteSheet="armor_16x16.png" spriteLayout="16,16">
+      <SpriteAnim name="Idle" spriteIndexes="130"/>
+    </SpriteAnimSet>
+  </ItemDefinition>
+
+  <ItemDefinition name="Platemail Helmet" equipSlot="head">
+    <Stats baseMovement="0" baseStrength="0~1" baseDefense="3~5" />
+    <SpriteAnimSet spriteSheet="armor_16x16.png" spriteLayout="16,16">
+      <SpriteAnim name="Idle" spriteIndexes="25"/>
+    </SpriteAnimSet>
+  </ItemDefinition>
+
+  <ItemDefinition name="Platemail Leggings" equipSlot="legs">
+    <Stats baseMovement="0" baseStrength="0~1" baseDefense="3~5" />
+    <SpriteAnimSet spriteSheet="armor_16x16.png" spriteLayout="16,16">
+      <SpriteAnim name="Idle" spriteIndexes="190"/>
+    </SpriteAnimSet>
+  </ItemDefinition>
+
+  <ItemDefinition name="Leather Chestpiece" equipSlot="chest">
+    <Stats baseMovement="1~3" baseStrength="0" baseDefense="1~3" />
+    <SpriteAnimSet spriteSheet="armor_16x16.png" spriteLayout="16,16">
+      <SpriteAnim name="Idle" spriteIndexes="146"/>
+    </SpriteAnimSet>
+  </ItemDefinition>
+
+  <ItemDefinition name="Leather Leggings" equipSlot="legs">
+    <Stats baseMovement="1~3" baseStrength="0" baseDefense="1~3" />
+    <SpriteAnimSet spriteSheet="armor_16x16.png" spriteLayout="16,16">
+      <SpriteAnim name="Idle" spriteIndexes="147"/>
+    </SpriteAnimSet>
+  </ItemDefinition>
+
+  <ItemDefinition name="Leather Hat" equipSlot="head">
+    <Stats baseMovement="1~3" baseStrength="0" baseDefense="1~3" />
+    <SpriteAnimSet spriteSheet="armor_16x16.png" spriteLayout="16,16">
+      <SpriteAnim name="Idle" spriteIndexes="4"/>
+    </SpriteAnimSet>
+  </ItemDefinition>
+  
+  
+</ItemDefinitions>

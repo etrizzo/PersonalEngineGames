@@ -1,0 +1,70 @@
+<ActorDefinitions>
+
+  <ActorDefinition name="Player" faction="good">
+    <Size physicsRadius="0.25" drawRadius=".7" drawBounds="-2,-1.25,2,3.5"/>
+    <Movement>
+      <Walk speed="3.0"/>
+      <Swim speed ="1.0"/>
+    </Movement>
+    <Stats baseMovement="1" baseStrength="1~2" baseDefense="0" />
+    <Health max="100" start="100"/>
+    <Inventory>
+       <Item name="Bow" chanceToSpawn="1.0"/>
+    </Inventory>
+    <SpriteAnimSet spriteSheet="wulax_bow_walk_9x4.png" spriteLayout="9,4" fps="12" defaultAnim ="IdleSouth">
+      <SpriteAnim name="MoveNorth"    spriteIndexes="0~8"/>
+      <SpriteAnim name="MoveWest"     spriteIndexes="9~17"/>
+      <SpriteAnim name="MoveSouth"    spriteIndexes="18~26"/>
+      <SpriteAnim name="MoveEast"     spriteIndexes="27~35"/>
+      <SpriteAnim name="IdleNorth"		spriteIndexes="0,1" fps="2"/>
+      <SpriteAnim name="IdleWest"		spriteIndexes="9,17" fps="2"/>
+      <SpriteAnim name="IdleSouth"		spriteIndexes="18,19" fps="2"/>
+      <SpriteAnim name="IdleEast"		spriteIndexes="27,35" fps="2"/>
+      <SpriteAnim name="AttackNorth"  spriteIndexes="0~12"  spriteSheet="wulax_bow_attack_13x4.png" spriteLayout="13,4" fps="24" playbackMode="0" />
+      <SpriteAnim name="AttackWest"   spriteIndexes="13~25" spriteSheet="wulax_bow_attack_13x4.png" spriteLayout="13,4" fps="24" playbackMode="0" />
+      <SpriteAnim name="AttackSouth"  spriteIndexes="26~38" spriteSheet="wulax_bow_attack_13x4.png" spriteLayout="13,4" fps="24" playbackMode="0" />
+      <SpriteAnim name="AttackEast"   spriteIndexes="39~51" spriteSheet="wulax_bow_attack_13x4.png" spriteLayout="13,4" fps="24" playbackMode="0" />
+    </SpriteAnimSet>
+  </ActorDefinition>
+
+  <ActorDefinition name="Goblin" faction="evil">
+    <Size physicsRadius="0.25" drawRadius="0.8" drawBounds="-2,-1.25,2,3.5"/>
+    <Movement>
+      <Walk speed="1.0"/>
+      <Sight range="5.0"/>
+    </Movement>
+    <Health max="30" start="30"/>
+    <SpriteAnimSet spriteSheet="orc_piratess.png" spriteLayout="9,4" fps="8" defaultAnim ="IdleSouth">
+      <SpriteAnim name="MoveNorth"    spriteIndexes="0~8"/>
+      <SpriteAnim name="MoveWest"     spriteIndexes="9~17"/>
+      <SpriteAnim name="MoveSouth"    spriteIndexes="18~26"/>
+      <SpriteAnim name="MoveEast"     spriteIndexes="27~35"/>
+      <SpriteAnim name="IdleNorth"		spriteIndexes="0,1" fps="2"/>
+      <SpriteAnim name="IdleWest"		  spriteIndexes="9,10" fps="2"/>
+      <SpriteAnim name="IdleSouth"		spriteIndexes="18,19" fps="2"/>
+      <SpriteAnim name="IdleEast"		  spriteIndexes="27,28" fps="2"/>
+    </SpriteAnimSet>
+  </ActorDefinition>
+
+
+  <ActorDefinition name="Balrog" faction="evil">
+    <Size physicsRadius="0.25" drawRadius="0.8" drawBounds="-2,-1.25,2,3.5"/>
+    <Movement>
+      <Walk speed="1.0"/>
+      <Sight range="10.0"/>
+    </Movement>
+    <Health max="80" start="80"/>
+    <Stats baseMovement="1" baseStrength="3~4" baseDefense="2~3" />
+    <SpriteAnimSet spriteSheet="orc_piratess.png" spriteLayout="9,4" fps="8" defaultAnim ="IdleSouth">
+      <SpriteAnim name="MoveNorth"    spriteIndexes="0~8"/>
+      <SpriteAnim name="MoveWest"     spriteIndexes="9~17"/>
+      <SpriteAnim name="MoveSouth"    spriteIndexes="18~26"/>
+      <SpriteAnim name="MoveEast"     spriteIndexes="27~35"/>
+      <SpriteAnim name="IdleNorth"		spriteIndexes="0,1" fps="2"/>
+      <SpriteAnim name="IdleWest"		spriteIndexes="9,10" fps="2"/>
+      <SpriteAnim name="IdleSouth"		spriteIndexes="18,19" fps="2"/>
+      <SpriteAnim name="IdleEast"		spriteIndexes="27,28" fps="2"/>
+    </SpriteAnimSet>
+  </ActorDefinition>
+
+</ActorDefinitions>

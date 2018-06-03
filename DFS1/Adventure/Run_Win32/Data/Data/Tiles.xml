@@ -1,0 +1,165 @@
+<TileDefinitions>
+  <TileDefinition
+		  name="Grass"
+		  spriteCoords="6,31|7,31|7,31|8,31|8,31|8,31|8,31|8,31"
+      spriteTint="128,255,128"
+      chromaKey ="0,255,0"
+		  allowsSight="true"
+		  allowsWalking="true"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+	  />
+  
+  <TileDefinition
+		  name="Flowers"
+		  spriteCoords="18,0|18,0|19,0"
+      chromaKey ="255,255,0"
+		  allowsSight="true"
+		  allowsWalking="true"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+	  />
+  
+  <TileDefinition
+		  name="LightFlowers"
+		  spriteCoords="20,0|20,0|19,0"
+      chromaKey ="200,255,128"
+		  allowsSight="true"
+		  allowsWalking="true"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+	  />
+
+  <TileDefinition
+    name="Sand"
+    spriteCoords="21,31|22,31|23,31"
+    chromaKey ="255,200,128"
+    allowsSight="true"
+    allowsWalking="true"
+    allowsFlying="true"
+    allowsSwimming="false"
+	  />
+  
+  <TileDefinition
+		  name="Stone"
+		  spriteCoords="9,31|10,31|11,31"
+		  spriteTint="128,128,128"
+      chromaKey ="128,128,128"
+		  allowsSight="false"
+		  allowsWalking="false"
+		  allowsFlying="false"
+		  allowsSwimming="false"
+	  />
+
+  <TileDefinition
+		  name="Water"
+		  spriteCoords="24,31|25,31|26,31"
+      chromaKey ="0,0,255"
+		  allowsSight="true"
+		  allowsWalking="false"
+		  allowsFlying="true"
+		  allowsSwimming="true"
+	  />
+
+  <TileDefinition
+		  name="Lava"
+		  spriteCoords="12,31|13,31|14,31"
+      chromaKey ="255,128,0"
+		  allowsSight="true"
+		  allowsWalking="false"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+	  />
+  
+  <TileDefinition 
+      name="StoneBrick"
+      spriteCoords="11,7"
+      chromaKey ="100,100,100"
+		  allowsSight="true"
+		  allowsWalking="true"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+  />
+  
+  <TileDefinition
+      name="CrackedStoneBrick"
+      spriteCoords="12,7"
+      chromaKey ="80,80,80"
+		  allowsSight="true"
+		  allowsWalking="true"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+  />
+  
+  <TileDefinition
+      name="MossyStoneBrick"
+      spriteCoords="13,7"
+      chromaKey ="80,100,80"
+		  allowsSight="true"
+		  allowsWalking="true"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+   />
+
+
+  <TileDefinition
+      name="Dirt"
+      spriteCoords="4,31|5,31"
+      chromaKey ="164,128,0"
+		  allowsSight="true"
+		  allowsWalking="true"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+   />
+
+  <TileDefinition
+    name="DarkDirt"
+    spriteCoords="27,31|28,31|28,31|28,31|28,31|29,31|29,31|29,31|29,31|29,31"
+    chromaKey ="100,64,0"
+    allowsSight="true"
+    allowsWalking="true"
+    allowsFlying="true"
+    allowsSwimming="false"
+   />
+
+  <TileDefinition
+      name="Wood"
+      spriteCoords="31,1"
+      chromaKey ="255,200,128"
+		  allowsSight="true"
+		  allowsWalking="true"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+   />
+
+  <TileDefinition
+      name="WeatheredWood"
+      spriteCoords="30,1"
+      chromaKey ="205,220,128"
+		  allowsSight="true"
+		  allowsWalking="true"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+   />
+
+  <TileDefinition
+      name="Cobblestone"
+      spriteCoords="15,5"
+      chromaKey ="200,200,200"
+		  allowsSight="true"
+		  allowsWalking="true"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+   />
+
+  <TileDefinition
+     name="StoneBrickWall"
+     spriteCoords="0,8"
+     chromaKey ="50,50,50"
+     allowsSight="false"
+     allowsWalking="false"
+     allowsFlying="false"
+     allowsSwimming="false"
+  />
+
+</TileDefinitions>

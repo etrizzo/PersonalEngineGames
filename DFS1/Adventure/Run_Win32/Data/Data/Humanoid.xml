@@ -1,0 +1,16 @@
+<SpriteAnimSet spriteSheet="wulax_bow_walk_9x4.png" spriteLayout="13,21" fps="12" defaultAnim ="IdleSouth">
+  <SpriteAnim name="MoveNorth"    spriteIndexes="104~112"   />
+  <SpriteAnim name="MoveWest"     spriteIndexes="117~125"  />
+  <SpriteAnim name="MoveSouth"    spriteIndexes="130~138" />
+  <SpriteAnim name="MoveEast"     spriteIndexes="142~150" />
+  
+  <SpriteAnim name="IdleNorth"		spriteIndexes="104"  />
+  <SpriteAnim name="IdleWest"		  spriteIndexes="117"   />
+  <SpriteAnim name="IdleSouth"		spriteIndexes="130" />
+  <SpriteAnim name="IdleEast"		  spriteIndexes="142"    />
+  
+  <SpriteAnim name="BowNorth"  spriteIndexes="208~220"  fps="24" playbackMode="0" />
+  <SpriteAnim name="BowWest"   spriteIndexes="221~233" fps="24" playbackMode="0" />
+  <SpriteAnim name="BowSouth"  spriteIndexes="234~246" fps="24" playbackMode="0" />
+  <SpriteAnim name="BowEast"   spriteIndexes="247~259" fps="24" playbackMode="0" />
+</SpriteAnimSet>

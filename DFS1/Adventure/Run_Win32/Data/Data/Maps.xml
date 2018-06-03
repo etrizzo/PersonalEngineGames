@@ -1,0 +1,67 @@
+<MapDefinitions>
+  <MapDefinition name="Zoo" defaultTile="Grass" width="10~15" soundtrack="Caketown 1.mp3">
+    <GenerationSteps>
+      <Mutate ifType="Grass" toType="Water" chanceToMutate=".001" />
+      <CellularAutomata iterations="2~3" ifNeighborType="Water" changeToType="Water" chanceToMutate=".5"/>
+      <CellularAutomata ifType="Grass" changeToType="Sand" ifNeighborType="Water"/>
+      <PerlinNoise ifType="Grass" changeToType="Water" ifNoise=".4~1" />
+      <PerlinNoise ifType="Grass" changeToType="Flowers" ifNoise="-1~-.4" />
+      <PerlinNoise ifType="Grass" changeToType="LightFlowers" ifNoise="-.4~-.1" />
+      <FillAndEdge edgeTile="StoneBrickWall"/>
+    </GenerationSteps>
+  </MapDefinition>
+    
+  <MapDefinition name="Island" defaultTile="Sand" width="20~30" height="20~30" soundtrack="Caketown 1.mp3">
+    <GenerationSteps>
+      <FillAndEdge fillTile="Sand" edgeTile="Water"/>
+      <Mutate ifType="Sand" toType="Grass" chanceToMutate=".1"/>
+      <FromFile fileName="Altar_Test.png" startX="3~5" startY="3~5"/>
+      <FillAndEdge edgeTile="Water"/>
+      <CellularAutomata iterations="2~4" ifType="Sand" ifNeighborType="Water" changeToType="Water" chanceToMutate=".4"/>
+      <CellularAutomata iterations="2~4" ifType="Sand" changeToType="Grass" ifNeighborType="Grass" chanceToMutate="0.3"/>
+      <CellularAutomata ifType="Sand" changeToType="Water" ifNeighborType="Water" ifNeighborCount="5~8"/>
+      <CellularAutomata iterations="2" ifType="Sand" changeToType="Grass" ifNeighborType="Grass" ifNeighborCount="4~8" chanceToMutate=".3"/>
+      <CellularAutomata ifType="Grass" changeToType="Sand" ifNeighborType="Water"/>
+    </GenerationSteps>
+  </MapDefinition>
+
+  <MapDefinition name="SmallVillage" defaultTile="Grass" width="30~50" height="30~50" soundtrack="Caketown 1.mp3">
+    <GenerationSteps>
+      <Mutate ifType="Grass" toType="Water" chanceToMutate=".001" />
+      <CellularAutomata iterations="3~4" ifNeighborType="Water" changeToType="Water" chanceToMutate=".5"/>
+      <Mutate ifType="Grass" toType="Water" chanceToMutate=".001" />
+      <CellularAutomata iterations="2~4" ifNeighborType="Water" changeToType="Water" chanceToMutate=".5"/>
+      <CellularAutomata iterations="1" ifType="Grass" ifNeighborType="Water" changeToType="Water" ifNeighborCount="5~8"/>
+      <CellularAutomata ifType="Grass" ifNeighborType="Water" changeToType="Sand"/>
+      <PerlinNoise ifType="Grass" changeToType="Flowers" ifNoise="-1~-.6" gridSize="12"/>
+      <PerlinNoise ifType="Grass" changeToType="LightFlowers" ifNoise="-.6~-.2" gridSize="12"/>
+      <Mutate ifType="Grass" toType="LightFlowers" chanceToMutate=".001" />
+      <Mutate ifType="LightFlowers" toType="Grass" chanceToMutate=".06" />
+      <CellularAutomata ifType="Flowers" toType="LightFlowers" ifNeighbor="LightFlowers" chanceToMutate=".2"/>
+      <CellularAutomata iterations="1~2" ifType="LightFlowers" toType="Grass" ifNeighbor="Grass" chanceToMutate=".2"/>
+      <RoomsAndPaths>
+        <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
+        <Paths floor="Dirt" straightChance=".05"/>
+      </RoomsAndPaths>
+      <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
+    </GenerationSteps>
+  </MapDefinition>
+
+  <MapDefinition name="Cellar" defaultTile="StoneBrick" width="10~15" height="10~15" soundtrack="Dark Descent.mp3">
+    <GenerationSteps>
+      <Mutate ifType="StoneBrick" toType="MossyStoneBrick" chanceToMutate=".4"/>
+      <Mutate ifType="MossyStoneBrick" toType="CrackedStoneBrick" chanceToMutate=".4"/>
+    </GenerationSteps>
+  </MapDefinition>
+  
+  <MapDefinition name="Cave" defaultTile="DarkDirt" width="40~70" soundtrack="Mystical Theme.mp3">
+    <GenerationSteps>
+      <Mutate ifType="DarkDirt" toType="Stone" chanceToMutate=".5"/>
+      <Conway iterations="2~3" liveTile="DarkDirt" deadTile="Stone" birthLimit="4" deathLimit="3" />
+      <SpawnActor type="Goblin" iterations="8~10"/>
+      <SpawnItem type ="Platemail Helmet" iterations="1~2"/>
+    </GenerationSteps>
+  </MapDefinition>
+
+
+</MapDefinitions>

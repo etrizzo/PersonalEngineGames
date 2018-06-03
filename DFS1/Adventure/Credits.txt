@@ -1,0 +1,37 @@
+Character Sprites
+
+	- LPC assets: 
+		Orc Pirate:
+			https://opengameart.org/content/lpc-female-orcogregoblintroll-base-walkcycle
+
+		Temp character:
+			https://opengameart.org/content/lpc-medieval-fantasy-character-sprites
+
+		LPC github:
+			https://github.com/jrconway3/Universal-LPC-spritesheet
+
+
+
+	- Item art:
+		https://vxresource.files.wordpress.com/2010/07/bigset.png
+
+
+
+
+Music:
+	- Attract menu:
+		https://opengameart.org/content/town-theme-rpg
+
+	- Village music:
+		https://opengameart.org/content/caketown-cuteplayful
+			http://www.matthewpablo.com/contact
+
+	- Cave music:
+		https://opengameart.org/content/mystical-theme
+
+	- Cellar music:
+		https://opengameart.org/content/dark-descent
+
+	- Victory fanfare:
+		https://opengameart.org/content/lively-meadow-victory-fanfare-and-song
+			http://www.matthewpablo.com/contact

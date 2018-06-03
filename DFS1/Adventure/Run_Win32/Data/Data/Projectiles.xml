@@ -1,0 +1,14 @@
+<ProjectileDefinitions>
+
+  <ProjectileDefinition name="Arrow">
+    <Size physicsRadius="0.11" drawRadius="1.5"/>
+    <Movement>
+      <Fly speed="5.0"/>
+    </Movement>
+    <Damage amount="5~10"/>
+    <SpriteAnimSet spriteSheet="Arrow.png" spriteLayout="1,1">
+      <SpriteAnim name="Idle" spriteIndexes="0" autoOrient="true"/>
+    </SpriteAnimSet>
+  </ProjectileDefinition>
+
+</ProjectileDefinitions>

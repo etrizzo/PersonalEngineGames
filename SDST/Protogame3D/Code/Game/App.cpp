@@ -51,6 +51,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 	CommandStartup();
 
 	g_theGame->PostStartup();
+	g_theRenderer->SetAmbientLight(RGBA(120,120,128,128));
 }
 
 

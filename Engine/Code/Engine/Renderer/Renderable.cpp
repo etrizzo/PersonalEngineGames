@@ -38,7 +38,8 @@ Renderable::Renderable(std::string objFile, std::string matFile)
 	m_mesh = new Mesh();
 	Material* mat = Material::GetMaterial(matFile);		//try to load existing material
 	if (mat == nullptr){
-		Material::LoadMaterials(matFile);		//try to parse material as a .mtl file
+		Material::LoadMaterials(matFile);		//try to load materials as a .mtl file
+		//at this point materials specified in the .obj will load correctly
 	}
 
 
