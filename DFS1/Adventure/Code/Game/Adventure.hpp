@@ -27,6 +27,10 @@ public:
 	void MoveToMapIndex(int index);
 	void RegenerateCurrentMap();
 
+	RenderScene* GetScene();
+
+
+
 	AdventureDefinition* m_definition = nullptr;
 	Map* m_startingMap = nullptr;
 	Map* m_currentMap = nullptr;

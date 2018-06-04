@@ -32,7 +32,7 @@ void Actor::Update(float deltaSeconds)
 
 void Actor::Render()
 {
-	Entity::Render();
+	//Entity::Render();
 	Entity::RenderHealthBar();
 	Entity::RenderName();
 }
@@ -71,8 +71,9 @@ void Actor::RunCorrectivePhysics()
 
 void Actor::RunWorldPhysics()
 {
+	Vector2 pos = GetPosition();
 	//Get Tile
-	Tile* currentTile = m_map->TileAtFloat(m_position);
+	Tile* currentTile = m_map->TileAtFloat(pos);
 	//Get Neighbors
 	Tile neighbors[8];
 	m_map->GetNeighbors(currentTile, neighbors);
@@ -86,22 +87,22 @@ void Actor::RunWorldPhysics()
 		CheckTileForCollisions(neighbors[0], tileCenter + Vector2(-.5f,.5f));
 	}
 	if (!CanEnterTile(neighbors[1])){
-		CheckTileForCollisions(neighbors[1], Vector2(m_position.x, tileCenter.y + .5f));
+		CheckTileForCollisions(neighbors[1], Vector2(pos.x, tileCenter.y + .5f));
 	}
 	if (!CanEnterTile(neighbors[2])){
 		CheckTileForCollisions(neighbors[2], tileCenter + Vector2(.5f,.5f));
 	}
 	if (!CanEnterTile(neighbors[3])){
-		CheckTileForCollisions(neighbors[3], Vector2(tileCenter.x - .5f, m_position.y));
+		CheckTileForCollisions(neighbors[3], Vector2(tileCenter.x - .5f, pos.y));
 	}
 	if (!CanEnterTile(neighbors[4])){
-		CheckTileForCollisions(neighbors[4], Vector2(tileCenter.x + .5f, m_position.y));
+		CheckTileForCollisions(neighbors[4], Vector2(tileCenter.x + .5f, pos.y));
 	}
 	if (!CanEnterTile(neighbors[5])){
 		CheckTileForCollisions(neighbors[5], tileCenter + Vector2(-.5f,-.5f));
 	}
 	if (!CanEnterTile(neighbors[6])){
-		CheckTileForCollisions(neighbors[6], Vector2(m_position.x, tileCenter.y - .5f));
+		CheckTileForCollisions(neighbors[6], Vector2(pos.x, tileCenter.y - .5f));
 	}
 	if (!CanEnterTile(neighbors[7])){
 		CheckTileForCollisions(neighbors[7], tileCenter + Vector2(.5f,-.5f));
@@ -112,7 +113,7 @@ void Actor::RunEntityPhysics()
 {
 	for (int actorIndex = 0; actorIndex < (int) m_map->m_allActors.size(); actorIndex++){
 		Actor* collidingActor = (Actor*) m_map->m_allActors[actorIndex];
-		if (collidingActor->m_position != m_position){
+		if (collidingActor->GetPosition() != GetPosition()){
 			CheckActorForCollision(collidingActor);
 		}
 	}
@@ -149,14 +150,14 @@ void Actor::EquipOrUnequipItem(Item * itemToEquip)
 {
 	EQUIPMENT_SLOT slotToEquipIn = itemToEquip->m_definition->m_equipSlot;
 	if (slotToEquipIn != NOT_EQUIPPABLE){
-		if (itemToEquip->m_currentlyEquipped){		//unequip item
+		if (itemToEquip->m_currentlyEquipped){		//un-equip item
 			m_equippedItems[slotToEquipIn] = nullptr;
 			itemToEquip->m_currentlyEquipped = false;
 		} else {
 			if (m_equippedItems[slotToEquipIn] == nullptr){		//equip to empty slot	
 				m_equippedItems[slotToEquipIn] = itemToEquip;
 			} else {
-				m_equippedItems[slotToEquipIn]->m_currentlyEquipped = false;		//unequip item in slot, and equip selected item
+				m_equippedItems[slotToEquipIn]->m_currentlyEquipped = false;		//un-equip item in slot, and equip selected item
 				m_equippedItems[slotToEquipIn] = itemToEquip;
 			}
 			itemToEquip->m_currentlyEquipped = true;
@@ -200,7 +201,7 @@ void Actor::UpdateWithController(float deltaSeconds)
 		m_moving = true;
 		float mag = g_primaryController->GetLeftThumbstickMagnitude();
 		Vector2 direction = m_facing;
-		m_position+= (direction * mag * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+		Translate(direction * mag * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
 		//m_rotationDegrees = controller->GetLeftThumbstickAngle();
 		m_rotationDegrees = 0.f;
 		m_facing = Vector2::MakeDirectionAtDegrees(g_primaryController->GetLeftThumbstickAngle()).GetNormalized() * .5f;
@@ -221,7 +222,7 @@ void Actor::UpdateWithController(float deltaSeconds)
 
 		if (arrowDirections != Vector2(0.f,0.f)){
 			m_moving = true;
-			m_position+= (arrowDirections * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+			Translate(arrowDirections * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
 			m_rotationDegrees = 0.f;
 			m_facing = arrowDirections;
 		} else {
@@ -236,18 +237,18 @@ void Actor::RunSimpleAI(float deltaSeconds)
 	if (g_theGame->m_player == nullptr){
 		Wander(deltaSeconds);
 	} else {
-		Vector2 playerPos = g_theGame->m_player->m_position;
+		Vector2 playerPos = g_theGame->m_player->GetPosition();
 		//RaycastResult2D raycast = m_map->Raycast(m_position, playerPos - m_position, m_definition->m_range);
 		//Vector2 hitPos = raycast.m_impactPosition;
 		//if the player is visible, update target
 		if (g_theGame->m_player->m_dead){
 			Wander(deltaSeconds);
-		} else if (m_map->HasLineOfSight(m_position, playerPos, m_definition->m_range)){
+		} else if (m_map->HasLineOfSight(GetPosition(), playerPos, m_definition->m_range)){
 			//pursue target
-			Vector2 distance = playerPos - m_position;
+			Vector2 distance = playerPos - GetPosition();
 			m_facing = distance.GetNormalized();
 			if (distance.GetLengthSquared() > 4){
-				m_position+= (m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+				Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
 			}
 			FireArrow();
 		} else {
@@ -260,7 +261,7 @@ void Actor::Wander(float deltaSeconds)
 {
 	float diff = m_ageInSeconds - m_timeLastUpdatedDirection;
 	if (diff < 5.f ){
-		m_position+= (m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+		Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
 	}
 	if (diff > 5.f && diff < 7.5f){
 		if (m_moving){
@@ -279,22 +280,24 @@ void Actor::FireArrow()
 {
 	if (m_ageInSeconds - m_lastAttacked > 2.f){
 		Vector2 facingScaled = m_facing * .5f;
-		m_map->SpawnNewProjectile("Arrow", m_position + facingScaled, facingScaled.GetOrientationDegrees(), m_faction, m_stats.GetStat(STAT_STRENGTH));
+		m_map->SpawnNewProjectile("Arrow", GetPosition() + facingScaled, facingScaled.GetOrientationDegrees(), m_faction, m_stats.GetStat(STAT_STRENGTH));
 		m_lastAttacked = m_ageInSeconds;
 	}
 }
 
 void Actor::CheckActorForCollision(Actor * actor)
 {
+	Vector2 pos = GetPosition();
+	Vector2 actorPos = actor->GetPosition();
 	if (DoDiscsOverlap(m_physicsDisc, actor->m_physicsDisc)){
-		Vector2 distance = m_position - actor->m_position;
-		Vector2 midPoint = m_position - (distance * .5f);
+		Vector2 distance = pos - actorPos;
+		Vector2 midPoint = pos - (distance * .5f);
 		Vector2 myPushTo = m_physicsDisc.PushOutOfPoint(midPoint);
 		Vector2 entityPushTo = actor->m_physicsDisc.PushOutOfPoint(midPoint);
 		
 		SetPosition(myPushTo);
 		actor->SetPosition(entityPushTo);
-		distance = m_position - actor->m_position;
+		distance = pos - actorPos;
 	}
 }
 

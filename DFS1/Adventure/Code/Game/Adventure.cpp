@@ -155,6 +155,11 @@ void Adventure::RegenerateCurrentMap()
 
 }
 
+RenderScene * Adventure::GetScene()
+{
+	return m_currentMap->m_scene;
+}
+
 void Adventure::GenerateMaps()
 {
 	m_mapsByName = std::map<std::string, Map*>();

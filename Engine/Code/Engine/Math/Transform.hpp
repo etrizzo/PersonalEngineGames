@@ -57,6 +57,7 @@ public:
 	Matrix44 GetLocalMatrix() const;  //local to parent matrix, not local to world.
 	void SetLocalMatrix( Matrix44 const &mat ); 
 
+	// 3D utilities
 	void SetLocalPosition( Vector3 pos );         //this is allllll local transforming
 	void TranslateLocal( Vector3 offset ); 
 	Vector3 GetWorldPosition() const; 
@@ -68,6 +69,16 @@ public:
 
 	void SetScale( Vector3 s ); 
 	Vector3 GetScale() const; 
+
+	//2D Utilities
+	void SetLocalPosition2D( Vector2 pos, float z = 0.f );         //this is allllll local transforming
+	void TranslateLocal2D( Vector2 offset ); 
+
+	void SetRotationEuler2D( float rotation ); 
+	void RotateByEuler2D( float rotationOffset ); 
+
+	void SetScale2D( Vector2 s ); 
+
 
 	Vector3 GetForward() const;
 	Vector3 GetRight() const;

@@ -16,7 +16,7 @@ void Projectile::Update(float deltaSeconds)
 	if (!m_aboutToBeDeleted){
 		Entity::Update(deltaSeconds);
 		
-		Vector2 newPos = m_position + (m_facing * m_speed * deltaSeconds );
+		Vector2 newPos = GetPosition() + (m_facing * m_speed * deltaSeconds );
 		Tile* currentTile = m_map->TileAtFloat(newPos);
 		if (currentTile != nullptr && Entity::CanEnterTile(*currentTile)){
 			Entity::SetPosition(newPos);

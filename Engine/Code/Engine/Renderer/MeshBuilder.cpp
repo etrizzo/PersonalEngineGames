@@ -191,6 +191,41 @@ void MeshBuilder::AppendPlane(const Vector3& center, const Vector3& up, const Ve
 
 }
 
+void MeshBuilder::AppendPlane2D(const AABB2 & plane, RGBA & color, const AABB2 & uvs)
+{
+	SetColor(color);
+
+	Vector3 bottomLeft	= Vector3(plane.mins, 0.f);
+	Vector3 bottomRight	= Vector3(plane.maxs.x, plane.mins.y, 0.f);
+	Vector3 topRight	= Vector3(plane.maxs, 0.f);
+	Vector3 topLeft		= Vector3(plane.mins.x, plane.maxs.y, 0.f);
+
+	Vector2 uvMins = uvs.mins;
+	Vector2 uvMaxs = uvs.maxs;
+
+	Vector2 bl_UV = uvMins;
+	Vector2 br_UV = Vector2(uvMaxs.x, uvMins.y);
+	Vector2 tl_UV = Vector2(uvMins.x, uvMaxs.y);
+	Vector2 tr_UV = uvMaxs;
+
+	SetNormal(Vector3::FORWARD * -1.f);
+	SetTangent(Vector3::RIGHT);
+	SetUV(bl_UV);
+	unsigned int idx = PushVertex(bottomLeft);
+
+	SetUV(br_UV);
+	PushVertex(bottomRight);
+
+	SetUV(tl_UV);
+	PushVertex(topLeft);
+
+	SetUV(tr_UV);
+	PushVertex(topRight);
+
+	AddTriIndices(idx + 0, idx + 1, idx + 2);
+	AddTriIndices(idx + 2, idx + 1, idx + 3);
+}
+
 //assumes begin & end happen outside of the function somewhere
 void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 UV_TOP, AABB2 UV_SIDE, AABB2 UV_BOTTOM )
 {

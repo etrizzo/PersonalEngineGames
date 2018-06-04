@@ -14,13 +14,17 @@ public:
 	~Game();											// destructor: do nothing (for speed)
 	Game();											// default constructor: do nothing (for speed)
 
+	ForwardRenderPath*	m_renderPath	= nullptr;
+	//RenderScene*		m_currentScene	= nullptr;
+
 	bool m_isPaused;
 	bool m_devMode;
 	bool m_fullMapMode;
 	float m_gameTime;
 	//Map* m_currentMap;
 	Adventure* m_currentAdventure;
-	Camera* m_camera;
+	Camera* m_camera	= nullptr;		//might change 
+	Camera* m_uiCamera	= nullptr;		//stays the same from encounter to encounter
 	//std::map<std::string, Map*> m_mapsByName;
 	Player* m_player;
 
@@ -39,6 +43,8 @@ public:
 	SoundPlaybackID m_victoryPlayback;
 
 	static SpriteAnimSetDef* s_humanoidAnimSetDef;
+
+	Vector2 GetPlayerPosition() const;
 
 
 	void Update			(float deltaSeconds);

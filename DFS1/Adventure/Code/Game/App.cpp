@@ -38,6 +38,8 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_theInput = new InputSystem();
 	g_theAudio = new AudioSystem();
 	g_theRenderer->Initialize();
+	g_theRenderer->LoadShadersFromFile("shaders.xml");
+	g_theRenderer->LoadMaterialsFromFile("materials.xml");
 	g_theGame = new Game();
 
 	g_theGame->m_transitionToState = STATE_ATTRACT;

@@ -18,10 +18,10 @@ void Player::Update(float deltaSeconds)
 		if (!m_isFiring){
 			Actor::UpdateWithController(deltaSeconds);
 		}
-		m_physicsDisc.center=m_position;
+		m_physicsDisc.center=GetPosition();
 		m_ageInSeconds+=deltaSeconds;
 
-		Tile* newTile = m_map->TileAtFloat(m_position);
+		Tile* newTile = m_map->TileAtFloat(GetPosition());
 		if (newTile != m_currentTile){
 			EnterTile(newTile);
 		}
@@ -180,7 +180,7 @@ void Player::FireArrow()
 {
 	m_isFiring = false;
 	Vector2 closestAngle = GetClosestAngle() * .5f;
-	m_map->SpawnNewProjectile("Arrow", m_position + closestAngle, closestAngle.GetOrientationDegrees(), m_faction, m_stats.GetStat(STAT_STRENGTH));
+	m_map->SpawnNewProjectile("Arrow", GetPosition() + closestAngle, closestAngle.GetOrientationDegrees(), m_faction, m_stats.GetStat(STAT_STRENGTH));
 }
 
 Vector2 Player::GetClosestAngle()

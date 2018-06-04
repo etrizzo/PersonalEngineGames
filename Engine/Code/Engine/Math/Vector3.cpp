@@ -35,11 +35,11 @@ Vector3::Vector3( float initialX, float initialY , float initialZ)
 	z = initialZ;
 }
 
-Vector3::Vector3(const Vector2 & vec2, float z)
+Vector3::Vector3(const Vector2 & vec2, float initialz)
 {
 	x = vec2.x;
 	y = vec2.y;
-	z = z;
+	z = initialz;
 }
 
 

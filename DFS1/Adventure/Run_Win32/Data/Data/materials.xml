@@ -1,0 +1,77 @@
+<!--
+<material name="name" shader="shadername">
+	<textures>
+		//type is just for readability, might want to hard-map diffuse and normal
+		<tex type="diffuse" path="texturePath"/> 
+		<tex type="normal" path="texturePath"/> 
+		<tex type="maskorsomething" path="texturePath" index="2" /> 
+		<tex path="texturePath"/>
+		.
+		.
+		.
+	</textures> 
+	<properties>
+		<property type="float|RGBA" name="name" value="value" />
+		<property type="float|RGBA" name="name" value="value" />
+		<property type="float|RGBA" name="name" value="value" />
+		.
+		.
+		.
+	</properties>
+-->
+
+<!-- default mats -->
+
+<material name="default" shader="default">
+	<textures>
+		<texture type="diffuse" path="white" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+
+
+<!-- special mats -->
+<material name="particle" shader="additive">
+	<textures>
+		<texture type="diffuse" path="particle.png" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+<material name="tile" shader="default">
+	<textures>
+		<texture type="diffuse" path="Terrain_32x32.png" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+
+<material name="orc" shader="default">
+	<textures>
+		<texture type="diffuse" path="orc_piratess.png" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+
+<!-- skybox doesn't use a "texture" so no texture element -->
+<material name="skybox" shader="skybox">
+</material>
+
+<material name="additive" shader="additive">
+	<textures>
+		<texture type="diffuse" path="white" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>

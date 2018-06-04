@@ -24,6 +24,7 @@ Map::~Map()
 
 Map::Map(std::string name, MapDefinition* mapDef)
 {
+	m_scene = new RenderScene();
 	m_name = name;
 	m_mapDef = mapDef;
 	m_allEntities = std::vector<Entity*>();
@@ -43,13 +44,14 @@ Map::Map(std::string name, MapDefinition* mapDef)
 	//find width/height??
 	InitializeTiles();
 	RunMapGeneration();
+	CreateTileRenderable();
 }
 
 
 void Map::Render()
 {
 	SetCamera();
-	RenderTiles();
+	//RenderTiles();
 	RenderEntities();
 }
 
@@ -99,7 +101,7 @@ bool Map::RunBubbleSortPassOnEntities()
 			Entity* currentEntity = m_allEntities[checkIndex];
 			Entity* nextEntity = m_allEntities[checkIndex+1];
 			if (nextEntity != nullptr && currentEntity != nullptr){
-				if (currentEntity->m_position.y < nextEntity->m_position.y){
+				if (currentEntity->GetPosition().y < nextEntity->GetPosition().y){
 					sorted = false;
 					Entity* temp = m_allEntities[checkIndex];
 					m_allEntities[checkIndex] = m_allEntities[checkIndex+1];
@@ -365,10 +367,12 @@ bool Map::HasLineOfSight(const Vector2 & startPos, const Vector2 & endPos, float
 void Map::AddEntityToMap(Entity * entity)
 {
 	m_allEntities.push_back(entity);
+	m_scene->AddRenderable(entity->m_renderable);
 }
 
 void Map::RemoveEntityFromMap(Entity* entity)
 {
+	m_scene->RemoveRenderable(entity->m_renderable);
 	for( std::vector<Entity*>::iterator entityIter = m_allEntities.begin(); entityIter != m_allEntities.end(); ++entityIter )
 	{
 		if( *entityIter == entity )
@@ -381,6 +385,7 @@ void Map::RemoveEntityFromMap(Entity* entity)
 
 void Map::RemoveActorFromMap(Actor * actor)
 {
+	m_scene->RemoveRenderable(actor->m_renderable);
 	for( std::vector<Actor*>::iterator entityIter = m_allActors.begin(); entityIter != m_allActors.end(); ++entityIter )
 	{
 		if( *entityIter == actor )
@@ -406,6 +411,7 @@ void Map::AddActorToMap(Actor * actor)
 {
 	m_allActors.push_back(actor);
 	m_allEntities.push_back(actor);
+	m_scene->AddRenderable(actor->m_renderable);
 }
 
 void Map::RemoveEntities()
@@ -718,6 +724,7 @@ Player * Map::SpawnNewPlayer(Vector2 spawnPosition)
 	Player* newPlayer = new Player(actorDef, spawnPosition, this);
 	m_allEntities.push_back((Entity*) newPlayer);
 	m_allActors.push_back( (Actor*) newPlayer);
+	m_scene->AddRenderable(newPlayer->m_renderable);
 	return newPlayer;
 }
 
@@ -732,6 +739,7 @@ Actor * Map::SpawnNewActor(ActorDefinition * actorDef, Vector2 spawnPosition, fl
 	Actor* newActor = new Actor(actorDef, this, spawnPosition, spawnRotation);
 	m_allEntities.push_back(newActor);
 	m_allActors.push_back(newActor);
+	m_scene->AddRenderable(newActor->m_renderable);
 	return newActor;
 }
 
@@ -746,6 +754,7 @@ Projectile * Map::SpawnNewProjectile(ProjectileDefinition * projectileDef, Vecto
 	Projectile* newProjectile = new Projectile(projectileDef, this, spawnPosition, spawnRotation, faction, bonusStrength);
 	m_allEntities.push_back( newProjectile);
 	m_allProjectiles.push_back(newProjectile);
+	m_scene->AddRenderable(newProjectile->m_renderable);
 	return newProjectile;
 }
 
@@ -766,6 +775,7 @@ Portal * Map::SpawnNewPortal(PortalDefinition * portalDef, Vector2 spawnPosition
 	Portal* newPortal = new Portal(portalDef, this, destinationMap, spawnPosition, toPos, spawnRotation, spawnReciprocal);
 	m_allEntities.push_back( newPortal);
 	m_allPortals.push_back(newPortal);
+	m_scene->AddRenderable(newPortal->m_renderable);
 	return newPortal;
 }
 
@@ -780,6 +790,7 @@ Item * Map::SpawnNewItem(ItemDefinition * itemDef, Vector2 spawnPosition)
 	Item* newItem = new Item(itemDef, this, spawnPosition);
 	m_allEntities.push_back( newItem);
 	m_allItems.push_back(newItem);
+	m_scene->AddRenderable(newItem->m_renderable);
 	return newItem;
 }
 
@@ -796,7 +807,7 @@ void Map::SetCamera()
 	} else {
 		float viewWidth = WINDOW_ASPECT * ZOOM_FACTOR;
 		Vector2 halfDimensions = Vector2(viewWidth, ZOOM_FACTOR) * .5f;
-		Vector2 positionToCenter = g_theGame->m_player->m_position;
+		Vector2 positionToCenter = g_theGame->m_player->GetPosition();
 		//g_theGame->m_camera->m_transform.SetLocalPosition(Vector3(positionToCenter, -1.f));
 		
 
@@ -820,7 +831,7 @@ void Map::SetCamera()
 		//ClampCameraToMap();
 	}
 	//g_theRenderer->SetOrtho(g_theGame->m_camera->GetBounds().mins, g_theGame->m_camera->GetBounds().maxs);
-	g_theRenderer->SetOrtho(Vector3(g_theGame->m_camera->GetBounds().mins, 0.f), Vector3(g_theGame->m_camera->GetBounds().maxs, 2.f));
+	//g_theRenderer->SetOrtho(Vector3(g_theGame->m_camera->GetBounds().mins, 0.f), Vector3(g_theGame->m_camera->GetBounds().maxs, 2.f));
 	//if (g_theGame->m_isPaused){
 	//	g_theRenderer->DrawAABB2(AABB2(m_camera->m_bottomLeft, m_camera->m_topRight), RGBA(0,0,0,128));
 	//}
@@ -881,6 +892,48 @@ void Map::InitializeTiles()
 		m_tiles[i] = Tile(coords, m_mapDef->m_defaultTile);
 	}
 	m_numTiles = numTiles;
+}
+
+void Map::CreateTileRenderable()
+{
+	m_tileRenderable = new Renderable();
+	Material* tileMat = Material::GetMaterial("tile");
+	MeshBuilder mb =  MeshBuilder();
+	mb.Begin(PRIMITIVE_TRIANGLES, true);
+	static std::vector<Vertex3D_PCU> tileVerts;
+	tileVerts.clear();
+	AABB2 camBounds = GetCameraBounds();
+	Vector2 spacing = Vector2(1.f,1.f);
+	Tile* minTile = TileAtFloat(camBounds.mins - spacing);
+	Tile* maxTile = TileAtFloat(camBounds.maxs + spacing);
+
+	IntVector2 minTileCoords = IntVector2(0,0);
+	IntVector2 maxTileCoords = m_dimensions;
+	//if (minTile != nullptr){
+	//	minTileCoords= minTile->m_coordinates;
+	//}
+	//if (maxTile != nullptr){
+	//	maxTileCoords = maxTile->m_coordinates;
+	//}
+	for ( int x = minTileCoords.x; x < maxTileCoords.x; x++){
+		for (int y = minTileCoords.y; y < maxTileCoords.y; y++){
+			//push vertices
+			Tile* tileToRender = TileAt(x,y);
+			AABB2 bounds = tileToRender->GetBounds();
+			RGBA color = tileToRender->m_tileDef->m_spriteTint;
+			AABB2 texCoords = tileToRender->m_tileDef->GetTexCoords(tileToRender->m_extraInfo->m_variant);
+			mb.AppendPlane2D(bounds, color, texCoords);
+			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.mins.x, bounds.mins.y), color, Vector2(texCoords.mins.x, texCoords.maxs.y)));
+			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.maxs.x, bounds.mins.y), color, Vector2(texCoords.maxs.x, texCoords.maxs.y)));
+			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.maxs.x, bounds.maxs.y), color, Vector2(texCoords.maxs.x, texCoords.mins.y)));
+			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.mins.x, bounds.maxs.y), color, Vector2(texCoords.mins.x, texCoords.mins.y)));
+		}
+	}
+	mb.End();
+
+	m_tileRenderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_3DPCU));
+	m_tileRenderable->SetMaterial(tileMat);
+	m_scene->AddRenderable(m_tileRenderable);
 }
 
 void Map::RunMapGeneration()

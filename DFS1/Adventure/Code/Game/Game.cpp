@@ -29,6 +29,10 @@ Game::~Game()
 
 Game::Game()
 {
+
+	m_renderPath = new ForwardRenderPath();
+	m_renderPath->m_renderer = g_theRenderer;
+
 	Texture* tileTexture = g_theRenderer->CreateOrGetTexture("Terrain_32x32.png");
 	g_tileSpriteSheet = new SpriteSheet(*tileTexture, 32,32);
 	Texture* miscTexture = g_theRenderer->CreateOrGetTexture("MiscItems_4x4.png");
@@ -59,6 +63,14 @@ Game::Game()
 
 	g_theRenderer->ClearDepth( 1.0f ); 
 	g_theRenderer->EnableDepth( COMPARE_LESS, true );
+}
+
+Vector2 Game::GetPlayerPosition() const
+{
+	if (m_player != nullptr){
+		return m_player->GetPosition();
+	}
+	return Vector2::ZERO;
 }
 
 void Game::Update(float deltaSeconds)
@@ -152,7 +164,7 @@ void Game::Render()
 {
 	g_theRenderer->SetCullMode(CULLMODE_NONE);
 	g_theRenderer->DisableDepth();
-	//g_theRenderer->ClearScreen(RGBA::BLACK);
+	g_theRenderer->ClearScreen(RGBA::BLACK);
 	//g_theRenderer->SetOrtho(m_camera->GetBounds().mins, m_camera->GetBounds().maxs);
 
 	if (m_currentState == STATE_PLAYING){
@@ -210,6 +222,9 @@ void Game::RenderAttract()
 
 void Game::RenderPlaying()
 {
+	m_currentAdventure->Render();
+	//m_currentAdventure->m_currentMap->SetCamera()
+	m_renderPath->RenderSceneForCamera(m_camera, m_currentAdventure->GetScene());
 	m_currentAdventure->Render();
 	if (!m_isFinishedTransitioning){
 		if (m_transitionToState != NO_STATE){

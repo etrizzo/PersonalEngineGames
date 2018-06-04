@@ -58,6 +58,9 @@ public:
 	int m_numTiles;
 	SoundPlaybackID m_musicPlayback;
 
+	RenderScene* m_scene;
+	Renderable* m_tileRenderable;
+
 	void Update(float deltaSeconds);
 	void UpdateEntities(float deltaSeconds);
 	void RunPhysics();
@@ -127,6 +130,7 @@ private:
 	void SetCamera();
 	void ClampCameraToMap();
 	void InitializeTiles();
+	void CreateTileRenderable();
 	void RunMapGeneration();
 
 	void ResetPortals();

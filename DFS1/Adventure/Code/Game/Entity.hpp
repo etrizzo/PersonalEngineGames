@@ -7,7 +7,7 @@ class SpriteAnimSet;
 class EntityDefinition;
 class Item;
 
-class Entity{
+class Entity {
 public:
 	~Entity();									
 	Entity() ;									
@@ -19,7 +19,6 @@ public:
 	virtual void RenderDevDisc(RGBA color);
 	virtual std::string GetAnimName();		//returns current animation name
 
-	virtual void CheckScreen();
 	virtual bool IsAboutToBeDeleted();
 
 	virtual void RunCorrectivePhysics();
@@ -33,14 +32,30 @@ public:
 	void RenderName();
 
 	
-	virtual void SetPosition(Vector2 newPosition, Map* newMap = nullptr);
+	
 	bool IsPointInForwardView(Vector2 point);
 	bool IsSameFaction(Entity* otherEntity) const;
 	void AddItemToInventory(Item* itemToAdd);
 
+	Vector2		GetPosition()	const;
+	float		GetRotation()	const;
+	Renderable* GetRenderable() const;
+	Transform&  GetTransform()	const;
+
+	virtual void SetPosition(Vector2 newPosition, Map* newMap = nullptr);
+	void SetRotation(float newRot);
+	void SetScale(float uniformScale);
+	void SetScale(Vector2 scale);
+	void Rotate(float offset);
+	void Translate(Vector2 offset);
+
+
+
+	Renderable* m_renderable;
+
 	const EntityDefinition* m_definition;
 	Map* m_map;
-	Vector2 m_position;
+	//Vector2 m_position;
 	float m_rotationDegrees;
 	float m_ageInSeconds;
 	Vector2 m_facing;
