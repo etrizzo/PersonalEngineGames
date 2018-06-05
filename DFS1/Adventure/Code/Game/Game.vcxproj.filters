@@ -88,6 +88,9 @@
     <ClCompile Include="AIBehavior.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -166,6 +169,9 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="AIBehavior.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

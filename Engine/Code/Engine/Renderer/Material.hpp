@@ -23,10 +23,10 @@ public:
 
 	//Texture Setting!!!!!!!!
 	//also adds a sampler w/ the same bindpoint
-	void SetTexture(int bindPoint, Texture* tex);
-	void SetDiffuseTexture(Texture* tex);	
+	void SetTexture(int bindPoint, const Texture* tex);
+	void SetDiffuseTexture(const Texture* tex);	
 	void SetDiffuseTexture(std::string texPath); //helper
-	void SetNormalTexture(Texture* tex);
+	void SetNormalTexture(const Texture* tex);
 	void SetNormalTexture(std::string texPath);	//helper
 
 
@@ -55,7 +55,7 @@ public:
 	std::string m_name;
 	Shader* m_shader;
 
-	std::vector<Texture*> m_textures;
+	std::vector<const Texture*> m_textures;
 	std::vector<Sampler*> m_samplers;
 
 	std::vector<MaterialProperty*> m_properties;

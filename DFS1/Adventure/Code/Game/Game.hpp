@@ -1,6 +1,6 @@
 #pragma once
 #include "GameCommon.hpp"
-
+#include "Game/GameState.hpp"
 
 
 class Entity;
@@ -28,8 +28,11 @@ public:
 	//std::map<std::string, Map*> m_mapsByName;
 	Player* m_player;
 
-	GAME_STATE m_currentState = STATE_ATTRACT;
-	GAME_STATE m_transitionToState = NO_STATE;
+	GameState* m_currentState = nullptr;
+	GameState* m_transitionToState = nullptr;
+
+	//GAME_STATE m_currentState = STATE_ATTRACT;
+	//GAME_STATE m_transitionToState = NO_STATE;
 	float m_timeEnteredState;
 	bool m_isFinishedTransitioning;
 	float m_transitionLength;
@@ -73,11 +76,18 @@ public:
 	void TogglePause();
 	void ToggleDevMode();
 
+	void TransitionToState(GameState* newState);
+	void TriggerTransition();
+	AABB2 SetUICamera();
+	AABB2 SetMainCamera();
+	AABB2 GetUIBounds();
+	AABB2 GetMainCameraBounds();
+
 	void UpdateMenuSelection(int direction = 1);
 
-	void StartStateTransition(GAME_STATE newState, float transitionTime = .5f, RGBA transitionColor = RGBA(0,0,0,255));
-	void Transition();
-	void FadeIn();
+	//void StartStateTransition(GAME_STATE newState, float transitionTime = .5f, RGBA transitionColor = RGBA(0,0,0,255));
+	//void Transition();
+	//void FadeIn();
 	void StartAdventure(std::string adventureDefName);
 
 	void ToggleState(bool& stateToToggle);
@@ -101,5 +111,17 @@ private:
 	RGBA m_currentFadeColor;
 	RGBA m_startFadeColor;
 };
+
+
+bool WasBackJustPressed();		//'back' functionality - esc, b
+bool WasStartJustPressed();		//BROAD 'start' functionality - p, enter, start, a
+bool WasSelectJustPressed();		//enter or a ONLY
+bool WasPauseJustPressed();			//p or start ONLY
+bool WasExitJustPressed();			//ESC only
+bool WasUpJustPressed();
+bool WasDownJustPressed();
+bool WasRightJustPressed();
+bool WasLeftJustPressed();
+void CheckArrowKeys();
 
 extern Game* g_theGame;

@@ -17,6 +17,7 @@ public:
 	//drawing
 	float	m_drawingRadius			= 1.f;
 	float	m_physicsRadius			= .3f;
+	float	m_aspectRatio;
 	AABB2	m_boundingBox			= AABB2(0.f,0.f,0.f,0.f);
 	bool	m_drawWithBounds		= false;
 

@@ -54,11 +54,18 @@ void EntityDefinition::ParseSize(tinyxml2::XMLElement* sizeElement)
 	if (sizeElement != nullptr){
 		m_physicsRadius = ParseXmlAttribute(*sizeElement, "physicsRadius", m_physicsRadius);
 		m_drawingRadius = ParseXmlAttribute(*sizeElement, "drawRadius", m_drawingRadius);
-		std::string bounds = ParseXmlAttribute(*sizeElement, "drawBounds", " ");
+		m_aspectRatio	= ParseXmlAttribute(*sizeElement, "aspect", 1.5f);
+
+		//draw radius is width
+		float height = m_drawingRadius * m_aspectRatio;
+		m_boundingBox.mins = Vector2(-m_drawingRadius * .5f, -height * .5f);
+		m_boundingBox.maxs = Vector2(m_drawingRadius * .5f, height * .5f);
+
+		/*std::string bounds = ParseXmlAttribute(*sizeElement, "drawBounds", " ");
 		if (bounds != " "){
 			m_drawWithBounds = true;
 			m_boundingBox.SetFromText(bounds.c_str());
-		}
+		}*/
 	} 
 }
 

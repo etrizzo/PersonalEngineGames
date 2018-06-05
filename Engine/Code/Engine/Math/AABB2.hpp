@@ -14,6 +14,9 @@ public:
 	explicit AABB2(const Vector2& center, float radiusX, float radiusY);
 
 
+	bool operator==( const AABB2& compare ) const;				
+	bool operator!=( const AABB2& compare ) const;				
+
 	// Mutators
 	void StretchToIncludePoint(float x, float y);
 	void StretchToIncludePoint(const Vector2& point);

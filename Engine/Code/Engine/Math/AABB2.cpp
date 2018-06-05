@@ -21,6 +21,16 @@ AABB2::AABB2(const Vector2 & center, float radiusX, float radiusY)
 	maxs = Vector2(center.x + radiusX, center.y + radiusY);
 }
 
+bool AABB2::operator==(const AABB2 & compare) const
+{
+	return ((mins == compare.mins) && (maxs == compare.maxs));
+}
+
+bool AABB2::operator!=(const AABB2 & compare) const
+{
+	return ((mins != compare.mins) || (maxs != compare.maxs));
+}
+
 void AABB2::StretchToIncludePoint(float x, float y)
 {
 	if (x < mins.x){

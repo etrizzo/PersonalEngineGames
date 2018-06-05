@@ -18,6 +18,8 @@ public:
 	void Respawn();
 	std::string GetAnimName();
 
+	void StartFiringArrow();
+
 	bool m_dead;
 	Heatmap m_distanceMap;
 

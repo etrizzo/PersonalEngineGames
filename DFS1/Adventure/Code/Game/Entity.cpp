@@ -16,7 +16,8 @@ Entity::~Entity()
 
 Entity::Entity()
 {
-	m_renderable = new Renderable;
+	m_renderable = new Renderable();
+	m_renderable->SetMaterial(Material::GetMaterial("default"));
 }
 
 Entity::Entity(EntityDefinition * entityDef, Map * entityMap, Vector2 initialPos, float initialRotation)
@@ -24,6 +25,7 @@ Entity::Entity(EntityDefinition * entityDef, Map * entityMap, Vector2 initialPos
 	
 	m_definition = entityDef;
 	m_renderable = new Renderable();
+	m_renderable->SetMaterial(Material::GetMaterial("default"));
 	SetPosition(initialPos);
 	m_rotationDegrees = initialRotation;
 
@@ -62,6 +64,7 @@ Entity::Entity(EntityDefinition * entityDef, Map * entityMap, Vector2 initialPos
 	m_faction = "none";
 	m_inventory = std::vector<Item*>();
 	FillInventory();
+	UpdateRenderable();
 }
 
 
@@ -83,18 +86,39 @@ void Entity::Update(float deltaSeconds)
 	m_animSet->SetCurrentAnim(animName);		//sets IF it's different from the last frame
 	m_animSet->Update(deltaSeconds);
 
+	UpdateRenderable();
+
+}
+
+void Entity::UpdateRenderable()
+{
+	const Texture* entityTexture = m_animSet->GetCurrentTexture();
+	AABB2 uvs = m_animSet->GetCurrentUVs();
+	if (!(uvs == m_lastUVs)){
+		//regenerate mesh
+		m_lastUVs = uvs;
+		MeshBuilder mb = MeshBuilder();
+		mb.Begin(PRIMITIVE_TRIANGLES, true);
+		mb.AppendPlane2D(m_localDrawingBox, RGBA::WHITE, uvs);
+		mb.End();
+
+		m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_3DPCU));
+	}
+	if (m_renderable->GetEditableMaterial()->m_textures[0] != entityTexture){
+		m_renderable->SetDiffuseTexture(entityTexture);
+	}
 }
 
 void Entity::Render()
 {
 	TODO("Clean up entity rendering pipeline");
-	g_theRenderer->PushAndTransform2(GetPosition(), m_rotationDegrees, m_definition->m_physicsRadius);
-	
-	//Texture* entityTexture = g_theRenderer->CreateOrGetTexture(m_texturePath);
-	const Texture* entityTexture = m_animSet->GetCurrentTexture();
-	AABB2 texCoords = m_animSet->GetCurrentUVs();
-	g_theRenderer->DrawTexturedAABB2(m_localDrawingBox, *entityTexture,texCoords.mins, texCoords.maxs, RGBA());
-	g_theRenderer->Pop();
+	//g_theRenderer->PushAndTransform2(GetPosition(), m_rotationDegrees, m_definition->m_physicsRadius);
+	//
+	////Texture* entityTexture = g_theRenderer->CreateOrGetTexture(m_texturePath);
+	//const Texture* entityTexture = m_animSet->GetCurrentTexture();
+	//AABB2 texCoords = m_animSet->GetCurrentUVs();
+	//g_theRenderer->DrawTexturedAABB2(m_localDrawingBox, *entityTexture,texCoords.mins, texCoords.maxs, RGBA());
+	//g_theRenderer->Pop();
 
 	RenderHealthBar();
 	if (g_theGame->m_devMode){

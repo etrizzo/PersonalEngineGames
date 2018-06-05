@@ -32,8 +32,10 @@ public:
 	void SetMesh(Mesh* mesh);
 	void SetMesh(SubMesh* smesh, int idx = 0);
 
-	void SetDiffuseTexture(Texture* tex, int index = 0);
-	void SetNormalTexture(Texture* tex, int index = 0);
+	//void SetDiffuseTexture(Texture* tex, int index = 0);
+	//void SetNormalTexture(Texture* tex, int index = 0);
+	void SetDiffuseTexture(const Texture* tex, int index = 0);		//should use the const ones but keep old ones for backwards compatibility
+	void SetNormalTexture(const Texture* tex, int index = 0);
 
 	void SetShader(std::string shaderName, int index = 0);
 	void SetShader(Shader* shader, int index = 0);

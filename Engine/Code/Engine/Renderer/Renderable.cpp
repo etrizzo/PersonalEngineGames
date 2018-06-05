@@ -101,12 +101,12 @@ void Renderable::SetMesh(SubMesh* smesh, int idx)
 	m_mesh->SetSubMesh(smesh, idx);
 }
 
-void Renderable::SetDiffuseTexture(Texture * tex, int index)
+void Renderable::SetDiffuseTexture(const Texture * tex, int index)
 {
 	GetEditableMaterial(index)->SetDiffuseTexture(tex);
 }
 
-void Renderable::SetNormalTexture(Texture * tex, int index)
+void Renderable::SetNormalTexture(const Texture * tex, int index)
 {
 	GetEditableMaterial(index)->SetNormalTexture(tex);
 }

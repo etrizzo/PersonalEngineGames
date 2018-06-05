@@ -191,7 +191,7 @@ void MeshBuilder::AppendPlane(const Vector3& center, const Vector3& up, const Ve
 
 }
 
-void MeshBuilder::AppendPlane2D(const AABB2 & plane, RGBA & color, const AABB2 & uvs)
+void MeshBuilder::AppendPlane2D(const AABB2 & plane, const RGBA & color, const AABB2 & uvs)
 {
 	SetColor(color);
 

@@ -27,22 +27,26 @@ Adventure::~Adventure()
 void Adventure::Begin()
 {
 	GenerateMaps();
-	if (g_theGame->m_currentState == STATE_MAPMODE){
-		m_startingMap = m_mapsByIndex[0];
-	} else {
-		m_startingMap = GetMap(m_definition->m_startMapName);
-	}
+	//if (g_theGame->m_currentState == STATE_MAPMODE){
+	//	m_startingMap = m_mapsByIndex[0];
+	//} else {
+	//	m_startingMap = GetMap(m_definition->m_startMapName);
+	//}
+
+	m_startingMap = GetMap(m_definition->m_startMapName);
+
 	SetCurrentMap(m_startingMap);
 	m_victoryConditions = std::vector<VictoryCondition*>();
 	for(VictoryCondition* condition :m_definition->m_victoryConditions){
 		m_victoryConditions.push_back(condition->Clone());		//i hate this
 	}
 
-	if(g_theGame->m_transitionToState != STATE_MAPMODE){
-		g_theGame->m_player = SpawnPlayer();
-	} else {
-		g_theGame->m_player = nullptr;
-	}
+	g_theGame->m_player = SpawnPlayer();
+	//if(g_theGame->m_transitionToState != STATE_MAPMODE){
+	//	g_theGame->m_player = SpawnPlayer();
+	//} else {
+	//	g_theGame->m_player = nullptr;
+	//}
 }
 
 void Adventure::Update(float deltaSeconds)
@@ -56,7 +60,7 @@ void Adventure::Update(float deltaSeconds)
 void Adventure::Render()
 {
 	m_currentMap->Render();
-	RenderUI();
+	//RenderUI();
 }
 
 void Adventure::RenderUI()
@@ -108,7 +112,8 @@ void Adventure::CheckForVictory()
 		}
 		m_hasWon = finishedAllConditions;
 		if (m_hasWon){
-			g_theGame->StartStateTransition(STATE_VICTORY, .5f, RGBA(0,0,0,128));
+			TODO("Victory State");
+			//g_theGame->StartStateTransition(STATE_VICTORY, .5f, RGBA(0,0,0,128));
 		}
 	}
 	

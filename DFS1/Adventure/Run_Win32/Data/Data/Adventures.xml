@@ -31,8 +31,10 @@
       <Actor type="Goblin" onTileType="Sand"/>
     </Map>
     <Map name="My ZOO :^)" mapDefinition="Zoo">
+      <!--
       <Actor type="Goblin" onTileType="Grass"/>
       <Item type="Platemail Chestpiece" onTileType="Grass"/>
+    -->
     </Map>
   </AdventureDefinition>
 

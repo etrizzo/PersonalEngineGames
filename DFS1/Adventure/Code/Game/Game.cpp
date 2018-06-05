@@ -59,6 +59,21 @@ Game::Game()
 	Vector2 center = m_camera->GetBounds().GetCenter();
 	m_camera->LookAt(Vector3(center.x, center.y, -1.f), Vector3(center.x, center.y, .5f));
 
+
+	// Setup ui camera - draws from (0,0) to (1,1) always
+	m_uiCamera = new Camera();
+
+	// Setup what it will draw to
+	m_uiCamera->SetColorTarget( g_theRenderer->m_defaultColorTarget );
+	m_uiCamera->SetDepthStencilTarget( g_theRenderer->m_defaultDepthTarget );
+
+	m_uiCamera->SetProjectionOrtho(1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f,100.f);
+	Vector2 uicenter = m_uiCamera->GetBounds().GetCenter();
+	m_uiCamera->LookAt( Vector3( uicenter.x, uicenter.y, -1.f ), Vector3(uicenter.x, uicenter.y, .5f)); 
+
+
+
+
 	g_theRenderer->SetCamera( m_camera ); 
 
 	g_theRenderer->ClearDepth( 1.0f ); 
@@ -76,50 +91,20 @@ Vector2 Game::GetPlayerPosition() const
 void Game::Update(float deltaSeconds)
 {
 	m_gameTime+=deltaSeconds;
-	if (!m_isFinishedTransitioning){
-		if (m_gameTime - m_timeEnteredState > m_transitionLength){
-			if (m_transitionToState == NO_STATE){
-				m_isFinishedTransitioning = true;
-			} else {
-				Transition();
-			}
-		}
-	}
-
-	if (m_currentState == STATE_PLAYING){
-		UpdatePlaying(deltaSeconds);
-	}
-	if (m_currentState == STATE_ATTRACT){
-		UpdateAttract(deltaSeconds);
-	}
-	if (m_currentState == STATE_PAUSED){
-		UpdatePaused(deltaSeconds);
-	}
-	if (m_currentState == STATE_INVENTORY){
-		UpdateInventory(deltaSeconds);
-	}
-	if (m_currentState == STATE_VICTORY){
-		UpdateVictory(deltaSeconds);
-	}
-	if (m_currentState == STATE_DEFEAT){
-		UpdateDefeat(deltaSeconds);
-	}
-
-
-	if (m_currentState == STATE_MAPMODE){
-		UpdateMapMode(deltaSeconds);
+	if(!m_isPaused){
+		m_currentState->Update(deltaSeconds);
+		m_currentState->HandleInput();
 	}
 }
 
-void Game::UpdateAttract(float deltaSeconds)
-{
-	if (!m_isFinishedTransitioning && m_transitionToState != NO_STATE){
-		float timeInTranstion = m_gameTime - m_timeEnteredState;
-		float percThroughTransition = timeInTranstion / m_transitionLength;
-		g_theAudio->SetSoundPlaybackVolume(m_attractPlayback, 1.f - percThroughTransition);
-	}
-	deltaSeconds;
-}
+//void Game::UpdateAttract(float deltaSeconds)
+//{
+//	if (!m_isFinishedTransitioning && m_transitionToState != nullptr){
+//		float timeInTranstion = m_gameTime - m_timeEnteredState;
+//		float percThroughTransition = timeInTranstion / m_transitionLength;
+//		g_theAudio->SetSoundPlaybackVolume(m_attractPlayback, 1.f - percThroughTransition);
+//	}
+//}
 
 void Game::UpdatePlaying(float deltaSeconds)
 {
@@ -167,7 +152,8 @@ void Game::Render()
 	g_theRenderer->ClearScreen(RGBA::BLACK);
 	//g_theRenderer->SetOrtho(m_camera->GetBounds().mins, m_camera->GetBounds().maxs);
 
-	if (m_currentState == STATE_PLAYING){
+	m_currentState->Render();
+	/*if (m_currentState == STATE_PLAYING){
 		RenderPlaying();
 	}
 	if (m_currentState == STATE_ATTRACT){
@@ -190,140 +176,140 @@ void Game::Render()
 
 	if (m_currentState == STATE_MAPMODE){
 		RenderMapMode();
-	}
-
-}
-
-void Game::RenderAttract()
-{
-	/*if (m_gameTime - m_timeEnteredState < m_transitionLength){
-		FadeIn();
 	}*/
-	AABB2 screenBounds = AABB2(Vector2(0.f,0.f), Vector2((float) m_screenWidth, (float) m_screenWidth));
-	g_theRenderer->SetOrtho(Vector3(0.f,0.f, 0.f), Vector3((float) m_screenWidth, (float) m_screenWidth, 2.f));
-	g_theRenderer->DrawAABB2(AABB2(0.f,0.f, (float) m_screenWidth, (float) m_screenWidth), RGBA(64,128,0,255));
-	g_theRenderer->DrawTextInBox2D("Adventure", screenBounds, Vector2(.5f,.5f), (float)m_screenWidth * .08f);
-	g_theRenderer->DrawTextInBox2D("Press Start", screenBounds, Vector2(.5f,.3f), (float)m_screenWidth * .03f);
-
-	/*if (m_transitionToState != NO_STATE){
-		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-		g_theRenderer->DrawAABB2(AABB2(0.f,0.f, m_screenWidth,m_screenWidth), m_startFadeColor.GetColorWithAlpha((int) (percThroughTransition * 255)));
-	}*/
-	if (!m_isFinishedTransitioning){
-		if (m_transitionToState != NO_STATE){
-			float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-			g_theRenderer->DrawAABB2(AABB2(0.f,0.f,(float) m_screenWidth, (float) m_screenWidth), m_startFadeColor.GetColorWithAlpha((unsigned char) (percThroughTransition * 255)));
-		} else if (m_gameTime - m_timeEnteredState < m_transitionLength){
-			FadeIn();
-		}
-	}
 
 }
+//
+//void Game::RenderAttract()
+//{
+//	/*if (m_gameTime - m_timeEnteredState < m_transitionLength){
+//		FadeIn();
+//	}*/
+//	AABB2 screenBounds = AABB2(Vector2(0.f,0.f), Vector2((float) m_screenWidth, (float) m_screenWidth));
+//	g_theRenderer->SetOrtho(Vector3(0.f,0.f, 0.f), Vector3((float) m_screenWidth, (float) m_screenWidth, 2.f));
+//	g_theRenderer->DrawAABB2(AABB2(0.f,0.f, (float) m_screenWidth, (float) m_screenWidth), RGBA(64,128,0,255));
+//	g_theRenderer->DrawTextInBox2D("Adventure", screenBounds, Vector2(.5f,.5f), (float)m_screenWidth * .08f);
+//	g_theRenderer->DrawTextInBox2D("Press Start", screenBounds, Vector2(.5f,.3f), (float)m_screenWidth * .03f);
+//
+//	/*if (m_transitionToState != NO_STATE){
+//		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
+//		g_theRenderer->DrawAABB2(AABB2(0.f,0.f, m_screenWidth,m_screenWidth), m_startFadeColor.GetColorWithAlpha((int) (percThroughTransition * 255)));
+//	}*/
+//	if (!m_isFinishedTransitioning){
+//		if (m_transitionToState != NO_STATE){
+//			float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
+//			g_theRenderer->DrawAABB2(AABB2(0.f,0.f,(float) m_screenWidth, (float) m_screenWidth), m_startFadeColor.GetColorWithAlpha((unsigned char) (percThroughTransition * 255)));
+//		} else if (m_gameTime - m_timeEnteredState < m_transitionLength){
+//			FadeIn();
+//		}
+//	}
+//
+//}
 
-void Game::RenderPlaying()
-{
-	m_currentAdventure->Render();
-	//m_currentAdventure->m_currentMap->SetCamera()
-	m_renderPath->RenderSceneForCamera(m_camera, m_currentAdventure->GetScene());
-	m_currentAdventure->Render();
-	if (!m_isFinishedTransitioning){
-		if (m_transitionToState != NO_STATE){
-			float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-			m_currentFadeColor = Interpolate( m_startFadeColor.GetColorWithAlpha(0), m_startFadeColor, percThroughTransition);
-			g_theRenderer->DrawAABB2(m_camera->GetBounds(), m_currentFadeColor);
-		} else if (m_gameTime - m_timeEnteredState < m_transitionLength){
-			FadeIn();
-		}
-	}
-}
+//void Game::RenderPlaying()
+//{
+//	m_currentAdventure->Render();
+//	//m_currentAdventure->m_currentMap->SetCamera()
+//	m_renderPath->RenderSceneForCamera(m_camera, m_currentAdventure->GetScene());
+//	//m_currentAdventure->Render();
+//	if (!m_isFinishedTransitioning){
+//		if (m_transitionToState != NO_STATE){
+//			float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
+//			m_currentFadeColor = Interpolate( m_startFadeColor.GetColorWithAlpha(0), m_startFadeColor, percThroughTransition);
+//			g_theRenderer->DrawAABB2(m_camera->GetBounds(), m_currentFadeColor);
+//		} else if (m_gameTime - m_timeEnteredState < m_transitionLength){
+//			FadeIn();
+//		}
+//	}
+//}
 
-void Game::RenderPaused()
-{
-	m_currentAdventure->Render();
-	g_theRenderer->DrawAABB2(m_camera->GetBounds(), m_startFadeColor);
-	
-	RGBA textColor = RGBA::WHITE;
-	if (!m_isFinishedTransitioning){
-		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-		if (m_transitionToState == NO_STATE){
-			textColor = Interpolate( textColor.GetColorWithAlpha(0), textColor, percThroughTransition);
-		} else {
-			textColor = Interpolate( textColor, textColor.GetColorWithAlpha(0), percThroughTransition);
-		}
-	}
+//void Game::RenderPaused()
+//{
+//	m_currentAdventure->Render();
+//	g_theRenderer->DrawAABB2(m_camera->GetBounds(), m_startFadeColor);
+//	
+//	RGBA textColor = RGBA::WHITE;
+//	if (!m_isFinishedTransitioning){
+//		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
+//		if (m_transitionToState == NO_STATE){
+//			textColor = Interpolate( textColor.GetColorWithAlpha(0), textColor, percThroughTransition);
+//		} else {
+//			textColor = Interpolate( textColor, textColor.GetColorWithAlpha(0), percThroughTransition);
+//		}
+//	}
+//
+//	//Vector2 center = m_currentAdventure->m_currentMap->m_camera->m_worldPos;
+//	//		
+//	//m_screenWidth = m_currentAdventure->m_currentMap->m_camera->m_numTilesInViewVertically;
+//	AABB2 camBounds = m_camera->GetBounds();
+//	Vector2 center = camBounds.GetCenter();
+//	m_screenWidth = camBounds.GetHeight();		//num tiles in view vertically
+//	g_theRenderer->DrawTextInBox2D("Paused", camBounds, Vector2(.5f,.9f), 1.f);
+//	camBounds.AddPaddingToSides(m_screenWidth * -.1f, m_screenWidth * -.2f);
+//	camBounds.Translate(0.f, -.1f * m_screenWidth);
+//	RenderVictoryConditionsInBox(camBounds);
+//	
+//}
 
-	//Vector2 center = m_currentAdventure->m_currentMap->m_camera->m_worldPos;
-	//		
-	//m_screenWidth = m_currentAdventure->m_currentMap->m_camera->m_numTilesInViewVertically;
-	AABB2 camBounds = m_camera->GetBounds();
-	Vector2 center = camBounds.GetCenter();
-	m_screenWidth = camBounds.GetHeight();		//num tiles in view vertically
-	g_theRenderer->DrawTextInBox2D("Paused", camBounds, Vector2(.5f,.9f), 1.f);
-	camBounds.AddPaddingToSides(m_screenWidth * -.1f, m_screenWidth * -.2f);
-	camBounds.Translate(0.f, -.1f * m_screenWidth);
-	RenderVictoryConditionsInBox(camBounds);
-	
-}
+//void Game::RenderInventory()
+//{
+//	m_screenWidth = m_camera->GetBounds().GetHeight();
+//	m_currentAdventure->Render();
+//	g_theRenderer->DrawAABB2( m_camera->GetBounds(), m_startFadeColor);
+//
+//	RGBA textColor = RGBA::WHITE;
+//	if (!m_isFinishedTransitioning){
+//		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
+//		if (m_transitionToState == NO_STATE){
+//			textColor = Interpolate( textColor.GetColorWithAlpha(0), textColor, percThroughTransition);
+//		} else {
+//			textColor = Interpolate( textColor, textColor.GetColorWithAlpha(0), percThroughTransition);
+//		}
+//	}
+//	DrawCurrentInventory();	
+//}
 
-void Game::RenderInventory()
-{
-	m_screenWidth = m_camera->GetBounds().GetHeight();
-	m_currentAdventure->Render();
-	g_theRenderer->DrawAABB2( m_camera->GetBounds(), m_startFadeColor);
+//void Game::RenderVictory()
+//{
+//	m_currentAdventure->Render();
+//	g_theRenderer->DrawAABB2( m_camera->GetBounds(), m_startFadeColor);
+//
+//	RGBA textColor = RGBA::WHITE;
+//	if (!m_isFinishedTransitioning){
+//		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
+//		if (m_transitionToState == NO_STATE){
+//			textColor = Interpolate( textColor.GetColorWithAlpha(0), textColor, percThroughTransition);
+//		} else {
+//			textColor = Interpolate( textColor, textColor.GetColorWithAlpha(0), percThroughTransition);
+//		}
+//	}
+//
+//	AABB2 camBounds = m_currentAdventure->m_currentMap->GetCameraBounds();
+//	g_theRenderer->DrawTextInBox2D("Victory!!", camBounds, Vector2(.5f,.5f), 1.f);
+//	g_theRenderer->DrawTextInBox2D("Press 'start' or 'p' to return to main menu", camBounds, Vector2(.5f,.3f), .2f, TEXT_DRAW_WORD_WRAP);
+//	g_theRenderer->DrawAABB2Outline(camBounds, RGBA::WHITE);
+//}
 
-	RGBA textColor = RGBA::WHITE;
-	if (!m_isFinishedTransitioning){
-		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-		if (m_transitionToState == NO_STATE){
-			textColor = Interpolate( textColor.GetColorWithAlpha(0), textColor, percThroughTransition);
-		} else {
-			textColor = Interpolate( textColor, textColor.GetColorWithAlpha(0), percThroughTransition);
-		}
-	}
-	DrawCurrentInventory();	
-}
-
-void Game::RenderVictory()
-{
-	m_currentAdventure->Render();
-	g_theRenderer->DrawAABB2( m_camera->GetBounds(), m_startFadeColor);
-
-	RGBA textColor = RGBA::WHITE;
-	if (!m_isFinishedTransitioning){
-		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-		if (m_transitionToState == NO_STATE){
-			textColor = Interpolate( textColor.GetColorWithAlpha(0), textColor, percThroughTransition);
-		} else {
-			textColor = Interpolate( textColor, textColor.GetColorWithAlpha(0), percThroughTransition);
-		}
-	}
-
-	AABB2 camBounds = m_currentAdventure->m_currentMap->GetCameraBounds();
-	g_theRenderer->DrawTextInBox2D("Victory!!", camBounds, Vector2(.5f,.5f), 1.f);
-	g_theRenderer->DrawTextInBox2D("Press 'start' or 'p' to return to main menu", camBounds, Vector2(.5f,.3f), .2f, TEXT_DRAW_WORD_WRAP);
-	g_theRenderer->DrawAABB2Outline(camBounds, RGBA::WHITE);
-}
-
-void Game::RenderDefeat()
-{
-	m_currentAdventure->Render();
-	g_theRenderer->DrawAABB2( m_camera->GetBounds(), m_startFadeColor);
-
-	RGBA textColor = RGBA::WHITE;
-	if (!m_isFinishedTransitioning){
-		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-		if (m_transitionToState == NO_STATE){
-			textColor = Interpolate( textColor.GetColorWithAlpha(0), textColor, percThroughTransition);
-		} else {
-			textColor = Interpolate( textColor, textColor.GetColorWithAlpha(0), percThroughTransition);
-		}
-	}
-
-	AABB2 camBounds = m_currentAdventure->m_currentMap->GetCameraBounds();
-	g_theRenderer->DrawTextInBox2D("Defeat :(", camBounds, Vector2(.5f,.5f), 1.f);
-	g_theRenderer->DrawTextInBox2D("Press 'start' or 'n' to respawn", camBounds, Vector2(.5f,.3f), .5f, TEXT_DRAW_SHRINK_TO_FIT);
-	g_theRenderer->DrawAABB2Outline(camBounds, RGBA::WHITE);
-}
+//void Game::RenderDefeat()
+//{
+//	m_currentAdventure->Render();
+//	g_theRenderer->DrawAABB2( m_camera->GetBounds(), m_startFadeColor);
+//
+//	RGBA textColor = RGBA::WHITE;
+//	if (!m_isFinishedTransitioning){
+//		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
+//		if (m_transitionToState == NO_STATE){
+//			textColor = Interpolate( textColor.GetColorWithAlpha(0), textColor, percThroughTransition);
+//		} else {
+//			textColor = Interpolate( textColor, textColor.GetColorWithAlpha(0), percThroughTransition);
+//		}
+//	}
+//
+//	AABB2 camBounds = m_currentAdventure->m_currentMap->GetCameraBounds();
+//	g_theRenderer->DrawTextInBox2D("Defeat :(", camBounds, Vector2(.5f,.5f), 1.f);
+//	g_theRenderer->DrawTextInBox2D("Press 'start' or 'n' to respawn", camBounds, Vector2(.5f,.3f), .5f, TEXT_DRAW_SHRINK_TO_FIT);
+//	g_theRenderer->DrawAABB2Outline(camBounds, RGBA::WHITE);
+//}
 
 void Game::DrawCurrentInventory()
 {
@@ -483,6 +469,52 @@ void Game::ToggleDevMode()
 	}
 }
 
+void Game::TransitionToState(GameState* newState)
+{
+	/*if (newState == GAME_STATE_ATTRACT){
+	m_encounterState->Enter("heightMap.png");
+	}*/
+	m_transitionToState = newState;
+	m_currentState->StartTransition();
+	//m_startTransitionTime = m_gameTime;
+}
+
+void Game::TriggerTransition()
+{
+	m_currentState = m_transitionToState;
+	m_transitionToState = nullptr;
+	m_timeEnteredState = m_gameTime;
+}
+
+AABB2 Game::SetUICamera()
+{
+	g_theRenderer->SetCamera( m_uiCamera ); 
+
+	//g_theRenderer->ClearDepth( 1.0f ); 
+	//g_theRenderer->EnableDepth( COMPARE_ALWAYS, false );
+	g_theRenderer->DisableDepth();
+	return m_uiCamera->GetBounds();
+}
+
+AABB2 Game::SetMainCamera()
+{
+	g_theRenderer->SetCamera( m_camera ); 
+
+	g_theRenderer->ClearDepth( 1.0f ); 
+	g_theRenderer->DisableDepth();
+	return m_camera->GetBounds();		//not really gonna be necessary, probably
+}
+
+AABB2 Game::GetUIBounds()
+{
+	return m_uiCamera->GetBounds();
+}
+
+AABB2 Game::GetMainCameraBounds()
+{
+	return m_camera->GetBounds();
+}
+
 //Map * Game::CreateMap(std::string mapName, std::string mapType)
 //{
 //	MapDefinition* newMapDef = MapDefinition::GetMapDefinition(mapType);
@@ -499,51 +531,51 @@ void Game::UpdateMenuSelection(int direction)
 	m_indexOfSelectedMenuItem+=direction;
 }
 
-void Game::StartStateTransition(GAME_STATE newState, float transitionLength, RGBA startColor)
-{
-	
-	m_transitionToState = newState;
-	m_timeEnteredState = m_gameTime;
-	m_isFinishedTransitioning = false;
-	m_transitionLength = transitionLength;
-	m_startFadeColor = startColor;
-}
+//void Game::StartStateTransition(GAME_STATE newState, float transitionLength, RGBA startColor)
+//{
+//	
+//	m_transitionToState = newState;
+//	m_timeEnteredState = m_gameTime;
+//	m_isFinishedTransitioning = false;
+//	m_transitionLength = transitionLength;
+//	m_startFadeColor = startColor;
+//}
 
-void Game::Transition()
-{
-	if (m_currentState == STATE_ATTRACT){
-		g_theAudio->StopSound(m_attractPlayback);
-		if (m_transitionToState != STATE_ATTRACT){
-			m_currentAdventure->Begin();
-		}
-	}
-	if (m_currentState == STATE_VICTORY){
-		g_theAudio->StopSound(m_victoryPlayback);
-	}
-	if (m_transitionToState == STATE_VICTORY){
-		m_currentAdventure->m_currentMap->StopMusic();
-		m_victoryPlayback = g_theAudio->PlaySound(m_victoryMusicID);
-	}
-	if (m_transitionToState == STATE_ATTRACT){
-		if (m_currentAdventure != nullptr){
-			m_currentAdventure->m_currentMap->StopMusic();
-		}
-		m_attractPlayback = g_theAudio->PlaySound(m_attractMusicID);
-		g_theAudio->SetSoundPlaybackVolume(m_attractPlayback, 1.f);
-	}
-	m_currentState = m_transitionToState;
-	m_timeEnteredState = m_gameTime;
-	m_transitionToState = NO_STATE;
-	//m_isFinishedTransitioning = true;
-}
+//void Game::Transition()
+//{
+//	if (m_currentState == STATE_ATTRACT){
+//		g_theAudio->StopSound(m_attractPlayback);
+//		if (m_transitionToState != STATE_ATTRACT){
+//			m_currentAdventure->Begin();
+//		}
+//	}
+//	if (m_currentState == STATE_VICTORY){
+//		g_theAudio->StopSound(m_victoryPlayback);
+//	}
+//	if (m_transitionToState == STATE_VICTORY){
+//		m_currentAdventure->m_currentMap->StopMusic();
+//		m_victoryPlayback = g_theAudio->PlaySound(m_victoryMusicID);
+//	}
+//	if (m_transitionToState == STATE_ATTRACT){
+//		if (m_currentAdventure != nullptr){
+//			m_currentAdventure->m_currentMap->StopMusic();
+//		}
+//		m_attractPlayback = g_theAudio->PlaySound(m_attractMusicID);
+//		g_theAudio->SetSoundPlaybackVolume(m_attractPlayback, 1.f);
+//	}
+//	m_currentState = m_transitionToState;
+//	m_timeEnteredState = m_gameTime;
+//	m_transitionToState = NO_STATE;
+//	//m_isFinishedTransitioning = true;
+//}
 
-void Game::FadeIn()
-{
-	AABB2 bounds =  m_camera->GetBounds();
-	float t = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-	m_currentFadeColor = Interpolate(m_startFadeColor, m_startFadeColor.GetColorWithAlpha(0), t);
-	g_theRenderer->DrawAABB2(bounds, m_currentFadeColor);
-}
+//void Game::FadeIn()
+//{
+//	AABB2 bounds =  m_camera->GetBounds();
+//	float t = (m_gameTime - m_timeEnteredState)/m_transitionLength;
+//	m_currentFadeColor = Interpolate(m_startFadeColor, m_startFadeColor.GetColorWithAlpha(0), t);
+//	g_theRenderer->DrawAABB2(bounds, m_currentFadeColor);
+//}
 
 void Game::StartAdventure(std::string adventureDefName)
 {
@@ -555,11 +587,7 @@ void Game::StartAdventure(std::string adventureDefName)
 
 void Game::ToggleState(bool & stateToToggle)
 {
-	if (!stateToToggle){
-		stateToToggle = true;
-	} else {
-		stateToToggle = false;
-	}
+	stateToToggle = !stateToToggle;
 }
 
 void Game::LookAtNextMap(int direction)
@@ -695,3 +723,59 @@ void Game::SpawnRandomTestGoblin()
 
 
 Game* g_theGame = nullptr;
+
+bool WasStartJustPressed()
+{
+	return g_theInput->WasKeyJustPressed(VK_RETURN) || g_theInput->WasKeyJustPressed('P') || g_primaryController->WasButtonJustPressed(XBOX_START) || g_primaryController->WasButtonJustPressed(XBOX_A);
+}
+
+bool WasPauseJustPressed()
+{
+	return g_theInput->WasKeyJustPressed('P') || g_primaryController->WasButtonJustPressed(XBOX_START);
+}
+
+bool WasBackJustPressed()
+{
+	return g_theInput->WasKeyJustPressed(VK_ESCAPE) || g_primaryController->WasButtonJustPressed(XBOX_B);
+
+}
+
+bool WasSelectJustPressed()
+{
+	return g_theInput->WasKeyJustPressed(VK_RETURN) || g_primaryController->WasButtonJustPressed(XBOX_A);
+
+}
+bool WasExitJustPressed()
+{
+	return g_theInput->WasKeyJustPressed(VK_ESCAPE);
+}
+
+bool WasUpJustPressed()
+{
+	return g_theInput->WasKeyJustPressed(VK_UP) || g_primaryController->WasButtonJustPressed(XBOX_D_UP);
+}
+
+bool WasDownJustPressed()
+{
+	return g_theInput->WasKeyJustPressed(VK_DOWN) || g_primaryController->WasButtonJustPressed(XBOX_D_DOWN);
+}
+
+bool WasRightJustPressed()
+{
+	return g_theInput->WasKeyJustPressed(VK_RIGHT) || g_primaryController->WasButtonJustPressed(XBOX_D_RIGHT);
+}
+
+bool WasLeftJustPressed()
+{
+	return g_theInput->WasKeyJustPressed(VK_LEFT) || g_primaryController->WasButtonJustPressed(XBOX_D_LEFT);
+}
+
+void CheckArrowKeys()
+{
+	if (WasUpJustPressed()){
+		g_theGame->UpdateMenuSelection(-1);
+	}
+	if (WasDownJustPressed()){
+		g_theGame->UpdateMenuSelection(1);
+	}
+}

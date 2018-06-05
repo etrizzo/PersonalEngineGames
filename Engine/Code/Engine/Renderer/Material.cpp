@@ -87,7 +87,7 @@ Material * Material::Clone()
 	//return nullptr;
 }
 
-void Material::SetTexture(int bindPoint, Texture * tex)
+void Material::SetTexture(int bindPoint, const Texture * tex)
 {
 	if (bindPoint >= (int) m_textures.size()){
 		m_textures.resize(bindPoint + 1);
@@ -100,7 +100,7 @@ void Material::SetTexture(int bindPoint, Texture * tex)
 	}
 }
 
-void Material::SetDiffuseTexture(Texture * tex)
+void Material::SetDiffuseTexture(const Texture * tex)
 {
 	SetTexture(DIFFUSE_BIND_POINT, tex);
 }
@@ -111,7 +111,7 @@ void Material::SetDiffuseTexture(std::string texPath)
 	SetTexture(DIFFUSE_BIND_POINT, tex);
 }
 
-void Material::SetNormalTexture(Texture * tex)
+void Material::SetNormalTexture(const Texture * tex)
 {
 	SetTexture(NORMAL_BIND_POINT, tex);
 }

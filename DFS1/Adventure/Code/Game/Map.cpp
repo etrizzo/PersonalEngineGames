@@ -52,7 +52,7 @@ void Map::Render()
 {
 	SetCamera();
 	//RenderTiles();
-	RenderEntities();
+	//RenderEntities();
 }
 
 
@@ -721,6 +721,7 @@ AABB2 Map::GetCameraBounds() const
 Player * Map::SpawnNewPlayer(Vector2 spawnPosition)
 {
 	ActorDefinition* actorDef = ActorDefinition::GetActorDefinition("Player");
+	//Vector2 spawn = Vector2(5.f,5.f);
 	Player* newPlayer = new Player(actorDef, spawnPosition, this);
 	m_allEntities.push_back((Entity*) newPlayer);
 	m_allActors.push_back( (Actor*) newPlayer);

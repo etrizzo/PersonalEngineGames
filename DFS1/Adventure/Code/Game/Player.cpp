@@ -30,20 +30,21 @@ void Player::Update(float deltaSeconds)
 		std::string animName = GetAnimName();
 		m_animSet->SetCurrentAnim(animName);		//sets IF it's different from the last frame
 		m_animSet->Update(deltaSeconds);
+		UpdateRenderable();
 		
-		if (g_theGame->m_currentState == STATE_PLAYING){
-			if (g_primaryController != nullptr){
-				if ((g_primaryController->WasButtonJustPressed(XBOX_A) || g_theInput->WasKeyJustPressed(VK_SPACE)) && !m_isFiring){
-					m_isFiring = true;
-				}
-			}
+		//if (g_theGame->m_currentState == STATE_PLAYING){
+		//	if (g_primaryController != nullptr){
+		//		if ((g_primaryController->WasButtonJustPressed(XBOX_A) || g_theInput->WasKeyJustPressed(VK_SPACE)) && !m_isFiring){
+		//			m_isFiring = true;
+		//		}
+		//	}
 
-			if (m_isFiring){
-				if (m_animSet->IsCurrentAnimFinished()){
-					FireArrow();
-				}
+		if (m_isFiring){
+			if (m_animSet->IsCurrentAnimFinished()){
+				FireArrow();
 			}
 		}
+		
 	}
 	
 }
@@ -129,7 +130,7 @@ void Player::TakeDamage(int dmg)
 	m_health-=dmg;
 	if (m_health <= 0){
 		m_dead = true;
-		g_theGame->StartStateTransition(STATE_DEFEAT, .1f, RGBA(0,0,0,200));
+		//g_theGame->StartStateTransition(STATE_DEFEAT, .1f, RGBA(0,0,0,200));
 	}
 }
 
@@ -137,7 +138,7 @@ void Player::Respawn()
 {
 	m_dead = false;
 	m_health = m_definition->m_startingHealth;
-	g_theGame->StartStateTransition(STATE_PLAYING, .1f, RGBA(0,0,0,200));
+	//g_theGame->StartStateTransition(STATE_PLAYING, .1f, RGBA(0,0,0,200));
 }
 
 std::string Player::GetAnimName()
@@ -167,6 +168,13 @@ std::string Player::GetAnimName()
 
 	return action + direction;
 
+}
+
+void Player::StartFiringArrow()
+{
+	if (!m_isFiring){
+		m_isFiring = true;
+	}
 }
 
 void Player::UpdateDistanceMap()

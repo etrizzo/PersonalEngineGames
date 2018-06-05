@@ -13,6 +13,7 @@ public:
 	Entity() ;									
 	Entity(EntityDefinition* entityDef, Map* entityMap, Vector2 initialPos, float initialRotation);
 	virtual void Update(float deltaSeconds);
+	virtual void UpdateRenderable();
 
 	virtual void Render();
 	virtual void RenderDevMode();
@@ -63,6 +64,7 @@ public:
 	int m_health;
 	float m_speed;
 	Tile* m_currentTile;
+	AABB2 m_lastUVs;
 	
 
 	std::string m_faction;
