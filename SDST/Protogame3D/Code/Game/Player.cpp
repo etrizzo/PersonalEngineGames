@@ -1,9 +1,10 @@
 #include "Game/Player.hpp"
 #include "Game/Game.hpp"
+#include "Game/DebugRenderSystem.hpp"
 
 Player::Player(Vector3 position)
 {
-	float size = 5.f;
+	float size = 1.f;
 	m_renderable = new Renderable(RENDERABLE_SPHERE, 1.f);
 	SetPosition(position);
 	SetScale(Vector3(size,size,size));
@@ -33,14 +34,18 @@ void Player::Update()
 	//m_thrusterSystem->m_emitters[0]->m_transform(m_leftThruster->GetWorldPosition());
 	//m_thrusterSystem->m_emitters[1]->m_renderable->SetPosition(m_rightThruster->GetWorldPosition());
 	//Translate(GetForward() * ds * m_speed * .5f);
-
+	SetWorldPosition();
+	if (m_rateOfFire.CheckAndReset()){
+		g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(1.f, GetPosition());
+	}
 }
 
 void Player::HandleInput()
 {
 	float ds = g_theGame->GetDeltaSeconds();
 
-	//float degPerSecond = 30.f;
+	//Add back in in A02
+	float degPerSecond = 30.f;
 	Vector3 rotation = Vector3::ZERO;
 
 	if (g_theInput->IsKeyDown(VK_UP)){
@@ -60,6 +65,8 @@ void Player::HandleInput()
 	rotation+=Vector3(controllerRotation.y, controllerRotation.x, 0.f);
 
 	Rotate(rotation * m_degPerSecond * ds);
+
+
 
 	Vector2 movement = Vector2::ZERO;
 
@@ -90,7 +97,7 @@ void Player::HandleInput()
 
 	m_positionXZ+=movement;
 
-	SetWorldPosition();
+	
 
 
 }
@@ -98,10 +105,11 @@ void Player::HandleInput()
 void Player::SetWorldPosition()
 {
 	Vector3 pos = Vector3(m_positionXZ.x, GetHeightAtCurrentPos(), m_positionXZ.y);
+	SetPosition(pos);
 }
 
 float Player::GetHeightAtCurrentPos()
 {
-	return 1.0f;
+	return 0.0f;
 }
 

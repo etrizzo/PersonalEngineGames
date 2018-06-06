@@ -440,7 +440,7 @@ void DebugRenderSystem::Render2D()
 
 	RenderInfo();
 
-	g_theRenderer->DrawTextInBox2D("+", bounds, Vector2::HALF, .02f, TEXT_DRAW_OVERRUN, RGBA(255,255,255,100));
+	
 }
 
 void DebugRenderSystem::RenderInfo()
@@ -495,6 +495,7 @@ void DebugRenderSystem::RenderInfo()
 			y+=gridSize;
 			tick++;
 		}
+		g_theRenderer->DrawTextInBox2D("+", screenBox, Vector2::HALF, .02f, TEXT_DRAW_OVERRUN, RGBA(255,255,255,100));
 	}
 }
 

@@ -1,6 +1,7 @@
 #include "Game/GameState_Playing.hpp"
 #include "Game/Game.hpp"
 #include "Game/Entity.hpp"
+#include "Game/Player.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
@@ -15,34 +16,33 @@ GameState_Playing::GameState_Playing()
 
 	m_couchMaterial = Material::GetMaterial("couch");
 
-	m_thaShip = new Entity(Vector3::ZERO, "scifi_fighter_mk6.obj");
-	m_thaShip->SetDiffuseTexture("SciFi_Fighter-MK6-diffuse.png");
+	m_player = new Player(Vector3::ZERO);
 
-	m_thaMiku = new Entity(Vector3(0.f, 3.f, 10.f), "miku.obj", "miku.mtl");
-	m_thaMiku->Rotate(Vector3(0.f,180.f,0.f));
-	m_thaMiku->m_renderable->SetShader("lit_alpha", 0);
-	m_thaMiku->m_renderable->SetShader("lit_alpha", 1);
-	m_thaMiku->m_renderable->SetShader("default_lit", 2);
+	//m_thaShip = new Entity(Vector3::ZERO, "scifi_fighter_mk6.obj");
+	//m_thaShip->SetDiffuseTexture("SciFi_Fighter-MK6-diffuse.png");
+
+	//m_thaMiku = new Entity(Vector3(0.f, 3.f, 10.f), "miku.obj", "miku.mtl");
+	//m_thaMiku->Rotate(Vector3(0.f,180.f,0.f));
+	//m_thaMiku->m_renderable->SetShader("lit_alpha", 0);
+	//m_thaMiku->m_renderable->SetShader("lit_alpha", 1);
+	//m_thaMiku->m_renderable->SetShader("default_lit", 2);
 
 	m_particleSystem = new ParticleSystem();
 	m_particleSystem->CreateEmitter(Vector3(0.f, 4.f, 0.f));
 	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
 
 	m_scene->AddRenderable(m_particleSystem->m_emitters[0]->m_renderable);
-	m_scene->AddRenderable(m_thaShip->m_renderable);
-	m_scene->AddRenderable(m_thaMiku->m_renderable);
+	m_scene->AddRenderable(m_player->m_renderable);
 
 
 	//m_scene->AddNewPointLight(Vector3::ZERO, RGBA::WHITE);
-	m_scene->AddNewSpotLight(Vector3(0.f, 4.f, -5.f), RGBA::WHITE, 20.f, 23.f);		//camera light
-	m_scene->AddNewSpotLight(Vector3(0.f, 5.f, 5.f), RGBA(255,255,128,255));			//orbiting light
-	m_scene->AddNewPointLight(Vector3(0.f, 5.f, 15.f), RGBA(255, 128, 70,255));		//reddish point light
+	//m_scene->AddNewSpotLight(Vector3(0.f, 4.f, -5.f), RGBA::WHITE, 20.f, 23.f);		//camera light
+	//m_scene->AddNewSpotLight(Vector3(0.f, 5.f, 5.f), RGBA(255,255,128,255));			//orbiting light
+	//m_scene->AddNewPointLight(Vector3(0.f, 5.f, 15.f), RGBA(255, 128, 70,255));		//reddish point light
 	m_scene->AddNewDirectionalLight(Vector3(-10.f, 0.f, -10.f), RGBA::WHITE, Vector3(0.f, -90.f, -10.f));		//bluish directional light
 
-	m_cameraLight = m_scene->m_lights[0];
-	m_orbitLight = (SpotLight*) m_scene->m_lights[1];
-
 	m_scene->AddCamera(g_theGame->m_currentCamera);
+	g_theGame->m_mainCamera->m_transform.SetParent(&m_player->m_renderable->m_transform);
 }
 
 void GameState_Playing::Update(float ds)
@@ -59,17 +59,12 @@ void GameState_Playing::Update(float ds)
 		//
 		Vector2 xz_pos = PolarToCartesian( 8.f, degrees ); 
 		Vector3 pos = Vector3( xz_pos.x, 5.f, xz_pos.y ); 
-		m_orbitLight->LookAt(pos, Vector3::ZERO);
-		m_thaMiku->Rotate(Vector3(0.f,1.f,0.f));
-
-		if (m_cameraLight != nullptr){
-			m_cameraLight->SetTransform(g_theGame->m_currentCamera->m_transform	);
-		}
 	}
 
 	m_couchMaterial->SetProperty("SPECULAR_AMOUNT", m_specAmount);
 	m_couchMaterial->SetProperty("SPECULAR_POWER", m_specFactor);
 	m_particleSystem->Update(deltaSeconds);
+	m_player->Update();
 }
 
 void GameState_Playing::RenderGame()
@@ -88,30 +83,6 @@ void GameState_Playing::RenderGame()
 	//m_thaShip->m_renderable->GetEditableMaterial()->SetProperty("TINT", RGBA::RED);
 
 	g_theRenderer->BindModel(Matrix44::IDENTITY);
-
-
-	//for a grass block
-	//g_theRenderer->BindTexture("Terrain_8x8.png");
-	//AABB2 sideUVS = g_tileSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(4, 2));
-	//AABB2 topUVs = g_tileSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1, 1));
-
-	g_theRenderer->BindMaterial(m_couchMaterial);
-	g_theRenderer->DrawCube( Vector3(0.f,0.f,10.f), Vector3::ONE, RGBA::WHITE); 
-
-
-	g_theRenderer->DrawSphere( Vector3( 3.0f, 0.0f, 10.f ), 1.f, 15, 15, RGBA::WHITE ); 
-	g_theRenderer->DrawSphere( Vector3( 6.0f, 0.0f, 10.f ), 1.f, 15, 15, RGBA::WHITE ); 
-
-
-
-
-	Plane p = Plane(Vector3(-3.f, 0.f, 10.f), Vector3::UP, Vector3::RIGHT, Vector2(1.f,1.f));
-	TODO("Clean up the whole plane class and go back and fix up sprites/tactics");
-	g_theRenderer->DrawPlane(p, RGBA::WHITE);
-
-
-
-	//m_thaShip->Render();
 
 
 
@@ -137,10 +108,8 @@ void GameState_Playing::RenderUI()
 
 	std::string specAmount = std::to_string(m_specAmount);
 	specAmount.resize(5);
-	//specAmount = "\nSpec Amount(N/M): " + specAmount;
-	//g_theRenderer->DrawTextInBox2D(specFactor + specAmount, bounds, Vector2(1.f, .6f), .015f);
-	g_theGame->m_debugRenderSystem->MakeDebugRender2DText("Spec Amount(N/M): %s\nSpec Power(J/K): %s", specAmount.c_str(), specFactor.c_str());
-	g_theGame->m_debugRenderSystem->MakeDebugRender2DText(0.f, .01f, Vector2(1.f, .95f), "Shader ([/]): %s", GetShaderName().c_str());
+	//g_theGame->m_debugRenderSystem->MakeDebugRender2DText("Spec Amount(N/M): %s\nSpec Power(J/K): %s", specAmount.c_str(), specFactor.c_str());
+	//g_theGame->m_debugRenderSystem->MakeDebugRender2DText(0.f, .01f, Vector2(1.f, .95f), "Shader ([/]): %s", GetShaderName().c_str());
 }
 
 void GameState_Playing::HandleInput()
@@ -193,7 +162,7 @@ void GameState_Playing::HandleInput()
 		m_specAmount = ClampFloat(m_specAmount, 0.f, 1.f);
 	}
 
-
+	m_player->HandleInput();
 }
 
 
@@ -227,15 +196,6 @@ void GameState_Playing::AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 
 
 void GameState_Playing::RemoveLight(int idx)
 {
-	if (m_lights.size() > idx){
-		Light* del = m_lights[idx];
-		if (del == m_cameraLight){
-			m_cameraLight = nullptr;
-		}
-		if (del == m_orbitLight){
-			m_orbitLight = nullptr;
-		}
-	}
 	m_scene->RemoveLight(idx);
 }
 
@@ -306,8 +266,7 @@ void GameState_Playing::SetShader()
 	}
 
 	g_theRenderer->UseShader(shaderName);
-	m_thaShip->m_renderable->SetShader(shaderName);
-	m_thaMiku->m_renderable->SetShader(shaderName, 2);
+	m_player->m_renderable->SetShader(shaderName);
 	m_couchMaterial->SetShader(shaderName);
 }
 

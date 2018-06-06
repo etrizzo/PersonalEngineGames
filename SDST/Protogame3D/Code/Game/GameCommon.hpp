@@ -49,5 +49,10 @@ bool LeftJustPressed();
 bool UpJustPressed();
 bool DownJustPressed();
 
+bool IsRightDown();
+bool IsLeftDown();
+bool IsUpDown();
+bool IsDownDown();		//down down alpha
+
 bool AcceptJustPressed();	//true if enter or ControllerA is pressed
 bool BackJustPressed();		//true if backspace or ControllerB is pressed

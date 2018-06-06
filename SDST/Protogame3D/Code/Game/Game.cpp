@@ -34,7 +34,7 @@ Game::Game()
 
 
 	m_mainCamera->SetPerspectiveOrtho(45.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.1f, 100.f);
-	m_mainCamera->LookAt(Vector3(0.f, 4.f, -5.f), Vector3(0.f, 1.f, 0.f));
+	m_mainCamera->LookAt(Vector3(0.f, 3.f, -5.f), Vector3(0.f, 1.f, 0.f));
 
 	m_uiCamera = new Camera();
 
@@ -68,7 +68,9 @@ void Game::PostStartup()
 	LoadMapDefinitions();
 	m_debugRenderSystem = new DebugRenderSystem();
 	DebugStartup();
-	m_debugRenderSystem->DetachCamera();
+	m_debugRenderSystem->ToggleInfo();
+	m_debugRenderSystem->ToggleScreenGrid();
+	//m_debugRenderSystem->DetachCamera();
 
 	m_currentState = new GameState_Attract();
 

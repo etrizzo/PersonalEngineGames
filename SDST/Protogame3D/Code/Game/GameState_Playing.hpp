@@ -6,6 +6,7 @@ class Camera;
 class PerspectiveCamera;
 class DebugRenderSystem;
 class Entity;
+class Player;
 class Light;
 class SpotLight;
 class ParticleSystem;
@@ -16,11 +17,9 @@ class GameState_Playing: public GameState{
 public:
 	GameState_Playing();
 
-	Entity* m_thaShip;
-	Entity* m_thaMiku;
-	SpotLight* m_orbitLight;
-	Light* m_cameraLight;
-	std::vector<Light*> m_lights = std::vector<Light*>();
+	Player* m_player;
+	//Light* m_cameraLight;
+	//std::vector<Light*> m_lights = std::vector<Light*>();
 
 	ForwardRenderPath* m_renderPath;
 	RenderScene* m_scene;
