@@ -745,6 +745,9 @@ void Renderer::BeginFrame(const Vector2 & bottomLeft, const Vector2 & topRight, 
 	UseShaderProgram(m_defaultShader->m_program);
 	//SetOrtho(bottomLeft, topRight);
 	ClearScreen(color);
+	
+	BindRendererUniforms();
+	BindRenderState(m_currentShader->m_state);
 
 	m_timeBuffer.CopyToGPU( sizeof(m_timeData), &m_timeData); 
 	glBindBufferBase( GL_UNIFORM_BUFFER, 
@@ -761,6 +764,9 @@ void Renderer::BeginFrame(const Vector3 & nearBottomLeft, const Vector3 & farTop
 	UseShaderProgram(m_defaultShader->m_program);
 	//SetOrtho(nearBottomLeft, farTopRight);
 	ClearScreen(color);
+
+	BindRendererUniforms();
+	BindRenderState(m_currentShader->m_state);
 
 	m_timeBuffer.CopyToGPU( sizeof(m_timeData), &m_timeData); 
 	glBindBufferBase( GL_UNIFORM_BUFFER, 
@@ -1911,6 +1917,10 @@ void Renderer::PostStartup()
 	m_defaultCamera = new Camera();
 	m_defaultCamera->SetColorTarget(m_defaultColorTarget);
 	m_defaultCamera->SetDepthStencilTarget(m_defaultDepthTarget);
+
+	m_defaultCamera->SetProjectionOrtho(1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f,100.f);
+	Vector2 center = m_defaultCamera->GetBounds().GetCenter();
+	m_defaultCamera->LookAt( Vector3( center.x, center.y, -1.f ), Vector3(center.x, center.y, .5f)); 
 
 	m_effectCamera = new Camera();
 	m_effectCamera->SetColorTarget(m_defaultColorTarget);

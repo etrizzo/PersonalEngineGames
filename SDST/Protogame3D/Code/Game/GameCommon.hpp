@@ -26,3 +26,28 @@ extern AudioSystem* g_theAudio;
 //extern Window* g_theWindow;
 
 extern SpriteSheet* g_tileSpriteSheet;
+
+
+enum eDebugShaders{
+	SHADER_LIT,			//default
+	SHADER_NORMAL,
+	SHADER_TANGENT,
+	SHADER_BITANGENT,
+	SHADER_NORMALMAP,
+	SHADER_WORLDNORMAL,
+	SHADER_DIFFUSE,
+	SHADER_SPECULAR,
+	NUM_DEBUG_SHADERS
+};
+
+
+
+
+//determines if arrow keys or d pad buttons were pressed
+bool RightJustPressed();
+bool LeftJustPressed();
+bool UpJustPressed();
+bool DownJustPressed();
+
+bool AcceptJustPressed();	//true if enter or ControllerA is pressed
+bool BackJustPressed();		//true if backspace or ControllerB is pressed

@@ -35,11 +35,14 @@ App::App(HINSTANCE applicationInstanceHandle)
 	m_backgroundColor = RGBA(0,0,0,255);
 
 	g_theRenderer = new Renderer();
-	g_theInput = new InputSystem();
-	g_theAudio = new AudioSystem();
+
 	g_theRenderer->Initialize();
 	g_theRenderer->LoadShadersFromFile("shaders.xml");
 	g_theRenderer->LoadMaterialsFromFile("materials.xml");
+	g_theRenderer->SetAmbientLight(RGBA(120,120,128,128));
+	
+	g_theInput = new InputSystem();
+	g_theAudio = new AudioSystem();
 	g_theGame = new Game();
 
 
@@ -50,23 +53,40 @@ App::App(HINSTANCE applicationInstanceHandle)
 	RegisterCommands();
 	CommandStartup();
 
-	g_theGame->PostStartup();
-	g_theRenderer->SetAmbientLight(RGBA(120,120,128,128));
 }
 
 
 void App::RunFrame()
 {
-	GetMasterClock()->BeginFrame();
-	g_theGame->SetGameCamera();
-	g_theRenderer->BeginFrame(m_nearBottomLeft, m_farTopRight, m_backgroundColor);
-	g_theInput->BeginFrame();
-	g_theAudio->BeginFrame();
-	Update();
-	Render();
-	g_theAudio->EndFrame();
-	g_theInput->EndFrame();
-	g_theRenderer->EndFrame(g_Window->m_displayContext);
+	if (false){
+		RGBA loadColor = RGBA(100,50,100,255);
+		//AABB2 x = g_theGame->SetUICamera();
+		g_theRenderer->BeginFrame(Vector2(-1.f,-1.f), Vector2(1.f,1.f), loadColor);
+		//g_theInput->BeginFrame();
+		//g_theAudio->BeginFrame();
+		
+		//g_theRenderer->SetCamera(g_theRenderer->m_defaultCamera);
+		//x = g_theRenderer->m_defaultCamera->GetBounds();
+
+		//g_theAudio->EndFrame();
+		//g_theInput->EndFrame();
+		g_theRenderer->EndFrame(g_Window->m_displayContext);
+		//Sleep(3000);
+		firstFrame = false;
+		PostStartup();
+
+	} else {
+		GetMasterClock()->BeginFrame();
+		g_theGame->SetGameCamera();
+		g_theRenderer->BeginFrame(m_nearBottomLeft, m_farTopRight, m_backgroundColor);
+		g_theInput->BeginFrame();
+		g_theAudio->BeginFrame();
+		Update();
+		Render();
+		g_theAudio->EndFrame();
+		g_theInput->EndFrame();
+		g_theRenderer->EndFrame(g_Window->m_displayContext);
+	}
 }
 
 void App::Update()
@@ -123,7 +143,8 @@ void App::RegisterCommands()
 	CommandRegister("debug_set_mode", CommandDebugRenderSetDepth, "Sets debug render mode", "debug_set_mode <use_depth|ignore_depth|hidden|xray>" );
 	CommandRegister("debug_detach_camera", CommandDebugDetachCamera, "Detaches camera from game camera and enables 5 DOF camera movement");
 	CommandRegister("debug_reattach_camera", CommandDebugReattachCamera, "Reattaches camera to in-game camera");
-	CommandRegister("debug_tasks", CommandDebugPrintTasks, "Prints all debug render types");
+	CommandRegister("debug_show_tasks", CommandDebugPrintTasks, "Prints all debug render types");
+	CommandRegister("debug_task", CommandDebugDrawTask, "Draws debug render task", "debug_task <render_task_type>");
 
 
 	CommandRegister("new_light", CommandMakeNewLight, "Adds new light of specified in front of the camera, with color rgba", "new_light <point|dir|spot> <r,g,b,a>");
@@ -156,6 +177,16 @@ void App::HandleInput()
 		g_theGame->HandleInput();
 
 	}
+}
+
+void App::PostStartup()
+{
+	
+
+
+
+	g_theGame->PostStartup();
+	
 }
 
 
@@ -223,6 +254,8 @@ void CommandDebugRenderSetTask(Command & cmd)
 				g_theGame->m_debugRenderSystem->SetDefaultColor(startColor, endColor);
 			}
 		}
+	} else {
+		ConsolePrintf(RGBA::RED, "No task called: %s. \"Type debug_show_tasks\" to view all tasks",  task.c_str());
 	}
 
 		
@@ -240,6 +273,23 @@ void CommandDebugPrintTasks(Command & cmd)
 	for (int i = NUM_2D_TASKS + 1; i < NUM_RENDER_TASKS; i++){
 		RenderTaskType type = (RenderTaskType) i;
 		ConsolePrintf(color3D, "%s (%s) : %s", GetTaskName(type), GetTaskID(type), GetTaskDescription(type));
+	}
+}
+
+void CommandDebugDrawTask(Command & cmd)
+{
+	std::string task = cmd.GetNextString();
+	RenderTaskType newTask = StringToDebugRenderTask(task);
+	bool draw2D = false;
+	if (newTask != NUM_RENDER_TASKS){
+		//set new task
+		g_theGame->m_debugRenderSystem->SetCurrentTask(newTask);
+		draw2D = newTask < NUM_2D_TASKS;
+	}
+	if (draw2D){
+		g_theGame->m_debugRenderSystem->AddCurrent2DTask();
+	} else {
+		g_theGame->m_debugRenderSystem->AddCurrent3DTask();
 	}
 }
 
@@ -265,7 +315,7 @@ void CommandRecompileShaders(Command & cmd)
 
 void CommandMakeNewLight(Command & cmd)
 {
-	//Vector3 pos = cmd.GetNextVec3();
+	Vector3 pos = cmd.GetNextVec3();
 	std::string type = cmd.GetNextString();
 	RGBA color = cmd.GetNextColor();
 	if (color == RGBA::BLACK){		//default color for GetNextColor();
@@ -302,21 +352,21 @@ void CommandSetAmbientLight(Command & cmd)
 void CommandRemoveLight(Command & cmd)
 {
 	int idx = cmd.GetNextInt();	//returns 0 if none found so that works for now
-	g_theGame->RemoveLight(idx);
-	//if (idx < MAX_LIGHTS && idx < (int) g_theGame->GetNumActiveLights()){
-	//	g_theGame->RemoveLight(idx);
-	//} else {
-	//	ConsolePrintf(RGBA::RED, "Cannot remove light %i because there are only %i lights in the scene :(", idx, (int) (g_theGame->GetNumActiveLights()) );
-	//}
+	//g_theGame->RemoveLight(idx);
+	if (idx < (int) g_theGame->GetNumActiveLights()){
+		g_theGame->RemoveLight(idx);
+	} else {
+		ConsolePrintf(RGBA::RED, "Cannot remove light %i because there are only %i lights in the scene :(", idx, (int) (g_theGame->GetNumActiveLights()) );
+	}
 }
 
 void CommandRemoveAllLights(Command & cmd)
 {
 	UNUSED(cmd);
-	for (int i = 0; i < g_theGame->m_scene->m_lights.size(); i++){
+	for (int i = 0; i < g_theGame->GetScene()->m_lights.size(); i++){
 		g_theGame->RemoveLight();
 	}
-	g_theGame->m_scene->m_lights.clear();
+	g_theGame->GetScene()->m_lights.clear();
 }
 
 void CommandSetLightAttenuation(Command & cmd)

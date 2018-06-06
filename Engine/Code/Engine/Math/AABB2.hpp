@@ -34,7 +34,7 @@ public:
 
 	//gets a portion of the AABB2 by percentages - useful for UI boxes in screen space
 	AABB2 GetPercentageBox(float xPercentMin, float yPercentMin, float xPercentMax,  float yPercentMax);
-	AABB2 GetPercentageBox(Vector2 xPercentages, Vector2 yPercentages);
+	AABB2 GetPercentageBox(Vector2 minPercentages, Vector2 maxPercentages);
 
 
 	//Accessors/queries

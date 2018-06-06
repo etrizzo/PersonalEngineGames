@@ -1,11 +1,12 @@
 #include "Entity.hpp"
 #include "Game/Game.hpp"
+#include "Game/Tile.hpp"
 #include "Game/Map.hpp"
 #include "Engine/Renderer/ObjLoader.hpp"
 
 Entity::~Entity()
 {
-	g_theGame->m_scene->RemoveRenderable(m_renderable);
+	g_theGame->GetScene()->RemoveRenderable(m_renderable);
 }
 
 Entity::Entity()

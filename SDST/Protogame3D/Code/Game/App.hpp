@@ -14,6 +14,7 @@ public:
 
 	double m_appTime;
 	float m_deltaTime;
+	bool firstFrame = true;
 
 
 public:
@@ -29,6 +30,7 @@ private:
 	//place to register game-specific commands
 	void RegisterCommands();
 	void HandleInput();
+	void PostStartup();
 
 	
 };
@@ -40,6 +42,7 @@ void CommandDebugRenderToggle(Command& cmd);
 void CommandDebugRenderSetDepth(Command& cmd);
 void CommandDebugRenderSetTask(Command& cmd);
 void CommandDebugPrintTasks(Command& cmd);
+void CommandDebugDrawTask(Command& cmd);
 
 void CommandDebugDetachCamera(Command& cmd);
 void CommandDebugReattachCamera(Command& cmd);

@@ -21,6 +21,7 @@ void DebugRenderSystem::Startup(Camera * currentCamera)
 
 void DebugRenderSystem::Shutdown()
 {
+	ReattachCamera();
 	//delete m_camera;
 	delete[] m_tasks3D.data();
 
@@ -34,31 +35,44 @@ void DebugRenderSystem::Shutdown()
 
 void DebugRenderSystem::DetachCamera()
 {
-	m_isDetached = true;
+	if (!m_isDetached){
+		m_isDetached = true;
 
-	m_camera = new PerspectiveCamera(m_gameCamera);
-	m_camera->SetColorTarget( g_theRenderer->m_defaultColorTarget );
-	m_camera->SetDepthStencilTarget( g_theRenderer->m_defaultDepthTarget );
-	g_theGame->SetGameCamera(m_camera);
-	g_theGame->m_scene->AddCamera(m_camera);
+		m_camera = new PerspectiveCamera(m_gameCamera);
+		m_camera->SetColorTarget( g_theRenderer->m_defaultColorTarget );
+		m_camera->SetDepthStencilTarget( g_theRenderer->m_defaultDepthTarget );
+		g_theGame->SetGameCamera(m_camera);
+		g_theRenderer->BindCamera(m_camera);
+		if (g_theGame->GetScene() != nullptr){
+			g_theGame->GetScene()->RemoveCamera(m_gameCamera);
+			g_theGame->GetScene()->AddCamera(m_camera);
+		}
+	}
 
 }
 
 void DebugRenderSystem::ReattachCamera()
 {
-	m_isDetached = false;
+	if (m_isDetached){
+		m_isDetached = false;
 
-	g_theGame->SetMainCamera();
-	delete m_camera;
+		g_theGame->SetMainCamera();
+		if (g_theGame->GetScene() != nullptr){
+			g_theGame->GetScene()->RemoveCamera(m_camera);
+			g_theGame->GetScene()->AddCamera(m_gameCamera);
+		}
+		delete m_camera;
+	}
 }
 
 void DebugRenderSystem::UpdateAndRender()
 {
 	if (m_isActive){
 		Update();
-		if (m_isRendering){
+		Render();
+		/*if (m_isRendering){
 			Render();
-		}
+		}*/
 	}
 	DestroyTasks();
 }
@@ -362,40 +376,57 @@ void DebugRenderSystem::Update()
 
 void DebugRenderSystem::Render()
 {
-	Render3D();
-	Render2D();
+	
+	if (m_isRendering){
+		Render3D();
+		Render2D();
+		
+	} else {
+		g_theRenderer->ReleaseShader();
+		ResetDepth();
+	}
+	
+	
+	
 }
 
 void DebugRenderSystem::Render3D()
 {
+	
 	TODO("Make a debug render rendering path");
-	if (m_isDetached){
-		//draw the camera
-		g_theRenderer->UseShader("wireframe");
-		g_theRenderer->BindModel(m_gameCamera->m_transform.GetLocalMatrix());
-		g_theRenderer->DrawMesh(m_gameCamera->GetDebugMesh());
-		g_theRenderer->ReleaseShader();
+		if (m_isDetached){
+			//draw the camera
+			
+			g_theRenderer->UseShader("wireframe");
+			g_theRenderer->BindModel(m_gameCamera->m_transform.GetLocalMatrix());
+			g_theRenderer->DrawMesh(m_gameCamera->GetDebugMesh());
+				
+			g_theRenderer->ReleaseShader();
 
-
-		g_theRenderer->BindModel(Matrix44::IDENTITY);
-		for(int i = 0; i < g_theGame->m_scene->m_lights.size(); i++){
-			//if (i >= (int) g_theGame->m_scene->m_lights.size()){
-			//	break;
-			//}
-			if (g_theGame->m_scene->m_lights[i] != g_theGame->m_cameraLight){
-				g_theGame->m_scene->m_lights[i]->RenderAsPoint(g_theRenderer);
-				MakeDebugRenderTag("L", 0.f, g_theGame->m_scene->m_lights[i]->GetPosition(), .5f, RGBA::WHITE);
+			g_theRenderer->BindModel(Matrix44::IDENTITY);
+			RenderScene* scene = g_theGame->GetScene();
+			if (scene != nullptr){
+				for(int i = 0; i < scene->m_lights.size(); i++){
+					//if (i >= (int) g_theGame->m_scene->m_lights.size()){
+					//	break;
+					//}
+					/*if (scene->m_lights[i] != g_theGame->m_cameraLight){
+						scene->m_lights[i]->RenderAsPoint(g_theRenderer);
+						MakeDebugRenderTag("L", 0.f, scene->m_lights[i]->GetPosition(), .5f, RGBA::WHITE);
+					}*/
+				}
 			}
 		}
-	}
-	for(DebugRenderTask* task : m_tasks3D){
-		SetRendererDrawMode(task);
-		task->Render();
+		for(DebugRenderTask* task : m_tasks3D){
+			SetRendererDrawMode(task);
+			task->Render();
 
-	}
-	if (m_currentRuler != nullptr){
-		m_currentRuler->Render();
-	}
+		}
+
+		if (m_currentRuler != nullptr){
+			m_currentRuler->Render();
+		}
+	
 
 	ResetDepth();
 }
@@ -609,9 +640,9 @@ RenderTaskType StringToDebugRenderTask(std::string task)
 		return RENDER_TASK_TEXT2;
 	}
 
-	ConsolePrintf(RGBA::RED, "No task called: %s. Task set to DebugPoint.",  task.c_str());
+	//ConsolePrintf(RGBA::RED, "No task called: %s. Task set to DebugPoint.",  task.c_str());
 
-	return RENDER_TASK_POINT;	//default
+	return NUM_RENDER_TASKS;	//default
 }
 
 const char* GetTaskName(RenderTaskType type)

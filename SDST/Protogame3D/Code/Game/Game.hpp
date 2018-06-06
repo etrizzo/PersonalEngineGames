@@ -1,5 +1,6 @@
 #pragma once
 #include "GameCommon.hpp"
+#include "Game/GameState_Playing.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
 
 
@@ -13,17 +14,6 @@ class ParticleSystem;
 
 class Map;
 
-enum eDebugShaders{
-	SHADER_LIT,			//default
-	SHADER_NORMAL,
-	SHADER_TANGENT,
-	SHADER_BITANGENT,
-	SHADER_NORMALMAP,
-	SHADER_WORLDNORMAL,
-	SHADER_DIFFUSE,
-	SHADER_SPECULAR,
-	NUM_DEBUG_SHADERS
-};
 
 
 enum EntityTypes{
@@ -38,20 +28,20 @@ public:
 
 	bool m_isPaused;
 	bool m_devMode;
-	float m_gameTime;
+	//float m_gameTime;
 	Map* m_currentMap;
 	PerspectiveCamera* m_mainCamera;
 	Camera* m_uiCamera;
 	PerspectiveCamera* m_currentCamera;
-	SpotLight* m_orbitLight;
-	Light* m_cameraLight;
-	std::vector<Light*> m_lights = std::vector<Light*>();
 	Texture* m_tileTexture;
-	Entity* m_thaShip;
-	Entity* m_thaMiku;
 
-	ForwardRenderPath* m_renderPath;
-	RenderScene* m_scene;
+
+	GameState* m_currentState;
+	GameState* m_transitionToState = nullptr;
+	GameState_Playing* m_playState;
+	float m_timeEnteredState;
+
+	Clock* m_gameClock = nullptr;
 
 
 	DebugRenderSystem* m_debugRenderSystem;
@@ -60,6 +50,11 @@ public:
 	void Update();
 	void Render();
 	void HandleInput();
+
+	void RenderLoadScreen();
+
+	void TransitionToState(GameState* newState);
+	void TriggerTransition();
 
 	float GetDeltaSeconds();
 
@@ -79,6 +74,11 @@ public:
 	void DebugClear();
 	void DebugToggleRendering();
 
+	bool IsDevMode() const { return m_devMode; }
+
+	RenderScene* GetScene();
+
+
 	void AddNewLight(std::string type, RGBA color = RGBA::WHITE);		//adds in front of camera
 	void AddNewLight(std::string type, Vector3 pos, RGBA color = RGBA::WHITE);
 	void AddNewPointLight(Vector3 pos, RGBA color);
@@ -91,8 +91,8 @@ public:
 
 	void SetLightAttenuation(int lightIndex, Vector3 att);
 
+	unsigned int GetNumActiveLights() const;
 
-	unsigned int GetNumActiveLights() const { return m_numActiveLights ; }
 
 private:
 	void LoadTileDefinitions();
@@ -101,20 +101,20 @@ private:
 	void RenderGame();
 	void RenderUI();
 
-	float m_specAmount = .5f;
-	float m_specFactor = 3.f;
-	int m_numActiveLights = 0;
+	//float m_specAmount = .5f;
+	//float m_specFactor = 3.f;
+	//int m_numActiveLights = 0;
 
-	eDebugShaders m_debugShader = SHADER_LIT;
+	//eDebugShaders m_debugShader = SHADER_LIT;
 
-	void UpdateShader(int direction);
-	void SetShader();		//sets which shader to draw scene with
-	std::string GetShaderName() const;
+	//void UpdateShader(int direction);
+	//void SetShader();		//sets which shader to draw scene with
+	//std::string GetShaderName() const;
 
-	//for objects drawn using drawmeshimmediate
-	Material* m_couchMaterial;
+	////for objects drawn using drawmeshimmediate
+	//Material* m_couchMaterial;
 
-	ParticleSystem* m_particleSystem;
+	//ParticleSystem* m_particleSystem;
 };
 
 extern Game* g_theGame;
