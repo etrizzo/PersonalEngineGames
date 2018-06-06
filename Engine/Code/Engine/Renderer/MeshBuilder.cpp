@@ -155,6 +155,36 @@ SubMesh * MeshBuilder::CreateSubMesh(eVertexType vertType)
 	return m;
 }
 
+void MeshBuilder::AppendPlane(Vector3 nbl, Vector3 nbr, Vector3 ftl, Vector3 ftr, const RGBA & color, Vector2 uvMins, Vector2 uvMaxs)
+{
+	Vector3 right = (nbr - nbl).GetNormalized();
+	Vector3 up = (ftl - nbl).GetNormalized();
+
+	Vector3 normal = Cross(up, right).GetNormalized();
+
+	Vector2 bl_UV = uvMins;
+	Vector2 br_UV = Vector2(uvMaxs.x, uvMins.y);
+	Vector2 tl_UV = Vector2(uvMins.x, uvMaxs.y);
+	Vector2 tr_UV = uvMaxs;
+
+	SetNormal(normal);
+	SetTangent(right);
+	SetUV(bl_UV);
+	unsigned int idx = PushVertex(nbl);
+
+	SetUV(br_UV);
+	PushVertex(nbr);
+
+	SetUV(tl_UV);
+	PushVertex(ftl);
+
+	SetUV(tr_UV);
+	PushVertex(ftr);
+
+	AddTriIndices(idx + 0, idx + 1, idx + 2);
+	AddTriIndices(idx + 2, idx + 1, idx + 3);
+}
+
 void MeshBuilder::AppendPlane(const Vector3& center, const Vector3& up, const Vector3& right, const Vector2 & size, const RGBA & color, Vector2 uvMins, Vector2 uvMaxs)
 {
 

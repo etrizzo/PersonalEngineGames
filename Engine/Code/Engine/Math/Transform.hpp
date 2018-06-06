@@ -43,7 +43,7 @@ struct transform_t
 };
 
 
-// this will get refactored later
+
 // all renderables have this, and the camera.
 // Can store this either as a pointer or by value
 class Transform 
@@ -70,14 +70,14 @@ public:
 	void SetScale( Vector3 s ); 
 	Vector3 GetScale() const; 
 
-	//2D Utilities
-	void SetLocalPosition2D( Vector2 pos, float z = 0.f );         //this is allllll local transforming
-	void TranslateLocal2D( Vector2 offset ); 
+	////2D Utilities
+	//void SetLocalPosition2D( Vector2 pos, float z = 0.f );         //this is allllll local transforming
+	//void TranslateLocal2D( Vector2 offset ); 
 
-	void SetRotationEuler2D( float rotation ); 
-	void RotateByEuler2D( float rotationOffset ); 
+	//void SetRotationEuler2D( float rotation ); 
+	//void RotateByEuler2D( float rotationOffset ); 
 
-	void SetScale2D( Vector2 s ); 
+	//void SetScale2D( Vector2 s ); 
 
 
 	Vector3 GetForward() const;

@@ -11,7 +11,7 @@
 #include "Engine/Core/ErrorWarningAssert.hpp"
 #include "Engine/Core/Image.hpp"
 #include "Engine/Renderer/SpriteAnimSetDef.hpp"
-#include "Engine/Renderer/ForwardRenderPath.hpp"
+#include "Engine/Renderer/SpriteRenderPath.hpp"
 
 #define SCREEN_MAX 1000.f
 #define SCREEN_MIN 0.f

@@ -2,7 +2,7 @@
 #include "Engine/Math/Renderer.hpp"
 
 
-SpriteSheet::SpriteSheet(const Texture& texture, int tilesWide, int tilesHigh):
+SpriteSheet::SpriteSheet( Texture& texture, int tilesWide, int tilesHigh):
 m_spriteSheetTexture (&texture){
 	m_spriteLayout = IntVector2(tilesWide, tilesHigh);
 }
@@ -36,7 +36,7 @@ int SpriteSheet::GetNumSprites() const
 	return m_spriteLayout.x * m_spriteLayout.y;
 }
 
-const Texture* SpriteSheet::GetTexture() const
+ Texture* SpriteSheet::GetTexture() const
 {
 	return m_spriteSheetTexture;
 }

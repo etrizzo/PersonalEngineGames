@@ -30,7 +30,7 @@ Game::~Game()
 Game::Game()
 {
 
-	m_renderPath = new ForwardRenderPath();
+	m_renderPath = new SpriteRenderPath();
 	m_renderPath->m_renderer = g_theRenderer;
 
 	Texture* tileTexture = g_theRenderer->CreateOrGetTexture("Terrain_32x32.png");
@@ -357,7 +357,7 @@ void Game::DrawCurrentInventory()
 		Item* item = m_player->m_equippedItems[i];
 		std::string drawText = Actor::GetEquipSlotByID((EQUIPMENT_SLOT) i) + ": ";
 		std::string itemText = "NONE";
-		const Texture* buttonTexture = m_miscSpriteSheet->GetTexture();
+		Texture* buttonTexture = m_miscSpriteSheet->GetTexture();
 		float padding = eqItemHeight * .2f;
 		itemIconBox.AddPaddingToSides(padding, padding);
 		if (item != nullptr){
@@ -415,7 +415,7 @@ void Game::RenderVictoryConditionsInBox(AABB2 boxToDrawIn)
 	textBox.AddPaddingToSides(fontHeight * -2.f, 0.f);
 	textBox.Translate( 0.f, - fontHeight);
 	
-	const Texture* buttonTexture = m_miscSpriteSheet->GetTexture();
+	Texture* buttonTexture = m_miscSpriteSheet->GetTexture();
 	for (VictoryCondition* objective: m_currentAdventure->m_victoryConditions){
 		//g_theRenderer->DrawAABB2Outline(iconBox, WHITE);
 		//g_theRenderer->DrawAABB2Outline(textBox, WHITE);

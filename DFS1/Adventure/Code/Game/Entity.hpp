@@ -40,8 +40,8 @@ public:
 
 	Vector2		GetPosition()	const;
 	float		GetRotation()	const;
-	Renderable* GetRenderable() const;
-	Transform&  GetTransform()	const;
+	Renderable2D* GetRenderable() const;
+	Transform2D&  GetTransform()	const;
 
 	virtual void SetPosition(Vector2 newPosition, Map* newMap = nullptr);
 	void SetRotation(float newRot);
@@ -52,7 +52,7 @@ public:
 
 
 
-	Renderable* m_renderable;
+	Renderable2D* m_renderable;
 
 	const EntityDefinition* m_definition;
 	Map* m_map;

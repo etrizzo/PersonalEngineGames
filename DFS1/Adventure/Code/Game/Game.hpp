@@ -14,7 +14,7 @@ public:
 	~Game();											// destructor: do nothing (for speed)
 	Game();											// default constructor: do nothing (for speed)
 
-	ForwardRenderPath*	m_renderPath	= nullptr;
+	SpriteRenderPath*	m_renderPath	= nullptr;
 	//RenderScene*		m_currentScene	= nullptr;
 
 	bool m_isPaused;

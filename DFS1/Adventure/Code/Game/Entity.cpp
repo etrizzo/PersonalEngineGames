@@ -16,7 +16,7 @@ Entity::~Entity()
 
 Entity::Entity()
 {
-	m_renderable = new Renderable();
+	m_renderable = new Renderable2D();
 	m_renderable->SetMaterial(Material::GetMaterial("default"));
 }
 
@@ -24,8 +24,9 @@ Entity::Entity(EntityDefinition * entityDef, Map * entityMap, Vector2 initialPos
 {
 	
 	m_definition = entityDef;
-	m_renderable = new Renderable();
+	m_renderable = new Renderable2D();
 	m_renderable->SetMaterial(Material::GetMaterial("default"));
+	m_renderable->m_zOrder = 1;
 	SetPosition(initialPos);
 	m_rotationDegrees = initialRotation;
 
@@ -92,17 +93,19 @@ void Entity::Update(float deltaSeconds)
 
 void Entity::UpdateRenderable()
 {
-	const Texture* entityTexture = m_animSet->GetCurrentTexture();
+	Texture* entityTexture = m_animSet->GetCurrentTexture();
 	AABB2 uvs = m_animSet->GetCurrentUVs();
 	if (!(uvs == m_lastUVs)){
-		//regenerate mesh
 		m_lastUVs = uvs;
-		MeshBuilder mb = MeshBuilder();
-		mb.Begin(PRIMITIVE_TRIANGLES, true);
-		mb.AppendPlane2D(m_localDrawingBox, RGBA::WHITE, uvs);
-		mb.End();
+		//regenerate mesh
+		//m_lastUVs = uvs;
+		//MeshBuilder mb = MeshBuilder();
+		//mb.Begin(PRIMITIVE_TRIANGLES, true);
+		//mb.AppendPlane2D(m_localDrawingBox, RGBA::WHITE, uvs);
+		//mb.End();
 
-		m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_3DPCU));
+		//m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_3DPCU));
+		m_renderable->SetMesh(m_localDrawingBox, uvs, RGBA::WHITE);
 	}
 	if (m_renderable->GetEditableMaterial()->m_textures[0] != entityTexture){
 		m_renderable->SetDiffuseTexture(entityTexture);
@@ -281,7 +284,7 @@ void Entity::RenderName()
 
 void Entity::SetPosition(Vector2 newPosition, Map* newMap)
 {
-	m_renderable->m_transform.SetLocalPosition2D(newPosition);
+	m_renderable->m_transform.SetLocalPosition(newPosition);
 	m_physicsDisc.center = newPosition;
 	if (newMap != nullptr){
 		m_map = newMap;
@@ -290,7 +293,7 @@ void Entity::SetPosition(Vector2 newPosition, Map* newMap)
 
 void Entity::SetRotation(float newRot)
 {
-	m_renderable->m_transform.SetRotationEuler2D(newRot);
+	m_renderable->m_transform.SetRotationEuler(newRot);
 }
 
 void Entity::SetScale(float uniformScale)
@@ -300,17 +303,17 @@ void Entity::SetScale(float uniformScale)
 
 void Entity::SetScale(Vector2 scale)
 {
-	m_renderable->m_transform.SetScale2D(scale);
+	m_renderable->m_transform.SetScale(scale);
 }
 
 void Entity::Rotate(float offset)
 {
-	m_renderable->m_transform.RotateByEuler2D(offset);
+	m_renderable->m_transform.RotateByEuler(offset);
 }
 
 void Entity::Translate(Vector2 offset)
 {
-	m_renderable->m_transform.TranslateLocal2D(offset);
+	m_renderable->m_transform.TranslateLocal(offset);
 }
 
 bool Entity::IsPointInForwardView(Vector2 point)
@@ -344,12 +347,12 @@ float Entity::GetRotation() const
 	return m_rotationDegrees;	//feeds transform
 }
 
-Renderable * Entity::GetRenderable() const
+Renderable2D * Entity::GetRenderable() const
 {
 	return m_renderable;
 }
 
-Transform&  Entity::GetTransform() const
+Transform2D&  Entity::GetTransform() const
 {
 	return m_renderable->m_transform;
 }

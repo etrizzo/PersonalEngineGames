@@ -15,7 +15,7 @@ public:
 	void Update(float deltaSeconds);
 	AABB2 GetCurrentTexCoords() const;
 	AABB2 GetTexCoordsAtTime(float time) const;
-	const Texture* GetTexture() const;
+	Texture* GetTexture() const;
 	void Pause();
 	void Resume();
 	void Reset();

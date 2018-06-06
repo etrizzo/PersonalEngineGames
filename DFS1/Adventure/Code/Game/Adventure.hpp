@@ -27,7 +27,7 @@ public:
 	void MoveToMapIndex(int index);
 	void RegenerateCurrentMap();
 
-	RenderScene* GetScene();
+	RenderScene2D* GetScene();
 
 
 

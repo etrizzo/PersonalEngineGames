@@ -24,7 +24,7 @@ Map::~Map()
 
 Map::Map(std::string name, MapDefinition* mapDef)
 {
-	m_scene = new RenderScene();
+	m_scene = new RenderScene2D();
 	m_name = name;
 	m_mapDef = mapDef;
 	m_allEntities = std::vector<Entity*>();
@@ -721,7 +721,7 @@ AABB2 Map::GetCameraBounds() const
 Player * Map::SpawnNewPlayer(Vector2 spawnPosition)
 {
 	ActorDefinition* actorDef = ActorDefinition::GetActorDefinition("Player");
-	//Vector2 spawn = Vector2(5.f,5.f);
+	spawnPosition = Vector2(5.f,5.f);
 	Player* newPlayer = new Player(actorDef, spawnPosition, this);
 	m_allEntities.push_back((Entity*) newPlayer);
 	m_allActors.push_back( (Actor*) newPlayer);
@@ -897,7 +897,7 @@ void Map::InitializeTiles()
 
 void Map::CreateTileRenderable()
 {
-	m_tileRenderable = new Renderable();
+	m_tileRenderable = new Renderable2D();
 	Material* tileMat = Material::GetMaterial("tile");
 	MeshBuilder mb =  MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);

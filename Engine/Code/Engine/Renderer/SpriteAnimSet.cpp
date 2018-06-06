@@ -36,13 +36,13 @@ void SpriteAnimSet::SetCurrentAnim(const std::string & animName)
 	
 }
 
-const Texture * SpriteAnimSet::GetCurrentTexture() const
+ Texture * SpriteAnimSet::GetCurrentTexture() const
 {
 
 	return m_currentAnim->GetTexture();
 }
 
-const Texture * SpriteAnimSet::GetTextureForAnim(std::string animName)
+ Texture * SpriteAnimSet::GetTextureForAnim(std::string animName)
 {
 	SpriteAnim* animToShow = GetAnim(animName);
 	return animToShow->GetTexture();

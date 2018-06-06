@@ -11,8 +11,8 @@ public:
 
 	void Update(float deltaSeconds);
 	void SetCurrentAnim(const std::string& animName);		//sets new anim and resets it
-	const Texture* GetCurrentTexture() const;
-	const Texture* GetTextureForAnim(std::string animName);
+	Texture* GetCurrentTexture() const;
+	Texture* GetTextureForAnim(std::string animName);
 	AABB2 GetCurrentUVs() const;
 	AABB2 GetUVsForAnim(std::string animName, float time = 0.f);
 

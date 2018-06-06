@@ -310,6 +310,7 @@
     <ClCompile Include="Math\Sphere.cpp" />
     <ClCompile Include="Math\Trajectory.cpp" />
     <ClCompile Include="Math\Transform.cpp" />
+    <ClCompile Include="Math\Transform2D.cpp" />
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Renderer\BitmapFont.cpp" />
@@ -332,8 +333,10 @@
     <ClCompile Include="Renderer\ParticleSystem.cpp" />
     <ClCompile Include="Renderer\PerspectiveCamera.cpp" />
     <ClCompile Include="Renderer\Renderable.cpp" />
+    <ClCompile Include="Renderer\Renderable2D.cpp" />
     <ClCompile Include="Renderer\RenderBuffer.cpp" />
     <ClCompile Include="Renderer\RenderScene.cpp" />
+    <ClCompile Include="Renderer\RenderScene2D.cpp" />
     <ClCompile Include="Renderer\Sampler.cpp" />
     <ClCompile Include="Renderer\Shader.cpp" />
     <ClCompile Include="Renderer\ShaderProgram.cpp" />
@@ -343,6 +346,7 @@
     <ClCompile Include="Renderer\SpriteAnimDef.cpp" />
     <ClCompile Include="Renderer\SpriteAnimSet.cpp" />
     <ClCompile Include="Renderer\SpriteAnimSetDef.cpp" />
+    <ClCompile Include="Renderer\SpriteRenderPath.cpp" />
     <ClCompile Include="Renderer\SpriteSheet.cpp" />
     <ClCompile Include="Renderer\Texture.cpp" />
     <ClCompile Include="Renderer\TextureCube.cpp" />
@@ -396,6 +400,7 @@
     <ClInclude Include="Math\Sphere.hpp" />
     <ClInclude Include="Math\Trajectory.hpp" />
     <ClInclude Include="Math\Transform.hpp" />
+    <ClInclude Include="Math\Transform2D.hpp" />
     <ClInclude Include="Math\Vector2.hpp" />
     <ClInclude Include="Math\Vector3.hpp" />
     <ClInclude Include="Renderer\BitmapFont.hpp" />
@@ -421,8 +426,10 @@
     <ClInclude Include="Renderer\ParticleSystem.hpp" />
     <ClInclude Include="Renderer\PerspectiveCamera.hpp" />
     <ClInclude Include="Renderer\Renderable.hpp" />
+    <ClInclude Include="Renderer\Renderable2D.hpp" />
     <ClInclude Include="Renderer\RenderBuffer.hpp" />
     <ClInclude Include="Renderer\RenderScene.hpp" />
+    <ClInclude Include="Renderer\RenderScene2D.hpp" />
     <ClInclude Include="Renderer\Sampler.hpp" />
     <ClInclude Include="Renderer\Shader.hpp" />
     <ClInclude Include="Renderer\ShaderLiterals.hpp" />
@@ -433,6 +440,7 @@
     <ClInclude Include="Renderer\SpriteAnimDef.hpp" />
     <ClInclude Include="Renderer\SpriteAnimSet.hpp" />
     <ClInclude Include="Renderer\SpriteAnimSetDef.hpp" />
+    <ClInclude Include="Renderer\SpriteRenderPath.hpp" />
     <ClInclude Include="Renderer\SpriteSheet.hpp" />
     <ClInclude Include="Renderer\Texture.hpp" />
     <ClInclude Include="Renderer\TextureCube.hpp" />

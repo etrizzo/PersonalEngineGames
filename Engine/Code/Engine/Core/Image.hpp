@@ -11,6 +11,7 @@ public:
 	Image( const std::string& imageFilePath );		//by default, image will read (0,0) as bottom left now
 	Image( std::vector<RGBA> texels, IntVector2 dimensions);
 	RGBA	GetTexel( int x, int y ) const; 			// (0,0) is bottom-left
+	RGBA	GetTexel(int idx) const;
 	void	SetTexel( int x, int y, const RGBA& color );
 
 	RGBA*	GetBuffer(int x, int y);

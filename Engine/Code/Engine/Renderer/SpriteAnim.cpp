@@ -100,9 +100,9 @@ AABB2 SpriteAnim::GetTexCoordsAtTime(float time) const
 	}
 }
 
-const Texture * SpriteAnim::GetTexture() const
+ Texture * SpriteAnim::GetTexture() const
 {
-	const Texture* tex;
+	 Texture* tex;
 	if (m_definition != nullptr){
 		tex = m_definition->GetSpriteSheet()->GetTexture();
 	} else {

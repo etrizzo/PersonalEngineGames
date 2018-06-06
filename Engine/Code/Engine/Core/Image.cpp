@@ -46,6 +46,11 @@ RGBA Image::GetTexel(int x, int y) const
 	return m_texels[texelIndex];
 }
 
+RGBA Image::GetTexel(int idx) const
+{
+	return m_texels[idx];
+}
+
 void Image::SetTexel(int x, int y, const RGBA & color)
 {
 	int texelIndex = GetIndexFromCoordinates(x,y,m_dimensions.x, m_dimensions.y);

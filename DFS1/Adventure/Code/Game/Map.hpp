@@ -58,8 +58,8 @@ public:
 	int m_numTiles;
 	SoundPlaybackID m_musicPlayback;
 
-	RenderScene* m_scene;
-	Renderable* m_tileRenderable;
+	RenderScene2D* m_scene;
+	Renderable2D* m_tileRenderable;
 
 	void Update(float deltaSeconds);
 	void UpdateEntities(float deltaSeconds);

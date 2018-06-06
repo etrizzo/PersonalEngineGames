@@ -41,8 +41,9 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_theRenderer->LoadShadersFromFile("shaders.xml");
 	g_theRenderer->LoadMaterialsFromFile("materials.xml");
 	g_theGame = new Game();
+	g_theGame->m_currentState = new GameState_Attract();
 
-	g_theGame->TransitionToState(new GameState_Attract());
+	//g_theGame->TransitionToState(new GameState_Attract());
 	//g_theGame->Transition();
 	g_primaryController = g_theInput->GetController(0);
 

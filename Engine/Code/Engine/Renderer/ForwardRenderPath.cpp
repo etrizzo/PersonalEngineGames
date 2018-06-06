@@ -39,7 +39,7 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 			dc.m_mesh = r->m_mesh->m_subMeshes[i];
 			dc.m_model = r->m_transform.GetWorldMatrix();
 			dc.m_material = r->GetEditableMaterial(i);
-			dc.m_layer = 0;
+			dc.m_layer = r->GetEditableMaterial()->m_shader->m_sortLayer;
 			dc.m_queue = 0;
 
 			if (r->GetEditableMaterial(i)->UsesLights()){
