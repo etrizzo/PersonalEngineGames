@@ -363,7 +363,7 @@ void CommandRemoveLight(Command & cmd)
 void CommandRemoveAllLights(Command & cmd)
 {
 	UNUSED(cmd);
-	for (int i = 0; i < g_theGame->GetScene()->m_lights.size(); i++){
+	for (int i = 0; i < (int) g_theGame->GetScene()->m_lights.size(); i++){
 		g_theGame->RemoveLight();
 	}
 	g_theGame->GetScene()->m_lights.clear();

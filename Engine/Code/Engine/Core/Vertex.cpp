@@ -39,7 +39,7 @@ Vertex3D_PCU
 		 break;
 	 }
 
-	 return VertexLayout();
+	 return Vertex3D_PCU::LAYOUT;
  }
 
 

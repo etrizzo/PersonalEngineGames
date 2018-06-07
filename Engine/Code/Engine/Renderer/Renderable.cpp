@@ -24,7 +24,7 @@ Renderable::Renderable(eRenderablePrimatives primType, float size)
 		mb.AppendPlane(Vector3::ZERO, Vector3::UP, Vector3::RIGHT, Vector2::ONE * size, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
 		break;
 	case RENDERABLE_SPHERE:
-		mb.AppendSphere(Vector3::ZERO, size, 10.f, 10.f, RGBA::WHITE);
+		mb.AppendSphere(Vector3::ZERO, size, 10, 10, RGBA::WHITE);
 		break;
 	}
 	mb.End();

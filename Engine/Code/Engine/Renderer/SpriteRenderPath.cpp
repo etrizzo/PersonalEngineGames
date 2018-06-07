@@ -31,7 +31,7 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 	//now we want to generate the draw calls
 	for(Renderable2D* r : scene->m_renderables){
 		//this will change for multi-pass shaders or multi-material meshes
-		for (int i = 0; i < r->m_mesh->m_subMeshes.size(); i++){
+		for (int i = 0; i < (int) r->m_mesh->m_subMeshes.size(); i++){
 			DrawCall dc;
 			//set up the draw call for this renderable :)
 			// the layer/queue comes from the shader!
@@ -39,7 +39,8 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 			dc.m_model = r->m_transform.GetWorldMatrix();
 			dc.m_material = r->GetEditableMaterial(i);
 			dc.m_layer = r->GetZOrder();
-			dc.m_queue = r->m_transform.GetWorldPosition().y;
+			dc.m_queue = 0;
+			//dc.m_queue = r->m_transform.GetWorldPosition().y;
 
 			if (r->GetEditableMaterial(i)->UsesLights()){
 				//compute most contributing lights based on renderable's position and puts them in the draw calls lights
@@ -51,7 +52,7 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 	}
 
 	//now we sort draw calls by layer/queue
-	SortDrawCalls(drawCalls, cam);
+	SortDrawCalls(drawCalls);
 	//sort alpha by distance to camera, etc.
 
 	for(DrawCall dc: drawCalls){
@@ -108,12 +109,12 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 //	}
 //}
 
-void SpriteRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls, Camera* cam)
+void SpriteRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls)
 {
 	//sort by sort layer
-	for (int i = 1; i < drawCalls.size(); i ++){
+	for (int i = 1; i < (int) drawCalls.size(); i ++){
 		bool sorted = false;
-		for (int j = i; j < drawCalls.size(); j++){
+		for (int j = i; j < (int) drawCalls.size(); j++){
 			sorted = true;
 			DrawCall dc = drawCalls[j];
 			DrawCall prevDC = drawCalls[j-1];

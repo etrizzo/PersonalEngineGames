@@ -1,5 +1,6 @@
 #include "Game/GameState_Playing.hpp"
 #include "Game/Game.hpp"
+#include "Game/Map.hpp"
 #include "Game/Entity.hpp"
 #include "Game/Player.hpp"
 #include "Game/DebugRenderSystem.hpp"
@@ -43,6 +44,8 @@ GameState_Playing::GameState_Playing()
 
 	m_scene->AddCamera(g_theGame->m_currentCamera);
 	g_theGame->m_mainCamera->m_transform.SetParent(&m_player->m_renderable->m_transform);
+	Skybox* skybox = new Skybox(g_theGame->m_mainCamera, "skybox.png");
+	m_scene->AddSkybox(skybox);
 }
 
 void GameState_Playing::Update(float ds)
@@ -264,9 +267,12 @@ void GameState_Playing::SetShader()
 		shaderName = "specular";
 		break;
 	}
+	
+	g_theGame->m_debugRenderSystem->MakeDebugRender2DText(shaderName.c_str());
 
 	g_theRenderer->UseShader(shaderName);
 	m_player->m_renderable->SetShader(shaderName);
+	g_theGame->m_currentMap->m_renderable->SetShader(shaderName);
 	m_couchMaterial->SetShader(shaderName);
 }
 

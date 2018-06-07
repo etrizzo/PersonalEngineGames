@@ -168,6 +168,7 @@ void MeshBuilder::AppendPlane(Vector3 nbl, Vector3 nbr, Vector3 ftl, Vector3 ftr
 	Vector2 tr_UV = uvMaxs;
 
 	SetNormal(normal);
+	SetColor(color);
 	SetTangent(right);
 	SetUV(bl_UV);
 	unsigned int idx = PushVertex(nbl);
@@ -548,7 +549,6 @@ void MeshBuilder::AddTriIndices(unsigned int idx1, unsigned int idx2, unsigned i
 SubMesh * MeshBuilder::CreateSubMesh3DPCU()
 {
 	const VertexLayout layout = GetLayoutForType(VERTEX_TYPE_3DPCU);
-	int x = 0;
 	SubMesh* mesh = new SubMesh(layout);
 	//
 	size_t vsize = layout.m_stride * m_vertices.size(); 

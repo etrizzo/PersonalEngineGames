@@ -94,7 +94,7 @@ void Mesh::AddSubMesh(SubMesh * smesh)
 
 void Mesh::SetSubMesh(SubMesh * smesh, int idx)
 {
-	if (idx >= m_subMeshes.size()){
+	if (idx >= (int) m_subMeshes.size()){
 		m_subMeshes.resize(idx+1);
 	}
 	if (m_subMeshes[idx] != nullptr){

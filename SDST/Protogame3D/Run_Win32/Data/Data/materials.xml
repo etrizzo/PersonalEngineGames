@@ -70,6 +70,18 @@
 	</properties>
 </material>
 
+<material name="terrain" shader="default_lit">
+	<textures>
+		<texture type="diffuse" path="grass_green_d.png" />
+		<texture type="normal" path="grass_green_n.png" />
+	</textures>
+	<properties>
+		<property type="float" name="SPECULAR_AMOUNT" value=".5" />
+		<property type="float" name="SPECULAR_POWER" value="2" />
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
 
 <material name="particle" shader="unlit_alpha">
 	<textures>
@@ -84,6 +96,20 @@
 <material name="additive" shader="additive">
 	<textures>
 		<texture type="diffuse" path="couch_albedo.png" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+
+
+<material name="skybox" shader="skybox">
+</material>
+
+<material name="additive" shader="additive">
+	<textures>
+		<texture type="diffuse" path="white" />
 	</textures>
 	<properties>
 		<property type="RGBA" name="TINT" value="255,255,255,255"/>

@@ -7,19 +7,24 @@ Map::~Map()
 
 }
 
-Map::Map(std::string imageFile, AABB2 const & extents, float minHeight, float maxHeight, IntVector2 chunks)
+Map::Map(std::string imageFile, AABB2 const & extents, float minHeight, float maxHeight, IntVector2 chunks, float tilesPerChunk)
 {
 	m_renderable = new Renderable();
 	Image img =  Image("Data/Images/" + imageFile);
 	IntVector2 imgSize = img.GetDimensions();
-	m_dimensions = img.GetDimensions();
 	m_extents = extents;
+	
+	
 	float chunkWidth = extents.GetWidth() / (float) chunks.x;
 	float chunkHeight = extents.GetHeight() / (float) chunks.y;
-	float tileWidth = extents.GetWidth() / (float) imgSize.x;
-	float tileHeight = extents.GetHeight()/ (float) imgSize.y;
+	float tileWidth = chunkWidth / tilesPerChunk;
+	float tileHeight = chunkHeight/ tilesPerChunk;
 	m_tileSize = Vector2(tileWidth, tileHeight);
 	m_heightRange = Vector2(minHeight, maxHeight);
+
+	int numTilesWidth = (int) (m_extents.GetWidth() / m_tileSize.x	);
+	int numTilesHeight = (int)( m_extents.GetHeight() / m_tileSize.y);
+	m_dimensions = IntVector2 (numTilesWidth, numTilesHeight);
 	//how many pixels per chunk?
 	//IntVector2 pixelsPerTile = IntVector2(imgSize.x / )
 	//m_dimensions = chunks
@@ -42,6 +47,7 @@ void Map::Render()
 
 void Map::Update(float deltaSeconds)
 {
+	UNUSED(deltaSeconds);
 	//UpdateEntities(deltaSeconds);
 
 	//RunPhysics();
@@ -79,7 +85,11 @@ int Map::GetHeight() const
 float Map::GetHeightForVertex(int x, int y)
 {
 	int index = GetIndexFromCoordinates(x, y, m_dimensions.x, m_dimensions.y);
-	return m_heights[index];
+	if (index >= 0){
+		return m_heights[index];
+	} else {
+		return 0.f;
+	}
 }
 
 Vector3 Map::GetVertexWorldPos(int x, int y)
@@ -93,7 +103,19 @@ float Map::GetHeightAtCoord(Vector2 xzCoord)
 {
 	IntVector2 bl_coords = GetVertexCoordsFromWorldPos(xzCoord);
 	//Vector3 bl_vert = GetVertexWorldPos(bl_coords.x, bl_coords.y);
-	float height = GetHeightForVertex(bl_coords.x, bl_coords.y);
+	Vector3 blVert = GetVertexWorldPos(bl_coords.x, bl_coords.y);
+	Vector3 brVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y);
+	Vector3 tlVert = GetVertexWorldPos(bl_coords.x, bl_coords.y + 1);
+	Vector3 trVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y + 1);
+
+	AABB2 bounds = AABB2(blVert.XZ(), trVert.XZ());
+	Vector2 percentage = bounds.GetPercentageOfPoint(xzCoord);
+
+	//find heights along u edges
+	float heightbottom = Interpolate(blVert.y, brVert.y, percentage.x);
+	float heightTop = Interpolate(tlVert.y, trVert.y, percentage.x);
+	float height = Interpolate(heightbottom, heightTop, percentage.y);
+
 	return height;
 }
 
@@ -134,24 +156,24 @@ IntVector2 Map::GetVertexCoordsFromWorldPos(Vector2 xzPos)
 //	return TileAt(intCoords);
 //}
 
-bool Map::HasLineOfSight(const Vector2 & startPos, const Vector2 & endPos, float maxDistance)
-{
-	/*Vector2 direction = (endPos - startPos);
-	if (direction.GetLength() > maxDistance){
-		return false;
-	} else {
-		RaycastResult2D raycastResult = Raycast(startPos, direction.GetNormalized(), maxDistance);
-		if (raycastResult.m_didImpact){
-			if (raycastResult.m_impactDistance > direction.GetLength()){
-				return true;
-			} else {
-				return false;
-			}
-		}
-		
-	}*/
-	return true;
-}
+//bool Map::HasLineOfSight(const Vector2 & startPos, const Vector2 & endPos, float maxDistance)
+//{
+//	/*Vector2 direction = (endPos - startPos);
+//	if (direction.GetLength() > maxDistance){
+//		return false;
+//	} else {
+//		RaycastResult2D raycastResult = Raycast(startPos, direction.GetNormalized(), maxDistance);
+//		if (raycastResult.m_didImpact){
+//			if (raycastResult.m_impactDistance > direction.GetLength()){
+//				return true;
+//			} else {
+//				return false;
+//			}
+//		}
+//		
+//	}*/
+//	return true;
+//}
 
 
 
@@ -190,21 +212,34 @@ bool Map::HasLineOfSight(const Vector2 & startPos, const Vector2 & endPos, float
 
 void Map::RunMapGeneration(const Image& img)
 {
-	int numTexels = img.GetDimensions().x * img.GetDimensions().y;
-	m_heights.resize(numTexels);
+	int numTilesWidth = (int) (m_extents.GetWidth() / m_tileSize.x	);
+	int numTilesHeight = (int)( m_extents.GetHeight() / m_tileSize.y);
+
+	m_heights.resize(numTilesWidth * numTilesHeight);
 	//read vertex heights from image data
-	for(int i = 0; i < numTexels; i++){
-		float r = (float) img.GetTexel(i).r;
-		m_heights[i] = RangeMapFloat(r, 0, 255.f, m_heightRange.x, m_heightRange.y);
+	for(int x = 0; x < numTilesWidth; x++){
+		for (int y = 0; y < numTilesHeight; y++){
+			Vector2 xzPos = Vector2(x * m_tileSize.x, y * m_tileSize.y) + m_extents.mins;
+			if (m_extents.IsPointInside(xzPos)){
+				Vector2 uvs = m_extents.GetPercentageOfPoint(xzPos);
+				
+				//Vector2 coordFloat  = Vector2( percentage.x * (float)img.GetDimensions().x, percentage.y * (float) img.GetDimensions().y);
+				//IntVector2 coords = IntVector2((int)floor(coordFloat.x), (int)floor(coordFloat.y));
+				//float r = (float) img.GetTexel(coords.x, coords.y).r;
+				float r = img.GetTexelAtUVS(uvs).r;
+				int idx = GetIndexFromCoordinates(x, y, numTilesWidth, numTilesHeight);
+				m_heights[idx] = RangeMapFloat(r, 0, 255.f, m_heightRange.x, m_heightRange.y);
+			}
+		}
 	}
 
 	//generate mesh
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	for (int x = 0; x < img.GetDimensions().x-1; x++){
-		for (int y = 0; y < img.GetDimensions().y-1; y++){
+	
+	for (int x = 0; x < numTilesWidth-1; x++){
+		for (int y = 0; y < numTilesHeight-1; y++){
 			//for each vertex, append plane (as bottom right)
-			int botLeftIndex = x;
 			Vector3 blPos = GetVertexWorldPos(x,y);
 			Vector3 brPos = GetVertexWorldPos(x+1, y);
 			Vector3 tlPos = GetVertexWorldPos(x, y+1);
@@ -214,7 +249,8 @@ void Map::RunMapGeneration(const Image& img)
 	}
 	mb.End();
 	m_renderable->SetMesh(mb.CreateMesh());
-	m_renderable->SetMaterial(Material::GetMaterial("wireframe"));
+	m_renderable->SetMaterial(Material::GetMaterial("terrain"));
+	//m_renderable->SetMaterial(Material::GetMaterial("wireframe"));
 
 }
 

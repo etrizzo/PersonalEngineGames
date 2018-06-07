@@ -12,7 +12,7 @@ public:
 	void RenderSceneForCamera(Camera* cam, RenderScene2D* scene);
 
 	//void ComputeMostContributingLights(DrawCall& drawCall, const Vector3& position, std::vector<Light*>& lights);
-	void SortDrawCalls(std::vector<DrawCall> &drawCalls, Camera* cam);
+	void SortDrawCalls(std::vector<DrawCall> &drawCalls);
 
 
 	Renderer* m_renderer;

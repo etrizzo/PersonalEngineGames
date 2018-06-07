@@ -33,7 +33,7 @@ Game::Game()
 	m_mainCamera->SetDepthStencilTarget( g_theRenderer->m_defaultDepthTarget );
 
 
-	m_mainCamera->SetPerspectiveOrtho(45.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.1f, 100.f);
+	m_mainCamera->SetPerspectiveOrtho(70.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.1f, 150.f);
 	m_mainCamera->LookAt(Vector3(0.f, 3.f, -5.f), Vector3(0.f, 1.f, 0.f));
 
 	m_uiCamera = new Camera();
@@ -72,7 +72,7 @@ void Game::PostStartup()
 	//m_debugRenderSystem->DetachCamera();
 
 	m_currentState = new GameState_Attract();
-	m_currentMap = new Map("Heightmap.png");
+	m_currentMap = new Map("Heightmap.png", AABB2(-200.f, -200.f, 200.f, 200.f), -20.f, 2.f, IntVector2(5,5), 60.f);
 
 
 	

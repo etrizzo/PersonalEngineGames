@@ -193,6 +193,7 @@ void GameState_Loading::Render()
 
 void GameState_Loading::Update(float ds)
 {
+	UNUSED(ds);
 	if (m_firstFrame){
 		//do nothing first frame
 		m_firstFrame = false;

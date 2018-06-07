@@ -45,8 +45,6 @@ void Player::HandleInput()
 {
 	float ds = g_theGame->GetDeltaSeconds();
 
-	//Add back in in A02
-	float degPerSecond = 30.f;
 	Vector3 rotation = Vector3::ZERO;
 
 	if (g_theInput->IsKeyDown(VK_UP)){
@@ -55,12 +53,12 @@ void Player::HandleInput()
 	if (g_theInput->IsKeyDown(VK_DOWN)){
 		rotation.x -=1.f;
 	}
-	//if (g_theInput->IsKeyDown(VK_RIGHT)){
-	//	rotation.y += 1.f;
-	//}
-	//if (g_theInput->IsKeyDown(VK_LEFT)){
-	//	rotation.y -=1.f;
-	//}
+	if (g_theInput->IsKeyDown(VK_RIGHT)){
+		rotation.y += 1.f;
+	}
+	if (g_theInput->IsKeyDown(VK_LEFT)){
+		rotation.y -=1.f;
+	}
 
 	Vector2 controllerRotation = g_theInput->GetController(0)->GetRightThumbstickCoordinates();
 	rotation+=Vector3(controllerRotation.y, controllerRotation.x, 0.f);

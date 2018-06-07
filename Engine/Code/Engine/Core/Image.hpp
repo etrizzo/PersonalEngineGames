@@ -14,6 +14,8 @@ public:
 	RGBA	GetTexel(int idx) const;
 	void	SetTexel( int x, int y, const RGBA& color );
 
+	RGBA GetTexelAtUVS(Vector2 uvs) const;
+
 	RGBA*	GetBuffer(int x, int y);
 	IntVector2 GetDimensions() const;
 	void* GetImageData() const;

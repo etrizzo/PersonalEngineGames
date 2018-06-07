@@ -35,7 +35,7 @@ float StopWatch::GetElapsedTime()
 float StopWatch::GetNormalizedElapsedTime()
 {
 	float elapsed = GetElapsedTime();
-	return (elapsed / (PerformanceCountToSeconds(m_intervalHPC)));
+	return (elapsed / (float) (PerformanceCountToSeconds(m_intervalHPC)));
 }
 
 bool StopWatch::HasElapsed()

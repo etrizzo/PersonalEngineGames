@@ -34,7 +34,7 @@ class Map{
 public:
 	Map(){}
 	~Map();
-	Map(std::string imageFile, AABB2 const &extents = AABB2(Vector2::ZERO, Vector2::ONE * 100.f), float minHeight = 0.f, float maxHeight = 5.f, IntVector2 chunks = IntVector2(5,5));
+	Map(std::string imageFile, AABB2 const &extents = AABB2(Vector2::ZERO, Vector2::ONE * 100.f), float minHeight = 0.f, float maxHeight = 5.f, IntVector2 chunks = IntVector2(5,5), float tilesPerChunk = 10.f);
 
 	std::string m_name;
 	//MapDefinition* m_definition;
@@ -67,7 +67,7 @@ public:
 	//Tile  GetRandomTileOfType(TileDefinition* tileType) const;
 	//Tile  GetRandomBaseTile() const;
 
-	bool HasLineOfSight(const Vector2& startPos, const Vector2& endPos, float maxDistance = 20.f);
+	//bool HasLineOfSight(const Vector2& startPos, const Vector2& endPos, float maxDistance = 20.f);
 	//RaycastResult2D Map::Raycast(const Vector2& startPos, const Vector2& direction, float maxDistance) ;
 
 	//void AddEntityToMap(Entity* entity);

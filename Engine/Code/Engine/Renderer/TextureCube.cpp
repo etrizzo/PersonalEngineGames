@@ -155,7 +155,7 @@ bool TextureCube::MakeFromImage(Image & image)
 	unsigned int size = width / 4; 
 
 	// make sure it is the type I think it is; 
-	ASSERT_OR_DIE( image.GetDimensions().y == (size * 3), "Invalid skybox format" ); 
+	ASSERT_OR_DIE( (unsigned int) image.GetDimensions().y == (size * 3), "Invalid skybox format" ); 
 
 	if (m_handle == NULL) {
 		glGenTextures( 1, &m_handle ); 

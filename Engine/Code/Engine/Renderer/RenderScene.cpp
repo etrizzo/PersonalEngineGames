@@ -29,7 +29,7 @@ void RenderScene::AddParticleSystem(ParticleSystem * ps)
 
 void RenderScene::RemoveCamera(Camera * c)
 {
-	for (int i = 0; i < m_cameras.size(); i++){
+	for (int i = 0; i < (int) m_cameras.size(); i++){
 		if (m_cameras[i] == c){
 			RemoveAtFast(m_cameras, i);
 			break;
@@ -117,7 +117,7 @@ void RenderScene::AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotati
 
 void RenderScene::RemoveLight(int idx)
 {
-	if (m_lights.size() > idx){
+	if ((int) m_lights.size() > idx){
 		if (m_lights.size() > 1){
 			Light* del = m_lights[idx];
 			m_lights[idx] = m_lights[m_lights.size()-1];
@@ -146,7 +146,7 @@ void RenderScene::SetLightColor(Vector4 newColor, unsigned int idx)
 
 void RenderScene::SetLightAttenuation(int lightIndex, Vector3 att)
 {
-	if (lightIndex < m_lights.size()){
+	if (lightIndex < (int) m_lights.size()){
 		m_lights[lightIndex]->SetAttenuation(att);
 	}
 }

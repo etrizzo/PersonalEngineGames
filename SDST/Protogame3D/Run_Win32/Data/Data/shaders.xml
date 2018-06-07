@@ -42,7 +42,7 @@
 </shader>
 
 <shader name="skybox" cull="front" fill="solid" frontface="ccw" blend = "alpha">
-	<program id="default" />
+	<program id="skybox" />
 	<depth write="false" test="always"/>
 </shader>
 

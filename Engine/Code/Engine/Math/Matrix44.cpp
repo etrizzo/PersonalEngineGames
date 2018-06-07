@@ -364,7 +364,7 @@ Matrix44 Matrix44::MakeOrtho3D(const Vector3 & nearBottomLeft, const Vector3 & f
 Matrix44 Matrix44::MakePerspectiveProjection(float fov_degrees, float aspect, float nz, float fz)
 {
 	float d = 1.0f / tanf(fov_degrees * .5f);
-	d = fabs(d);
+	d = (float) fabs(d);
 	float q = 1.0f / (fz - nz); 
 
 	Vector4 i = Vector4( d / aspect, 0,    0,                   0 );  

@@ -406,7 +406,7 @@ void DebugRenderSystem::Render3D()
 			g_theRenderer->BindModel(Matrix44::IDENTITY);
 			RenderScene* scene = g_theGame->GetScene();
 			if (scene != nullptr){
-				for(int i = 0; i < scene->m_lights.size(); i++){
+				for(int i = 0; i < (int) scene->m_lights.size(); i++){
 					//if (i >= (int) g_theGame->m_scene->m_lights.size()){
 					//	break;
 					//}

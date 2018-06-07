@@ -29,7 +29,7 @@ void RenderScene2D::AddCamera(Camera * c)
 
 void RenderScene2D::RemoveCamera(Camera * c)
 {
-	for (int i = 0; i < m_cameras.size(); i++){
+	for (int i = 0; i < (int) m_cameras.size(); i++){
 		if (m_cameras[i] == c){
 			RemoveAtFast(m_cameras, i);
 			break;

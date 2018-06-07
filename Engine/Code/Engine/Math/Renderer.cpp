@@ -455,7 +455,6 @@ void Renderer::DrawMesh(SubMesh * mesh)
 	//--------------------------------------------------------------------------------------------------------------
 
 
-	TODO("bind elements for the draw call (matrices, etc. using bind attributes/ bind layout)");
 	GLenum primitive = GetGLPrimitiveType(mesh->GetPrimitiveType());
 	GL_CHECK_ERROR();
 	if (mesh->UsesIndices()){
@@ -463,8 +462,6 @@ void Renderer::DrawMesh(SubMesh * mesh)
 		glDrawElements(primitive, mesh->GetElementCount(), GL_UNSIGNED_INT, 0);		//is this the correct call?? @GL_ARRAY_BUFFER
 	} else {
 		GL_CHECK_ERROR();
-		int elementCount = mesh->GetElementCount();
-		int startIndex = mesh->GetStartIndex();
 		glDrawArrays( primitive, mesh->GetStartIndex(), mesh->GetElementCount());
 	}
 }
@@ -731,7 +728,6 @@ void Renderer::DrawShapeFromVertices2(Vector2 vertices[], int numVertices, RGBA 
 			//DrawLine(vertices[i], vertices[((i+1)%numVertices)], color, color);
 		}
 
-		 Vertex3D_PCU* vertArray = &vertsVector[0];
 		DrawMeshImmediate(vertsVector.data(), (int) vertsVector.size(), PRIMITIVE_LINES);
 	}
 	
@@ -740,6 +736,8 @@ void Renderer::DrawShapeFromVertices2(Vector2 vertices[], int numVertices, RGBA 
 
 void Renderer::BeginFrame(const Vector2 & bottomLeft, const Vector2 & topRight, RGBA color)
 {
+	UNUSED(bottomLeft);
+	UNUSED(topRight);
 	ReleaseTexture();
 	SetAlphaBlending();
 	UseShaderProgram(m_defaultShader->m_program);

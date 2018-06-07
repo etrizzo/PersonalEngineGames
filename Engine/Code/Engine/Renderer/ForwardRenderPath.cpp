@@ -32,7 +32,7 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 	//now we want to generate the draw calls
 	for(Renderable* r : scene->m_renderables){
 		//this will change for multi-pass shaders or multi-material meshes
-		for (int i = 0; i < r->m_mesh->m_subMeshes.size(); i++){
+		for (int i = 0; i < (int) r->m_mesh->m_subMeshes.size(); i++){
 			DrawCall dc;
 			//set up the draw call for this renderable :)
 			// the layer/queue comes from the shader!
@@ -76,16 +76,16 @@ void ForwardRenderPath::ComputeMostContributingLights(DrawCall & drawCall, const
 {
 	if (lights.size() <= MAX_LIGHTS){
 		for(int i = 0; i < MAX_LIGHTS; i++){
-			if (i < lights.size()){
+			if (i < (int) lights.size()){
 				drawCall.m_lights[i] = lights[i];
 			}
 		}
 	} else {
 		//sort lights array by light factor
 		
-		for (int i = 1; i < lights.size(); i ++){
+		for (int i = 1; i < (int) lights.size(); i ++){
 			bool sorted = false;
-			for (int j = i; j < lights.size(); j++){
+			for (int j = i; j < (int) lights.size(); j++){
 				sorted = true;
 				Light* light = lights[j];
 				Light* prevLight = lights[j-1];
@@ -113,9 +113,9 @@ void ForwardRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls, Camera* 
 {
 	Vector3 camPos = cam->GetPosition();
 	//sort by sort layer
-	for (int i = 1; i < drawCalls.size(); i ++){
+	for (int i = 1; i < (int) drawCalls.size(); i ++){
 		bool sorted = false;
-		for (int j = i; j < drawCalls.size(); j++){
+		for (int j = i; j < (int) drawCalls.size(); j++){
 			sorted = true;
 			DrawCall dc = drawCalls[j];
 			DrawCall prevDC = drawCalls[j-1];

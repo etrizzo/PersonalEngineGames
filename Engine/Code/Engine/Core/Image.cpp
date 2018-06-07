@@ -60,6 +60,13 @@ void Image::SetTexel(int x, int y, const RGBA & color)
 	m_texels[texelIndex] = color;
 }
 
+RGBA Image::GetTexelAtUVS(Vector2 uvs) const
+{
+	Vector2 coordFloat  = Vector2( uvs.x * (float)GetDimensions().x, uvs.y * (float) GetDimensions().y);
+	IntVector2 coords = IntVector2((int)floor(coordFloat.x), (int)floor(coordFloat.y));
+	return GetTexel(coords.x, coords.y);
+}
+
 RGBA * Image::GetBuffer(int x, int y)
 {
 	int texIndex = GetIndexFromCoordinates(x, y,  m_dimensions.x, m_dimensions.y);

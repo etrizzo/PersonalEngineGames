@@ -153,7 +153,7 @@ RGBA DefaultSpawnColor()
 
 RGBA DefaultColor(float t)
 {
-	return RGBA::WHITE.GetColorWithAlpha((int) (255.f * (1.f - t)));
+	return RGBA::WHITE.GetColorWithAlpha((unsigned char) (255.f * (1.f - t)));
 }
 
 float DefaultLifetime()
