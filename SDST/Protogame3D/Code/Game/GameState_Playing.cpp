@@ -165,7 +165,9 @@ void GameState_Playing::HandleInput()
 		m_specAmount = ClampFloat(m_specAmount, 0.f, 1.f);
 	}
 
-	m_player->HandleInput();
+	if (!g_theGame->m_debugRenderSystem->m_isDetached){
+		m_player->HandleInput();
+	}
 }
 
 
