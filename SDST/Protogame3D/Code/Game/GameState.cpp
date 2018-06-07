@@ -79,7 +79,7 @@ void GameState_Attract::Update(float ds)
 	int selection = m_mainMenu->GetFrameSelection();
 	if (selection != -1){
 		if (selection == 0){
-			g_theGame->TransitionToState(g_theGame->m_playState);
+			g_theGame->TransitionToState(new GameState_Select());
 		}
 		if (selection == 1){
 			CommandQuit(Command("text"));
@@ -127,6 +127,63 @@ void GameState_Attract::HandleInput()
 		GetMasterClock()->SetScale(1.f);
 	}
 }
+
+
+GameState_Select::GameState_Select()
+{
+	if (g_theGame != nullptr){
+		AABB2 box = g_theGame->GetUIBounds();
+		m_selectMenu = new Menu(box.GetPercentageBox(Vector2(.3f, .4f), Vector2(.7f, .6f)));
+		m_selectMenu->AddOption("Press A", 0, true);
+	}
+	
+}
+
+void GameState_Select::Update(float ds)
+{
+	m_timeInState+=ds;
+	int selection = m_selectMenu->GetFrameSelection();
+	if (selection != -1){
+		if (selection == 0){
+			g_theGame->TransitionToState(g_theGame->m_playState);
+		}
+	}
+}
+
+void GameState_Select::RenderUI()
+{
+	
+
+	AABB2 UIBounds = g_theGame->SetUICamera();
+	g_theRenderer->DrawAABB2(UIBounds, RGBA(64, 64, 0));
+	m_selectMenu->Render();
+
+	g_theGame->SetGameCamera();
+}
+
+void GameState_Select::HandleInput()
+{
+
+	m_selectMenu->HandleInput();
+
+	if (g_theInput->WasKeyJustPressed('T')){
+		g_theGame->m_gameClock->SetScale(.1f);
+	}
+	if (g_theInput->WasKeyJustReleased('T')){
+		g_theGame->m_gameClock->SetScale(1.f);
+	}
+
+	if (g_theInput->WasKeyJustPressed('Y')){
+		GetMasterClock()->SetScale(.1f);
+	}
+	if (g_theInput->WasKeyJustReleased('Y')){
+		GetMasterClock()->SetScale(1.f);
+	}
+	if (BackJustPressed()){
+		g_theGame->TransitionToState(new GameState_Attract());
+	}
+}
+
 
 
 

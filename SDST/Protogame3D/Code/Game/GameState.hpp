@@ -54,6 +54,15 @@ public:
 	void HandleInput();
 };
 
+class GameState_Select: public GameState{
+public:
+	GameState_Select();
+	Menu* m_selectMenu;
+	void Update(float ds);
+	void RenderUI();
+	void HandleInput();
+};
+
 
 
 
