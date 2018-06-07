@@ -36,6 +36,9 @@ public:
 	AABB2 GetPercentageBox(float xPercentMin, float yPercentMin, float xPercentMax,  float yPercentMax);
 	AABB2 GetPercentageBox(Vector2 minPercentages, Vector2 maxPercentages);
 
+	//gets percentage into the box the point is
+	Vector2 GetPercentageOfPoint(Vector2 point);
+
 
 	//Accessors/queries
 	bool IsPointInside(float x, float y) const;

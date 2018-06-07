@@ -1,5 +1,6 @@
 #include "Game/Player.hpp"
 #include "Game/Game.hpp"
+#include "Game/Map.hpp"
 #include "Game/DebugRenderSystem.hpp"
 
 Player::Player(Vector3 position)
@@ -54,12 +55,12 @@ void Player::HandleInput()
 	if (g_theInput->IsKeyDown(VK_DOWN)){
 		rotation.x -=1.f;
 	}
-	if (g_theInput->IsKeyDown(VK_RIGHT)){
-		rotation.y += 1.f;
-	}
-	if (g_theInput->IsKeyDown(VK_LEFT)){
-		rotation.y -=1.f;
-	}
+	//if (g_theInput->IsKeyDown(VK_RIGHT)){
+	//	rotation.y += 1.f;
+	//}
+	//if (g_theInput->IsKeyDown(VK_LEFT)){
+	//	rotation.y -=1.f;
+	//}
 
 	Vector2 controllerRotation = g_theInput->GetController(0)->GetRightThumbstickCoordinates();
 	rotation+=Vector3(controllerRotation.y, controllerRotation.x, 0.f);
@@ -104,12 +105,12 @@ void Player::HandleInput()
 
 void Player::SetWorldPosition()
 {
-	Vector3 pos = Vector3(m_positionXZ.x, GetHeightAtCurrentPos(), m_positionXZ.y);
+	Vector3 pos = Vector3(m_positionXZ.x, GetHeightAtCurrentPos() + 1.f, m_positionXZ.y);
 	SetPosition(pos);
 }
 
 float Player::GetHeightAtCurrentPos()
 {
-	return 0.0f;
+	return g_theGame->m_currentMap->GetHeightAtCoord(m_positionXZ);
 }
 

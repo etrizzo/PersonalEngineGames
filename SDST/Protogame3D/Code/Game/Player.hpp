@@ -11,7 +11,7 @@ public:
 
 	void HandleInput();
 
-	Vector3 m_positionXZ;
+	Vector2 m_positionXZ;
 	float m_speed			= 10.f;
 	float m_degPerSecond	= 30.f;
 	StopWatch m_rateOfFire;

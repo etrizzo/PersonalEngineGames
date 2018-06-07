@@ -158,6 +158,17 @@ AABB2 AABB2::GetPercentageBox(Vector2 minsPercentages, Vector2 maxsPercentages)
 	return newBox;
 }
 
+Vector2 AABB2::GetPercentageOfPoint(Vector2 point)
+{
+	float width = GetWidth();
+	float height = GetHeight();
+	Vector2 offset = point - mins;
+	if (width != 0 && height != 0){
+		return Vector2 (offset.x / width, offset.y / height);
+	}
+	return Vector2::ZERO;
+}
+
 bool AABB2::IsPointInside(float x, float y) const
 {
 	if (x <= maxs.x && x >= mins.x){

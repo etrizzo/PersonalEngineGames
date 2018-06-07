@@ -1,6 +1,6 @@
 #include "Game.hpp"
 #include "Game/TileDefinition.hpp"
-#include "Game/MapDefinition.hpp"
+#include "Game/Map.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Game/Entity.hpp"
@@ -65,7 +65,6 @@ void Game::PostStartup()
 	m_currentMap = nullptr;
 	m_playState = new GameState_Playing();
 
-	LoadMapDefinitions();
 	m_debugRenderSystem = new DebugRenderSystem();
 	DebugStartup();
 	m_debugRenderSystem->ToggleInfo();
@@ -73,6 +72,7 @@ void Game::PostStartup()
 	//m_debugRenderSystem->DetachCamera();
 
 	m_currentState = new GameState_Attract();
+	m_currentMap = new Map("Heightmap.png");
 
 
 	
@@ -338,20 +338,7 @@ void Game::LoadTileDefinitions()
 
 }
 
-void Game::LoadMapDefinitions()
-{
-	tinyxml2::XMLDocument mapDefDoc;
-	mapDefDoc.LoadFile("Data/Data/Maps.xml");
 
-
-	tinyxml2::XMLElement* root = mapDefDoc.FirstChildElement("MapDefinitions");
-	for (tinyxml2::XMLElement* tileDefElement = root->FirstChildElement("MapDefinition"); tileDefElement != NULL; tileDefElement = tileDefElement->NextSiblingElement("MapDefinition")){
-		//had to make make MapDefinition take in pointer because was getting inaccessible error when trying to derference
-		MapDefinition* newDefinition = new MapDefinition(tileDefElement);
-
-		MapDefinition::s_definitions.insert(std::pair<std::string, MapDefinition*>(newDefinition->m_name, newDefinition));
-	}
-}
 
 void Game::RenderGame()
 {

@@ -23,6 +23,9 @@ Image::Image(const std::string & imageFilePath)
 	//	const char* failurereason = stbi_failure_reason();
 	//	throw (failurereason);
 	//}
+	if(numComponents == 1){
+		PopulateFromR8(imageData, m_dimensions);
+	}
 
 	if (numComponents == 3){
 		PopulateFromRGB(imageData, m_dimensions);
@@ -83,6 +86,20 @@ void Image::FlipY()
 			RGBA newColor = tempTexels[GetIndexFromCoordinates(flippedCoords, m_dimensions)];
 			SetTexel(x,y,newColor);
 		}
+	}
+}
+
+void Image::PopulateFromR8(unsigned char * imageData, IntVector2 dimensions)
+{
+	int arraySize = dimensions.x * dimensions.y;
+	m_texels.resize(dimensions.x * dimensions.y);
+	int texelIndex = 0;
+	for (int byteIndex = 0; byteIndex < arraySize; byteIndex++){
+		unsigned char r = imageData[byteIndex];
+		unsigned char g = imageData[byteIndex];
+		unsigned char b = imageData[byteIndex];
+		texelIndex = byteIndex;
+		m_texels[texelIndex] = RGBA(r,g,b,(unsigned char) 255);
 	}
 }
 

@@ -96,7 +96,6 @@ public:
 
 private:
 	void LoadTileDefinitions();
-	void LoadMapDefinitions();
 
 	void RenderGame();
 	void RenderUI();

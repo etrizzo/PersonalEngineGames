@@ -31,7 +31,7 @@ GameState_Playing::GameState_Playing()
 	m_particleSystem->CreateEmitter(Vector3(0.f, 4.f, 0.f));
 	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
 
-	m_scene->AddRenderable(m_particleSystem->m_emitters[0]->m_renderable);
+	//m_scene->AddRenderable(m_particleSystem->m_emitters[0]->m_renderable);
 	m_scene->AddRenderable(m_player->m_renderable);
 
 

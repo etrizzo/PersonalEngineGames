@@ -24,6 +24,7 @@ private:
 	IntVector2		m_dimensions;
 	std::vector< RGBA >	m_texels; // ordered left-to-right, then down, from [0]=(0,0) at top-left
 
+	void PopulateFromR8(unsigned char* imageData, IntVector2 dimensions);
 	void PopulateFromRGB(unsigned char* imageData, IntVector2 dimensions);
 	void PopulateFromRGBA(unsigned char* imageData, IntVector2 dimensions);
 
