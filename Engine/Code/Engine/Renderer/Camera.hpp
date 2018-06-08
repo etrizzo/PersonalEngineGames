@@ -30,6 +30,8 @@ public:
 	void RotateAroundY(float y);
 	void RotateAroundZ(float z);
 
+	void AddSkybox(const char* skyboxTexture);
+
 
 	
 
@@ -62,6 +64,8 @@ public:
 	AABB2 m_bounds;
 
 	SubMesh* m_debugmesh;
+	Skybox* m_skybox = nullptr;
+	RGBA m_clearColor = RGBA::BLACK;
 
 private:
 	Matrix44 m_viewMatrix;    // inverse of camera (used for shader)

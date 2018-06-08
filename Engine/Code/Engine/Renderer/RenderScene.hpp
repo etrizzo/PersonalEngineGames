@@ -16,13 +16,11 @@ public:
 	void AddRenderable(Renderable *r);
 	void AddLight(Light * l);
 	void AddCamera(Camera* c);	//optional?
-	void AddSkybox(Skybox* s);
 	void AddParticleSystem(ParticleSystem* ps);
 
 	void RemoveCamera(Camera* c);
 	void RemoveRenderable(Renderable* r);
 	void RemoveLight(Light* l);
-	void RemoveSkybox();
 
 	void SortCameras(){};		//todo
 
@@ -46,7 +44,6 @@ public:
 	std::vector<Camera*> m_cameras; 		//or could just have one camera
 	std::vector<ParticleSystem*> m_particleSystems;
 
-	Skybox* m_skybox = nullptr;		//optional
 	// //for particle emitters splitscreen
 	// std::vector<CameraPreRenderCB> m_preRenders;
 };

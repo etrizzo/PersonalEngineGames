@@ -156,7 +156,12 @@ void DebugRenderSystem::SetCamera()
 
 void DebugRenderSystem::AddCurrent3DTask()
 {
-	Vector3 drawPos = m_camera->GetPosition() + (m_camera->GetForward() * 5.f);
+	Vector3 drawPos;
+	if (m_camera != nullptr){
+		drawPos = m_camera->GetPosition() + (m_camera->GetForward() * 5.f);
+	} else {
+		drawPos = g_theGame->m_currentCamera->GetPosition() + (g_theGame->m_currentCamera->GetForward() * 5.f);
+	}
 
 	switch (m_current3DTask){
 	case RENDER_TASK_POINT:
@@ -398,7 +403,7 @@ void DebugRenderSystem::Render3D()
 			//draw the camera
 			
 			g_theRenderer->UseShader("wireframe");
-			g_theRenderer->BindModel(m_gameCamera->m_transform.GetLocalMatrix());
+			g_theRenderer->BindModel(m_gameCamera->m_transform.GetWorldMatrix());
 			g_theRenderer->DrawMesh(m_gameCamera->GetDebugMesh());
 				
 			g_theRenderer->ReleaseShader();

@@ -24,6 +24,7 @@ Texture::Texture( const std::string& imageFilePath )
 	, m_dimensions( 0, 0 )
 {
 	Image* texImage = new Image(imageFilePath);
+	texImage->FlipY();
 	PopulateFromImage(texImage);
 	m_path = imageFilePath;
 }
@@ -85,7 +86,7 @@ void Texture::PopulateFromImage(const Image * image)
 
 	if (m_dimensions.x == 0 && m_dimensions.y == 0){
 		TODO("Make an invalid texture");
-		std::vector<RGBA> invalid = {RGBA::WHITE};
+		std::vector<RGBA> invalid = {RGBA::MAGENTA, RGBA::BLACK, RGBA::BLACK, RGBA::MAGENTA};
 		image = new Image(invalid, IntVector2(1,1));
 	}
 

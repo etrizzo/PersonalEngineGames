@@ -15,14 +15,8 @@ Image::Image(const std::string & imageFilePath)
 									// Load (and decompress) the image RGB(A) bytes from a file on disk, and create an OpenGL texture instance from it
 	unsigned char* imageData = stbi_load( imageFilePath.c_str(), &m_dimensions.x, &m_dimensions.y, &numComponents, numComponentsRequested );
 
-	//if(imageData == nullptr) {
-	//	wchar_t result[ MAX_PATH ];
-	//	GetCurrentDirectory(MAX_PATH,result);
-	//	//GetModuleFileName(NULL, result, NULL);
-	//	//std::string( result, GetModuleFileName( NULL, result, MAX_PATH ) );
-	//	const char* failurereason = stbi_failure_reason();
-	//	throw (failurereason);
-	//}
+	ASSERT_OR_DIE(imageData != nullptr, "No image found: " + imageFilePath);
+
 	if(numComponents == 1){
 		PopulateFromR8(imageData, m_dimensions);
 	}
@@ -33,7 +27,7 @@ Image::Image(const std::string & imageFilePath)
 	if (numComponents == 4){
 		PopulateFromRGBA(imageData, m_dimensions);
 	}
-	FlipY();
+	//FlipY();
 	stbi_image_free( imageData );
 }
 
@@ -70,7 +64,6 @@ RGBA Image::GetTexelAtUVS(Vector2 uvs) const
 RGBA * Image::GetBuffer(int x, int y)
 {
 	int texIndex = GetIndexFromCoordinates(x, y,  m_dimensions.x, m_dimensions.y);
-	//int texIndex = GetIndexFromCoordinates(x,m_dimensions.y - y - 1,m_dimensions.x, m_dimensions.y);
 	return &(m_texels[texIndex]);
 }
 

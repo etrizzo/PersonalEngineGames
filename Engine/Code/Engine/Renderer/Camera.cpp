@@ -104,6 +104,11 @@ void Camera::RotateAroundZ(float z)
 	Rotate(Vector3(0.f,0.f,z));
 }
 
+void Camera::AddSkybox(const char* skyboxTexture)
+{
+	m_skybox = new Skybox(skyboxTexture);
+}
+
 
 bool Camera::Finalize()
 {

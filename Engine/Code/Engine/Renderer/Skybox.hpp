@@ -8,10 +8,10 @@ class Camera;
 //just a container for everything
 class Skybox {
 public:
-	Skybox(Camera* cam, const char* fileName);
+	Skybox(const char* fileName);
 	~Skybox(){};
 
-	void Update(Camera* cam);
+	void Update();
 
 	TextureCube m_texCube;
 	Mesh* m_mesh;

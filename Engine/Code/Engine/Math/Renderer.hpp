@@ -109,7 +109,7 @@ public:
 
 	void BindMaterial(Material* mat);
 
-	void BindSkybox(Skybox* skybox, Camera* cam);
+	void DrawSkybox(Skybox* skybox);
 
 	//should maybe be removed?
 	void BindProjection();

@@ -12,3 +12,10 @@ float DrawCall::GetDistance(Vector3 pos)
 	Vector3 myPos = m_model.GetPosition();
 	return (pos - myPos).GetLength();
 }
+
+void DrawCall::SetLights(Light * lights[MAX_LIGHTS])
+{
+	for (int i = 0; i < MAX_LIGHTS; i++){
+		m_lights[i] = lights[i];
+	}
+}

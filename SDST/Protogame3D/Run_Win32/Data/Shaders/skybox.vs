@@ -17,13 +17,13 @@ void main( void )
    // 1, since I don't want to translate
    vec4 local_pos = vec4( POSITION, 0.0f );	
 
-   vec4 world_pos = local_pos * MODEL; // assume local is world for now; 
+   vec4 world_pos = MODEL * local_pos ; // assume local is world for now; 
    passWorldPosition = world_pos.xyz;
 
-   vec4 camera_pos = local_pos * VIEW; 
+   vec4 camera_pos = VIEW * local_pos; 
 
    // projection relies on a 1 being present, so add it back
-   vec4 clip_pos = vec4(camera_pos.xyz, 1) * PROJECTION; 
+   vec4 clip_pos = PROJECTION * vec4(camera_pos.xyz, 1) ; 
 
    // we only render where depth is 1.0 (equal, ie, where have we not drawn)
    // so z needs to be one for all these

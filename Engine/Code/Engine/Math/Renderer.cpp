@@ -636,10 +636,10 @@ void Renderer::BindMaterial(Material * mat)
 	}
 }
 
-void Renderer::BindSkybox(Skybox * skybox, Camera* cam)
+void Renderer::DrawSkybox(Skybox * skybox)
 {
 	BindMaterial(Material::GetMaterial("skybox"));
-	BindModel(cam->m_transform.GetLocalMatrix());
+	BindModel(skybox->m_transform.GetWorldMatrix());
 	BindTextureCube(skybox->m_texCube, 8);
 	GL_CHECK_ERROR();
 	DrawMesh(skybox->m_mesh->m_subMeshes[0]);

@@ -3,35 +3,34 @@
 void ForwardRenderPath::Render(RenderScene * scene)
 {
 	scene->SortCameras();
-	//for (Camera* cam : scene->m_cameras){
-	//	RenderSkybox(cam, scene);
-	//	RenderSceneForCamera(cam, scene);
-	//}
-	RenderSkybox(scene->m_cameras[0], scene);
-	RenderSceneForCamera(scene->m_cameras[0], scene);
-	m_renderer->ReleaseTexture(0);
-	m_renderer->ReleaseTexture(1);
 
-	m_renderer->ReleaseShader();
+	for (Camera* cam : scene->m_cameras){
+		RenderSceneForCamera(cam, scene);
+	}
 }
 
 void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 {
 	
 	//now that we know which camera to render from, we can set it
-	m_renderer->BindCamera(cam);			//could just use the global one
+	m_renderer->BindCamera(cam);
 
-											//may want to clear color/depth, set based on the camera's settings
-											// i.e., are we clearing to a color? skybox?
-	//ClearBasedOnCameraOptions();
+	//clear color/depth, based on the camera's settings
+	// i.e., are we clearing to a color? sky box?
+	ClearForCamera(cam);
 
 	for (ParticleSystem* s : scene->m_particleSystems){
 		s->PreRenderForCamera(cam);
 	}
+
 	std::vector<DrawCall> drawCalls;
-	//now we want to generate the draw calls
+	// generate the draw calls
 	for(Renderable* r : scene->m_renderables){
 		//this will change for multi-pass shaders or multi-material meshes
+		Light* lights[MAX_LIGHTS];
+		if (r->GetEditableMaterial()->UsesLights()){
+			ComputeMostContributingLights(lights, r->GetPosition(), scene->m_lights);
+		}
 		for (int i = 0; i < (int) r->m_mesh->m_subMeshes.size(); i++){
 			DrawCall dc;
 			//set up the draw call for this renderable :)
@@ -41,12 +40,10 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 			dc.m_material = r->GetEditableMaterial(i);
 			dc.m_layer = r->GetEditableMaterial()->m_shader->m_sortLayer;
 			dc.m_queue = 0;
-
 			if (r->GetEditableMaterial(i)->UsesLights()){
-				//compute most contributing lights based on renderable's position and puts them in the draw calls lights
-				ComputeMostContributingLights(dc,
-					r->GetPosition(), scene->m_lights);
+				dc.SetLights(lights);
 			}
+			//add the draw call to your list of draw calls
 			drawCalls.push_back(dc);
 		}
 	}
@@ -72,12 +69,14 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 	//m_renderer->FinishEffects();
 }
 
-void ForwardRenderPath::ComputeMostContributingLights(DrawCall & drawCall, const Vector3 & position, std::vector<Light*>& lights)
+void ForwardRenderPath::ComputeMostContributingLights(Light* (&lightarray)[8], const Vector3 & position, std::vector<Light*>& lights)
 {
 	if (lights.size() <= MAX_LIGHTS){
 		for(int i = 0; i < MAX_LIGHTS; i++){
 			if (i < (int) lights.size()){
-				drawCall.m_lights[i] = lights[i];
+				lightarray[i] = lights[i];
+			} else {
+				lightarray[i] = new Light();
 			}
 		}
 	} else {
@@ -104,7 +103,7 @@ void ForwardRenderPath::ComputeMostContributingLights(DrawCall & drawCall, const
 
 		//fill the drawcall's light array with the MAX_LIGHTS closest
 		for(int i = 0; i < MAX_LIGHTS; i++){
-			drawCall.m_lights[i] = lights[i];
+			lightarray[i] = lights[i];
 		}
 	}
 }
@@ -142,19 +141,29 @@ void ForwardRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls, Camera* 
 	}
 }
 
+void ForwardRenderPath::ClearForCamera(Camera * cam)
+{
+	if (cam->m_skybox != nullptr){
+		RenderSkybox(cam);
+	} 
+	/*else {
+		m_renderer->ClearScreen(cam->m_clearColor);
+	}*/
+}
+
 float ForwardRenderPath::GetLightFactor(Light * l, Vector3 position)
 {
 	float dist = (l->GetPosition() - position).GetLength();
-	return dist;
-	//return l->GetAttenuation(dist);
+	//return dist;
+	return l->GetAttenuation(dist);
 }
 
-void ForwardRenderPath::RenderSkybox(Camera * cam, RenderScene * scene)
+void ForwardRenderPath::RenderSkybox(Camera * cam)
 {
-	if (scene->m_skybox != nullptr){
-		scene->m_skybox->Update(cam);
+	if (cam->m_skybox != nullptr){
+		cam->m_skybox->Update();
 		//m_renderer->BindModel(cam->m_transform.GetWorldMatrix());
-		m_renderer->BindSkybox(scene->m_skybox, cam);
+		m_renderer->DrawSkybox(cam->m_skybox);
 	}
 }
 

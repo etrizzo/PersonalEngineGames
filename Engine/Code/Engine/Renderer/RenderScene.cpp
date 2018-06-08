@@ -16,11 +16,6 @@ void RenderScene::AddCamera(Camera * c)
 	m_cameras.push_back(c);
 }
 
-void RenderScene::AddSkybox(Skybox * s)
-{
-	m_skybox = s;
-}
-
 void RenderScene::AddParticleSystem(ParticleSystem * ps)
 {
 	m_particleSystems.push_back(ps);
@@ -56,10 +51,6 @@ void RenderScene::RemoveLight(Light * l)
 	}
 }
 
-void RenderScene::RemoveSkybox()
-{
-	m_skybox = nullptr;
-}
 
 void RenderScene::AddNewLight(std::string type, Vector3 pos, RGBA color)
 {

@@ -24,7 +24,9 @@ public:
 
 private:
 	IntVector2		m_dimensions;
+	//optimization would be to just store imagedata returned from STBI and pull texel data as needed
 	std::vector< RGBA >	m_texels; // ordered left-to-right, then down, from [0]=(0,0) at top-left
+	int m_numComponents;
 
 	void PopulateFromR8(unsigned char* imageData, IntVector2 dimensions);
 	void PopulateFromRGB(unsigned char* imageData, IntVector2 dimensions);

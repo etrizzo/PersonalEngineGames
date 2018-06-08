@@ -44,8 +44,7 @@ GameState_Playing::GameState_Playing()
 
 	m_scene->AddCamera(g_theGame->m_currentCamera);
 	g_theGame->m_mainCamera->m_transform.SetParent(&m_player->m_renderable->m_transform);
-	Skybox* skybox = new Skybox(g_theGame->m_mainCamera, "skybox.png");
-	m_scene->AddSkybox(skybox);
+	g_theGame->m_mainCamera->AddSkybox("skybox.png");
 }
 
 void GameState_Playing::Update(float ds)

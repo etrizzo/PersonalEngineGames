@@ -1,18 +1,19 @@
 #include "Engine/Renderer/Skybox.hpp"
 #include "Engine/Renderer/Camera.hpp"
 
-Skybox::Skybox(Camera * cam, const char* fileName)
+Skybox::Skybox( const char* fileName)
 	:m_texCube(fileName)
 {
 	m_mesh = CreateCubeMesh(Vector3::ZERO, Vector3::ONE, RGBA::WHITE);
 	m_transform = Transform();
-	m_transform.SetLocalPosition(cam->GetPosition());
-	m_transform.RotateByEuler(Vector3(180.f,0.f,0.f));
+	//m_transform.RotateByEuler(Vector3(180.f,0.f,0.f));	//flips the skybox but faster than by pixel
 }
 
-void Skybox::Update(Camera* cam)
+void Skybox::Update()
 {
-	//m_transform = cam->m_t
-	m_transform.SetLocalPosition(cam->GetPosition());
+	//cool effects go here someday	
+	/*float ds = GetMasterClock()->GetDeltaSeconds();
+	m_transform.RotateByEuler(Vector3(0.f,0.f,20.f) * ds);*/
+	
 }
 

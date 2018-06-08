@@ -196,9 +196,12 @@ void Transform::LookAt(const Vector3 & position, const Vector3 & target, const V
 
 void Transform::SetParent(Transform * t)
 {
+
 	m_parent = t;
-	t->AddChild(this);
-	UpdateWorldMatrix();
+	if (t != nullptr){
+		t->AddChild(this);
+		UpdateWorldMatrix();
+	}
 }
 
 void Transform::AddChild(Transform * t)

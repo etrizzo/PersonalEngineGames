@@ -16,5 +16,6 @@ void main( void )
    vec3 normal = normalize(passWorldPosition); 
    vec4 tex_color = texture( gTexSky, normal ); 
 
+   //outColor =  vec4( (normal + vec3(1.0)) * .5, 1.0);
    outColor = tex_color * passColor;
 }
