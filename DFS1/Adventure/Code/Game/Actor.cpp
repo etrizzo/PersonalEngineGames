@@ -5,6 +5,7 @@
 #include "Player.hpp"
 #include "Item.hpp"
 #include "ItemDefinition.hpp"
+#include "Game/DebugRenderSystem.hpp"
 
 Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, float initialRotation)
 	:Entity((EntityDefinition*)definition, entityMap, initialPos, initialRotation)
@@ -27,6 +28,9 @@ void Actor::Update(float deltaSeconds)
 {
 	Entity::Update(deltaSeconds);
 	RunSimpleAI(deltaSeconds);
+	if (g_theGame->m_devMode){
+		g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, Vector3(GetPosition(), 0.f), 1.f);
+	}
 
 }
 

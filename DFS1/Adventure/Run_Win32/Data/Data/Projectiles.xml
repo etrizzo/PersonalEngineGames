@@ -1,7 +1,7 @@
 <ProjectileDefinitions>
 
   <ProjectileDefinition name="Arrow">
-    <Size physicsRadius="0.11" drawRadius="1.5"/>
+    <Size physicsRadius="0.11" drawRadius=".21"/>
     <Movement>
       <Fly speed="5.0"/>
     </Movement>

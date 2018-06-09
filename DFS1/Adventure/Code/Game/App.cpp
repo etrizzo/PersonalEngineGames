@@ -60,6 +60,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 
 void App::RunFrame()
 {
+	ClockSystemBeginFrame();
 	g_theRenderer->BeginFrame(m_bottomLeft, m_topRight, m_backgroundColor);
 	g_theInput->BeginFrame();
 	g_theAudio->BeginFrame();

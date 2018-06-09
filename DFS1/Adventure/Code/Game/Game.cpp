@@ -11,6 +11,7 @@
 #include "Game/VictoryCondition.hpp"
 #include "Engine/Renderer/SpriteAnimSetDef.hpp"
 #include "Engine/Renderer/Camera.hpp"
+#include "Game/DebugRenderSystem.hpp"
 
 #include "Game/Map.hpp"
 #include "Game/Player.hpp"
@@ -78,6 +79,10 @@ Game::Game()
 
 	g_theRenderer->ClearDepth( 1.0f ); 
 	g_theRenderer->EnableDepth( COMPARE_LESS, true );
+	m_debugRenderSystem = new DebugRenderSystem();
+	m_debugRenderSystem->Startup(m_camera);
+	m_debugRenderSystem->ToggleInfo();
+	m_debugRenderSystem->ToggleScreenGrid();
 }
 
 Vector2 Game::GetPlayerPosition() const
@@ -153,6 +158,8 @@ void Game::Render()
 	//g_theRenderer->SetOrtho(m_camera->GetBounds().mins, m_camera->GetBounds().maxs);
 
 	m_currentState->Render();
+
+	m_debugRenderSystem->UpdateAndRender();
 	/*if (m_currentState == STATE_PLAYING){
 		RenderPlaying();
 	}
@@ -462,11 +469,7 @@ void Game::TogglePause()
 
 void Game::ToggleDevMode()
 {
-	if ( !m_devMode){
-		m_devMode = true;
-	} else {
-		m_devMode = false;
-	}
+	m_devMode = !m_devMode;
 }
 
 void Game::TransitionToState(GameState* newState)
@@ -496,7 +499,7 @@ AABB2 Game::SetUICamera()
 	return m_uiCamera->GetBounds();
 }
 
-AABB2 Game::SetMainCamera()
+AABB2 Game::SetGameCamera()
 {
 	g_theRenderer->SetCamera( m_camera ); 
 

@@ -20,6 +20,7 @@ public:
 	float	m_aspectRatio;
 	AABB2	m_boundingBox			= AABB2(0.f,0.f,0.f,0.f);
 	bool	m_drawWithBounds		= false;
+	Vector2 m_pivot					= Vector2::HALF;
 
 	//health
 	int		m_maxHealth				= 1;

@@ -4,6 +4,7 @@
 #include "Game/Map.hpp"
 #include "Game/EntityDefinition.hpp"
 #include "Game/Item.hpp"
+#include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/SpriteAnimSet.hpp"
 
 Entity::~Entity()
@@ -29,6 +30,7 @@ Entity::Entity(EntityDefinition * entityDef, Map * entityMap, Vector2 initialPos
 	m_renderable->m_zOrder = 1;
 	SetPosition(initialPos);
 	m_rotationDegrees = initialRotation;
+	SetRotation(initialRotation);
 
 	m_ageInSeconds = 0.f;
 	//m_texturePath = texture;
@@ -88,6 +90,11 @@ void Entity::Update(float deltaSeconds)
 	m_animSet->Update(deltaSeconds);
 
 	UpdateRenderable();
+	if (g_theGame->m_devMode){
+		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, m_physicsDisc, true , DEBUG_RENDER_IGNORE_DEPTH, RGBA::MAGENTA, RGBA::MAGENTA);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, GetPosition(), m_localDrawingBox.GetWidth() * .5f, true, DEBUG_RENDER_IGNORE_DEPTH, RGBA::CYAN);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, GetPosition(), m_localDrawingBox.GetHeight() * .5f, true, DEBUG_RENDER_IGNORE_DEPTH, RGBA::YELLOW);
+	}
 
 }
 

@@ -65,27 +65,27 @@ void Adventure::Render()
 
 void Adventure::RenderUI()
 {
-	////adventure title - top left
-	//AABB2 cameraBounds = m_currentMap->GetCameraBounds();
-	//float screenWidth = cameraBounds.GetWidth();
-	//float screenHeight = cameraBounds.GetHeight();
-	//g_theRenderer->DrawTextInBox2D(m_definition->m_title, cameraBounds, Vector2(0.02f,0.98f), screenHeight * .02f, TEXT_DRAW_SHRINK_TO_FIT);
+	//adventure title - top left
+	AABB2 cameraBounds = m_currentMap->GetCameraBounds();
+	float screenWidth = cameraBounds.GetWidth();
+	float screenHeight = cameraBounds.GetHeight();
+	g_theRenderer->DrawTextInBox2D(m_definition->m_title, cameraBounds, Vector2(0.02f,0.98f), screenHeight * .02f, TEXT_DRAW_SHRINK_TO_FIT);
 
-	//if (!g_theGame->m_fullMapMode){
-	//	//player stats - bottom left
-	//	Vector2 boxSize = Vector2(screenWidth * .3f, screenWidth * .2f);
-	//	AABB2 statBox = AABB2(cameraBounds.mins, cameraBounds.mins + boxSize);
-	//	g_theRenderer->DrawAABB2(statBox, RGBA(200,200,100,200));
-	//	g_theGame->m_player->RenderStatsInBox(statBox, RGBA(0,0,0));
+	if (!g_theGame->m_fullMapMode){
+		//player stats - bottom left
+		Vector2 boxSize = Vector2(screenWidth * .3f, screenWidth * .2f);
+		AABB2 statBox = AABB2(cameraBounds.mins, cameraBounds.mins + boxSize);
+		g_theRenderer->DrawAABB2(statBox, RGBA(200,200,100,200));
+		g_theGame->m_player->RenderStatsInBox(statBox, RGBA(0,0,0));
 
-	//	//currently equipped weapon - bottom right
-	//	Item* weapon = g_theGame->m_player->m_equippedItems[EQUIP_SLOT_WEAPON];
-	//	if (weapon != nullptr){
-	//		AABB2 weaponBox = AABB2(cameraBounds.maxs.x - (boxSize.y * .5f), cameraBounds.mins.y, cameraBounds.maxs.x, cameraBounds.mins.y + (boxSize.y * .5f));
-	//		weaponBox.AddPaddingToSides(-.05f, -.05f);
-	//		weapon->RenderImageInBox(weaponBox);
-	//	}
-	//}
+		//currently equipped weapon - bottom right
+		Item* weapon = g_theGame->m_player->m_equippedItems[EQUIP_SLOT_WEAPON];
+		if (weapon != nullptr){
+			AABB2 weaponBox = AABB2(cameraBounds.maxs.x - (boxSize.y * .5f), cameraBounds.mins.y, cameraBounds.maxs.x, cameraBounds.mins.y + (boxSize.y * .5f));
+			weaponBox.AddPaddingToSides(-.05f, -.05f);
+			weapon->RenderImageInBox(weaponBox);
+		}
+	}
 
 }
 

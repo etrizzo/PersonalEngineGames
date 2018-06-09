@@ -54,18 +54,20 @@ void EntityDefinition::ParseSize(tinyxml2::XMLElement* sizeElement)
 	if (sizeElement != nullptr){
 		m_physicsRadius = ParseXmlAttribute(*sizeElement, "physicsRadius", m_physicsRadius);
 		m_drawingRadius = ParseXmlAttribute(*sizeElement, "drawRadius", m_drawingRadius);
-		m_aspectRatio	= ParseXmlAttribute(*sizeElement, "aspect", 1.5f);
+		m_aspectRatio	= ParseXmlAttribute(*sizeElement, "aspect", 1.f);
+		m_pivot			= ParseXmlAttribute(*sizeElement, "pivot", m_pivot);
 
 		//draw radius is width
 		float height = m_drawingRadius * m_aspectRatio;
-		m_boundingBox.mins = Vector2(-m_drawingRadius * .5f, -height * .5f);
-		m_boundingBox.maxs = Vector2(m_drawingRadius * .5f, height * .5f);
+		m_boundingBox.mins = Vector2(-m_drawingRadius * m_pivot.x, -height * m_pivot.y);
+		m_boundingBox.maxs = Vector2(m_drawingRadius * (1.f - m_pivot.x), height * (1.f - m_pivot.y));
+		m_drawWithBounds = true;
 
-		/*std::string bounds = ParseXmlAttribute(*sizeElement, "drawBounds", " ");
-		if (bounds != " "){
-			m_drawWithBounds = true;
-			m_boundingBox.SetFromText(bounds.c_str());
-		}*/
+		//std::string bounds = ParseXmlAttribute(*sizeElement, "drawBounds", " ");
+		//if (bounds != " "){
+		//	m_drawWithBounds = true;
+		//	//m_boundingBox.SetFromText(bounds.c_str());
+		//}
 	} 
 }
 

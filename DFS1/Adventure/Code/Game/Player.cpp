@@ -5,6 +5,7 @@
 #include "Engine/Renderer/SpriteAnimSet.hpp"
 #include "Game/ActorDefinition.hpp"
 #include "Game/Adventure.hpp"
+#include "Game/DebugRenderSystem.hpp"
 
 Player::Player(ActorDefinition* actorDef, Vector2 initialPos, Map* map)
 	: Actor(actorDef, map, initialPos)
@@ -44,7 +45,12 @@ void Player::Update(float deltaSeconds)
 				FireArrow();
 			}
 		}
-		
+		//g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, Vector3(GetPosition(), 0.f), m_definition->m_drawingRadius);
+		//g_theGame->m_debugRenderSystem->MakeDebugRender2DQuad(0.f, m_localDrawingBox);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, m_physicsDisc, true , DEBUG_RENDER_IGNORE_DEPTH, RGBA::MAGENTA, RGBA::MAGENTA);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, GetPosition() + m_localDrawingBox.GetCenter(), m_localDrawingBox.GetWidth() * .5f, true, DEBUG_RENDER_IGNORE_DEPTH, RGBA::CYAN);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, GetPosition() + m_localDrawingBox.GetCenter(), m_localDrawingBox.GetHeight() * .5f, true, DEBUG_RENDER_IGNORE_DEPTH, RGBA::YELLOW);
+		//g_theGame->m_debugRenderSystem->MakeDebugRender2DQuad(0.)
 	}
 	
 }

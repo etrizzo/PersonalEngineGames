@@ -7,6 +7,7 @@ class Entity;
 class Map;
 class Player;
 class Adventure;
+class DebugRenderSystem;
 
 class Game{
 
@@ -47,6 +48,8 @@ public:
 
 	static SpriteAnimSetDef* s_humanoidAnimSetDef;
 
+	DebugRenderSystem* m_debugRenderSystem;
+
 	Vector2 GetPlayerPosition() const;
 
 
@@ -79,7 +82,7 @@ public:
 	void TransitionToState(GameState* newState);
 	void TriggerTransition();
 	AABB2 SetUICamera();
-	AABB2 SetMainCamera();
+	AABB2 SetGameCamera();
 	AABB2 GetUIBounds();
 	AABB2 GetMainCameraBounds();
 

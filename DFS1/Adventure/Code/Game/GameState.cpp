@@ -56,7 +56,7 @@ void GameState::RenderTransitionEffect(float t)
 	RGBA transitionColor = RGBA(0,0,0, (unsigned char) (t * 255.f));
 	g_theRenderer->DrawAABB2(g_theGame->GetUIBounds(), transitionColor);
 
-	g_theGame->SetMainCamera();
+	g_theGame->SetGameCamera();
 }
 
 void GameState::StartTransition()
@@ -134,9 +134,9 @@ void GameState_Encounter::Update(float ds)
 
 void GameState_Encounter::RenderGame()
 {
-	g_theRenderer->ClearScreen( RGBA::BLACK ); 
-	g_theRenderer->ClearDepth( 1.0f ); 
-	g_theRenderer->EnableDepth( COMPARE_LESS, true ); 
+	//g_theRenderer->ClearScreen( RGBA::BLACK ); 
+	//g_theRenderer->ClearDepth( 1.0f ); 
+	//g_theRenderer->EnableDepth( COMPARE_LESS, true ); 
 
 
 
@@ -168,10 +168,6 @@ void GameState_Encounter::HandleInput()
 
 	if (g_theInput->WasKeyJustPressed('M')){
 		g_theGame->ToggleState(g_theGame->m_fullMapMode);		//change later to open map screen
-	}
-
-	if (g_theInput->WasKeyJustPressed(VK_F1)){
-		g_theGame->ToggleDevMode();
 	}
 
 	if (g_primaryController != nullptr){
