@@ -417,15 +417,19 @@ void Game::RenderVictoryConditionsInBox(AABB2 boxToDrawIn)
 	//g_theRenderer->DrawAABB2Outline(boxToDrawIn, RGBA(255,0,0));
 	float fontHeight = boxToDrawIn.GetHeight() * .05f;
 	float lineHeight = fontHeight * 3.f;
-	AABB2 textBox = AABB2(boxToDrawIn.mins.x, boxToDrawIn.maxs.y - lineHeight, boxToDrawIn.maxs.x, boxToDrawIn.maxs.y);
+/*	AABB2 textBox = AABB2(boxToDrawIn.mins.x, boxToDrawIn.maxs.y - lineHeight, boxToDrawIn.maxs.x, boxToDrawIn.maxs.y);
 	AABB2 iconBox = AABB2(textBox.mins, Vector2(textBox.mins.x + fontHeight, textBox.mins.y + fontHeight));
-	textBox.AddPaddingToSides(fontHeight * -2.f, 0.f);
-	textBox.Translate( 0.f, - fontHeight);
+	*///textBox.AddPaddingToSides(fontHeight * -2.f, 0.f);
+	AABB2 lineBox = boxToDrawIn.GetPercentageBox(.1f, .4f, .9f, .5f);
+	AABB2 textBox;
+	AABB2 iconBox;
+	lineBox.SplitAABB2Vertical(.1f, iconBox, textBox );
+	fontHeight = textBox.GetHeight() * .3f;
+	lineHeight = fontHeight * 3.f;
+	iconBox.TrimToSquare();
 	
 	Texture* buttonTexture = m_miscSpriteSheet->GetTexture();
 	for (VictoryCondition* objective: m_currentAdventure->m_victoryConditions){
-		//g_theRenderer->DrawAABB2Outline(iconBox, WHITE);
-		//g_theRenderer->DrawAABB2Outline(textBox, WHITE);
 		RGBA tint = RGBA(255,255,255);
 		if (objective->CheckIfComplete()){
 			tint = RGBA(200,200,200, 200);
@@ -437,6 +441,8 @@ void Game::RenderVictoryConditionsInBox(AABB2 boxToDrawIn)
 		}
 		std::string victoryText = objective->GetText();
 		g_theRenderer->DrawTextInBox2D(victoryText, textBox, Vector2(0.f,.5f), fontHeight, TEXT_DRAW_WORD_WRAP, tint);
+		//g_theRenderer->DrawAABB2Outline(iconBox, RGBA::RED);
+		//g_theRenderer->DrawAABB2Outline(textBox, RGBA::MAGENTA);
 		textBox.Translate(0.f, -lineHeight);
 		iconBox.Translate(0.f, -lineHeight);
 	}

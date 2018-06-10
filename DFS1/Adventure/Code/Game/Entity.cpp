@@ -6,12 +6,15 @@
 #include "Game/Item.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/SpriteAnimSet.hpp"
+#include "Game/Adventure.hpp"
 
 Entity::~Entity()
 {
+	
 	for (Item* item : m_inventory){
 		delete item;
 	}
+	delete m_renderable;
 	//delete (m_animSet);
 }
 
@@ -321,6 +324,11 @@ void Entity::Rotate(float offset)
 void Entity::Translate(Vector2 offset)
 {
 	m_renderable->m_transform.TranslateLocal(offset);
+}
+
+std::string Entity::GetName() const
+{
+	return m_definition->m_name;
 }
 
 bool Entity::IsPointInForwardView(Vector2 point)

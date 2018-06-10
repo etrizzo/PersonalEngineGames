@@ -50,6 +50,7 @@ public:
 	void Rotate(float offset);
 	void Translate(Vector2 offset);
 
+	std::string GetName() const;
 
 
 	Renderable2D* m_renderable;

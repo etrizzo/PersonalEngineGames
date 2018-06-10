@@ -97,6 +97,12 @@
     <ClCompile Include="DebugRenderTask.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="MenuState.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -182,6 +188,12 @@
     </ClInclude>
     <ClInclude Include="DebugRenderSystem.hpp" />
     <ClInclude Include="DebugRenderTask.hpp" />
+    <ClInclude Include="MenuState.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\..\Run_Win32\Data\Data\GameConfig.xml">

@@ -1,5 +1,6 @@
 #pragma once
 #include "Game/GameCommon.hpp"
+#include "Game/MenuState.hpp"
 
 
 
@@ -56,11 +57,17 @@ public:
 class GameState_Paused: public GameState{
 public:
 	GameState_Paused(GameState_Encounter* encounter);
-	void Update(float ds);
-	void RenderGame();
-	void RenderUI();
-	void RenderTransitionEffect();
-	void HandleInput();
+	void Update(float ds) override;
+	void RenderGame() override;
+	void RenderUI() override;
+	void RenderTransition() override;
+	void RenderTransitionEffect(float t) override;
+	void HandleInput() override;
+
+	void SwitchToPaused();
+	void SwitchToInventory();
+	void SwitchToMap();
 
 	GameState_Encounter* m_encounterGameState;
+	MenuState* m_menuState;
 };

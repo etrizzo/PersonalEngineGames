@@ -86,17 +86,19 @@ void Player::RenderStatsInBox(AABB2 boxToDrawIn, RGBA tint)
 	healthBox.Translate(fontSize *2.f, - fontSize * .1f);
 	Entity::RenderHealthInBox(healthBox);
 
-	AABB2 pictureBox = AABB2(boxToDrawIn.mins + padding, Vector2(boxToDrawIn.maxs.x - (widthOfBox*.5f), boxToDrawIn.maxs.y - fontSize) - padding);
-	pictureBox.AddPaddingToSides(-.1f, -.15f);
+	//AABB2 pictureBox = AABB2(boxToDrawIn.mins + padding, Vector2(boxToDrawIn.maxs.x - (widthOfBox*.5f), boxToDrawIn.maxs.y - fontSize) - padding);
+	AABB2 pictureBox = boxToDrawIn.GetPercentageBox(.05f, .15f, .45f, .72f);
+	float height = pictureBox.GetHeight();
+	//pictureBox.AddPaddingToSides(height * -.1f,height * -.15f);
 	g_theRenderer->DrawAABB2Outline(pictureBox, RGBA(255,255,255,64));
-	pictureBox.AddPaddingToSides(-.1f, -.1f);
+	//pictureBox.AddPaddingToSides(height *-.1f, height *-.1f);
 	const Texture* entityTexture = m_animSet->GetTextureForAnim("IdleSouth");
 	AABB2 texCoords = m_animSet->GetUVsForAnim("IdleSouth", 0.f);
 	g_theRenderer->DrawTexturedAABB2(pictureBox, *entityTexture,texCoords.mins, texCoords.maxs, RGBA());
 
 	AABB2 statsBox = pictureBox;
 	statsBox.Translate((widthOfBox * .5f), 0.f);
-	statsBox.AddPaddingToSides(.1f,.1f);
+	//statsBox.AddPaddingToSides(.1f,.1f);
 	//g_theRenderer->DrawAABB2Outline(statsBox, RGBA(255,255,0));
 	std::string statsString = "";
 	for ( int statIDNum = 0; statIDNum < NUM_STAT_IDS; statIDNum++){

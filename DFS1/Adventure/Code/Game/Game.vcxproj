@@ -209,6 +209,8 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MapDefinition.cpp" />
     <ClCompile Include="MapGenStep.cpp" />
+    <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="PortalDefinition.cpp" />
@@ -245,6 +247,8 @@
     <ClInclude Include="Map.hpp" />
     <ClInclude Include="MapDefinition.hpp" />
     <ClInclude Include="MapGenStep.hpp" />
+    <ClInclude Include="Menu.hpp" />
+    <ClInclude Include="MenuState.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Portal.hpp" />
     <ClInclude Include="PortalDefinition.hpp" />

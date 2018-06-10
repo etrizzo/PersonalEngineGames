@@ -115,6 +115,44 @@ void AABB2::UniformScaleFromCenter(float scale)
 	maxs = center + halfDims;
 }
 
+void AABB2::TrimToSquare()
+{
+	Vector2 center = GetCenter();
+	float w = GetWidth();
+	float h = GetHeight();
+
+	float halfHeight = h * .5f;
+	float halfWidth = w * .5f;
+	if (h > w){
+		//shrink in y direction
+		mins = Vector2(mins.x, center.y - halfWidth);
+		maxs = Vector2(maxs.x, center.y + halfWidth);
+	} else if (h < w){
+		//shrink in x direction
+		mins = Vector2(center.x - halfHeight, mins.y);
+		maxs = Vector2(center.x + halfHeight, maxs.y);
+	}
+}
+
+void AABB2::ExpandToSquare()
+{
+	Vector2 center = GetCenter();
+	float w = GetWidth();
+	float h = GetHeight();
+
+	float halfHeight = h * .5f;
+	float halfWidth = w * .5f;
+	if (h > w){
+		//expand in x direction
+		mins = Vector2(center.x - halfHeight, mins.y);
+		maxs = Vector2(center.x + halfHeight, maxs.y);
+	} else if (h < w){
+		//expand in y direction
+		mins = Vector2(mins.x, center.y - halfWidth);
+		maxs = Vector2(maxs.y, center.y + halfWidth);
+	}
+}
+
 void AABB2::SetFromText(const char * text)
 {
 	Strings floats = Strings();

@@ -61,15 +61,18 @@ void Item::RenderStats(AABB2 boxToRenderIn)
 	Vector2 padding = Vector2(fontSize * .2f, fontSize * .2f);
 	g_theRenderer->DrawTextInBox2D(m_definition->m_name, boxToRenderIn, Vector2(.5f, .97f),fontSize, TEXT_DRAW_SHRINK_TO_FIT);
 
-	AABB2 pictureBox = AABB2(boxToRenderIn.mins + padding, Vector2(boxToRenderIn.maxs.x - (widthOfBox*.5f), boxToRenderIn.maxs.y - fontSize) - padding);
-	pictureBox.AddPaddingToSides(-.15f, -.15f);
+	//AABB2 pictureBox = AABB2(boxToRenderIn.mins + padding, Vector2(boxToRenderIn.maxs.x - (widthOfBox*.5f), boxToRenderIn.maxs.y - fontSize) - padding);
+	AABB2 pictureBox = boxToRenderIn.GetPercentageBox(.05f, .25f, .45f, .75f);
+	pictureBox.TrimToSquare();
+	//pictureBox.AddPaddingToSides(-.15f, -.15f);
 	g_theRenderer->DrawAABB2Outline(pictureBox, RGBA(255,255,255,64));
-	pictureBox.AddPaddingToSides(-.15f, -.15f);
+	//pictureBox.AddPaddingToSides(-.15f, -.15f);
 	RenderImageInBox(pictureBox);
 
-	AABB2 statsBox = pictureBox;
-	statsBox.Translate((widthOfBox * .5f) - .15f, 0.f);
-	statsBox.AddPaddingToSides(.2f,0.15f);
+	//AABB2 statsBox = pictureBox;
+	AABB2 statsBox = boxToRenderIn.GetPercentageBox(.55f, .25f, .95f, .75f);
+	//statsBox.Translate((widthOfBox * .5f) - .15f, 0.f);
+	//statsBox.AddPaddingToSides(.2f,0.15f);
 	//AABB2 statsBox = AABB2(Vector2(boxToRenderIn.mins.x + (widthOfBox*.5f), 0.f)+ padding, boxToRenderIn.maxs - padding);
 	std::string statsString = "Bonus Stats \n\n  ";
 	for ( int statIDNum = 0; statIDNum < NUM_STAT_IDS; statIDNum++){

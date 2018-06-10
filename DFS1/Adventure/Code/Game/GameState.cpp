@@ -146,6 +146,7 @@ void GameState_Encounter::RenderGame()
 
 void GameState_Encounter::RenderUI()
 {
+	g_theGame->SetUICamera();
 	g_theGame->m_currentAdventure->RenderUI();
 }
 
@@ -191,25 +192,18 @@ void GameState_Encounter::HandleInput()
 GameState_Paused::GameState_Paused(GameState_Encounter* encounter)
 {
 	m_encounterGameState = encounter;
+	m_menuState = new MenuState_Paused(this, g_theGame->SetUICamera());
 }
 
 void GameState_Paused::Update(float ds)
 {
 	m_encounterGameState->Update(0.f);
+	m_menuState->Update(ds);
 	m_timeInState+=ds;
 }
 
 void GameState_Paused::RenderGame()
 {
-	//GameState_Encounter::RenderGame();
-	//m_encounterGameState->RenderGame();
-	g_theRenderer->ClearScreen( RGBA::BLACK ); 
-	g_theRenderer->ClearDepth( 1.0f ); 
-	g_theRenderer->EnableDepth( COMPARE_LESS, true ); 
-
-	//if (g_theGame->IsDevMode()){		//draw cube at origin
-	//	g_theRenderer->DrawCube(Vector3::ZERO,Vector3::ONE, RGBA::RED);
-	//}
 
 	m_encounterGameState->Render();
 }
@@ -223,15 +217,55 @@ void GameState_Paused::RenderUI()
 	
 	AABB2 UIBounds = g_theGame->SetUICamera(); //AABB2(-1.f,-1.f, 1.f,1.f);
 	//g_theRenderer->DrawAABB2(UIBounds, RGBA(0, 32, 32, 64));
+	
 	if (!m_isTransitioning){
-		g_theRenderer->DrawTextInBox2D("Paused", UIBounds, Vector2(.5f,.5f), .1f);
+		m_menuState->RenderBackground();
+		m_menuState->RenderContent();
+		//g_theRenderer->DrawTextInBox2D("Paused", UIBounds, Vector2(.5f,.5f), .1f);
 	}
 	
 }
 
-void GameState_Paused::RenderTransitionEffect()
+void GameState_Paused::RenderTransition()
 {
+	//do a very simple fade in/out of state - temporary
+	//if transitioning out of state, fade out
+	if (m_isTransitioning){
+		float percThroughTransition = (m_timeInState - m_startTransitionTime) / m_transitionLength;
 
+		if (m_timeInState - m_startTransitionTime > m_transitionLength){
+			//move to the new state 
+			m_isTransitioning = false;
+			g_theGame->TriggerTransition();
+		} else {
+			RenderTransitionEffect(percThroughTransition);
+		}
+		
+		if (m_soundtrackID != NULL){
+			g_theAudio->SetSoundPlaybackVolume(m_soundtrackPlayback, 1.f - percThroughTransition);
+		}
+	}
+
+	////if transitioning into state, fade in
+	//if (m_timeInState < m_transitionLength){
+	//	float percThroughTransition =  (m_timeInState) / m_transitionLength;
+
+	//	RenderTransitionEffect(1 - percThroughTransition);
+	//	if (m_soundtrackID != NULL){
+	//		g_theAudio->SetSoundPlaybackVolume(m_soundtrackPlayback, 1.f - percThroughTransition);
+	//	}
+	//}
+}
+
+void GameState_Paused::RenderTransitionEffect(float t)
+{
+	g_theGame->SetUICamera();
+
+
+	RGBA transitionColor = Interpolate(RGBA(0,0,0,0), RGBA(0,32,32,64), t);
+	g_theRenderer->DrawAABB2(g_theGame->GetUIBounds(), transitionColor);
+
+	g_theGame->SetGameCamera();
 }
 
 void GameState_Paused::HandleInput()
@@ -240,17 +274,30 @@ void GameState_Paused::HandleInput()
 		g_theGame->TransitionToState(m_encounterGameState);
 	}
 */
-	if (WasPauseJustPressed() || g_primaryController->WasButtonJustPressed(XBOX_B)){
-		g_theGame->TransitionToState(m_encounterGameState);
-	}
-	if (g_theInput->WasKeyJustPressed('I') || g_primaryController->WasButtonJustPressed(XBOX_BACK)){
-		TODO("Add inventory state");
-		//g_theGame->TransitionToState(new GameState_Inventory);
-	}
+	//if (WasPauseJustPressed() || g_primaryController->WasButtonJustPressed(XBOX_B)){
+	//	g_theGame->TransitionToState(m_encounterGameState);
+	//}
+	//if (g_theInput->WasKeyJustPressed('I') || g_primaryController->WasButtonJustPressed(XBOX_BACK)){
+	//	TODO("Add inventory state");
+	//	//g_theGame->TransitionToState(new GameState_Inventory);
+	//}
 
-	CheckArrowKeys();
+	//CheckArrowKeys();
 
-	if (g_theInput->WasKeyJustPressed(VK_ESCAPE)){
-		g_theGame->TransitionToState(new GameState_Attract());
-	}
+	
+	m_menuState->HandleInput();
+}
+
+void GameState_Paused::SwitchToPaused()
+{
+	m_menuState = new MenuState_Paused(this, g_theGame->GetUIBounds());
+}
+
+void GameState_Paused::SwitchToInventory()
+{
+	m_menuState = new MenuState_Inventory(this, g_theGame->GetUIBounds());
+}
+
+void GameState_Paused::SwitchToMap()
+{
 }

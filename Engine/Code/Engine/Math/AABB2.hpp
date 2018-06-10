@@ -24,6 +24,8 @@ public:
 	void Translate(const Vector2& translation);
 	void Translate(float translationX, float translationY);
 	void UniformScaleFromCenter(float scale);
+	void TrimToSquare();	//trims to shortest side length to a perfect square(preserves center);
+	void ExpandToSquare();	//expands to longest side length to a perfect square (preserves center)
 
 	void SetFromText(const char* text);
 

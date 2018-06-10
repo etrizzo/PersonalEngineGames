@@ -66,7 +66,7 @@ void Adventure::Render()
 void Adventure::RenderUI()
 {
 	//adventure title - top left
-	AABB2 cameraBounds = m_currentMap->GetCameraBounds();
+	AABB2 cameraBounds = g_theGame->GetUIBounds();
 	float screenWidth = cameraBounds.GetWidth();
 	float screenHeight = cameraBounds.GetHeight();
 	g_theRenderer->DrawTextInBox2D(m_definition->m_title, cameraBounds, Vector2(0.02f,0.98f), screenHeight * .02f, TEXT_DRAW_SHRINK_TO_FIT);
@@ -82,7 +82,7 @@ void Adventure::RenderUI()
 		Item* weapon = g_theGame->m_player->m_equippedItems[EQUIP_SLOT_WEAPON];
 		if (weapon != nullptr){
 			AABB2 weaponBox = AABB2(cameraBounds.maxs.x - (boxSize.y * .5f), cameraBounds.mins.y, cameraBounds.maxs.x, cameraBounds.mins.y + (boxSize.y * .5f));
-			weaponBox.AddPaddingToSides(-.05f, -.05f);
+			//weaponBox.AddPaddingToSides(-.05f, -.05f);
 			weapon->RenderImageInBox(weaponBox);
 		}
 	}

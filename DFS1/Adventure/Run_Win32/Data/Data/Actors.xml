@@ -10,6 +10,8 @@
     <Health max="100" start="100"/>
     <Inventory>
        <Item name="Bow" chanceToSpawn="1.0"/>
+       <Item name="Bow" chanceToSpawn="1.0"/>
+       <Item name="Bow" chanceToSpawn="1.0"/>
     </Inventory>
     <SpriteAnimSet spriteSheet="wulax_bow_walk_9x4.png" spriteLayout="9,4" fps="6" defaultAnim ="IdleSouth">
       <SpriteAnim name="MoveNorth"    spriteIndexes="0~8"/>

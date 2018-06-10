@@ -251,6 +251,7 @@ void Map::RemoveDoomedEntities()
 			Entity* entity = m_allEntities.at(entityIndex);
 			if (entity != nullptr && entity->IsAboutToBeDeleted()){
 				m_allEntities.erase(m_allEntities.begin() + entityIndex);
+				g_theGame->m_currentAdventure->GetScene()->RemoveRenderable(entity->m_renderable);
 				//delete(entity);
 			}
 		}
