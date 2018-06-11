@@ -112,10 +112,11 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 void SpriteRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls)
 {
 	//sort by sort layer
+	bool sorted = false;
 	for (int i = 1; i < (int) drawCalls.size(); i ++){
-		bool sorted = false;
-		for (int j = i; j < (int) drawCalls.size(); j++){
-			sorted = true;
+		sorted = true;
+		for (int j = 1; j < (int) drawCalls.size(); j++){
+			
 			DrawCall dc = drawCalls[j];
 			DrawCall prevDC = drawCalls[j-1];
 			if (dc.GetSortLayer() < prevDC.GetSortLayer()){		//sort layer is now 

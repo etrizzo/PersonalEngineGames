@@ -11,6 +11,8 @@ public:
 	void RenderStatsInBox(AABB2 statsBox, RGBA tint = RGBA::WHITE);
 	void RenderDistanceMap() const;
 
+	void HandleInput();
+
 	void SetPosition(Vector2 newPos, Map* newMap = nullptr) override;
 	void EnterTile(Tile* tile) override;
 

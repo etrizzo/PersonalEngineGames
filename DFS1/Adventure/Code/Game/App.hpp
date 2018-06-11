@@ -30,6 +30,7 @@ public:
 private:
 	//place to register game-specific commands
 	void RegisterCommands();
+	void HandleInput();
 
 	//void CheckKeys();
 	//void CheckAttractKeys();

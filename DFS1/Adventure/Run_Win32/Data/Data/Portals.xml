@@ -1,7 +1,7 @@
 <PortalDefinitions>
 
   <PortalDefinition name="TeleportVortex" reciprocal="TeleportVortex">
-    <Size physicsRadius="0.35" drawRadius=".35"/>
+    <Size physicsRadius="0.35" drawRadius=".55"/>
     <Movement>
       <Fly speed="0.0"/>
     </Movement>
@@ -11,7 +11,7 @@
   </PortalDefinition>
 
   <PortalDefinition name="StairsDown" reciprocal="StairsUp">
-    <Size physicsRadius="0.35" drawRadius=".35"/>
+    <Size physicsRadius="0.35" drawRadius=".55"/>
     <Movement>
       <Walk speed="0.0"/>
     </Movement>
@@ -21,7 +21,7 @@
   </PortalDefinition>
 
   <PortalDefinition name="StairsUp" reciprocal="StairsDown">
-    <Size physicsRadius="0.35" drawRadius=".35"/>
+    <Size physicsRadius="0.35" drawRadius=".55"/>
     <Movement>
       <Walk speed="0.0"/>
     </Movement>

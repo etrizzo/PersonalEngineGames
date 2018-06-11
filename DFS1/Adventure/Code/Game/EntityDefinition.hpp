@@ -15,9 +15,9 @@ public:
 	bool m_useHumanoidAnimSet = false;
 
 	//drawing
-	float	m_drawingRadius			= 1.f;
-	float	m_physicsRadius			= .3f;
-	float	m_aspectRatio;
+	float	m_drawingRadius			= .5f;
+	float	m_physicsRadius			= .35f;
+	float	m_aspectRatio			= 1.f;
 	AABB2	m_boundingBox			= AABB2(0.f,0.f,0.f,0.f);
 	bool	m_drawWithBounds		= false;
 	Vector2 m_pivot					= Vector2::HALF;

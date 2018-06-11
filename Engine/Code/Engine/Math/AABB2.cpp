@@ -115,6 +115,54 @@ void AABB2::UniformScaleFromCenter(float scale)
 	maxs = center + halfDims;
 }
 
+void AABB2::TrimToAspectRatio(float aspect)
+{
+	if (aspect > 0.f){
+		Vector2 center = GetCenter();
+		float w = GetWidth();
+		float h = GetHeight();
+
+		float currentAspect = w / h;
+		if (currentAspect > aspect){
+			//wider than it needs to be
+			float desiredWidth = h * aspect;
+			float halfWidth = desiredWidth * .5f;
+			mins = Vector2(center.x - halfWidth, mins.y);
+			maxs = Vector2(center.x + halfWidth, maxs.y);
+		} else if (currentAspect < aspect){
+			//taller than it needs to be
+			float desiredHeight = w / aspect;
+			float halfHeight = desiredHeight * .5f;
+			mins = Vector2(mins.x, center.y - halfHeight);
+			maxs = Vector2(maxs.x, center.y + halfHeight);
+		}
+	}
+}
+
+void AABB2::ExpandToAspectRatio(float aspect)
+{
+	if (aspect > 0.f){
+		Vector2 center = GetCenter();
+		float w = GetWidth();
+		float h = GetHeight();
+
+		float currentAspect = w / h;
+		if (currentAspect > aspect){
+			//shorter than it needs to be
+			float desiredHeight = w / aspect;
+			float halfHeight = desiredHeight * .5f;
+			mins = Vector2(mins.x, center.y - halfHeight);
+			maxs = Vector2(maxs.x, center.y + halfHeight);
+		} else if (currentAspect < aspect){
+			//thinner than it needs to be
+			float desiredWidth = h * aspect;
+			float halfWidth = desiredWidth * .5f;
+			mins = Vector2(center.x - halfWidth, mins.y);
+			maxs = Vector2(center.x + halfWidth, maxs.y);
+		}
+	}
+}
+
 void AABB2::TrimToSquare()
 {
 	Vector2 center = GetCenter();

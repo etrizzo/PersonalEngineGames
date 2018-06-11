@@ -45,9 +45,9 @@ std::string Actor::GetAnimName()
 {
 	Vector2 dir = m_facing.GetNormalized();
 	std::string direction = "South";
-	if (DotProduct(dir, DIRECTION_NORTH) >= .7f){
+	if (DotProduct(dir, DIRECTION_NORTH) >= .75f){
 		direction = "North";
-	} else if (DotProduct(dir, DIRECTION_SOUTH) >=.7f){
+	} else if (DotProduct(dir, DIRECTION_SOUTH) >=.75f){
 		direction = "South";
 	} else {
 		if (dir.x > 0.f){
@@ -263,21 +263,21 @@ void Actor::RunSimpleAI(float deltaSeconds)
 }
 void Actor::Wander(float deltaSeconds)
 {
-	float diff = m_ageInSeconds - m_timeLastUpdatedDirection;
-	if (diff < 5.f ){
-		Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
-	}
-	if (diff > 5.f && diff < 7.5f){
-		if (m_moving){
-			m_moving = false;
-		}
-	}
-	if (diff > 7.5f){
-		m_moving = true;
-		//m_facing = Vector2::MakeDirectionAtDegrees(GetRandomFloatInRange(-180.f,180.f));
-		m_facing = m_facing - (2 * m_facing);
-		m_timeLastUpdatedDirection = m_ageInSeconds;
-	}
+	//float diff = m_ageInSeconds - m_timeLastUpdatedDirection;
+	//if (diff < 5.f ){
+	//	Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+	//}
+	//if (diff > 5.f && diff < 10.5f){
+	//	if (m_moving){
+	//		m_moving = false;
+	//	}
+	//}
+	//if (diff > 10.5f){
+	//	m_moving = true;
+	//	//m_facing = Vector2::MakeDirectionAtDegrees(GetRandomFloatInRange(-180.f,180.f));
+	//	m_facing = m_facing - (2 * m_facing);
+	//	m_timeLastUpdatedDirection = m_ageInSeconds;
+	//}
 }
 
 void Actor::FireArrow()

@@ -74,6 +74,7 @@ GameState_Attract::GameState_Attract()
 {
 	if (g_theGame != nullptr){
 		m_soundtrackID = g_theGame->m_attractMusicID;
+		m_soundtrackPlayback = g_theAudio->PlaySound(m_soundtrackID);
 	}
 }
 
@@ -84,6 +85,11 @@ void GameState_Attract::Update(float ds)
 		float percThroughTransition =  (m_timeInState) / m_transitionLength;
 		g_theAudio->SetSoundPlaybackVolume(g_theGame->m_attractPlayback, 1.f - percThroughTransition);
 	}
+}
+
+void GameState_Attract::Transition()
+{
+	g_theGame->m_currentAdventure->Begin();
 }
 
 void GameState_Attract::RenderUI()
@@ -104,7 +110,7 @@ void GameState_Attract::HandleInput()
 	if (WasStartJustPressed()){
 		//g_theGame->StartStateTransition(STATE_PLAYING, 1.f);
 		g_theGame->TransitionToState(new GameState_Encounter("Balrog"));
-		g_theGame->m_currentAdventure->Begin();
+		
 		//g_theGame->StartAdventure("Balrog");
 	}
 
@@ -132,6 +138,8 @@ void GameState_Encounter::Update(float ds)
 	g_theGame->m_currentAdventure->Update(ds);
 }
 
+
+
 void GameState_Encounter::RenderGame()
 {
 	//g_theRenderer->ClearScreen( RGBA::BLACK ); 
@@ -152,6 +160,10 @@ void GameState_Encounter::RenderUI()
 
 void GameState_Encounter::HandleInput()
 {
+	if (g_theGame->m_player != nullptr){
+		g_theGame->m_player->HandleInput();
+	}
+
 	if (g_theInput->WasKeyJustPressed(VK_F1)){
 		g_theGame->ToggleDevMode();
 	}
@@ -300,4 +312,67 @@ void GameState_Paused::SwitchToInventory()
 
 void GameState_Paused::SwitchToMap()
 {
+	m_menuState = new MenuState_Map(this, g_theGame->GetUIBounds());
+}
+
+GameState_Victory::GameState_Victory(GameState_Encounter * encounter)
+{
+	m_encounterGameState = encounter;
+	if (g_theGame != nullptr){
+		m_soundtrackID = g_theGame->m_victoryMusicID;
+		m_soundtrackPlayback = g_theAudio->PlaySound(m_soundtrackID);
+	}
+}
+
+void GameState_Victory::Update(float ds)
+{
+	m_encounterGameState->Update(0.f);
+	m_timeInState+=ds;
+}
+
+void GameState_Victory::RenderGame()
+{
+	m_encounterGameState->Render();
+}
+
+void GameState_Victory::RenderUI()
+{
+	m_encounterGameState->RenderUI();
+	//g_theRenderer->ApplyEffect("timeeffect");
+	//g_theRenderer->FinishEffects();
+	g_theRenderer->ClearDepth(1.f);
+
+	AABB2 UIBounds = g_theGame->SetUICamera(); //AABB2(-1.f,-1.f, 1.f,1.f);
+											   //g_theRenderer->DrawAABB2(UIBounds, RGBA(0, 32, 32, 64));
+
+	if (!m_isTransitioning){
+		g_theRenderer->DrawAABB2(UIBounds, RGBA(0,32,32,200));
+		g_theRenderer->DrawTextInBox2D("Victory!!", UIBounds, Vector2(.5f,.5f), UIBounds.GetHeight() * .08f);
+		g_theRenderer->DrawTextInBox2D("Press Start", UIBounds, Vector2(.5f,.3f), UIBounds.GetHeight() * .03f);
+
+		//g_theRenderer->DrawTextInBox2D("Paused", UIBounds, Vector2(.5f,.5f), .1f);
+	}
+}
+
+//void GameState_Victory::RenderTransition()
+//{
+//
+//}
+
+void GameState_Victory::RenderTransitionEffect(float t)
+{
+	g_theGame->SetUICamera();
+
+
+	RGBA transitionColor = Interpolate(RGBA(0,0,0,0), RGBA(0,32,32,200), t);
+	g_theRenderer->DrawAABB2(g_theGame->GetUIBounds(), transitionColor);
+
+	g_theGame->SetGameCamera();
+}
+
+void GameState_Victory::HandleInput()
+{
+		if (WasStartJustPressed()){
+			g_theGame->m_currentState = new GameState_Attract();
+		}
 }

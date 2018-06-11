@@ -121,13 +121,14 @@ void Map::SortAllEntities()
 
 void Map::Update(float deltaSeconds)
 {
-	ResetPortals();
+	
 
 	UpdateEntities(deltaSeconds);
 
 	RunPhysics();
 
 	CheckEntityInteractions();
+	ResetPortals();
 
 }
 
@@ -139,7 +140,7 @@ void Map::UpdateEntities(float deltaSeconds)
 			m_allEntities.at(entityIndex)->Update(deltaSeconds);
 		}
 	}
-
+	
 	//for (unsigned int entityIndex = 0; entityIndex < m_allActors.size(); entityIndex++){
 	//	m_allActors.at(entityIndex)->Update(deltaSeconds);
 	//}
@@ -246,29 +247,40 @@ void Map::CheckEntityInteractions()
 void Map::RemoveDoomedEntities()
 {
 	//delete doomed entities
-	for(int i = 0; i < 2; i++){
-		for (unsigned int entityIndex = 0; entityIndex < m_allEntities.size(); entityIndex++){
-			Entity* entity = m_allEntities.at(entityIndex);
-			if (entity != nullptr && entity->IsAboutToBeDeleted()){
-				m_allEntities.erase(m_allEntities.begin() + entityIndex);
+	//for(int i = 0; i < 2; i++){
+	//	for (unsigned int entityIndex = 0; entityIndex < m_allEntities.size(); entityIndex++){
+	//		Entity* entity = m_allEntities.at(entityIndex);
+	//		if (entity != nullptr && entity->IsAboutToBeDeleted()){
+	//			m_allEntities.erase(m_allEntities.begin() + entityIndex);
+	//			g_theGame->m_currentAdventure->GetScene()->RemoveRenderable(entity->m_renderable);
+	//			//delete(entity);
+	//		}
+	//	}
+	//}
+	for (unsigned int entityIndex = m_allEntities.size()-1; entityIndex < m_allEntities.size(); entityIndex--){
+		Entity* entity = m_allEntities.at(entityIndex);
+		if (entity == nullptr || entity->IsAboutToBeDeleted()){
+			RemoveAtFast(m_allEntities, entityIndex);
+			//m_allEntities.erase(m_allEntities.begin() + entityIndex);
+			if (entity!= nullptr){
 				g_theGame->m_currentAdventure->GetScene()->RemoveRenderable(entity->m_renderable);
-				//delete(entity);
 			}
+			//delete(entity);
 		}
 	}
 
-	for (unsigned int entityIndex = 0; entityIndex < m_allActors.size(); entityIndex++){
-		Entity* entity = m_allActors.at(entityIndex);
+	for (unsigned int entityIndex = m_allActors.size()-1; entityIndex < m_allActors.size(); entityIndex--){
+		Actor* entity = m_allActors.at(entityIndex);
 		if (entity->IsAboutToBeDeleted()){
- 			m_allActors.erase(m_allActors.begin() + entityIndex);
+ 			RemoveAtFast(m_allActors, entityIndex);
 			delete(entity);
 		}
 	}
 
-	for (unsigned int entityIndex = 0; entityIndex < m_allProjectiles.size(); entityIndex++){
-		Entity* entity = m_allProjectiles.at(entityIndex);
+	for (unsigned int entityIndex = m_allProjectiles.size()-1; entityIndex < m_allProjectiles.size(); entityIndex--){
+		Projectile* entity = m_allProjectiles.at(entityIndex);
 		if (entity->IsAboutToBeDeleted()){
-			m_allProjectiles.erase(m_allProjectiles.begin() + entityIndex);
+			RemoveAtFast(m_allProjectiles, entityIndex);
 			delete(entity);
 		}
 	}
@@ -300,6 +312,7 @@ void Map::RemoveDoomedEntities()
 void Map::StartMusic()
 {
 	m_musicPlayback = g_theAudio->PlaySound(m_mapDef->m_mapMusic);
+	g_theGame->m_currentState->m_soundtrackPlayback = m_musicPlayback;
 }
 
 void Map::StopMusic()
@@ -804,7 +817,8 @@ void Map::SetCamera()
 {
 	if (g_theGame->m_fullMapMode){
 		//g_theGame->m_camera->SetProjectionOrtho(Vector2(-.5f,-.5f),  Vector2((float) m_dimensions.x + .5f, (float)m_dimensions.y + .5f));
-		g_theGame->m_camera->SetProjectionOrtho(m_dimensions.y + 1, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
+		int ortho = max(m_dimensions.x, m_dimensions.y);
+		g_theGame->m_camera->SetProjectionOrtho((float) ortho + 1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
 		g_theGame->m_camera->LookAt( Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, -1.f), Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, .5f));
 	} else {
 		float viewWidth = WINDOW_ASPECT * ZOOM_FACTOR;
@@ -935,6 +949,7 @@ void Map::CreateTileRenderable()
 
 	m_tileRenderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_3DPCU));
 	m_tileRenderable->SetMaterial(tileMat);
+	m_tileRenderable->m_zOrder = 0;
 	m_scene->AddRenderable(m_tileRenderable);
 }
 

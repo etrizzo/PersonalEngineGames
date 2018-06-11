@@ -8,26 +8,33 @@
 Renderable2D::Renderable2D()
 {
 	m_mesh = new Mesh();
+	m_mb = new MeshBuilder();
 	m_materials.push_back(Material::GetMaterial("default_lit"));
 	//m_materials[0]->SetShader("default_lit");
 }
 
 Renderable2D::Renderable2D(eRenderablePrimatives primType, float size)
 {
-	MeshBuilder mb;
-	mb.Begin(PRIMITIVE_TRIANGLES, true);
+	m_mb = new MeshBuilder();
+	m_mb->Begin(PRIMITIVE_TRIANGLES, true);
 	switch(primType){
 	case RENDERABLE_PLANE:
-		mb.AppendPlane(Vector3::ZERO, Vector3::UP, Vector3::RIGHT, Vector2::ONE * size, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
+		m_mb->AppendPlane(Vector3::ZERO, Vector3::UP, Vector3::RIGHT, Vector2::ONE * size, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
 		break;
 	//case RENDERABLE_CIRCLE:
 	//	mb.AppendSphere(Vector3::ZERO, size, 10.f, 10.f, RGBA::WHITE);
 	//	break;
 	}
-	mb.End();
-	m_mesh = mb.CreateMesh(VERTEX_TYPE_3DPCU);
+	m_mb->End();
+	m_mesh = m_mb->CreateMesh(VERTEX_TYPE_3DPCU);
 
 	m_materials.push_back(Material::GetMaterial("default_lit"));
+}
+
+Renderable2D::~Renderable2D()
+{
+	delete m_mesh;
+	delete m_mb;
 }
 
 //Renderable2D::Renderable2D(AABB2 quad)
@@ -95,11 +102,11 @@ void Renderable2D::SetMesh(SubMesh* smesh, int idx)
 void Renderable2D::SetMesh(const AABB2& drawingBox, const AABB2& currentUVS, const RGBA& color)
 {
 	delete m_mesh;
-	MeshBuilder mb = MeshBuilder();
-	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendPlane2D(drawingBox, color, currentUVS);
-	mb.End();
-	m_mesh = mb.CreateMesh(VERTEX_TYPE_3DPCU);
+	m_mb->Clear();
+	m_mb->Begin(PRIMITIVE_TRIANGLES, true);
+	m_mb->AppendPlane2D(drawingBox, color, currentUVS);
+	m_mb->End();
+	m_mesh = m_mb->CreateMesh(VERTEX_TYPE_3DPCU);
 }
 
 void Renderable2D::SetDiffuseTexture( Texture * tex, int index)

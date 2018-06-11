@@ -7,6 +7,7 @@
   </ItemDefinition>
 
   <ItemDefinition name="Greatbow" equipSlot="weapon">
+    <Size physicsRadius="0.35" drawRadius=".55"/>
     <Stats baseMovement="1~5" baseStrength="4~7" baseDefense="0~1" />
     <SpriteAnimSet spriteSheet="bows.png" spriteLayout="16,5">
       <SpriteAnim name="Idle" spriteIndexes="65"/>

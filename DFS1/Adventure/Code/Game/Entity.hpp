@@ -51,6 +51,8 @@ public:
 	void Translate(Vector2 offset);
 
 	std::string GetName() const;
+	float GetAspectRatio() const;
+	Vector2 GetPivot()	const;
 
 
 	Renderable2D* m_renderable;

@@ -21,7 +21,8 @@ public:
 	bool m_isPaused;
 	bool m_devMode;
 	bool m_fullMapMode;
-	float m_gameTime;
+	//float m_gameTime;
+	Clock* m_gameClock;
 	//Map* m_currentMap;
 	Adventure* m_currentAdventure;
 	Camera* m_camera	= nullptr;		//might change 
@@ -62,6 +63,8 @@ public:
 	void UpdateDefeat	(float deltaSeconds);
 	void UpdateMapMode	(float deltaSeconds);
 
+	void HandleInput();
+
 	void Render();
 	void RenderAttract();
 	void RenderPlaying();
@@ -85,6 +88,8 @@ public:
 	AABB2 SetGameCamera();
 	AABB2 GetUIBounds();
 	AABB2 GetMainCameraBounds();
+
+	float GetDeltaSeconds();
 
 	void UpdateMenuSelection(int direction = 1);
 

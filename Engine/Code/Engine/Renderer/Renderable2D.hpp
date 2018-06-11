@@ -8,11 +8,13 @@ class Renderable2D{
 public:
 	Renderable2D();
 	Renderable2D(eRenderablePrimatives primType, float size = 1.f);
+	~Renderable2D();
 	//Renderable2D(AABB2 quad);
 	//Renderable2D(std::string objFile, std::string matFile = "default");
 
 public:
 	Mesh* m_mesh;
+	MeshBuilder* m_mb;
 	//Material* m_sharedMaterial;		//whatever material i'm using
 	//Material* m_instanceMaterial;	// == nullptr;
 	std::vector<Material*> m_materials;

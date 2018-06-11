@@ -4,6 +4,14 @@
 
 EntityDefinition::EntityDefinition(tinyxml2::XMLElement * entityDefElement)
 {
+	//m_drawingRadius			= .5f;
+	//m_physicsRadius			= .35f;
+	//m_aspectRatio			= 1.f;
+	//m_boundingBox			= AABB2(0.f,0.f,0.f,0.f);
+	//m_drawWithBounds		= false;
+	//m_pivot					= Vector2::HALF;
+
+
 	m_name = ParseXmlAttribute(*entityDefElement, "name", m_name);
 	tinyxml2::XMLElement* sizeElement = entityDefElement->FirstChildElement("Size");
 	tinyxml2::XMLElement* movementElement = entityDefElement->FirstChildElement("Movement");
@@ -53,15 +61,10 @@ void EntityDefinition::ParseSize(tinyxml2::XMLElement* sizeElement)
 {
 	if (sizeElement != nullptr){
 		m_physicsRadius = ParseXmlAttribute(*sizeElement, "physicsRadius", m_physicsRadius);
-		m_drawingRadius = ParseXmlAttribute(*sizeElement, "drawRadius", m_drawingRadius);
+		m_drawingRadius = ParseXmlAttribute(*sizeElement, "drawRadius", m_drawingRadius);	//width
 		m_aspectRatio	= ParseXmlAttribute(*sizeElement, "aspect", 1.f);
 		m_pivot			= ParseXmlAttribute(*sizeElement, "pivot", m_pivot);
 
-		//draw radius is width
-		float height = m_drawingRadius * m_aspectRatio;
-		m_boundingBox.mins = Vector2(-m_drawingRadius * m_pivot.x, -height * m_pivot.y);
-		m_boundingBox.maxs = Vector2(m_drawingRadius * (1.f - m_pivot.x), height * (1.f - m_pivot.y));
-		m_drawWithBounds = true;
 
 		//std::string bounds = ParseXmlAttribute(*sizeElement, "drawBounds", " ");
 		//if (bounds != " "){
@@ -69,6 +72,12 @@ void EntityDefinition::ParseSize(tinyxml2::XMLElement* sizeElement)
 		//	//m_boundingBox.SetFromText(bounds.c_str());
 		//}
 	} 
+
+	//draw radius is width
+	float height = m_drawingRadius / m_aspectRatio;
+	m_boundingBox.mins = Vector2(-m_drawingRadius * m_pivot.x, -height * m_pivot.y);
+	m_boundingBox.maxs = Vector2(m_drawingRadius * (1.f - m_pivot.x), height * (1.f - m_pivot.y));
+	m_drawWithBounds = true;
 }
 
 void EntityDefinition::ParseHealth(tinyxml2::XMLElement * healthElement)

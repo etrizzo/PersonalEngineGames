@@ -16,10 +16,7 @@ Player::Player(ActorDefinition* actorDef, Vector2 initialPos, Map* map)
 void Player::Update(float deltaSeconds)
 {
 	if (!m_dead){
-		if (!m_isFiring){
-			Actor::UpdateWithController(deltaSeconds);
-		}
-		m_physicsDisc.center=GetPosition();
+
 		m_ageInSeconds+=deltaSeconds;
 
 		Tile* newTile = m_map->TileAtFloat(GetPosition());
@@ -88,6 +85,7 @@ void Player::RenderStatsInBox(AABB2 boxToDrawIn, RGBA tint)
 
 	//AABB2 pictureBox = AABB2(boxToDrawIn.mins + padding, Vector2(boxToDrawIn.maxs.x - (widthOfBox*.5f), boxToDrawIn.maxs.y - fontSize) - padding);
 	AABB2 pictureBox = boxToDrawIn.GetPercentageBox(.05f, .15f, .45f, .72f);
+	pictureBox.TrimToAspectRatio(GetAspectRatio());
 	float height = pictureBox.GetHeight();
 	//pictureBox.AddPaddingToSides(height * -.1f,height * -.15f);
 	g_theRenderer->DrawAABB2Outline(pictureBox, RGBA(255,255,255,64));
@@ -116,6 +114,14 @@ void Player::RenderDistanceMap() const
 		float heatVal = m_distanceMap.GetHeat(i);
 		g_theRenderer->DrawTextInBox2D(std::to_string(heatVal), tileBox, Vector2 (.5f,.5f), .1f, TEXT_DRAW_SHRINK_TO_FIT);
 	}
+}
+
+void Player::HandleInput()
+{
+	if (!m_isFiring){
+		Actor::UpdateWithController(g_theGame->GetDeltaSeconds());
+	}
+	m_physicsDisc.center=GetPosition();
 }
 
 void Player::SetPosition(Vector2 newPos, Map * newMap)
@@ -154,9 +160,9 @@ std::string Player::GetAnimName()
 	XboxController* controller = g_theInput->GetController(0);
 	Vector2 dir = m_facing.GetNormalized();
 	std::string direction = "South";
-	if (DotProduct(dir, DIRECTION_NORTH) >= .7f){
+	if (DotProduct(dir, DIRECTION_NORTH) >= .75f){
 		direction = "North";
-	} else if (DotProduct(dir, DIRECTION_SOUTH) >=.7f){
+	} else if (DotProduct(dir, DIRECTION_SOUTH) >=.75f){
 		direction = "South";
 	} else {
 		if (dir.x > 0.f){

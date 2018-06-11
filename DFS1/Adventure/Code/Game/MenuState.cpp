@@ -54,6 +54,9 @@ void MenuState_Paused::HandleInput()
 	if (g_theInput->WasKeyJustPressed('I') || g_primaryController->WasButtonJustPressed(XBOX_BACK)){
 		m_pauseState->SwitchToInventory();
 	}
+	if (g_theInput->WasKeyJustPressed('M')){
+		m_pauseState->SwitchToMap();
+	}
 
 }
 
@@ -145,6 +148,8 @@ void MenuState_Inventory::RenderContent()
 		itemIconBox.Translate(textHeight * -1.5f);
 	}
 
+	//// ------ Render Player Paperdoll ------ ////
+
 	float eqHeight = equippedBox.GetHeight();
 	equippedBox.AddPaddingToSides(0.f, eqHeight * -.2f);
 	equippedBox.Translate(0.f, eqHeight * -.2f);
@@ -168,8 +173,43 @@ void MenuState_Inventory::HandleInput()
 	if (WasPauseJustPressed() || g_primaryController->WasButtonJustPressed(XBOX_B)){
 		m_pauseState->SwitchToPaused();
 	}
+	if (g_theInput->WasKeyJustPressed('M')){
+		m_pauseState->SwitchToMap();
+	}
 	if (g_theInput->WasKeyJustPressed(VK_ESCAPE)){
 		g_theGame->TransitionToState(m_pauseState->m_encounterGameState);
 	}
 	m_menu->HandleInput();
+}
+
+MenuState_Map::MenuState_Map(GameState_Paused * pauseState, AABB2 bounds)
+	:MenuState(pauseState, bounds)
+{
+	g_theGame->m_fullMapMode = true;
+}
+
+void MenuState_Map::RenderBackground()
+{
+	g_theRenderer->DrawAABB2(m_bounds, RGBA(0, 32, 32, 200));
+}
+
+void MenuState_Map::RenderContent()
+{
+	m_pauseState->m_encounterGameState->RenderGame();
+}
+
+void MenuState_Map::HandleInput()
+{
+	if (WasPauseJustPressed() || g_primaryController->WasButtonJustPressed(XBOX_B)){
+		m_pauseState->SwitchToPaused();
+		g_theGame->m_fullMapMode = false;
+	}
+	if (g_theInput->WasKeyJustPressed('I') || g_primaryController->WasButtonJustPressed(XBOX_BACK)){
+		m_pauseState->SwitchToInventory();
+		g_theGame->m_fullMapMode = false;
+	}
+	if (g_theInput->WasKeyJustPressed(VK_ESCAPE)){
+		g_theGame->TransitionToState(m_pauseState->m_encounterGameState);
+		g_theGame->m_fullMapMode = false;
+	}
 }

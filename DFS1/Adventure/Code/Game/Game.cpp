@@ -42,7 +42,8 @@ Game::Game()
 	m_isPaused = false;
 	m_devMode = false;
 	m_fullMapMode = false;
-	m_gameTime = 0.f;
+	//m_gameTime = 0.f;
+	m_gameClock = new Clock(GetMasterClock());
 	
 
 	LoadSounds();
@@ -95,10 +96,9 @@ Vector2 Game::GetPlayerPosition() const
 
 void Game::Update(float deltaSeconds)
 {
-	m_gameTime+=deltaSeconds;
+	//m_gameTime+=deltaSeconds;
 	if(!m_isPaused){
 		m_currentState->Update(deltaSeconds);
-		m_currentState->HandleInput();
 	}
 }
 
@@ -150,15 +150,20 @@ void Game::UpdateMapMode(float deltaSeconds)
 	m_currentAdventure->Update(deltaSeconds);
 }
 
+void Game::HandleInput()
+{
+	
+	m_currentState->HandleInput();
+}
+
 void Game::Render()
 {
 	g_theRenderer->SetCullMode(CULLMODE_NONE);
 	g_theRenderer->DisableDepth();
 	g_theRenderer->ClearScreen(RGBA::BLACK);
-	//g_theRenderer->SetOrtho(m_camera->GetBounds().mins, m_camera->GetBounds().maxs);
 
 	m_currentState->Render();
-
+	g_theGame->SetGameCamera();
 	m_debugRenderSystem->UpdateAndRender();
 	/*if (m_currentState == STATE_PLAYING){
 		RenderPlaying();
@@ -490,9 +495,12 @@ void Game::TransitionToState(GameState* newState)
 
 void Game::TriggerTransition()
 {
+	g_theAudio->StopSound(m_currentState->m_soundtrackPlayback);
+	m_currentState->Transition();
+	//m_transitionToState->m_soundtrackPlayback = m_currentState->m_soundtrackPlayback;
 	m_currentState = m_transitionToState;
 	m_transitionToState = nullptr;
-	m_timeEnteredState = m_gameTime;
+	m_timeEnteredState = m_gameClock->GetCurrentSeconds();
 }
 
 AABB2 Game::SetUICamera()
@@ -522,6 +530,11 @@ AABB2 Game::GetUIBounds()
 AABB2 Game::GetMainCameraBounds()
 {
 	return m_camera->GetBounds();
+}
+
+float Game::GetDeltaSeconds()
+{
+	return m_gameClock->GetDeltaSeconds();
 }
 
 //Map * Game::CreateMap(std::string mapName, std::string mapType)

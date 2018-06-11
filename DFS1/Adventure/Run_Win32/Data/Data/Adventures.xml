@@ -3,7 +3,7 @@
   <AdventureDefinition name="Balrog" title="Kill the Balrog">
     <StartConditions startMap="The Village" startOnTileType="Grass"/>
     <VictoryConditions>
-      <KillActor actorToKill="Goblin" numToKill="3"/>
+     <!--<KillActor actorToKill="Goblin" numToKill="3"/>-->
       <KillActor actorToKill="Balrog" numToKill="1"/>
     </VictoryConditions>
     <Map name="The Village" mapDefinition="SmallVillage">
@@ -24,6 +24,7 @@
       <Item type="Platemail Chestpiece" onTileType="DarkDirt"/>
       <Item type="Platemail Leggings" onTileType="DarkDirt"/>
       <Item type="Platemail Helmet" onTileType="DarkDirt"/>
+      <Actor type="Balrog" onTileType="DarkDirt"/>
     </Map>
 
 
@@ -31,10 +32,8 @@
       <Actor type="Goblin" onTileType="Sand"/>
     </Map>
     <Map name="My ZOO :^)" mapDefinition="Zoo">
-      <!--
       <Actor type="Goblin" onTileType="Grass"/>
       <Item type="Platemail Chestpiece" onTileType="Grass"/>
-    -->
     </Map>
   </AdventureDefinition>
 

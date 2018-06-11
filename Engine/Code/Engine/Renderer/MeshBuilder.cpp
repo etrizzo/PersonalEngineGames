@@ -63,8 +63,8 @@ MeshBuilder::MeshBuilder()
 
 MeshBuilder::~MeshBuilder()
 {
-	//delete m_vertices.data();
-	//delete m_indices.data();
+	/*delete m_vertices;
+	delete m_indices;*/
 }
 
 void MeshBuilder::Clear()

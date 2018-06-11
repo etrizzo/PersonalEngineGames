@@ -3,7 +3,7 @@
 
 int DrawCall::GetSortLayer()
 {
-	return m_material->GetShader()->m_sortLayer;
+	return m_layer;
 }
 
 float DrawCall::GetDistance(Vector3 pos)

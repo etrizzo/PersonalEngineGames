@@ -50,7 +50,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 	
 	g_Window->SetInputSystem(g_theInput);
 	AABB2 bounds = g_theGame->m_camera->GetBounds();
-	g_devConsole = new DevConsole(g_theGame->m_camera->GetBounds());
+	g_devConsole = new DevConsole(g_theGame->GetUIBounds());
 	g_devConsole->SetRenderer(g_theRenderer);
 	RegisterCommands();
 	CommandStartup();
@@ -94,6 +94,8 @@ void App::Update()
 		g_devConsole->Update(ds);
 	}
 	m_appTime = GetCurrentTimeSeconds();
+	HandleInput();
+	g_theRenderer->UpdateClock(ds, m_deltaTime);
 }
 
 void App::Render()
@@ -101,7 +103,9 @@ void App::Render()
 
 	g_theGame->Render();
 	if (DevConsoleIsOpen()){
+		g_theGame->SetUICamera();
 		g_devConsole->Render();
+		g_theGame->SetGameCamera();
 	}
 
 }
@@ -110,6 +114,27 @@ void App::RegisterCommands()
 {
 	//should this be registered in Command::CommandRegister or nah? uses g_theRenderer which is kinda sorta game specific, idk
 	CommandRegister("recompile_shaders", CommandRecompileShaders, "Recompiles all shaders registered to the renderer");		
+}
+void App::HandleInput()
+{
+	if (g_theInput->WasKeyJustPressed(192)){		//the ` key
+		if (!DevConsoleIsOpen()){
+			g_devConsole->Open();
+		} else {
+			g_devConsole->Close();
+		}
+	}
+
+	if (!DevConsoleIsOpen()){
+		//universal keys
+		//if (g_theInput->WasKeyJustPressed(VK_ESCAPE)){
+		//	CommandRun("quit");
+		//}
+
+		//have game handle input
+		g_theGame->HandleInput();
+
+	}
 }
 //
 //App::App(HDC dispContext)

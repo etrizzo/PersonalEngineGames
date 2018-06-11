@@ -38,3 +38,11 @@ public:
 
 	Menu* m_menu;
 };
+
+class MenuState_Map : public MenuState{
+public:
+	MenuState_Map(GameState_Paused* pauseState, AABB2 bounds);
+	void RenderBackground() override;
+	void RenderContent() override;
+	void HandleInput() override;
+};

@@ -331,6 +331,16 @@ std::string Entity::GetName() const
 	return m_definition->m_name;
 }
 
+float Entity::GetAspectRatio() const
+{
+	return m_definition->m_aspectRatio;
+}
+
+Vector2 Entity::GetPivot() const
+{
+	return m_definition->m_pivot;
+}
+
 bool Entity::IsPointInForwardView(Vector2 point)
 {
 	return IsPointInConicSector2D(point, GetPosition(), m_facing, m_definition->m_forwardViewAngle, m_definition->m_range);

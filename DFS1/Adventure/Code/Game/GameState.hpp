@@ -10,10 +10,13 @@ public:
 	GameState() {};
 	GameState(float transitionLength, SoundID soundtrack = NULL) ;
 	~GameState() {};
+
+	SoundPlaybackID m_soundtrackPlayback;
 	// How many of these should be pure virutal??
 	virtual void Render();		//renders game, then UI, then transitions
 	virtual void Update(float ds = 0) { m_timeInState+=ds; }; 
-	virtual void RenderUI() {};
+	virtual void Transition() {};		//does any state-specific set-up
+	virtual void RenderUI() {};	
 	virtual void RenderGame() {};
 	virtual void RenderTransition();
 	virtual void RenderTransitionEffect(float t);
@@ -29,7 +32,7 @@ protected:
 	float m_transitionLength = .5f;
 
 	SoundID m_soundtrackID;
-	SoundPlaybackID m_soundtrackPlayback;
+	
 };
 
 
@@ -38,6 +41,7 @@ class GameState_Attract: public GameState{
 public:
 	GameState_Attract();
 	void Update(float ds);
+	void Transition() override;
 	void RenderUI();
 	void HandleInput();
 };
@@ -48,6 +52,7 @@ public:
 	GameState_Encounter(std::string adventureDefName);
 
 	void Update(float ds);
+	//void Transition() override;
 	void RenderGame();
 	void RenderUI();
 	void HandleInput();
@@ -67,6 +72,20 @@ public:
 	void SwitchToPaused();
 	void SwitchToInventory();
 	void SwitchToMap();
+
+	GameState_Encounter* m_encounterGameState;
+	MenuState* m_menuState;
+};
+
+class GameState_Victory: public GameState{
+public:
+	GameState_Victory(GameState_Encounter* encounter);
+	void Update(float ds) override;
+	void RenderGame() override;
+	void RenderUI() override;
+	//void RenderTransition() override;
+	void RenderTransitionEffect(float t) override;
+	void HandleInput() override;
 
 	GameState_Encounter* m_encounterGameState;
 	MenuState* m_menuState;

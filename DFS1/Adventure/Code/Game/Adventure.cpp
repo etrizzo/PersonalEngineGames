@@ -113,7 +113,7 @@ void Adventure::CheckForVictory()
 		m_hasWon = finishedAllConditions;
 		if (m_hasWon){
 			TODO("Victory State");
-			//g_theGame->StartStateTransition(STATE_VICTORY, .5f, RGBA(0,0,0,128));
+			g_theGame->TransitionToState(new GameState_Victory((GameState_Encounter*) g_theGame->m_currentState));
 		}
 	}
 	

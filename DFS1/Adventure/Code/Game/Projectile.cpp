@@ -11,6 +11,11 @@ Projectile::Projectile(ProjectileDefinition * definition, Map * entityMap, Vecto
 	m_localDrawingBox = AABB2(-definition->m_drawingRadius, -definition->m_drawingRadius, definition->m_drawingRadius, definition->m_drawingRadius);
 }
 
+Projectile::~Projectile()
+{
+	ConsolePrintf("deleted proj");
+}
+
 void Projectile::Update(float deltaSeconds)
 {
 	if (!m_aboutToBeDeleted){
