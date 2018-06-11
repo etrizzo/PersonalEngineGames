@@ -46,9 +46,12 @@ public:
 
 class DebugRenderTask_Basis: public DebugRenderTask_Point{
 public: 
-	DebugRenderTask_Basis(Vector3 pos, float lifetime = 0.f, RGBA startColor = RGBA::WHITE, RGBA endColor = RGBA::WHITE, DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH)
-		: DebugRenderTask_Point(pos, lifetime, startColor, endColor, mode) {};
+	DebugRenderTask_Basis(Vector3 pos, Matrix44 basis, float size = 1.f, float lifetime = 0.f, RGBA startColor = RGBA::WHITE, RGBA endColor = RGBA::WHITE, DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH);
 	void Render() override;
+	float m_size = .1f;
+	Vector3 m_right;
+	Vector3 m_up;
+	Vector3 m_forward;
 };
 
 

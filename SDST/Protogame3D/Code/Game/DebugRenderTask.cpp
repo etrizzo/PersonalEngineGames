@@ -75,6 +75,15 @@ void DebugRenderTask_Point::Render()
 	
 }
 
+DebugRenderTask_Basis::DebugRenderTask_Basis(Vector3 pos, Matrix44 basis, float size, float lifetime, RGBA startColor, RGBA endColor, DebugRenderMode mode)
+	: DebugRenderTask_Point(pos, lifetime, startColor, endColor, mode)
+{
+	m_size = size;
+	m_right = basis.GetI().XYZ();
+	m_up = basis.GetJ().XYZ();
+	m_forward = basis.GetK().XYZ();
+}
+
 void DebugRenderTask_Basis::Render()
 {
 	RGBA color = Interpolate(m_info.m_startColor, m_info.m_endColor, m_info.m_age / m_info.m_lifetime);
@@ -82,7 +91,7 @@ void DebugRenderTask_Basis::Render()
 	RGBA up = Interpolate(color, RGBA::GREEN, .5f);
 	RGBA forward = Interpolate(color, RGBA::BLUE, .5f);
 
-	g_theRenderer->DrawPoint(m_position, .1f, Vector3::RIGHT, Vector3::UP, Vector3::FORWARD, right, up, forward);
+	g_theRenderer->DrawPoint(m_position, m_size, m_right, m_up, m_forward, right, up, forward);
 }
 
 DebugRenderTask_Quad::DebugRenderTask_Quad(Vector3 center, Vector2 size, Vector3 right, Vector3 up, float lifetime, RGBA startColor, RGBA endColor, DebugRenderMode mode)

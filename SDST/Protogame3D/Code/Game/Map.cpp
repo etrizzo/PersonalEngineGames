@@ -99,6 +99,11 @@ Vector3 Map::GetVertexWorldPos(int x, int y)
 	return Vector3(xyPos.x, height, xyPos.y);
 }
 
+Vector3 Map::GetVertexWorldPos(IntVector2 xy)
+{
+	return GetVertexWorldPos(xy.x, xy.y);
+}
+
 float Map::GetHeightAtCoord(Vector2 xzCoord)
 {
 	IntVector2 bl_coords = GetVertexCoordsFromWorldPos(xzCoord);
@@ -117,6 +122,32 @@ float Map::GetHeightAtCoord(Vector2 xzCoord)
 	float height = Interpolate(heightbottom, heightTop, percentage.y);
 
 	return height;
+}
+
+Vector3 Map::GetPositionAtCoord(Vector2 xzCoord)
+{
+	return Vector3(xzCoord.x, GetHeightAtCoord(xzCoord), xzCoord.y);
+}
+
+Vector3 Map::GetNormalAtTile(Vector2 xzCoord)
+{
+	IntVector2 bl_coords = GetVertexCoordsFromWorldPos(xzCoord);
+	/*int numTilesWidth = (int) (m_extents.GetWidth() / m_tileSize.x	);
+	int numTilesHeight = (int)( m_extents.GetHeight() / m_tileSize.y);
+	int idx = GetIndexFromCoordinates(bl_coords.x, bl_coords.y, numTilesWidth, numTilesHeight);
+	Vector3 normal = m_normals[idx];
+	return normal;*/
+
+	Vector3 du = GetVertexWorldPos( bl_coords + IntVector2(1, 0) ) 
+		- GetVertexWorldPos( bl_coords - IntVector2(1, 0) ); 
+	Vector3 tangent = du.GetNormalized(); 
+
+	Vector3 dv = GetVertexWorldPos( bl_coords + IntVector2(0, 1) ) 
+		- GetVertexWorldPos( bl_coords - IntVector2(0, 1) ); 
+	Vector3 bitan = dv.GetNormalized(); 
+
+	Vector3 normal = Cross( bitan, tangent ); 
+	return normal.GetNormalized(); 
 }
 
 IntVector2 Map::GetVertexCoordsFromWorldPos(Vector2 xzPos)
@@ -216,6 +247,7 @@ void Map::RunMapGeneration(const Image& img)
 	int numTilesHeight = (int)( m_extents.GetHeight() / m_tileSize.y);
 
 	m_heights.resize(numTilesWidth * numTilesHeight);
+	m_normals.resize(numTilesWidth * numTilesHeight);
 	//read vertex heights from image data
 	for(int x = 0; x < numTilesWidth; x++){
 		for (int y = 0; y < numTilesHeight; y++){
@@ -244,6 +276,13 @@ void Map::RunMapGeneration(const Image& img)
 			Vector3 brPos = GetVertexWorldPos(x+1, y);
 			Vector3 tlPos = GetVertexWorldPos(x, y+1);
 			Vector3 trPos = GetVertexWorldPos(x+1, y+1);
+			
+			Vector3 right = (brPos - blPos).GetNormalized();
+			Vector3 up = (tlPos - blPos).GetNormalized();
+			int idx = GetIndexFromCoordinates(x, y, numTilesWidth, numTilesHeight);
+			Vector3 normal = Cross(up, right).GetNormalized();
+			m_normals[idx] = normal;
+
 			mb.AppendPlane(blPos, brPos, tlPos, trPos, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
 		}
 	}

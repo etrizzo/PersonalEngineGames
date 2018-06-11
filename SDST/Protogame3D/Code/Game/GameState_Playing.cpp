@@ -43,7 +43,7 @@ GameState_Playing::GameState_Playing()
 	m_scene->AddNewDirectionalLight(Vector3(-10.f, 0.f, -10.f), RGBA::WHITE, Vector3(0.f, -90.f, -10.f));		//bluish directional light
 
 	m_scene->AddCamera(g_theGame->m_currentCamera);
-	g_theGame->m_mainCamera->m_transform.SetParent(&m_player->m_renderable->m_transform);
+	//g_theGame->m_mainCamera->m_transform.SetParent(&m_player->m_renderable->m_transform);
 	g_theGame->m_mainCamera->AddSkybox("skybox.png");
 }
 
@@ -67,6 +67,8 @@ void GameState_Playing::Update(float ds)
 	m_couchMaterial->SetProperty("SPECULAR_POWER", m_specFactor);
 	m_particleSystem->Update(deltaSeconds);
 	m_player->Update();
+	g_theGame->m_mainCamera->m_transform.SetLocalPosition(m_player->GetPosition() + Vector3(0.f, 3.f, -5.f));
+	
 }
 
 void GameState_Playing::RenderGame()

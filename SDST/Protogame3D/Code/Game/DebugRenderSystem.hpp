@@ -175,6 +175,7 @@ public:
 
 	void MakeDebugRenderBasis( float lifetime, 
 		Vector3 position = Vector3::ZERO, 
+		float size = 1.f,
 		Matrix44 const &basis = Matrix44::IDENTITY, 
 		RGBA const &start_color = RGBA::RED, 
 		RGBA const &end_color = RGBA::GREEN, 

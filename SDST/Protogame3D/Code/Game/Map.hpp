@@ -58,7 +58,10 @@ public:
 
 	float GetHeightForVertex(int x, int y);
 	Vector3 GetVertexWorldPos(int x, int y);		//index of vertex
+	Vector3 GetVertexWorldPos(IntVector2 xy);		//index of vertex
 	float GetHeightAtCoord(Vector2 xzCoord);
+	Vector3 GetPositionAtCoord(Vector2 xzCoord);
+	Vector3 GetNormalAtTile(Vector2 xzCoord);
 	IntVector2 GetVertexCoordsFromWorldPos(Vector2 xzPos);
 	//Tile* TileAt(int x, int y);
 	//Tile* TileAt(IntVector2 coordinates);
@@ -78,6 +81,7 @@ public:
 	//std::vector<Entity*> m_allEntities;
 	//std::vector<GameChunk*> m_chunks;
 	std::vector<float> m_heights;
+	std::vector<Vector3> m_normals;
 	Renderable* m_renderable;
 
 private:

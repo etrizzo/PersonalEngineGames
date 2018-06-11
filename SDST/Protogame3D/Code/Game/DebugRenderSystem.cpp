@@ -168,7 +168,7 @@ void DebugRenderSystem::AddCurrent3DTask()
 		MakeDebugRenderPoint(m_defaultLifetime, drawPos, m_defaultStartColor, m_defaultEndColor, m_currentMode);
 		break;
 	case RENDER_TASK_BASIS:
-		MakeDebugRenderBasis(m_defaultLifetime, drawPos, Matrix44::IDENTITY, m_defaultStartColor, m_defaultEndColor, m_currentMode);
+		MakeDebugRenderBasis(m_defaultLifetime, drawPos, 1.f, Matrix44::IDENTITY, m_defaultStartColor, m_defaultEndColor, m_currentMode);
 		break;
 	case RENDER_TASK_QUAD:
 		MakeDebugRenderQuad(m_defaultLifetime, drawPos, Vector2::ONE * .3f, Vector3::RIGHT, Vector3::UP, m_defaultStartColor, m_defaultEndColor, m_currentMode);
@@ -322,11 +322,9 @@ void DebugRenderSystem::MakeDebugRenderLineSegment(Vector3 const & p0, Vector3 c
 	m_tasks3D.push_back((DebugRenderTask*) line);
 }
 
-void DebugRenderSystem::MakeDebugRenderBasis(float lifetime, Vector3 position, Matrix44 const & basis, RGBA const & start_color, RGBA const & end_color, DebugRenderMode const mode)
+void DebugRenderSystem::MakeDebugRenderBasis(float lifetime, Vector3 position, float size, Matrix44 const & basis, RGBA const & start_color, RGBA const & end_color, DebugRenderMode const mode)
 {
-	UNUSED(basis);
-	TODO("Make basis into any basis draw instead of just world basis, and also change point to be not that");
-	DebugRenderTask_Basis* point = new DebugRenderTask_Basis(position, lifetime, start_color, end_color, mode);
+	DebugRenderTask_Basis* point = new DebugRenderTask_Basis(position, basis, size, lifetime, start_color, end_color, mode);
 	m_tasks3D.push_back((DebugRenderTask*) point);
 }
 

@@ -6,7 +6,7 @@
 Player::Player(Vector3 position)
 {
 	float size = 1.f;
-	m_renderable = new Renderable(RENDERABLE_SPHERE, 1.f);
+	m_renderable = new Renderable(RENDERABLE_CUBE, 1.f);
 	SetPosition(position);
 	SetScale(Vector3(size,size,size));
 	Material* mat = Material::GetMaterial("couch");
@@ -36,34 +36,35 @@ void Player::Update()
 	//m_thrusterSystem->m_emitters[1]->m_renderable->SetPosition(m_rightThruster->GetWorldPosition());
 	//Translate(GetForward() * ds * m_speed * .5f);
 	SetWorldPosition();
-	if (m_rateOfFire.CheckAndReset()){
-		g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(1.f, GetPosition());
-	}
+	//if (m_rateOfFire.CheckAndReset()){
+	//	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(1.f, GetPosition());
+	//}
+	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, GetPosition(), 1.5f, m_renderable->m_transform.GetWorldMatrix());
 }
 
 void Player::HandleInput()
 {
 	float ds = g_theGame->GetDeltaSeconds();
 
-	Vector3 rotation = Vector3::ZERO;
+	//Vector3 rotation = Vector3::ZERO;
 
-	if (g_theInput->IsKeyDown(VK_UP)){
-		rotation.x += 1.f;
-	}
-	if (g_theInput->IsKeyDown(VK_DOWN)){
-		rotation.x -=1.f;
-	}
-	if (g_theInput->IsKeyDown(VK_RIGHT)){
-		rotation.y += 1.f;
-	}
-	if (g_theInput->IsKeyDown(VK_LEFT)){
-		rotation.y -=1.f;
-	}
+	//if (g_theInput->IsKeyDown(VK_UP)){
+	//	rotation.x += 1.f;
+	//}
+	//if (g_theInput->IsKeyDown(VK_DOWN)){
+	//	rotation.x -=1.f;
+	//}
+	//if (g_theInput->IsKeyDown(VK_RIGHT)){
+	//	rotation.y += 1.f;
+	//}
+	//if (g_theInput->IsKeyDown(VK_LEFT)){
+	//	rotation.y -=1.f;
+	//}
 
-	Vector2 controllerRotation = g_theInput->GetController(0)->GetRightThumbstickCoordinates();
-	rotation+=Vector3(controllerRotation.y, controllerRotation.x, 0.f);
+	//Vector2 controllerRotation = g_theInput->GetController(0)->GetRightThumbstickCoordinates();
+	//rotation+=Vector3(controllerRotation.y, controllerRotation.x, 0.f);
 
-	Rotate(rotation * m_degPerSecond * ds);
+	//Rotate(rotation * m_degPerSecond * ds);
 
 
 
@@ -104,7 +105,15 @@ void Player::HandleInput()
 void Player::SetWorldPosition()
 {
 	Vector3 pos = Vector3(m_positionXZ.x, GetHeightAtCurrentPos() + 1.f, m_positionXZ.y);
-	SetPosition(pos);
+	Vector3 normal = g_theGame->m_currentMap->GetNormalAtTile(m_positionXZ);
+	Matrix44 mat = Matrix44::IDENTITY;
+	mat.SetI(Vector4(Cross(normal, GetForward()).GetNormalized()));
+	mat.SetJ(Vector4(normal));
+	mat.SetK(Vector4(GetForward()));
+	mat.SetT(Vector4(pos));
+
+	m_renderable->m_transform.SetLocalMatrix(mat);
+	//SetPosition(pos);
 }
 
 float Player::GetHeightAtCurrentPos()
