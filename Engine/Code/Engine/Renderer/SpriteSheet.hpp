@@ -16,6 +16,7 @@ public:
 	 Texture* GetTexture() const;
 	IntVector2 GetDimensions() const;
 	std::string GetPath() const { return m_spriteSheetTexture->GetPath(); };
+	void SetTexture(Texture* tex);
 
 private:
 	Texture* m_spriteSheetTexture;

@@ -13,20 +13,14 @@
        <Item name="Bow" chanceToSpawn="1.0"/>
        <Item name="Bow" chanceToSpawn="1.0"/>
     </Inventory>
-    <SpriteAnimSet spriteSheet="wulax_bow_walk_9x4.png" spriteLayout="9,4" fps="6" defaultAnim ="IdleSouth">
-      <SpriteAnim name="MoveNorth"    spriteIndexes="0~8"/>
-      <SpriteAnim name="MoveWest"     spriteIndexes="9~17"/>
-      <SpriteAnim name="MoveSouth"    spriteIndexes="18~26"/>
-      <SpriteAnim name="MoveEast"     spriteIndexes="27~35"/>
-      <SpriteAnim name="IdleNorth"		spriteIndexes="0,1" fps=".5"/>
-      <SpriteAnim name="IdleWest"		spriteIndexes="9,17" fps=".5"/>
-      <SpriteAnim name="IdleSouth"		spriteIndexes="18,19" fps=".5"/>
-      <SpriteAnim name="IdleEast"		spriteIndexes="27,35" fps=".5"/>
-      <SpriteAnim name="AttackNorth"  spriteIndexes="0~12"  spriteSheet="wulax_bow_attack_13x4.png" spriteLayout="13,4" fps="24" playbackMode="0" />
-      <SpriteAnim name="AttackWest"   spriteIndexes="13~25" spriteSheet="wulax_bow_attack_13x4.png" spriteLayout="13,4" fps="24" playbackMode="0" />
-      <SpriteAnim name="AttackSouth"  spriteIndexes="26~38" spriteSheet="wulax_bow_attack_13x4.png" spriteLayout="13,4" fps="24" playbackMode="0" />
-      <SpriteAnim name="AttackEast"   spriteIndexes="39~51" spriteSheet="wulax_bow_attack_13x4.png" spriteLayout="13,4" fps="24" playbackMode="0" />
-    </SpriteAnimSet>
+    <SpriteAnimSet name = "humanoid" />
+    <Layers>
+      <Body name="HUMANOIDS/BODY/body_human_f_1.png" />
+      <Legs name="HUMANOIDS/LEGS/pants_f_1.png" />
+      <Chest name="HUMANOIDS/CHEST/chest_f_1.png" />
+      <Head name="HUMANOIDS/HEAD/hair_human_1.png" />
+      <Weapon name="HUMANOIDS/WEAPON/bow.png" />
+    </Layers>
   </ActorDefinition>
 
   <ActorDefinition name="Goblin" faction="evil">
@@ -36,16 +30,14 @@
       <Sight range="5.0"/>
     </Movement>
     <Health max="30" start="30"/>
-    <SpriteAnimSet spriteSheet="orc_piratess.png" spriteLayout="9,4" fps="8" defaultAnim ="IdleSouth">
-      <SpriteAnim name="MoveNorth"    spriteIndexes="0~8"/>
-      <SpriteAnim name="MoveWest"     spriteIndexes="9~17"/>
-      <SpriteAnim name="MoveSouth"    spriteIndexes="18~26"/>
-      <SpriteAnim name="MoveEast"     spriteIndexes="27~35"/>
-      <SpriteAnim name="IdleNorth"		spriteIndexes="0,1" fps="2"/>
-      <SpriteAnim name="IdleWest"		  spriteIndexes="9,10" fps="2"/>
-      <SpriteAnim name="IdleSouth"		spriteIndexes="18,19" fps="2"/>
-      <SpriteAnim name="IdleEast"		  spriteIndexes="27,28" fps="2"/>
-    </SpriteAnimSet>
+    <SpriteAnimSet name = "humanoid" />
+    <Layers>
+      <Body name="HUMANOIDS/BODY/body_orc_f_1.png" />
+      <Legs name="HUMANOIDS/LEGS/pants_f_1.png" />
+      <Chest name="HUMANOIDS/CHEST/chest_f_2.png" />
+      <Head name="HUMANOIDS/HEAD/head_bandana_f.png" />
+      <Weapon name="HUMANOIDS/WEAPON/recurvebow.png" />
+    </Layers>
   </ActorDefinition>
 
 
@@ -57,16 +49,11 @@
     </Movement>
     <Health max="80" start="80"/>
     <Stats baseMovement="1" baseStrength="3~4" baseDefense="2~3" />
-    <SpriteAnimSet spriteSheet="orc_piratess.png" spriteLayout="9,4" fps="8" defaultAnim ="IdleSouth">
-      <SpriteAnim name="MoveNorth"    spriteIndexes="0~8"/>
-      <SpriteAnim name="MoveWest"     spriteIndexes="9~17"/>
-      <SpriteAnim name="MoveSouth"    spriteIndexes="18~26"/>
-      <SpriteAnim name="MoveEast"     spriteIndexes="27~35"/>
-      <SpriteAnim name="IdleNorth"		spriteIndexes="0,1" fps="2"/>
-      <SpriteAnim name="IdleWest"		spriteIndexes="9,10" fps="2"/>
-      <SpriteAnim name="IdleSouth"		spriteIndexes="18,19" fps="2"/>
-      <SpriteAnim name="IdleEast"		spriteIndexes="27,28" fps="2"/>
-    </SpriteAnimSet>
+   <SpriteAnimSet name = "humanoid" />
+    <Layers>
+      <Body name="HUMANOIDS/BODY/body_orc_m_2.png" />
+       <Weapon name="HUMANOIDS/WEAPON/recurvebow.png" />
+    </Layers>
   </ActorDefinition>
 
 </ActorDefinitions>

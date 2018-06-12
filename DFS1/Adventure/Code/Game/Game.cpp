@@ -659,10 +659,11 @@ void Game::LoadMapDefinitions()
 
 void Game::LoadEntityDefinitions()
 {
-	tinyxml2::XMLDocument humanoidDefDoc;
-	humanoidDefDoc.LoadFile("Data/Data/Humanoid.xml");
-	tinyxml2::XMLElement* spriteAnimDefElement = humanoidDefDoc.FirstChildElement("SpriteAnimSet");
-	s_humanoidAnimSetDef = new SpriteAnimSetDef(spriteAnimDefElement, *g_theRenderer);
+	//tinyxml2::XMLDocument humanoidDefDoc;
+	//humanoidDefDoc.LoadFile("Data/Data/Humanoid.xml");
+	SpriteAnimSetDef::LoadSetsFromFile("Humanoid.xml");
+	//tinyxml2::XMLElement* spriteAnimDefElement = humanoidDefDoc.FirstChildElement("SpriteAnimSet");
+	//s_humanoidAnimSetDef = new SpriteAnimSetDef(spriteAnimDefElement, *g_theRenderer);
 
 	LoadItemDefinitions();
 	LoadActorDefinitions();

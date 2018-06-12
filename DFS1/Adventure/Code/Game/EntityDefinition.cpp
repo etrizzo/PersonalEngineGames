@@ -22,7 +22,13 @@ EntityDefinition::EntityDefinition(tinyxml2::XMLElement * entityDefElement)
 	ParseMovement(movementElement);
 	ParseHealth(healthElement);
 	ParseStartingInventory(inventoryElement);
-	m_spriteAnimSetDef = new SpriteAnimSetDef(animSetElement, *g_theRenderer);		//why is this by reference?
+	if (animSetElement != nullptr){
+		std::string animSetName = ParseXmlAttribute(*animSetElement, "name", " ");
+		m_spriteAnimSetDef = SpriteAnimSetDef::GetSpriteAnimSetDef(animSetName);
+		if(m_spriteAnimSetDef == nullptr){		//if no anim set def exists, make a new one
+			m_spriteAnimSetDef = new SpriteAnimSetDef(animSetElement);		//why is this by reference?
+		}
+	}
 }
 
 EntityDefinition::~EntityDefinition()

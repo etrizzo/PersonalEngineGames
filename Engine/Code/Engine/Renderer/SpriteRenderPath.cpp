@@ -32,22 +32,24 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 	for(Renderable2D* r : scene->m_renderables){
 		//this will change for multi-pass shaders or multi-material meshes
 		for (int i = 0; i < (int) r->m_mesh->m_subMeshes.size(); i++){
-			DrawCall dc;
-			//set up the draw call for this renderable :)
-			// the layer/queue comes from the shader!
-			dc.m_mesh = r->m_mesh->m_subMeshes[i];
-			dc.m_model = r->m_transform.GetWorldMatrix();
-			dc.m_material = r->GetEditableMaterial(i);
-			dc.m_layer = r->GetZOrder();
-			dc.m_queue = 0;
-			//dc.m_queue = r->m_transform.GetWorldPosition().y;
+			if (r->m_mesh->m_subMeshes[i] != nullptr){
+				DrawCall dc;
+				//set up the draw call for this renderable :)
+				// the layer/queue comes from the shader!
+				dc.m_mesh = r->m_mesh->m_subMeshes[i];
+				dc.m_model = r->m_transform.GetWorldMatrix();
+				dc.m_material = r->GetEditableMaterial(i);
+				dc.m_layer = r->GetZOrder();
+				dc.m_queue = 0;
+				//dc.m_queue = r->m_transform.GetWorldPosition().y;
 
-			if (r->GetEditableMaterial(i)->UsesLights()){
-				//compute most contributing lights based on renderable's position and puts them in the draw calls lights
-				/*ComputeMostContributingLights(dc,
-					r->GetPosition(), scene->m_lights);*/
+				if (r->GetEditableMaterial(i)->UsesLights()){
+					//compute most contributing lights based on renderable's position and puts them in the draw calls lights
+					/*ComputeMostContributingLights(dc,
+						r->GetPosition(), scene->m_lights);*/
+				}
+				drawCalls.push_back(dc);
 			}
-			drawCalls.push_back(dc);
 		}
 	}
 

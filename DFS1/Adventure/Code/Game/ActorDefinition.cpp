@@ -28,8 +28,11 @@ std::map<std::string, ActorDefinition*>	ActorDefinition::s_definitions;
 
 ActorDefinition::ActorDefinition(tinyxml2::XMLElement * actorElement): EntityDefinition(actorElement)
 {
+	m_layerTextures = std::vector<Texture*>();
+	m_layerTextures.resize(NUM_RENDER_SLOTS);
 	m_startingFaction = ParseXmlAttribute(*actorElement, "faction", "evil");
 	ParseStats(actorElement->FirstChildElement("Stats"));			//maybe should be in entity? Will apply to actors, projectiles, and items, most likely
+	ParseLayersElement(actorElement->FirstChildElement("Layers"));
 }
 
 ActorDefinition::~ActorDefinition()
@@ -63,6 +66,27 @@ void ActorDefinition::ParseStats(tinyxml2::XMLElement * statsElement)
 		m_maxStats.SetStat(STAT_STRENGTH, strengthRange.max);
 		m_minStats.SetStat(STAT_DEFENSE, defenseRange.min);
 		m_maxStats.SetStat(STAT_DEFENSE, defenseRange.max);
+	}
+}
+
+void ActorDefinition::ParseLayersElement(tinyxml2::XMLElement * layersElement)
+{
+	if (layersElement != nullptr){
+		ParseLayer(layersElement->FirstChildElement("Body"), BODY_SLOT);
+		ParseLayer(layersElement->FirstChildElement("Chest"), CHEST_SLOT);
+		ParseLayer(layersElement->FirstChildElement("Legs"), LEGS_SLOT);
+		ParseLayer(layersElement->FirstChildElement("Head"), HEAD_SLOT);
+		ParseLayer(layersElement->FirstChildElement("Weapon"), WEAPON_SLOT);
+	}
+}
+
+void ActorDefinition::ParseLayer(tinyxml2::XMLElement * layer, RENDER_SLOT slot)
+{
+	if (layer != nullptr){
+		std::string name = ParseXmlAttribute(*layer, "name", "NO_TEXTURE");
+		ASSERT_OR_DIE(name != "NO_TEXTURE", "Must specify layer texture");
+		m_layerTextures[slot] = Texture::CreateOrGetTexture(name);
+		//m_spriteSetDefs[slot]->SetSpriteSheetTexture(name);
 	}
 }
 

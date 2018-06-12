@@ -31,11 +31,13 @@ public:
 	void SetMesh(SubMesh* smesh, int idx = 0);
 
 	void SetMesh(const AABB2& drawingBox, const AABB2& currentUVS, const RGBA& color = RGBA::WHITE);
+	void SetSubMesh(const AABB2& drawingBox, const AABB2& currentUVs, const RGBA& color, const int& meshIndex);
 
 	//void SetDiffuseTexture(Texture* tex, int index = 0);
 	//void SetNormalTexture(Texture* tex, int index = 0);
 	void SetDiffuseTexture( Texture* tex, int index = 0);		//should use the const ones but keep old ones for backwards compatibility
 	void SetNormalTexture( Texture* tex, int index = 0);
+	void AddDiffuseTexture(Texture* tex, int index = 0);
 
 	void SetShader(std::string shaderName, int index = 0);
 	void SetShader(Shader* shader, int index = 0);

@@ -15,6 +15,7 @@ public:
 	void Render();
 	std::string GetAnimName();
 
+	void UpdateRenderable() override;
 	void RunCorrectivePhysics() override;
 	void RunWorldPhysics() override;
 	void RunEntityPhysics() override;
@@ -31,10 +32,17 @@ public:
 	Item* m_equippedItems[NUM_EQUIP_SLOTS];
 	Stats m_stats;
 	Stats m_baseStats;
+
+	void StartFiringArrow();
 	
 	static std::string GetEquipSlotByID(EQUIPMENT_SLOT equipID);
 
+	//std::vector<SpriteAnimSet*> m_animSets;		//collection of all anim sets - m_animSets[0] = m_animSet;
+
+
 protected:
+	void ParseLayersElement();
+
 	float m_lastAttacked;
 	void UpdateWithController(float deltaSeconds);
 	void RunSimpleAI(float deltaSeconds);
@@ -46,4 +54,5 @@ protected:
 	void GetRandomStatsFromDefinition();
 
 	void UpdateStats();
+	bool m_isFiring;
 };

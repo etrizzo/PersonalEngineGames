@@ -11,7 +11,7 @@ class SpriteAnimDef{
 	friend class SpriteAnim;
 	friend class SpriteAnimSetDef;
 public:
-	SpriteAnimDef(tinyxml2::XMLElement* spriteAnimDef, SpriteSheet* defaultSpriteSheet, float defaultFPS, Renderer& renderer);
+	SpriteAnimDef(tinyxml2::XMLElement* spriteAnimDef, SpriteSheet* defaultSpriteSheet, float defaultFPS);
 	~SpriteAnimDef();
 
 	SpriteSheet* GetSpriteSheet();

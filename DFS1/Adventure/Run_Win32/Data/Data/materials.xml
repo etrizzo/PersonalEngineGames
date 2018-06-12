@@ -34,6 +34,16 @@
 
 
 <!-- special mats -->
+
+<material name="cutout" shader="cutout">
+	<textures>
+		<texture type="diffuse" path="white" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
 <material name="particle" shader="additive">
 	<textures>
 		<texture type="diffuse" path="particle.png" />

@@ -3,7 +3,7 @@
 #include "Engine/Renderer/SpriteSheet.hpp"
 #include "Engine/Math/Renderer.hpp"
 
-SpriteAnimDef::SpriteAnimDef(tinyxml2::XMLElement* spriteAnimDefElement, SpriteSheet* defaultSpriteSheet, float defaultFPS, Renderer& renderer)
+SpriteAnimDef::SpriteAnimDef(tinyxml2::XMLElement* spriteAnimDefElement, SpriteSheet* defaultSpriteSheet, float defaultFPS)
 {
 	m_name = ParseXmlAttribute(*spriteAnimDefElement, "name", (std::string) "NONAME");
 	
@@ -12,7 +12,7 @@ SpriteAnimDef::SpriteAnimDef(tinyxml2::XMLElement* spriteAnimDefElement, SpriteS
 	if (!spriteSheetName.compare((std::string)"")){
 		m_spriteSheet = defaultSpriteSheet;
 	} else {
-		Texture* sheetTexture = renderer.CreateOrGetTexture(spriteSheetName);
+		Texture* sheetTexture = Texture::CreateOrGetTexture(spriteSheetName);
 		IntVector2 sheetDimensions = ParseXmlAttribute(*spriteAnimDefElement, "spriteLayout", IntVector2(0,0));
 		m_spriteSheet =  new SpriteSheet(*sheetTexture, sheetDimensions.x, sheetDimensions.y);
 	}

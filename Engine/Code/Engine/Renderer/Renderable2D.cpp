@@ -109,6 +109,16 @@ void Renderable2D::SetMesh(const AABB2& drawingBox, const AABB2& currentUVS, con
 	m_mesh = m_mb->CreateMesh(VERTEX_TYPE_3DPCU);
 }
 
+void Renderable2D::SetSubMesh(const AABB2 & drawingBox, const AABB2 & currentUVs, const RGBA & color, const int & meshIndex)
+{
+	//delete m_mesh;
+	m_mb->Clear();
+	m_mb->Begin(PRIMITIVE_TRIANGLES, true);
+	m_mb->AppendPlane2D(drawingBox, color, currentUVs);
+	m_mb->End();
+	m_mesh->SetSubMesh(m_mb->CreateSubMesh(VERTEX_TYPE_3DPCU), meshIndex);
+}
+
 void Renderable2D::SetDiffuseTexture( Texture * tex, int index)
 {
 	GetEditableMaterial(index)->SetDiffuseTexture(tex);
@@ -117,6 +127,14 @@ void Renderable2D::SetDiffuseTexture( Texture * tex, int index)
 void Renderable2D::SetNormalTexture( Texture * tex, int index)
 {
 	GetEditableMaterial(index)->SetNormalTexture(tex);
+}
+
+void Renderable2D::AddDiffuseTexture(Texture * tex, int index)
+{
+	if ((int) m_materials.size() <= index){
+		SetMaterial(m_materials[0], index);
+	}
+	SetDiffuseTexture(tex, index);
 }
 
 void Renderable2D::SetShader(std::string shaderName, int index)

@@ -6,16 +6,29 @@
 #include "Item.hpp"
 #include "ItemDefinition.hpp"
 #include "Game/DebugRenderSystem.hpp"
+#include "Engine/Renderer/SpriteAnimSet.hpp"
 
 Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, float initialRotation)
 	:Entity((EntityDefinition*)definition, entityMap, initialPos, initialRotation)
 {
+	//m_renderable->SetMaterial(Material::GetMaterial("cutout"));
 	m_definition = definition;
 	m_faction = definition->m_startingFaction;
 	m_timeLastUpdatedDirection = GetRandomFloatInRange(-1.f,1.f);
 	m_lastAttacked = 0.f;
 	m_facing = Vector2::MakeDirectionAtDegrees(GetRandomFloatInRange(-180.f,180.f));
 	GetRandomStatsFromDefinition();
+	//m_animSets = std::vector<SpriteAnimSet*>();
+	//m_animSets.resize(NUM_RENDER_SLOTS);
+	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
+		if (m_definition->m_layerTextures[i] != nullptr){
+			//m_animSets[i] = new SpriteAnimSet(m_definition->m_spriteSetDefs[i]);
+			//m_renderable->SetDiffuseTexture(m_animSets[i]->GetCurrentTexture(), i);
+			m_renderable->SetSubMesh(m_localDrawingBox, m_lastUVs, RGBA::WHITE, i);
+			m_renderable->AddDiffuseTexture(m_definition->m_layerTextures[i], i);
+		}
+	}
+	UpdateRenderable();
 }
 
 Actor::~Actor()
@@ -27,9 +40,13 @@ Actor::~Actor()
 void Actor::Update(float deltaSeconds)
 {
 	Entity::Update(deltaSeconds);
-	RunSimpleAI(deltaSeconds);
-	if (g_theGame->m_devMode){
-		g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, Vector3(GetPosition(), 0.f), 1.f);
+	std::string animName = GetAnimName();
+	if (m_isFiring){
+		if (m_animSet->IsCurrentAnimFinished()){
+			FireArrow();
+		}
+	} else {
+		RunSimpleAI(deltaSeconds);
 	}
 
 }
@@ -61,8 +78,26 @@ std::string Actor::GetAnimName()
 		//Vector2 dir = Vector2::MakeDirectionAtDegrees(controller->GetLeftThumbstickAngle()).GetNormalized();
 		action = "Move";
 	}
+	if (m_isFiring){
+		action = "Bow";
+	}
 
 	return action + direction;
+}
+
+void Actor::UpdateRenderable()
+{
+	AABB2 uvs = m_animSet->GetCurrentUVs();
+	if (!(uvs == m_lastUVs)){		//every anim set should have the same UVs so this should be fine
+		m_lastUVs = uvs;
+		for (int i = BODY_SLOT; i  < NUM_RENDER_SLOTS; i++){
+			if (m_definition->m_layerTextures[i] != nullptr){
+				//Texture* baseTexture = m_animSets[i]->GetCurrentTexture();	//base, legs, torso, head (, weapon)
+				m_renderable->SetSubMesh(m_localDrawingBox, uvs, RGBA::WHITE, i);
+
+			}
+		}
+	}
 }
 
 void Actor::RunCorrectivePhysics()
@@ -178,6 +213,15 @@ void Actor::EquipOrUnequipItem(Item * itemToEquip)
 //	}
 //}
 
+
+void Actor::StartFiringArrow()
+{
+	if (m_ageInSeconds - m_lastAttacked > 2.f){
+		if (!m_isFiring){
+			m_isFiring = true;
+		}
+	}
+}
 std::string Actor::GetEquipSlotByID(EQUIPMENT_SLOT equipID)
 {
 	if (equipID == EQUIP_SLOT_HEAD){
@@ -195,8 +239,15 @@ std::string Actor::GetEquipSlotByID(EQUIPMENT_SLOT equipID)
 	if (equipID == NOT_EQUIPPABLE){
 		return "Not Equippable";
 	}
+	//if (equipID == BODY_SLOT){
+	//	return "Body";
+	//}
 
 	ERROR_AND_DIE("No equip slot for equipID");
+}
+
+void Actor::ParseLayersElement()
+{
 }
 
 void Actor::UpdateWithController(float deltaSeconds)
@@ -252,9 +303,12 @@ void Actor::RunSimpleAI(float deltaSeconds)
 			Vector2 distance = playerPos - GetPosition();
 			m_facing = distance.GetNormalized();
 			if (distance.GetLengthSquared() > 4){
+				m_moving = true;
 				Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+			} else {
+				m_moving = false;
 			}
-			FireArrow();
+			StartFiringArrow();
 		} else {
 			Wander(deltaSeconds);
 		}
@@ -263,30 +317,31 @@ void Actor::RunSimpleAI(float deltaSeconds)
 }
 void Actor::Wander(float deltaSeconds)
 {
-	//float diff = m_ageInSeconds - m_timeLastUpdatedDirection;
-	//if (diff < 5.f ){
-	//	Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
-	//}
-	//if (diff > 5.f && diff < 10.5f){
-	//	if (m_moving){
-	//		m_moving = false;
-	//	}
-	//}
-	//if (diff > 10.5f){
-	//	m_moving = true;
-	//	//m_facing = Vector2::MakeDirectionAtDegrees(GetRandomFloatInRange(-180.f,180.f));
-	//	m_facing = m_facing - (2 * m_facing);
-	//	m_timeLastUpdatedDirection = m_ageInSeconds;
-	//}
+	float diff = m_ageInSeconds - m_timeLastUpdatedDirection;
+	if (diff < 5.f ){
+		Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+	}
+	if (diff > 5.f && diff < 10.5f){
+		if (m_moving){
+			m_moving = false;
+		}
+	}
+	if (diff > 10.5f){
+		m_moving = true;
+		//m_facing = Vector2::MakeDirectionAtDegrees(GetRandomFloatInRange(-180.f,180.f));
+		m_facing = m_facing - (2 * m_facing);
+		m_timeLastUpdatedDirection = m_ageInSeconds;
+	}
 }
 
 void Actor::FireArrow()
 {
-	if (m_ageInSeconds - m_lastAttacked > 2.f){
-		Vector2 facingScaled = m_facing * .5f;
-		m_map->SpawnNewProjectile("Arrow", GetPosition() + facingScaled, facingScaled.GetOrientationDegrees(), m_faction, m_stats.GetStat(STAT_STRENGTH));
-		m_lastAttacked = m_ageInSeconds;
-	}
+
+	
+	m_isFiring = false;
+	Vector2 facingScaled = m_facing * .5f;
+	m_map->SpawnNewProjectile("Arrow", GetPosition() + facingScaled, facingScaled.GetOrientationDegrees(), m_faction, m_stats.GetStat(STAT_STRENGTH));
+	m_lastAttacked = m_ageInSeconds;
 }
 
 void Actor::CheckActorForCollision(Actor * actor)

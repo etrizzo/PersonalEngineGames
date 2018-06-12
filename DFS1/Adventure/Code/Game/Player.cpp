@@ -11,6 +11,7 @@ Player::Player(ActorDefinition* actorDef, Vector2 initialPos, Map* map)
 	: Actor(actorDef, map, initialPos)
 {
 	m_dead = false;
+
 }
 
 void Player::Update(float deltaSeconds)
@@ -28,14 +29,9 @@ void Player::Update(float deltaSeconds)
 		std::string animName = GetAnimName();
 		m_animSet->SetCurrentAnim(animName);		//sets IF it's different from the last frame
 		m_animSet->Update(deltaSeconds);
+
 		UpdateRenderable();
-		
-		//if (g_theGame->m_currentState == STATE_PLAYING){
-		//	if (g_primaryController != nullptr){
-		//		if ((g_primaryController->WasButtonJustPressed(XBOX_A) || g_theInput->WasKeyJustPressed(VK_SPACE)) && !m_isFiring){
-		//			m_isFiring = true;
-		//		}
-		//	}
+
 
 		if (m_isFiring){
 			if (m_animSet->IsCurrentAnimFinished()){
@@ -44,9 +40,11 @@ void Player::Update(float deltaSeconds)
 		}
 		//g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, Vector3(GetPosition(), 0.f), m_definition->m_drawingRadius);
 		//g_theGame->m_debugRenderSystem->MakeDebugRender2DQuad(0.f, m_localDrawingBox);
-		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, m_physicsDisc, true , DEBUG_RENDER_IGNORE_DEPTH, RGBA::MAGENTA, RGBA::MAGENTA);
-		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, GetPosition() + m_localDrawingBox.GetCenter(), m_localDrawingBox.GetWidth() * .5f, true, DEBUG_RENDER_IGNORE_DEPTH, RGBA::CYAN);
-		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, GetPosition() + m_localDrawingBox.GetCenter(), m_localDrawingBox.GetHeight() * .5f, true, DEBUG_RENDER_IGNORE_DEPTH, RGBA::YELLOW);
+		if (g_theGame->m_devMode){
+			g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, m_physicsDisc, true , DEBUG_RENDER_IGNORE_DEPTH, RGBA::MAGENTA, RGBA::MAGENTA);
+			g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, GetPosition() + m_localDrawingBox.GetCenter(), m_localDrawingBox.GetWidth() * .5f, true, DEBUG_RENDER_IGNORE_DEPTH, RGBA::CYAN);
+			g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, GetPosition() + m_localDrawingBox.GetCenter(), m_localDrawingBox.GetHeight() * .5f, true, DEBUG_RENDER_IGNORE_DEPTH, RGBA::YELLOW);
+		}
 		//g_theGame->m_debugRenderSystem->MakeDebugRender2DQuad(0.)
 	}
 	
@@ -90,9 +88,13 @@ void Player::RenderStatsInBox(AABB2 boxToDrawIn, RGBA tint)
 	//pictureBox.AddPaddingToSides(height * -.1f,height * -.15f);
 	g_theRenderer->DrawAABB2Outline(pictureBox, RGBA(255,255,255,64));
 	//pictureBox.AddPaddingToSides(height *-.1f, height *-.1f);
-	const Texture* entityTexture = m_animSet->GetTextureForAnim("IdleSouth");
 	AABB2 texCoords = m_animSet->GetUVsForAnim("IdleSouth", 0.f);
-	g_theRenderer->DrawTexturedAABB2(pictureBox, *entityTexture,texCoords.mins, texCoords.maxs, RGBA());
+	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
+		if (m_definition->m_layerTextures[i] != nullptr){
+			//const Texture* entityTexture = m_animSets[i]->GetTextureForAnim("IdleSouth");
+			g_theRenderer->DrawTexturedAABB2(pictureBox, *m_definition->m_layerTextures[i], texCoords.mins, texCoords.maxs, RGBA());
+		}
+	}
 
 	AABB2 statsBox = pictureBox;
 	statsBox.Translate((widthOfBox * .5f), 0.f);
@@ -177,19 +179,14 @@ std::string Player::GetAnimName()
 		action = "Move";
 	}
 	if (m_isFiring){
-		action = "Attack";
+		action = "Bow";
 	}
 
 	return action + direction;
 
 }
 
-void Player::StartFiringArrow()
-{
-	if (!m_isFiring){
-		m_isFiring = true;
-	}
-}
+
 
 void Player::UpdateDistanceMap()
 {

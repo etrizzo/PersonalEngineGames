@@ -20,7 +20,7 @@ public:
 	void Respawn();
 	std::string GetAnimName();
 
-	void StartFiringArrow();
+	
 
 	bool m_dead;
 	Heatmap m_distanceMap;
@@ -30,6 +30,5 @@ private:
 	virtual void FireArrow();
 	Vector2 GetClosestAngle();
 	float checkDot(IntVector2 direction);
-	bool m_isFiring;
 
 };

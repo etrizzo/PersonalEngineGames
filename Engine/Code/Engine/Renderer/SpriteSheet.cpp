@@ -46,3 +46,8 @@ IntVector2 SpriteSheet::GetDimensions() const
 	return m_spriteLayout;
 }
 
+void SpriteSheet::SetTexture(Texture* tex)
+{
+	m_spriteSheetTexture = tex;
+}
+

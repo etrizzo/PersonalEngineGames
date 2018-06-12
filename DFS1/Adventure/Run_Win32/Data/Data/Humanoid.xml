@@ -1,16 +1,33 @@
-<SpriteAnimSet spriteSheet="wulax_bow_walk_9x4.png" spriteLayout="13,21" fps="12" defaultAnim ="IdleSouth">
-  <SpriteAnim name="MoveNorth"    spriteIndexes="104~112"   />
-  <SpriteAnim name="MoveWest"     spriteIndexes="117~125"  />
-  <SpriteAnim name="MoveSouth"    spriteIndexes="130~138" />
-  <SpriteAnim name="MoveEast"     spriteIndexes="142~150" />
+    <SpriteAnimSet name="humanoid" spriteSheet="HUMANOIDS/BODY/body_human_f_1.png" spriteLayout="13,21" fps="6" defaultAnim ="IdleSouth">
+      <SpriteAnim name="MoveNorth"    spriteIndexes="105~112"   />
+      <SpriteAnim name="MoveWest"     spriteIndexes="117~125"  />
+      <SpriteAnim name="MoveSouth"    spriteIndexes="131~138" />
+      <SpriteAnim name="MoveEast"     spriteIndexes="143~150" />
   
-  <SpriteAnim name="IdleNorth"		spriteIndexes="104"  />
-  <SpriteAnim name="IdleWest"		  spriteIndexes="117"   />
-  <SpriteAnim name="IdleSouth"		spriteIndexes="130" />
-  <SpriteAnim name="IdleEast"		  spriteIndexes="142"    />
+      <SpriteAnim name="IdleNorth"    spriteIndexes="105"  />
+      <SpriteAnim name="IdleWest"     spriteIndexes="117"   />
+      <SpriteAnim name="IdleSouth"    spriteIndexes="131" />
+      <SpriteAnim name="IdleEast"     spriteIndexes="143"    />
   
-  <SpriteAnim name="BowNorth"  spriteIndexes="208~220"  fps="24" playbackMode="0" />
-  <SpriteAnim name="BowWest"   spriteIndexes="221~233" fps="24" playbackMode="0" />
-  <SpriteAnim name="BowSouth"  spriteIndexes="234~246" fps="24" playbackMode="0" />
-  <SpriteAnim name="BowEast"   spriteIndexes="247~259" fps="24" playbackMode="0" />
+      <SpriteAnim name="BowNorth"  spriteIndexes="208~220"  fps="24" playbackMode="0" />
+      <SpriteAnim name="BowWest"   spriteIndexes="221~233" fps="24" playbackMode="0" />
+      <SpriteAnim name="BowSouth"  spriteIndexes="234~246" fps="24" playbackMode="0" />
+      <SpriteAnim name="BowEast"   spriteIndexes="247~259" fps="24" playbackMode="0" />
+    </SpriteAnimSet>
+
+
+
+<SpriteAnimSet spriteSheet="HUMANOIDS/BODY/body_human_f_1.png" spriteLayout="9,4" fps="6" defaultAnim ="IdleSouth">
+      <SpriteAnim name="MoveNorth"    spriteIndexes="0~8"/>
+      <SpriteAnim name="MoveWest"     spriteIndexes="9~17"/>
+      <SpriteAnim name="MoveSouth"    spriteIndexes="18~26"/>
+      <SpriteAnim name="MoveEast"     spriteIndexes="27~35"/>
+      <SpriteAnim name="IdleNorth"    spriteIndexes="0,1" fps=".5"/>
+      <SpriteAnim name="IdleWest"   spriteIndexes="9,17" fps=".5"/>
+      <SpriteAnim name="IdleSouth"    spriteIndexes="18,19" fps=".5"/>
+      <SpriteAnim name="IdleEast"   spriteIndexes="27,35" fps=".5"/>
+      <SpriteAnim name="AttackNorth"  spriteIndexes="0~12"  spriteSheet="wulax_bow_attack_13x4.png" spriteLayout="13,4" fps="24" playbackMode="0" />
+      <SpriteAnim name="AttackWest"   spriteIndexes="13~25" spriteSheet="wulax_bow_attack_13x4.png" spriteLayout="13,4" fps="24" playbackMode="0" />
+      <SpriteAnim name="AttackSouth"  spriteIndexes="26~38" spriteSheet="wulax_bow_attack_13x4.png" spriteLayout="13,4" fps="24" playbackMode="0" />
+      <SpriteAnim name="AttackEast"   spriteIndexes="39~51" spriteSheet="wulax_bow_attack_13x4.png" spriteLayout="13,4" fps="24" playbackMode="0" />
 </SpriteAnimSet>

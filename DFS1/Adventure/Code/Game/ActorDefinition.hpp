@@ -17,7 +17,12 @@ public:
 
 	static std::map< std::string, ActorDefinition* >		s_definitions;
 	static ActorDefinition* GetActorDefinition(std::string definitionName);
+
+	std::vector<Texture*> m_layerTextures;
+
 protected:
 	void ParseStats(tinyxml2::XMLElement* statsElement);
+	void ParseLayersElement(tinyxml2::XMLElement* layersElement);
+	void ParseLayer(tinyxml2::XMLElement* layer, RENDER_SLOT slot);
 
 };
