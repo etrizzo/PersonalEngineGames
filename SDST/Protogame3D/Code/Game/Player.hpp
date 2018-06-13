@@ -15,9 +15,12 @@ public:
 	float m_speed			= 10.f;
 	float m_degPerSecond	= 30.f;
 	StopWatch m_rateOfFire;
+	Transform* m_cameraTarget;
+	Renderable* m_turretRenderable;
 
 private:
 	void SetWorldPosition();
+	void MoveTurretTowardTarget();
 
 	float GetHeightAtCurrentPos();
 

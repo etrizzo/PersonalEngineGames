@@ -1,6 +1,7 @@
 #include "Map.hpp"
 #include "Game.hpp"
 #include "Game/MapGenStep.hpp"
+#include "DebugRenderSystem.hpp"
 
 Map::~Map()
 {
@@ -112,6 +113,11 @@ float Map::GetHeightAtCoord(Vector2 xzCoord)
 	Vector3 brVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y);
 	Vector3 tlVert = GetVertexWorldPos(bl_coords.x, bl_coords.y + 1);
 	Vector3 trVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y + 1);
+
+	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, blVert, RGBA::RED);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, brVert, RGBA::GREEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, tlVert, RGBA::BLUE);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, trVert, RGBA::MAGENTA);
 
 	AABB2 bounds = AABB2(blVert.XZ(), trVert.XZ());
 	Vector2 percentage = bounds.GetPercentageOfPoint(xzCoord);
