@@ -8,6 +8,8 @@ const IntVector2 IntVector2::SOUTH = IntVector2(0,-1);
 const IntVector2 IntVector2::EAST = IntVector2( 1,0);
 const IntVector2 IntVector2::WEST = IntVector2(-1,0);
 
+const IntVector2 IntVector2::INVALID_INDEX = IntVector2(-1,-1);
+
 const IntVector2 IntVector2::AWAY_LEFT		= IntVector2(-1, 1);
 const IntVector2 IntVector2::AWAY_RIGHT		= IntVector2( 1, 1);
 const IntVector2 IntVector2::TOWARD_LEFT	= IntVector2(-1,-1);

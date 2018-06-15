@@ -1,6 +1,7 @@
 #pragma once
 #include "Game/Entity.hpp"
 #include "Game/MapDefinition.hpp"
+#include "Game/Chunk.hpp"
 
 
 const float RAYCAST_STEPS_PER_TILE = 100.f;
@@ -65,23 +66,9 @@ public:
 	Vector3 GetNormalForVertex(IntVector2 vertCoords);
 	Vector3 GetNormalForVertex(int x, int y);
 	IntVector2 GetVertexCoordsFromWorldPos(Vector2 xzPos);
-	//Tile* TileAt(int x, int y);
-	//Tile* TileAt(IntVector2 coordinates);
-	//Tile* TileAtFloat(float x, float y);
-	//Tile* TileAtFloat(Vector2 floatCoordinates);
-	//Tile  GetRandomTileOfType(TileDefinition* tileType) const;
-	//Tile  GetRandomBaseTile() const;
 
-	//bool HasLineOfSight(const Vector2& startPos, const Vector2& endPos, float maxDistance = 20.f);
-	//RaycastResult2D Map::Raycast(const Vector2& startPos, const Vector2& direction, float maxDistance) ;
 
-	//void AddEntityToMap(Entity* entity);
-	//void RemoveEntityFromMap(Entity* entity);
-	//void RemoveEntities();
-	
-	//make a "remove from map" method to keep this private
-	//std::vector<Entity*> m_allEntities;
-	//std::vector<GameChunk*> m_chunks;
+	std::vector<Chunk*> m_chunks;
 	std::vector<float> m_heights;
 	std::vector<Vector3> m_normals;
 	Renderable* m_renderable;
@@ -90,6 +77,8 @@ private:
 	int m_numTiles;
 	Vector2 m_tileSize;
 	Vector2 m_heightRange;
+	IntVector2 m_chunkDimensions;
+	float m_tilesPerChunk;
 
 	//void InitializeTiles();
 	void RunMapGeneration(const Image& img);

@@ -72,6 +72,8 @@ float ClampFloatNegativeOneToOne(float inValue);
 
 void ClampZeroToOne(float& value);
 
+Vector2 ClampVector2(Vector2 inVal, Vector2 mins, Vector2 maxs);
+
 //Finds the % (as a fraction) of inValue in [rangeStart, rangeEnd]
 float GetFractionInRange(float inValue, float rangeStart, float rangeEnd);
 

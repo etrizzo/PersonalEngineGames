@@ -75,8 +75,9 @@ void ForwardRenderPath::ComputeMostContributingLights(Light* (&lightarray)[8], c
 		for(int i = 0; i < MAX_LIGHTS; i++){
 			if (i < (int) lights.size()){
 				lightarray[i] = lights[i];
-			} else {
-				lightarray[i] = new Light();
+			} 
+			else {
+				lightarray[i] = nullptr;
 			}
 		}
 	} else {

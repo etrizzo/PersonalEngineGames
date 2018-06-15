@@ -44,6 +44,7 @@ Player::Player(Vector3 position)
 	m_cameraTarget->SetLocalPosition(GetPosition());
 	m_turretRenderable->SetPosition(GetPosition() + GetUp() * .25f);
 	m_turretRenderable->m_transform.SetParent(&m_renderable->m_transform);
+	//m_turretRenderable->m_transform.SetParent(m_cameraTarget);
 }
 
 void Player::Update()
@@ -58,10 +59,11 @@ void Player::Update()
 	//if (m_rateOfFire.CheckAndReset()){
 	//	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(1.f, GetPosition());
 	//}
+	UpdateTarget();
 	m_cameraTarget->SetLocalPosition(GetPosition() + GetUp() * .25f);
 	MoveTurretTowardTarget();
 	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, GetPosition(), 1.5f, m_renderable->m_transform.GetWorldMatrix());
-	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->GetPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix());
+	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->GetPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix());
 }
 
 void Player::HandleInput()
@@ -128,6 +130,7 @@ void Player::HandleInput()
 
 	m_positionXZ+=movement;
 
+	m_positionXZ = ClampVector2(m_positionXZ, g_theGame->m_currentMap->m_extents.mins, g_theGame->m_currentMap->m_extents.maxs);
 	
 
 
@@ -138,10 +141,18 @@ void Player::SetWorldPosition()
 	Vector3 pos = Vector3(m_positionXZ.x, GetHeightAtCurrentPos() + .3f, m_positionXZ.y);
 	Vector3 normal = g_theGame->m_currentMap->GetNormalAtTile(m_positionXZ);
 	Matrix44 mat = Matrix44::IDENTITY;
-	mat.SetI(Vector4(GetRight()));
+
+	//maintaining Forward
+	mat.SetI(Vector4(Cross( normal, GetForward()).GetNormalized()));
 	mat.SetJ(Vector4(normal));
-	mat.SetK(Vector4(Cross(GetRight(), normal).GetNormalized()));
+	mat.SetK(Vector4(GetForward()));
 	mat.SetT(Vector4(pos));
+
+	//maintaining Right:
+	//mat.SetI(Vector4(GetRight()));
+	//mat.SetJ(Vector4(normal));
+	//mat.SetK(Vector4(Cross(GetRight(), normal).GetNormalized()));
+	//mat.SetT(Vector4(pos));
 
 	m_renderable->m_transform.SetLocalMatrix(mat);
 	//SetPosition(pos);
@@ -152,6 +163,16 @@ void Player::MoveTurretTowardTarget()
 	//Transform* base = m_turretRenderable->m_transform.GetParent();
 	//Vector3 Local_pos = base->WorldToLocal(m_target);
 	//m_turretRenderable->m_transform.LocalLookAt(localPos);
+
+}
+
+void Player::UpdateTarget()
+{
+	//raycast against the world from camera forward
+	//RayCast3 ray = RayCast3(g_theGame->m_mainCamera->GetPosition(), g_theGame->m_mainCamera->GetForward() );
+	//
+	//Contact3 contact;
+
 }
 
 float Player::GetHeightAtCurrentPos()

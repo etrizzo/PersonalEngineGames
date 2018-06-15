@@ -64,9 +64,9 @@ void GameState_Playing::Update(float ds)
 		Vector3 pos = Vector3( xz_pos.x, 5.f, xz_pos.y ); 
 	}
 
-	m_couchMaterial->SetProperty("SPECULAR_AMOUNT", m_specAmount);
-	m_couchMaterial->SetProperty("SPECULAR_POWER", m_specFactor);
-	m_particleSystem->Update(deltaSeconds);
+	//m_couchMaterial->SetProperty("SPECULAR_AMOUNT", m_specAmount);
+	//m_couchMaterial->SetProperty("SPECULAR_POWER", m_specFactor);
+	//m_particleSystem->Update(deltaSeconds);
 	m_player->Update();
 	//g_theGame->m_mainCamera->m_transform.SetLocalPosition(m_player->GetPosition() + Vector3(0.f, 3.f, -5.f));
 	
@@ -83,7 +83,7 @@ void GameState_Playing::RenderGame()
 	}
 
 	m_particleSystem->m_emitters[0]->CameraPreRender(g_theGame->m_currentCamera);
-	SetShader();
+	//SetShader();
 
 	//m_thaShip->m_renderable->GetEditableMaterial()->SetProperty("TINT", RGBA::RED);
 

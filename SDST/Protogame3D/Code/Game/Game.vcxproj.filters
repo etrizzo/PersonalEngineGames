@@ -58,6 +58,12 @@
     <ClCompile Include="Player.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="Raycast3.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Chunk.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -106,6 +112,12 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="Player.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Raycast3.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunk.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

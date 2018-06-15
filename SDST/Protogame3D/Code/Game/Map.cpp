@@ -15,13 +15,14 @@ Map::Map(std::string imageFile, AABB2 const & extents, float minHeight, float ma
 	IntVector2 imgSize = img.GetDimensions();
 	m_extents = extents;
 	
-	
+	m_chunkDimensions = chunks;
 	float chunkWidth = extents.GetWidth() / (float) chunks.x;
 	float chunkHeight = extents.GetHeight() / (float) chunks.y;
 	float tileWidth = chunkWidth / tilesPerChunk;
 	float tileHeight = chunkHeight/ tilesPerChunk;
 	m_tileSize = Vector2(tileWidth, tileHeight);
 	m_heightRange = Vector2(minHeight, maxHeight);
+	m_tilesPerChunk = tilesPerChunk;
 
 	int numTilesWidth = (int) (m_extents.GetWidth() / m_tileSize.x	);
 	int numTilesHeight = (int)( m_extents.GetHeight() / m_tileSize.y);
@@ -162,18 +163,10 @@ Vector3 Map::GetNormalAtTile(Vector2 xzCoord)
 	Vector3 tlNorm = GetNormalForVertex(bl_coords.x, bl_coords.y + 1);
 	Vector3 trNorm = GetNormalForVertex(bl_coords.x + 1, bl_coords.y + 1);
 
-	//DEBUG DRAWING
 	Vector3 blVert = GetVertexWorldPos(bl_coords.x, bl_coords.y);
-	Vector3 brVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y);
-	Vector3 tlVert = GetVertexWorldPos(bl_coords.x, bl_coords.y + 1);
+
 	Vector3 trVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y + 1);
 
-	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(blVert, blVert + blNorm, RGBA::RED);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(brVert, brVert + brNorm, RGBA::GREEN);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(tlVert, tlVert + tlNorm, RGBA::BLUE);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(trVert, trVert + trNorm, RGBA::MAGENTA);
-
-	// END DEBUG DRAWING
 
 	AABB2 bounds = AABB2(blVert.XZ(), trVert.XZ());
 	Vector2 percentage = bounds.GetPercentageOfPoint(xzCoord);
@@ -183,10 +176,21 @@ Vector3 Map::GetNormalAtTile(Vector2 xzCoord)
 	Vector3 normTop = Interpolate(tlNorm, trNorm, percentage.x);
 	Vector3 norm = Interpolate(normbottom, normTop, percentage.y);
 
+	//DEBUG DRAWING
+	Vector3 brVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y);
+	Vector3 tlVert = GetVertexWorldPos(bl_coords.x, bl_coords.y + 1);
+
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(blVert, blVert + blNorm, RGBA::RED);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(brVert, brVert + brNorm, RGBA::GREEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(tlVert, tlVert + tlNorm, RGBA::BLUE);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(trVert, trVert + trNorm, RGBA::MAGENTA);
+
 	Vector3 pos = GetPositionAtCoord(xzCoord);
-	//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, (pos + normbottom.GetNormalized()), RGBA::RED, RGBA::RED);
-	//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, (pos + normTop.GetNormalized()), RGBA::GREEN, RGBA::GREEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, (pos + normbottom.GetNormalized()), RGBA::RED, RGBA::RED);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, (pos + normTop.GetNormalized()), RGBA::GREEN, RGBA::GREEN);
 	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, (pos + norm.GetNormalized()), RGBA::YELLOW, RGBA::YELLOW);
+
+	// END DEBUG DRAWING
 
 	return norm.GetNormalized();
 }
@@ -199,7 +203,7 @@ Vector3 Map::GetNormalForVertex(IntVector2 vertCoords)
 Vector3 Map::GetNormalForVertex(int x, int y)
 {
 	int idx = GetIndexFromCoordinates(x, y, m_dimensions.x, m_dimensions.y);
-	ClampInt(idx, 0 , m_dimensions.x * m_dimensions.y);
+	idx = ClampInt(idx, 0 , m_dimensions.x * m_dimensions.y);
 	return m_normals[idx];
 }
 
@@ -296,52 +300,71 @@ IntVector2 Map::GetVertexCoordsFromWorldPos(Vector2 xzPos)
 
 void Map::RunMapGeneration(const Image& img)
 {
-	int numTilesWidth = (int) (m_extents.GetWidth() / m_tileSize.x	);
-	int numTilesHeight = (int)( m_extents.GetHeight() / m_tileSize.y);
+	//int numTilesWidth = (int) (m_extents.GetWidth() / m_tileSize.x	);
+	//int numTilesHeight = (int)( m_extents.GetHeight() / m_tileSize.y);
 
-	m_heights.resize(numTilesWidth * numTilesHeight);
-	m_normals.resize(numTilesWidth * numTilesHeight);
+	m_heights.resize(m_dimensions.x * m_dimensions.y);
+	m_normals.resize(m_dimensions.x * m_dimensions.y);
 	//read vertex heights from image data
-	for(int x = 0; x < numTilesWidth; x++){
-		for (int y = 0; y < numTilesHeight; y++){
+	for(int x = 0; x < m_dimensions.x; x++){
+		for (int y = 0; y < m_dimensions.y; y++){
 			Vector2 xzPos = Vector2(x * m_tileSize.x, y * m_tileSize.y) + m_extents.mins;
-			if (m_extents.IsPointInside(xzPos)){
+			//if (m_extents.IsPointInside(xzPos)){
 				Vector2 uvs = m_extents.GetPercentageOfPoint(xzPos);
-				
+				uvs = ClampVector2(uvs, Vector2::ZERO, Vector2::ONE);
 				//Vector2 coordFloat  = Vector2( percentage.x * (float)img.GetDimensions().x, percentage.y * (float) img.GetDimensions().y);
 				//IntVector2 coords = IntVector2((int)floor(coordFloat.x), (int)floor(coordFloat.y));
 				//float r = (float) img.GetTexel(coords.x, coords.y).r;
 				float r = img.GetTexelAtUVS(uvs).r;
-				int idx = GetIndexFromCoordinates(x, y, numTilesWidth, numTilesHeight);
+				int idx = GetIndexFromCoordinates(x, y, m_dimensions.x, m_dimensions.y);
 				m_heights[idx] = RangeMapFloat(r, 0, 255.f, m_heightRange.x, m_heightRange.y);
-			}
+			//}
 		}
 	}
-
-	//generate mesh
 	MeshBuilder mb = MeshBuilder();
-	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	
-	for (int x = 0; x < numTilesWidth-1; x++){
-		for (int y = 0; y < numTilesHeight-1; y++){
-			//for each vertex, append plane (as bottom right)
-			Vector3 blPos = GetVertexWorldPos(x,y);
-			Vector3 brPos = GetVertexWorldPos(x+1, y);
-			Vector3 tlPos = GetVertexWorldPos(x, y+1);
-			Vector3 trPos = GetVertexWorldPos(x+1, y+1);
-			
-			Vector3 right = (brPos - blPos).GetNormalized();
-			Vector3 up = (tlPos - blPos).GetNormalized();
-			int idx = GetIndexFromCoordinates(x, y, numTilesWidth, numTilesHeight);
-			Vector3 normal = Cross(up, right).GetNormalized();
-			m_normals[idx] = normal;
+	Material* terrainMat = Material::GetMaterial("terrain");
+	for (int chunkX = 0; chunkX < m_chunkDimensions.x; chunkX++){
+		for (int chunkY = 0; chunkY < m_chunkDimensions.y; chunkY++){
+			int startX = chunkX *m_tilesPerChunk;
+			int startY = chunkY *m_tilesPerChunk;
+			int endX = startX + m_tilesPerChunk;
+			int endY = startY + m_tilesPerChunk;
 
-			mb.AppendPlane(blPos, brPos, tlPos, trPos, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
+			//generate mesh
+			mb.Clear();
+			mb.Begin(PRIMITIVE_TRIANGLES, true);
+			
+			for (int x = startX; x < endX; x++){
+				for (int y = startY; y < endY; y++){
+					//for each vertex, append plane (as bottom right)
+					
+					Vector3 blPos = GetVertexWorldPos(x,y);
+					Vector3 brPos = GetVertexWorldPos(x+1, y);
+					Vector3 tlPos = GetVertexWorldPos(x, y+1);
+					Vector3 trPos = GetVertexWorldPos(x+1, y+1);
+					
+					Vector3 right = (brPos - blPos).GetNormalized();
+					Vector3 up = (tlPos - blPos).GetNormalized();
+					int idx = GetIndexFromCoordinates(x, y, m_dimensions.x, m_dimensions.y);
+					Vector3 normal = Cross(up, right).GetNormalized();
+					m_normals[idx] = normal;
+					if ( (x + 1) < m_dimensions.x && (y + 1 ) < m_dimensions.y){
+						mb.AppendPlane(blPos, brPos, tlPos, trPos, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
+					}
+				}
+			}
+			mb.End();
+			Chunk* chunk = new Chunk();
+			chunk->Setup(this, IntVector2(chunkX, chunkY));
+			chunk->SetMesh(mb.CreateMesh());
+			chunk->SetMaterial(terrainMat);
+
+			g_theGame->m_playState->m_scene->AddRenderable(chunk->m_renderable);
+			m_chunks.push_back(chunk);
+			//m_renderable->SetMesh(mb.CreateMesh());
+			//m_renderable->SetMaterial(terrainMat);
 		}
 	}
-	mb.End();
-	m_renderable->SetMesh(mb.CreateMesh());
-	m_renderable->SetMaterial(Material::GetMaterial("terrain"));
 	//m_renderable->SetMaterial(Material::GetMaterial("wireframe"));
 
 }

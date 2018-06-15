@@ -72,7 +72,8 @@ void Game::PostStartup()
 	//m_debugRenderSystem->DetachCamera();
 
 	m_currentState = new GameState_Attract();
-	m_currentMap = new Map("Heightmap.png", AABB2(-100.f, -100.f, 100.f, 100.f), -5.f, 2.f, IntVector2(10,10), 40.f);
+	m_currentMap = new Map("Heightmap_2.png", AABB2(-100.f, -100.f, 100.f, 100.f), -5.f, 2.f, IntVector2(20,20), 40.f);
+	//m_currentMap = new Map("Heightmap.png", AABB2(-100.f, -100.f, 100.f, 100.f), -5.f, 2.f, IntVector2(20,20), 40.f);
 
 
 	

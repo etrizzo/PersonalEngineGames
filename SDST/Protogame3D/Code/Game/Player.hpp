@@ -21,6 +21,7 @@ public:
 private:
 	void SetWorldPosition();
 	void MoveTurretTowardTarget();
+	void UpdateTarget();
 
 	float GetHeightAtCurrentPos();
 

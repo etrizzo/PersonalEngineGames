@@ -197,6 +197,13 @@ void ClampZeroToOne(float & value)
 	}
 }
 
+Vector2 ClampVector2(Vector2 inVal, Vector2 mins, Vector2 maxs)
+{
+	inVal.x = ClampFloat(inVal.x, mins.x, maxs.x);
+	inVal.y = ClampFloat(inVal.y, mins.y, maxs.y);
+	return inVal;
+}
+
 float GetFractionInRange(float inValue, float rangeStart, float rangeEnd)
 {
 

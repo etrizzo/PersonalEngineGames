@@ -38,6 +38,8 @@ public:
 	const static IntVector2 SOUTH;
 	const static IntVector2 EAST;
 	const static IntVector2 WEST;
+	
+	const static IntVector2 INVALID_INDEX;
 
 	const static IntVector2 AWAY_LEFT;
 	const static IntVector2 AWAY_RIGHT;
