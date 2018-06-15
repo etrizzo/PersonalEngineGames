@@ -2,7 +2,7 @@
 #include "Game/GameCommon.hpp"
 #include "Game/MenuState.hpp"
 
-
+class Adventure;
 
 class GameState
 {
@@ -12,6 +12,7 @@ public:
 	~GameState() {};
 
 	SoundPlaybackID m_soundtrackPlayback;
+	Adventure* m_currentAdventure;
 	// How many of these should be pure virutal??
 	virtual void Render();		//renders game, then UI, then transitions
 	virtual void Update(float ds = 0) { m_timeInState+=ds; }; 
@@ -41,7 +42,7 @@ class GameState_Attract: public GameState{
 public:
 	GameState_Attract();
 	void Update(float ds);
-	void Transition() override;
+	
 	void RenderUI();
 	void HandleInput();
 };
@@ -49,13 +50,15 @@ public:
 
 class GameState_Encounter: public GameState{
 public:
-	GameState_Encounter(std::string adventureDefName);
+	GameState_Encounter(std::string adventureDefName, int difficulty = 0);
 
 	void Update(float ds);
-	//void Transition() override;
+	void Transition() override;
 	void RenderGame();
 	void RenderUI();
 	void HandleInput();
+
+	
 };
 
 

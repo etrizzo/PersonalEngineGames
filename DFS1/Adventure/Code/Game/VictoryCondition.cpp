@@ -21,29 +21,32 @@ VictoryCondition * VictoryCondition::CreateVictoryCondition(const tinyxml2::XMLE
 	std::string conditionName = conditionElement->Name();
 	VictoryCondition* newCondition = nullptr;
 	if (conditionName == "KillActor"){
-		newCondition  = (VictoryCondition*) new VictoryCondition_KillActor(conditionElement);
+		newCondition  = (VictoryCondition*) new VictoryCondition_KillActor(conditionElement, nullptr);
 	}
 	return newCondition;
 }
 
 
-VictoryCondition_KillActor::VictoryCondition_KillActor(const tinyxml2::XMLElement * conditionsElement)
+VictoryCondition_KillActor::VictoryCondition_KillActor(const tinyxml2::XMLElement * conditionsElement, Adventure* adv)
 	:VictoryCondition(conditionsElement)
 {
+	m_currentAdventure = adv;
 	m_actorToKillName = ParseXmlAttribute(*conditionsElement, "actorToKill", "");
 	m_numberToKill = ParseXmlAttribute(*conditionsElement, "numToKill", 1);
 	m_numberKilled = 0;
 }
 
-VictoryCondition_KillActor * VictoryCondition_KillActor::Clone() const
+VictoryCondition_KillActor * VictoryCondition_KillActor::Clone(Adventure* adventure) const
 {
-	return new VictoryCondition_KillActor(*this);
+	VictoryCondition_KillActor* vc = new VictoryCondition_KillActor(*this);
+	vc->m_currentAdventure = adventure;
+	return vc;
 }
 
 bool VictoryCondition_KillActor::CheckIfComplete()
 {
 	if (!m_complete){
-		for(Actor* actor: g_theGame->m_currentAdventure->m_currentMap->m_allActors){
+		for(Actor* actor: m_currentAdventure->m_currentMap->m_allActors){
 			if (actor->m_aboutToBeDeleted){
 				if (actor->m_definition->m_name == m_actorToKillName){
 					m_numberKilled++;

@@ -13,7 +13,7 @@ Projectile::Projectile(ProjectileDefinition * definition, Map * entityMap, Vecto
 
 Projectile::~Projectile()
 {
-	ConsolePrintf("deleted proj");
+
 }
 
 void Projectile::Update(float deltaSeconds)

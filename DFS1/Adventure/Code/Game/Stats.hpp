@@ -5,6 +5,8 @@ class Stats{
 public:
 	Stats();
 	Stats(Stats minStats, Stats maxStats);
+	Stats(IntRange allStatRange);
+	Stats(int val);
 	~Stats(){};
 
 	void SetStatsFromRanges(Stats minStats, Stats maxStats);

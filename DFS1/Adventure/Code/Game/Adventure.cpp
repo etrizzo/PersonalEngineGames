@@ -6,9 +6,11 @@
 #include "Game/Player.hpp"
 #include "Game/Item.hpp"
 
-Adventure::Adventure(AdventureDefinition * adventureDef)
+Adventure::Adventure(AdventureDefinition * adventureDef, int difficulty)
 {
 	m_definition = adventureDef;
+	m_adventureBegun = false;
+	m_difficulty = difficulty;
 	
 }
 
@@ -24,8 +26,22 @@ Adventure::~Adventure()
 
 }
 
+void Adventure::Clear()
+{
+	g_theGame->m_player->m_map = nullptr;
+	for (Map* m : m_mapsByIndex){
+		delete(m);
+	}
+
+	for (VictoryCondition* victoryCondition : m_victoryConditions){
+		delete(victoryCondition);
+	}
+}
+
 void Adventure::Begin()
 {
+	m_adventureBegun = true;
+	
 	GenerateMaps();
 	//if (g_theGame->m_currentState == STATE_MAPMODE){
 	//	m_startingMap = m_mapsByIndex[0];
@@ -38,10 +54,15 @@ void Adventure::Begin()
 	SetCurrentMap(m_startingMap);
 	m_victoryConditions = std::vector<VictoryCondition*>();
 	for(VictoryCondition* condition :m_definition->m_victoryConditions){
-		m_victoryConditions.push_back(condition->Clone());		//i hate this
+		m_victoryConditions.push_back(condition->Clone(this));		//i hate this
 	}
 
-	g_theGame->m_player = SpawnPlayer();
+	if (g_theGame->m_player == nullptr){
+		g_theGame->m_player = SpawnPlayer();
+	} else {
+		Tile spawnTile = m_startingMap->GetRandomTileOfType(m_definition->m_startTileDef);
+		g_theGame->m_player->SetPosition(spawnTile.GetCenter(), m_currentMap);
+	}
 	//if(g_theGame->m_transitionToState != STATE_MAPMODE){
 	//	g_theGame->m_player = SpawnPlayer();
 	//} else {
@@ -70,6 +91,8 @@ void Adventure::RenderUI()
 	float screenWidth = cameraBounds.GetWidth();
 	float screenHeight = cameraBounds.GetHeight();
 	g_theRenderer->DrawTextInBox2D(m_definition->m_title, cameraBounds, Vector2(0.02f,0.98f), screenHeight * .02f, TEXT_DRAW_SHRINK_TO_FIT);
+	g_theRenderer->DrawTextInBox2D(std::to_string(m_difficulty), cameraBounds, Vector2(0.98f,0.98f), screenHeight * .02f, TEXT_DRAW_SHRINK_TO_FIT);
+
 
 	if (!g_theGame->m_fullMapMode){
 		//player stats - bottom left
@@ -95,8 +118,6 @@ Map * Adventure::GetMap(std::string mapName)
 	Map* foundMap = nullptr;
 	if (containsMap != m_mapsByName.end()){
 		foundMap = containsMap->second;
-	} else {
-		ERROR_AND_DIE("No map named: " + mapName);
 	}
 	return foundMap;
 }
@@ -112,11 +133,26 @@ void Adventure::CheckForVictory()
 		}
 		m_hasWon = finishedAllConditions;
 		if (m_hasWon){
-			TODO("Victory State");
 			g_theGame->TransitionToState(new GameState_Victory((GameState_Encounter*) g_theGame->m_currentState));
 		}
 	}
 	
+}
+
+void Adventure::DebugWinAdventure()
+{
+	for (int i = 0; i < (int) m_victoryConditions.size(); i++){
+		DebugCompleteQuest(i);
+	}
+}
+
+void Adventure::DebugCompleteQuest(int index)
+{
+	if (index >= 0 && index < (int) m_victoryConditions.size()){
+		m_victoryConditions[index]->m_complete = true;
+	} else {
+		ConsolePrintf(RGBA::RED, ("No quest at index " + std::to_string(index) + ". There are " +  std::to_string(m_victoryConditions.size()) + " active quests").c_str());
+	}
 }
 
 Player * Adventure::SpawnPlayer()
@@ -150,7 +186,7 @@ void Adventure::RegenerateCurrentMap()
 			break;
 		}
 	}
-	Map* newMap = mapToGenerate->GenerateMap();
+	Map* newMap = mapToGenerate->GenerateMap(m_difficulty);
 	mapToGenerate->SpawnEntities(newMap);
 	//m_mapsByName.insert(std::pair<std::string, Map*>(m_currentMap->m_name, newMap));
 	m_mapsByName[m_currentMap->m_name] = newMap;
@@ -165,12 +201,30 @@ RenderScene2D * Adventure::GetScene()
 	return m_currentMap->m_scene;
 }
 
+void Adventure::SetDifficulty(int difficulty)
+{
+	m_difficulty = difficulty;
+	Clear();
+	Begin();
+}
+
+void Adventure::GoToMap(std::string mapName)
+{
+	Map* newMap = GetMap(mapName);
+	if (newMap == nullptr){
+		ConsolePrintf(RGBA::RED, ("No map called: " + mapName + ". use map_names to see current adventure maps").c_str());
+	} else {
+		Tile t = newMap->GetRandomBaseTile();
+		g_theGame->m_player->SetPosition(t.GetCenter(), newMap);
+	}
+}
+
 void Adventure::GenerateMaps()
 {
 	m_mapsByName = std::map<std::string, Map*>();
 	m_mapsByIndex = std::vector<Map*>();
 	for(MapToGenerate* mapToGenerate : m_definition->m_mapsToGenerate){
-		Map* newMap = mapToGenerate->GenerateMap();
+		Map* newMap = mapToGenerate->GenerateMap(m_difficulty);
 		m_mapsByName.insert(std::pair<std::string, Map*>(newMap->m_name, newMap));
 	}
 
@@ -180,4 +234,6 @@ void Adventure::GenerateMaps()
 		m_mapsByIndex.push_back(existingMap);
 		existingMap->SortAllEntities();
 	}
+
+	
 }

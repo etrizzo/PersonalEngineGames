@@ -90,16 +90,21 @@ MapToGenerate::~MapToGenerate()
 {
 }
 
-Map* MapToGenerate::GenerateMap()
+Map* MapToGenerate::GenerateMap(int difficulty)
 {
-	Map* generatedMap = new Map(m_name, m_mapDefinition);
+	Map* generatedMap = new Map(m_name, m_mapDefinition, difficulty);
 	return generatedMap;
 }
 
 void MapToGenerate::SpawnEntities(Map* generatedMap)
 {
 	for(ActorToSpawn* actor : m_actorsToSpawn){
-		actor->Spawn(generatedMap);
+		actor->Spawn(generatedMap, generatedMap->m_difficulty);
+		for (int i = 0; i < generatedMap->m_difficulty; i++){		//random chance to spawn extra baddies
+			if (CheckRandomChance((.05f))){
+				actor->Spawn(generatedMap, generatedMap->m_difficulty);
+			}
+		}
 	}
 
 	for (PortalToSpawn* portal : m_portalsToSpawn){
@@ -136,7 +141,7 @@ PortalToSpawn::~PortalToSpawn()
 void PortalToSpawn::Spawn(Map * mapToSpawnOn)
 {
 	Tile tileToSpawnOn = mapToSpawnOn->GetRandomTileOfType(m_onTileDefinition);
-	Map* toMap = g_theGame->m_currentAdventure->GetMap(m_toMapName);
+	Map* toMap = g_theGame->m_currentState->m_currentAdventure->GetMap(m_toMapName);
 	Tile reciprocalTile = toMap->GetRandomTileOfType(m_toTileDefinition);
 	mapToSpawnOn->SpawnNewPortal(m_portalDefinition, tileToSpawnOn.GetCenter(), toMap, reciprocalTile.GetCenter(), 0.f, true);
 }
@@ -155,10 +160,10 @@ ActorToSpawn::~ActorToSpawn()
 	delete m_actorDef;
 }
 
-void ActorToSpawn::Spawn(Map * mapToSpawnOn)
+void ActorToSpawn::Spawn(Map * mapToSpawnOn, int difficulty)
 {
 	Tile spawnTile = mapToSpawnOn->GetRandomTileOfType(m_onTileDefinition);
-	mapToSpawnOn->SpawnNewActor(m_actorDef, spawnTile.GetCenter());
+	mapToSpawnOn->SpawnNewActor(m_actorDef, spawnTile.GetCenter(), 0.f, difficulty);
 }
 
 ItemToSpawn::ItemToSpawn(tinyxml2::XMLElement * itemElement)

@@ -24,7 +24,7 @@ public:
 	//float m_gameTime;
 	Clock* m_gameClock;
 	//Map* m_currentMap;
-	Adventure* m_currentAdventure;
+	//Adventure* m_currentAdventure;
 	Camera* m_camera	= nullptr;		//might change 
 	Camera* m_uiCamera	= nullptr;		//stays the same from encounter to encounter
 	//std::map<std::string, Map*> m_mapsByName;
@@ -47,7 +47,7 @@ public:
 	SoundID m_victoryMusicID;
 	SoundPlaybackID m_victoryPlayback;
 
-	static SpriteAnimSetDef* s_humanoidAnimSetDef;
+	//static SpriteAnimSetDef* s_humanoidAnimSetDef;
 
 	DebugRenderSystem* m_debugRenderSystem;
 
@@ -55,27 +55,11 @@ public:
 
 
 	void Update			(float deltaSeconds);
-	void UpdateAttract	(float deltaSeconds);
-	void UpdatePlaying	(float deltaSeconds);
-	void UpdatePaused	(float deltaSeconds);
-	void UpdateInventory(float deltaSeconds);
-	void UpdateVictory	(float deltaSeconds);
-	void UpdateDefeat	(float deltaSeconds);
-	void UpdateMapMode	(float deltaSeconds);
 
 	void HandleInput();
 
 	void Render();
-	void RenderAttract();
-	void RenderPlaying();
-	void RenderPaused();
-	void RenderInventory();
-	void RenderVictory();
-	void RenderDefeat();
-	void DrawCurrentInventory();
 	void RenderSelectArrow(AABB2 boxToDrawIn);
-	void RenderMapMode();
-	void RenderVictoryConditionsInBox(AABB2 boxToDrawIn);
 	void RenderXboxStartButton(AABB2 boxToDrawIn);
 	void RenderXboxBackButton(AABB2 boxToDrawIn);
 
@@ -96,10 +80,18 @@ public:
 	//void StartStateTransition(GAME_STATE newState, float transitionTime = .5f, RGBA transitionColor = RGBA(0,0,0,255));
 	//void Transition();
 	//void FadeIn();
-	void StartAdventure(std::string adventureDefName);
+	void DebugWinAdventure();
+	void DebugCompleteQuest(int index = 0);
+	void DebugSetDifficulty(int difficulty);
+	void SetCurrentMap(Map* newMap);
+	void GoToMap(std::string mapName);
+
+	
 
 	void ToggleState(bool& stateToToggle);
 	void LookAtNextMap(int direction);
+
+	void ShowActorStats();
 
 private:
 	void LoadSounds();
@@ -114,7 +106,6 @@ private:
 
 	int m_screenWidth = 10;
 
-	void SpawnRandomTestGoblin();
 
 	RGBA m_currentFadeColor;
 	RGBA m_startFadeColor;

@@ -8,7 +8,7 @@ class Item;
 class Actor: public Entity{
 public:
 	Actor(){};
-	Actor(ActorDefinition* definition, Map* entityMap, Vector2 initialPos, float initialRotation = 0.f);
+	Actor(ActorDefinition* definition, Map* entityMap, Vector2 initialPos, float initialRotation = 0.f, int difficulty = 0);
 	~Actor();
 
 	void Update(float deltaSeconds);

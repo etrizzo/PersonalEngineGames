@@ -17,13 +17,14 @@
 #include "Game/Player.hpp"
 #include <map>
 
-SpriteAnimSetDef* Game::s_humanoidAnimSetDef;
+//SpriteAnimSetDef* Game::s_humanoidAnimSetDef;
 
 Game::~Game()
 {
-	delete m_currentAdventure;
-	//delete m_player;
+	//delete m_currentAdventure;
+	delete m_player;
 	delete g_tileSpriteSheet;
+	delete m_currentState;
 
 	//delete all the definitions
 }
@@ -111,44 +112,6 @@ void Game::Update(float deltaSeconds)
 //	}
 //}
 
-void Game::UpdatePlaying(float deltaSeconds)
-{
-
-	m_currentAdventure->Update(deltaSeconds);
-}
-
-void Game::UpdatePaused(float deltaSeconds)
-{
-	deltaSeconds;
-	m_currentAdventure->Update(0.f);
-}
-
-void Game::UpdateInventory(float deltaSeconds)
-{
-	deltaSeconds;
-	m_currentAdventure->Update(0.f);
-
-	m_indexOfSelectedMenuItem = ClampInt(m_indexOfSelectedMenuItem, 0, (int) m_player->m_inventory.size()-1);
-	if (g_theInput->WasKeyJustPressed(VK_RETURN) || g_theInput->GetController(0)->WasButtonJustPressed(XBOX_A)){
-		m_player->EquipOrUnequipItem(m_player->m_inventory[m_indexOfSelectedMenuItem]);
-	}
-}
-
-void Game::UpdateVictory(float deltaSeconds)
-{
-	deltaSeconds;
-	m_currentAdventure->Update(0.f);
-}
-
-void Game::UpdateDefeat(float deltaSeconds)
-{
-	deltaSeconds;
-}
-
-void Game::UpdateMapMode(float deltaSeconds)
-{
-	m_currentAdventure->Update(deltaSeconds);
-}
 
 void Game::HandleInput()
 {
@@ -165,142 +128,9 @@ void Game::Render()
 	m_currentState->Render();
 	g_theGame->SetGameCamera();
 	m_debugRenderSystem->UpdateAndRender();
-	/*if (m_currentState == STATE_PLAYING){
-		RenderPlaying();
-	}
-	if (m_currentState == STATE_ATTRACT){
-		RenderAttract();
-	}
-	if (m_currentState == STATE_PAUSED){
-		RenderPaused();
-	}
-	if (m_currentState == STATE_INVENTORY){
-		RenderInventory();
-	}
-	if (m_currentState == STATE_VICTORY){
-		RenderVictory();
-	}
-	if (m_currentState == STATE_DEFEAT){
-		RenderDefeat();
-	}
-
-
-
-	if (m_currentState == STATE_MAPMODE){
-		RenderMapMode();
-	}*/
 
 }
-//
-//void Game::RenderAttract()
-//{
-//	/*if (m_gameTime - m_timeEnteredState < m_transitionLength){
-//		FadeIn();
-//	}*/
-//	AABB2 screenBounds = AABB2(Vector2(0.f,0.f), Vector2((float) m_screenWidth, (float) m_screenWidth));
-//	g_theRenderer->SetOrtho(Vector3(0.f,0.f, 0.f), Vector3((float) m_screenWidth, (float) m_screenWidth, 2.f));
-//	g_theRenderer->DrawAABB2(AABB2(0.f,0.f, (float) m_screenWidth, (float) m_screenWidth), RGBA(64,128,0,255));
-//	g_theRenderer->DrawTextInBox2D("Adventure", screenBounds, Vector2(.5f,.5f), (float)m_screenWidth * .08f);
-//	g_theRenderer->DrawTextInBox2D("Press Start", screenBounds, Vector2(.5f,.3f), (float)m_screenWidth * .03f);
-//
-//	/*if (m_transitionToState != NO_STATE){
-//		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-//		g_theRenderer->DrawAABB2(AABB2(0.f,0.f, m_screenWidth,m_screenWidth), m_startFadeColor.GetColorWithAlpha((int) (percThroughTransition * 255)));
-//	}*/
-//	if (!m_isFinishedTransitioning){
-//		if (m_transitionToState != NO_STATE){
-//			float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-//			g_theRenderer->DrawAABB2(AABB2(0.f,0.f,(float) m_screenWidth, (float) m_screenWidth), m_startFadeColor.GetColorWithAlpha((unsigned char) (percThroughTransition * 255)));
-//		} else if (m_gameTime - m_timeEnteredState < m_transitionLength){
-//			FadeIn();
-//		}
-//	}
-//
-//}
 
-//void Game::RenderPlaying()
-//{
-//	m_currentAdventure->Render();
-//	//m_currentAdventure->m_currentMap->SetCamera()
-//	m_renderPath->RenderSceneForCamera(m_camera, m_currentAdventure->GetScene());
-//	//m_currentAdventure->Render();
-//	if (!m_isFinishedTransitioning){
-//		if (m_transitionToState != NO_STATE){
-//			float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-//			m_currentFadeColor = Interpolate( m_startFadeColor.GetColorWithAlpha(0), m_startFadeColor, percThroughTransition);
-//			g_theRenderer->DrawAABB2(m_camera->GetBounds(), m_currentFadeColor);
-//		} else if (m_gameTime - m_timeEnteredState < m_transitionLength){
-//			FadeIn();
-//		}
-//	}
-//}
-
-//void Game::RenderPaused()
-//{
-//	m_currentAdventure->Render();
-//	g_theRenderer->DrawAABB2(m_camera->GetBounds(), m_startFadeColor);
-//	
-//	RGBA textColor = RGBA::WHITE;
-//	if (!m_isFinishedTransitioning){
-//		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-//		if (m_transitionToState == NO_STATE){
-//			textColor = Interpolate( textColor.GetColorWithAlpha(0), textColor, percThroughTransition);
-//		} else {
-//			textColor = Interpolate( textColor, textColor.GetColorWithAlpha(0), percThroughTransition);
-//		}
-//	}
-//
-//	//Vector2 center = m_currentAdventure->m_currentMap->m_camera->m_worldPos;
-//	//		
-//	//m_screenWidth = m_currentAdventure->m_currentMap->m_camera->m_numTilesInViewVertically;
-//	AABB2 camBounds = m_camera->GetBounds();
-//	Vector2 center = camBounds.GetCenter();
-//	m_screenWidth = camBounds.GetHeight();		//num tiles in view vertically
-//	g_theRenderer->DrawTextInBox2D("Paused", camBounds, Vector2(.5f,.9f), 1.f);
-//	camBounds.AddPaddingToSides(m_screenWidth * -.1f, m_screenWidth * -.2f);
-//	camBounds.Translate(0.f, -.1f * m_screenWidth);
-//	RenderVictoryConditionsInBox(camBounds);
-//	
-//}
-
-//void Game::RenderInventory()
-//{
-//	m_screenWidth = m_camera->GetBounds().GetHeight();
-//	m_currentAdventure->Render();
-//	g_theRenderer->DrawAABB2( m_camera->GetBounds(), m_startFadeColor);
-//
-//	RGBA textColor = RGBA::WHITE;
-//	if (!m_isFinishedTransitioning){
-//		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-//		if (m_transitionToState == NO_STATE){
-//			textColor = Interpolate( textColor.GetColorWithAlpha(0), textColor, percThroughTransition);
-//		} else {
-//			textColor = Interpolate( textColor, textColor.GetColorWithAlpha(0), percThroughTransition);
-//		}
-//	}
-//	DrawCurrentInventory();	
-//}
-
-//void Game::RenderVictory()
-//{
-//	m_currentAdventure->Render();
-//	g_theRenderer->DrawAABB2( m_camera->GetBounds(), m_startFadeColor);
-//
-//	RGBA textColor = RGBA::WHITE;
-//	if (!m_isFinishedTransitioning){
-//		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-//		if (m_transitionToState == NO_STATE){
-//			textColor = Interpolate( textColor.GetColorWithAlpha(0), textColor, percThroughTransition);
-//		} else {
-//			textColor = Interpolate( textColor, textColor.GetColorWithAlpha(0), percThroughTransition);
-//		}
-//	}
-//
-//	AABB2 camBounds = m_currentAdventure->m_currentMap->GetCameraBounds();
-//	g_theRenderer->DrawTextInBox2D("Victory!!", camBounds, Vector2(.5f,.5f), 1.f);
-//	g_theRenderer->DrawTextInBox2D("Press 'start' or 'p' to return to main menu", camBounds, Vector2(.5f,.3f), .2f, TEXT_DRAW_WORD_WRAP);
-//	g_theRenderer->DrawAABB2Outline(camBounds, RGBA::WHITE);
-//}
 
 //void Game::RenderDefeat()
 //{
@@ -323,135 +153,14 @@ void Game::Render()
 //	g_theRenderer->DrawAABB2Outline(camBounds, RGBA::WHITE);
 //}
 
-void Game::DrawCurrentInventory()
-{
-	
-
-	AABB2 camBounds = m_currentAdventure->m_currentMap->GetCameraBounds();
-	float fontSize = m_screenWidth * .02f;
-	//g_theRenderer->DrawTextInBox2D("Inventory", camBounds, Vector2(.5f,.95f), 1.f);
-
-
-	//------ Draw raw inventory box -------//
-
-	AABB2 unequippedBox = AABB2(camBounds.mins + Vector2((m_screenWidth* .5f) + .5f,.5f), camBounds.maxs - Vector2(.5f,2.f));
-	g_theRenderer->DrawAABB2(unequippedBox, RGBA(64,64,64,200));
-	g_theRenderer->DrawAABB2Outline(unequippedBox, RGBA(255,255,255,128));
-	g_theRenderer->DrawTextInBox2D("Inventory", unequippedBox, Vector2(.5f, .99f),fontSize * 1.5f);
-	Vector2 textHeight = Vector2(0.f,fontSize);
-	Vector2 unequippedDrawStart = Vector2(0.05f, .94f);
-	
-	AABB2 drawItemBox = AABB2(unequippedBox.mins.x, unequippedBox.maxs.y - textHeight.y, unequippedBox.maxs.x, unequippedBox.maxs.y);
-	drawItemBox.Translate(0.f, fontSize * -2.f);
-	for (unsigned int i = 0; i < m_player->m_inventory.size(); i++){
-		Item* item = m_player->m_inventory[i];
-		if (i == m_indexOfSelectedMenuItem){
-			item->RenderInMenu(drawItemBox, true);
-		} else {
-			item->RenderInMenu(drawItemBox, false);
-		}
-		drawItemBox.Translate(textHeight * -1.f);
-	}
-
-	//------ Draw equipped box -------//
-
-	AABB2 equippedBox = AABB2(camBounds.mins + Vector2(.5f, m_screenWidth * .35f), camBounds.maxs - Vector2((m_screenWidth* .5f) + .5f,2.f));
-	g_theRenderer->DrawAABB2(equippedBox, RGBA(64,64,64,200));
-	g_theRenderer->DrawAABB2Outline(equippedBox, RGBA(255,255,255,128));
-	g_theRenderer->DrawTextInBox2D("Equipped", equippedBox, Vector2(.5f, .97f),fontSize * 1.5f);
-
-	float eqWidth = equippedBox.GetWidth();
-	AABB2 equippedItemBox = AABB2(equippedBox.mins.x, equippedBox.maxs.y - textHeight.y - .02f, equippedBox.mins.x + (eqWidth * .4f), equippedBox.maxs.y - .02f);
-	equippedItemBox.Translate(fontSize, fontSize * -2.5f);
-	float eqItemHeight = equippedItemBox.GetHeight();
-	AABB2 itemIconBox = AABB2(equippedItemBox.maxs.x, equippedItemBox.mins.y, equippedItemBox.maxs.x + eqItemHeight, equippedItemBox.maxs.y);
-	for ( int i = 0; i < NUM_EQUIP_SLOTS; i++){
-		Item* item = m_player->m_equippedItems[i];
-		std::string drawText = Actor::GetEquipSlotByID((EQUIPMENT_SLOT) i) + ": ";
-		std::string itemText = "NONE";
-		Texture* buttonTexture = m_miscSpriteSheet->GetTexture();
-		float padding = eqItemHeight * .2f;
-		itemIconBox.AddPaddingToSides(padding, padding);
-		if (item != nullptr){
-			//itemText= item->m_definition->m_name;
-			AABB2 texCoords = m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(0,0));
-			g_theRenderer->DrawTexturedAABB2(itemIconBox, *buttonTexture, texCoords.mins, texCoords.maxs , RGBA::WHITE);
-			itemIconBox.AddPaddingToSides(-padding, -padding);
-			item->RenderImageInBox(itemIconBox);
-		} else {
-			AABB2 texCoords = m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0));
-			g_theRenderer->DrawTexturedAABB2(itemIconBox, *buttonTexture, texCoords.mins, texCoords.maxs , RGBA::WHITE);
-			itemIconBox.AddPaddingToSides(-padding, -padding);
-		}
-		g_theRenderer->DrawTextInBox2D(drawText, equippedItemBox, Vector2(.05f, .5f), fontSize, TEXT_DRAW_SHRINK_TO_FIT);
-		//g_theRenderer->DrawTextInBox2D(itemText, equippedItemBox, )
-		equippedItemBox.Translate(textHeight * -1.5f);
-		itemIconBox.Translate(textHeight * -1.5f);
-	}
-
-	float eqHeight = equippedBox.GetHeight();
-	equippedBox.AddPaddingToSides(0.f, eqHeight * -.2f);
-	equippedBox.Translate(0.f, eqHeight * -.2f);
-	m_player->RenderStatsInBox(equippedBox);
-
-
-	//------ Draw selected item stats box -------//
-
-	Item* selectedItem = m_player->m_inventory[m_indexOfSelectedMenuItem];
-	AABB2 statsBox = AABB2(camBounds.mins + Vector2(.5f,  .5f), camBounds.maxs - Vector2((m_screenWidth* .5f) + .5f,2.f + (m_screenWidth * .5f)));
-	g_theRenderer->DrawAABB2(statsBox, RGBA(64,64,64,200));
-	g_theRenderer->DrawAABB2Outline(statsBox, RGBA(255,255,255,128));
-	//g_theRenderer->DrawTextInBox2D(selectedItem->m_definition->m_name, statsBox, Vector2(.5f, .97f),fontSize);
-	selectedItem->RenderStats(statsBox);
-}
 
 void Game::RenderSelectArrow(AABB2 boxToDrawIn)
 {
 	g_theRenderer->DrawTextInBox2D(">", boxToDrawIn, Vector2(.5f,.5f), boxToDrawIn.GetHeight() * .8f);
 }
 
-void Game::RenderMapMode()
-{
-	m_currentAdventure->m_currentMap->Render();
-	float textHeight = m_currentAdventure->m_currentMap->GetCameraBounds().GetHeight() * .03f;
-	g_theRenderer->DrawTextInBox2D(m_currentAdventure->m_currentMap->m_name, m_currentAdventure->m_currentMap->GetCameraBounds(), Vector2(.95f,.95f), textHeight, TEXT_DRAW_SHRINK_TO_FIT);
-}
 
-void Game::RenderVictoryConditionsInBox(AABB2 boxToDrawIn)
-{
-	//g_theRenderer->DrawAABB2Outline(boxToDrawIn, RGBA(255,0,0));
-	float fontHeight = boxToDrawIn.GetHeight() * .05f;
-	float lineHeight = fontHeight * 3.f;
-/*	AABB2 textBox = AABB2(boxToDrawIn.mins.x, boxToDrawIn.maxs.y - lineHeight, boxToDrawIn.maxs.x, boxToDrawIn.maxs.y);
-	AABB2 iconBox = AABB2(textBox.mins, Vector2(textBox.mins.x + fontHeight, textBox.mins.y + fontHeight));
-	*///textBox.AddPaddingToSides(fontHeight * -2.f, 0.f);
-	AABB2 lineBox = boxToDrawIn.GetPercentageBox(.1f, .4f, .9f, .5f);
-	AABB2 textBox;
-	AABB2 iconBox;
-	lineBox.SplitAABB2Vertical(.1f, iconBox, textBox );
-	fontHeight = textBox.GetHeight() * .3f;
-	lineHeight = fontHeight * 3.f;
-	iconBox.TrimToSquare();
-	
-	Texture* buttonTexture = m_miscSpriteSheet->GetTexture();
-	for (VictoryCondition* objective: m_currentAdventure->m_victoryConditions){
-		RGBA tint = RGBA(255,255,255);
-		if (objective->CheckIfComplete()){
-			tint = RGBA(200,200,200, 200);
-			AABB2 texCoords = m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0));
-			g_theRenderer->DrawTexturedAABB2(iconBox, *buttonTexture, texCoords.mins, texCoords.maxs , tint);
-		} else {
-			AABB2 texCoords = m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(0,0));
-			g_theRenderer->DrawTexturedAABB2(iconBox, *buttonTexture, texCoords.mins, texCoords.maxs ,  tint);
-		}
-		std::string victoryText = objective->GetText();
-		g_theRenderer->DrawTextInBox2D(victoryText, textBox, Vector2(0.f,.5f), fontHeight, TEXT_DRAW_WORD_WRAP, tint);
-		//g_theRenderer->DrawAABB2Outline(iconBox, RGBA::RED);
-		//g_theRenderer->DrawAABB2Outline(textBox, RGBA::MAGENTA);
-		textBox.Translate(0.f, -lineHeight);
-		iconBox.Translate(0.f, -lineHeight);
-	}
-}
+
 
 void Game::RenderXboxStartButton(AABB2 boxToDrawIn)
 {
@@ -485,20 +194,18 @@ void Game::ToggleDevMode()
 
 void Game::TransitionToState(GameState* newState)
 {
-	/*if (newState == GAME_STATE_ATTRACT){
-	m_encounterState->Enter("heightMap.png");
-	}*/
+
 	m_transitionToState = newState;
 	m_currentState->StartTransition();
-	//m_startTransitionTime = m_gameTime;
 }
 
 void Game::TriggerTransition()
 {
 	g_theAudio->StopSound(m_currentState->m_soundtrackPlayback);
-	m_currentState->Transition();
+	
 	//m_transitionToState->m_soundtrackPlayback = m_currentState->m_soundtrackPlayback;
 	m_currentState = m_transitionToState;
+	m_currentState->Transition();
 	m_transitionToState = nullptr;
 	m_timeEnteredState = m_gameClock->GetCurrentSeconds();
 }
@@ -507,8 +214,6 @@ AABB2 Game::SetUICamera()
 {
 	g_theRenderer->SetCamera( m_uiCamera ); 
 
-	//g_theRenderer->ClearDepth( 1.0f ); 
-	//g_theRenderer->EnableDepth( COMPARE_ALWAYS, false );
 	g_theRenderer->DisableDepth();
 	return m_uiCamera->GetBounds();
 }
@@ -553,58 +258,46 @@ void Game::UpdateMenuSelection(int direction)
 	m_indexOfSelectedMenuItem+=direction;
 }
 
-//void Game::StartStateTransition(GAME_STATE newState, float transitionLength, RGBA startColor)
-//{
-//	
-//	m_transitionToState = newState;
-//	m_timeEnteredState = m_gameTime;
-//	m_isFinishedTransitioning = false;
-//	m_transitionLength = transitionLength;
-//	m_startFadeColor = startColor;
-//}
 
-//void Game::Transition()
-//{
-//	if (m_currentState == STATE_ATTRACT){
-//		g_theAudio->StopSound(m_attractPlayback);
-//		if (m_transitionToState != STATE_ATTRACT){
-//			m_currentAdventure->Begin();
-//		}
-//	}
-//	if (m_currentState == STATE_VICTORY){
-//		g_theAudio->StopSound(m_victoryPlayback);
-//	}
-//	if (m_transitionToState == STATE_VICTORY){
-//		m_currentAdventure->m_currentMap->StopMusic();
-//		m_victoryPlayback = g_theAudio->PlaySound(m_victoryMusicID);
-//	}
-//	if (m_transitionToState == STATE_ATTRACT){
-//		if (m_currentAdventure != nullptr){
-//			m_currentAdventure->m_currentMap->StopMusic();
-//		}
-//		m_attractPlayback = g_theAudio->PlaySound(m_attractMusicID);
-//		g_theAudio->SetSoundPlaybackVolume(m_attractPlayback, 1.f);
-//	}
-//	m_currentState = m_transitionToState;
-//	m_timeEnteredState = m_gameTime;
-//	m_transitionToState = NO_STATE;
-//	//m_isFinishedTransitioning = true;
-//}
-
-//void Game::FadeIn()
-//{
-//	AABB2 bounds =  m_camera->GetBounds();
-//	float t = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-//	m_currentFadeColor = Interpolate(m_startFadeColor, m_startFadeColor.GetColorWithAlpha(0), t);
-//	g_theRenderer->DrawAABB2(bounds, m_currentFadeColor);
-//}
-
-void Game::StartAdventure(std::string adventureDefName)
+void Game::DebugWinAdventure()
 {
-	AdventureDefinition* adventureDef = AdventureDefinition::GetAdventureDefinition(adventureDefName);
-	m_currentAdventure = new Adventure(adventureDef);
-	//m_currentAdventure->Begin();
-	
+	if (m_currentState->m_currentAdventure != nullptr){
+		m_currentState->m_currentAdventure->DebugWinAdventure();
+	} else {
+		ConsolePrintf(RGBA::RED, "No current adventure - start the game");
+	}
+}
+
+void Game::DebugCompleteQuest(int index)
+{
+	if (m_currentState->m_currentAdventure != nullptr){
+		m_currentState->m_currentAdventure->DebugCompleteQuest(index);
+	} else {
+		ConsolePrintf(RGBA::RED, "No current adventure - start the game");
+	}
+}
+
+void Game::DebugSetDifficulty(int difficulty)
+{
+	if (m_currentState->m_currentAdventure != nullptr){
+		m_currentState->m_currentAdventure->SetDifficulty(difficulty);
+	} else {
+		ConsolePrintf(RGBA::RED, "No current adventure - start the game");
+	}
+}
+
+void Game::SetCurrentMap(Map * newMap)
+{
+	m_currentState->m_currentAdventure->SetCurrentMap(newMap);
+}
+
+void Game::GoToMap(std::string mapName)
+{
+	if (m_currentState->m_currentAdventure != nullptr){
+		m_currentState->m_currentAdventure->GoToMap(mapName);
+	} else {
+		ConsolePrintf(RGBA::RED, "No current adventure - start the game");
+	}
 }
 
 void Game::ToggleState(bool & stateToToggle)
@@ -614,7 +307,22 @@ void Game::ToggleState(bool & stateToToggle)
 
 void Game::LookAtNextMap(int direction)
 {
-	m_currentAdventure->MoveToMapIndex(m_currentAdventure->m_currentMapIndex + direction);
+	//m_currentAdventure->MoveToMapIndex(m_currentAdventure->m_currentMapIndex + direction);
+}
+
+void Game::ShowActorStats()
+{
+	if (m_currentState->m_currentAdventure != nullptr){
+		for (Actor* actor : m_currentState->m_currentAdventure->m_currentMap->m_allActors){
+			ConsolePrintf(RGBA::GREEN, actor->GetName().c_str());
+			std::string healthString = "  HEALTH: " + std::to_string(actor->m_health);
+			ConsolePrintf(RGBA::YELLOW, healthString.c_str());
+			for (int i = STAT_STRENGTH; i < NUM_STAT_IDS; i++){
+				std::string statString = "   " + actor->m_stats.GetNameForStatID((STAT_ID) i) + " : " + std::to_string(actor->m_stats.GetStat((STAT_ID) i));
+				ConsolePrintf(RGBA::CYAN, statString.c_str());
+			}
+		}
+	}
 }
 
 void Game::LoadSounds()
@@ -732,15 +440,6 @@ void Game::LoadAdventureDefinitions()
 	}
 }
 
-
-
-
-
-void Game::SpawnRandomTestGoblin()
-{
-	Tile baseTile = m_currentAdventure->m_currentMap->GetRandomBaseTile();
-	m_currentAdventure->m_currentMap->SpawnNewActor("Goblin", baseTile.GetApproximateCenter(), 0.f);
-}
 
 
 

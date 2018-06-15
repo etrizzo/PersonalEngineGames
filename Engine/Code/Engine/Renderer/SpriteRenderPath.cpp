@@ -20,9 +20,9 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 	//now that we know which camera to render from, we can set it
 	m_renderer->BindCamera(cam);			//could just use the global one
 
-											//may want to clear color/depth, set based on the camera's settings
-											// i.e., are we clearing to a color? skybox?
-											//ClearBasedOnCameraOptions();
+	//may want to clear color/depth, set based on the camera's settings
+	// i.e., are we clearing to a color? skybox?
+	//ClearBasedOnCameraOptions();
 
 	//for (ParticleSystem* s : scene->m_particleSystems){
 	//	s->PreRenderForCamera(cam);

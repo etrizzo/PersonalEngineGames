@@ -9,9 +9,10 @@ class Player;
 class Adventure{
 public:
 	Adventure(){};
-	Adventure(AdventureDefinition* adventureDef);
+	Adventure(AdventureDefinition* adventureDef, int difficulty = 0);
 	~Adventure();
 
+	void Clear();	//empties the adventure
 	void Begin();
 
 	void Update(float deltaSeconds);
@@ -21,6 +22,9 @@ public:
 	Map* GetMap(std::string mapName);
 	void CheckForVictory();
 
+	void DebugWinAdventure();
+	void DebugCompleteQuest(int index);
+
 	Player* SpawnPlayer();
 
 	void SetCurrentMap(Map* newMap);
@@ -28,6 +32,9 @@ public:
 	void RegenerateCurrentMap();
 
 	RenderScene2D* GetScene();
+
+	void SetDifficulty(int difficulty);
+	void GoToMap(std::string mapName);
 
 
 
@@ -39,7 +46,9 @@ public:
 	int m_currentMapIndex;
 	std::vector<VictoryCondition*> m_victoryConditions;
 
+	bool m_adventureBegun = false;
 	bool m_hasWon = false;
+	int m_difficulty = 0;
 
 private:
 	void GenerateMaps();

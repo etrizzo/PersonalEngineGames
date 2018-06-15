@@ -579,6 +579,12 @@ void MapGenStep_SpawnActor::Run(Map & map)
 	}
 	Tile spawnTile = map.GetSpawnTileOfType(m_spawnOnTileDef);
 	map.SpawnNewActor(m_actorName, spawnTile.GetCenter());
+	for (int i = 0; i < map.m_difficulty; i++){		//random chance to add a multiple of the actor
+		if (CheckRandomChance(.05f)){
+			map.SpawnNewActor(m_actorName, spawnTile.GetCenter());
+		}
+	}
+	
 }
 
 MapGenStep_SpawnItem::MapGenStep_SpawnItem(const tinyxml2::XMLElement & generationStepElement)

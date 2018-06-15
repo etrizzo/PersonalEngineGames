@@ -41,7 +41,7 @@ public:
 	MapToGenerate(tinyxml2::XMLElement* mapElement);
 	~MapToGenerate();
 
-	Map* GenerateMap();
+	Map* GenerateMap(int difficulty);
 	void SpawnEntities(Map* generatedMap);
 
 	MapDefinition* m_mapDefinition;
@@ -70,7 +70,7 @@ public:
 	ActorToSpawn(tinyxml2::XMLElement* actorElement);
 	~ActorToSpawn();
 
-	void Spawn(Map* mapToSpawnOn);
+	void Spawn(Map* mapToSpawnOn, int difficulty);
 
 	ActorDefinition* m_actorDef= nullptr;
 	TileDefinition* m_onTileDefinition = nullptr;

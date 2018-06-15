@@ -1,6 +1,7 @@
 #include "GameState.hpp"
 #include "Game/Game.hpp"
 #include "Game/Adventure.hpp"
+#include "Game/AdventureDefinition.hpp"
 #include "Engine/Core/Clock.hpp"
 #include "Game/Player.hpp"
 
@@ -87,10 +88,7 @@ void GameState_Attract::Update(float ds)
 	}
 }
 
-void GameState_Attract::Transition()
-{
-	g_theGame->m_currentAdventure->Begin();
-}
+
 
 void GameState_Attract::RenderUI()
 {
@@ -127,17 +125,27 @@ void GameState_Attract::HandleInput()
 	CheckArrowKeys();
 }
 
-GameState_Encounter::GameState_Encounter(std::string lvlToLoad)
+GameState_Encounter::GameState_Encounter(std::string lvlToLoad, int difficulty)
 {
-	g_theGame->StartAdventure(lvlToLoad);
+	//g_theGame->StartAdventure(lvlToLoad);
+	AdventureDefinition* adventureDef = AdventureDefinition::GetAdventureDefinition(lvlToLoad);
+	m_currentAdventure = new Adventure(adventureDef, difficulty);
+	//m_currentAdventure->Begin();
 }
+
 
 void GameState_Encounter::Update(float ds)
 {
 	m_timeInState+=ds;
-	g_theGame->m_currentAdventure->Update(ds);
+	m_currentAdventure->Update(ds);
 }
 
+void GameState_Encounter::Transition()
+{
+	if (!m_currentAdventure->m_adventureBegun){
+		m_currentAdventure->Begin();
+	}
+}
 
 
 void GameState_Encounter::RenderGame()
@@ -148,14 +156,14 @@ void GameState_Encounter::RenderGame()
 
 
 
-	g_theGame->m_currentAdventure->Render();
-	g_theGame->m_renderPath->RenderSceneForCamera(g_theGame->m_camera, g_theGame->m_currentAdventure->GetScene());
+	m_currentAdventure->Render();
+	g_theGame->m_renderPath->RenderSceneForCamera(g_theGame->m_camera, m_currentAdventure->GetScene());
 }
 
 void GameState_Encounter::RenderUI()
 {
 	g_theGame->SetUICamera();
-	g_theGame->m_currentAdventure->RenderUI();
+	m_currentAdventure->RenderUI();
 }
 
 void GameState_Encounter::HandleInput()
@@ -373,6 +381,7 @@ void GameState_Victory::RenderTransitionEffect(float t)
 void GameState_Victory::HandleInput()
 {
 		if (WasStartJustPressed()){
-			g_theGame->m_currentState = new GameState_Attract();
+			int difficulty = m_encounterGameState->m_currentAdventure->m_difficulty;
+			g_theGame->TransitionToState(new GameState_Encounter("Balrog", difficulty + 1));
 		}
 }

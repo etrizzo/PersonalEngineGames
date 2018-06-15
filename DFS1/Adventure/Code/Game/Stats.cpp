@@ -12,6 +12,20 @@ Stats::Stats(Stats minStats, Stats maxStats)
 	SetStatsFromRanges(minStats, maxStats);
 }
 
+Stats::Stats(IntRange allStatRange)
+{
+	for (int statNum = 0; statNum < NUM_STAT_IDS; statNum++){
+		m_statValues[statNum] = allStatRange.GetRandomInRange();
+	}
+}
+
+Stats::Stats(int val)
+{
+	for (int i = 0; i < NUM_STAT_IDS; i++){
+		m_statValues[i] = val;
+	}
+}
+
 void Stats::SetStatsFromRanges(Stats minStats, Stats maxStats)
 {
 	for (int statNum = 0; statNum < NUM_STAT_IDS; statNum++){

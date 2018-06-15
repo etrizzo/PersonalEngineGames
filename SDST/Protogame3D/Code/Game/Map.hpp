@@ -62,6 +62,8 @@ public:
 	float GetHeightAtCoord(Vector2 xzCoord);
 	Vector3 GetPositionAtCoord(Vector2 xzCoord);
 	Vector3 GetNormalAtTile(Vector2 xzCoord);
+	Vector3 GetNormalForVertex(IntVector2 vertCoords);
+	Vector3 GetNormalForVertex(int x, int y);
 	IntVector2 GetVertexCoordsFromWorldPos(Vector2 xzPos);
 	//Tile* TileAt(int x, int y);
 	//Tile* TileAt(IntVector2 coordinates);

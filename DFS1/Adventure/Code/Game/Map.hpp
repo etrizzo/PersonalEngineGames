@@ -48,7 +48,7 @@ class Map{
 public:
 	Map(){}
 	~Map();
-	Map(std::string name, MapDefinition* mapDef);
+	Map(std::string name, MapDefinition* mapDef, int difficulty = 0);
 
 	std::string m_name;
 	MapDefinition* m_mapDef;
@@ -77,6 +77,8 @@ public:
 	void StartMusic();
 	void StopMusic();
 
+	
+	std::string GetName() const;
 	int GetWidth() const;
 	int GetHeight() const;
 	Tile* TileAt(int x, int y);
@@ -96,7 +98,7 @@ public:
 
 	Player* SpawnNewPlayer(Vector2 spawnPosition);
 	Actor* SpawnNewActor(std::string actorName, Vector2 spawnPosition, float spawnRotation = 0.f);
-	Actor* SpawnNewActor(ActorDefinition* actorDef, Vector2 spawnPosition, float spawnRotation = 0.f);
+	Actor* SpawnNewActor(ActorDefinition* actorDef, Vector2 spawnPosition, float spawnRotation = 0.f, int difficulty = 0);
 	Projectile* SpawnNewProjectile(std::string projectileName, Vector2 spawnPosition, float spawnRotation, std::string faction, int bonusStrength);
 	Projectile* SpawnNewProjectile(ProjectileDefinition* projectileDef, Vector2 spawnPosition, float spawnRotation, std::string faction, int bonusStrength);
 	Portal* SpawnNewPortal(std::string portalName, Vector2 spawnPosition, Map* destinationMap, Vector2 toPos, float spawnRotation, bool spawnReciprocal = true);
@@ -125,6 +127,7 @@ public:
 	std::vector<Projectile*> m_allProjectiles;
 	std::vector<Portal*> m_allPortals;
 	std::vector<Item*> m_allItems;
+	int m_difficulty;
 
 private:
 	void SetCamera();

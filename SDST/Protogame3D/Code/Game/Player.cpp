@@ -61,7 +61,7 @@ void Player::Update()
 	m_cameraTarget->SetLocalPosition(GetPosition() + GetUp() * .25f);
 	MoveTurretTowardTarget();
 	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, GetPosition(), 1.5f, m_renderable->m_transform.GetWorldMatrix());
-	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->GetPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix());
+	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->GetPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix());
 }
 
 void Player::HandleInput()
@@ -138,9 +138,9 @@ void Player::SetWorldPosition()
 	Vector3 pos = Vector3(m_positionXZ.x, GetHeightAtCurrentPos() + .3f, m_positionXZ.y);
 	Vector3 normal = g_theGame->m_currentMap->GetNormalAtTile(m_positionXZ);
 	Matrix44 mat = Matrix44::IDENTITY;
-	mat.SetI(Vector4(Cross(normal, GetForward()).GetNormalized()));
+	mat.SetI(Vector4(GetRight()));
 	mat.SetJ(Vector4(normal));
-	mat.SetK(Vector4(GetForward()));
+	mat.SetK(Vector4(Cross(GetRight(), normal).GetNormalized()));
 	mat.SetT(Vector4(pos));
 
 	m_renderable->m_transform.SetLocalMatrix(mat);

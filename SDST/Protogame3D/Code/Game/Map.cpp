@@ -137,23 +137,70 @@ Vector3 Map::GetPositionAtCoord(Vector2 xzCoord)
 
 Vector3 Map::GetNormalAtTile(Vector2 xzCoord)
 {
+	//IntVector2 bl_coords = GetVertexCoordsFromWorldPos(xzCoord);
+	///*int numTilesWidth = (int) (m_extents.GetWidth() / m_tileSize.x	);
+	//int numTilesHeight = (int)( m_extents.GetHeight() / m_tileSize.y);
+	//int idx = GetIndexFromCoordinates(bl_coords.x, bl_coords.y, numTilesWidth, numTilesHeight);
+	//Vector3 normal = m_normals[idx];
+	//return normal;*/
+
+	//Vector3 du = GetVertexWorldPos( bl_coords + IntVector2(1, 0) ) 
+	//	- GetVertexWorldPos( bl_coords - IntVector2(1, 0) ); 
+	//Vector3 tangent = du.GetNormalized(); 
+
+	//Vector3 dv = GetVertexWorldPos( bl_coords + IntVector2(0, 1) ) 
+	//	- GetVertexWorldPos( bl_coords - IntVector2(0, 1) ); 
+	//Vector3 bitan = dv.GetNormalized(); 
+
+	//Vector3 normal = Cross( bitan, tangent ); 
+	//return normal.GetNormalized(); 
+
 	IntVector2 bl_coords = GetVertexCoordsFromWorldPos(xzCoord);
-	/*int numTilesWidth = (int) (m_extents.GetWidth() / m_tileSize.x	);
-	int numTilesHeight = (int)( m_extents.GetHeight() / m_tileSize.y);
-	int idx = GetIndexFromCoordinates(bl_coords.x, bl_coords.y, numTilesWidth, numTilesHeight);
-	Vector3 normal = m_normals[idx];
-	return normal;*/
+	//Vector3 bl_vert = GetVertexWorldPos(bl_coords.x, bl_coords.y);
+	Vector3 blNorm = GetNormalForVertex(bl_coords.x, bl_coords.y);
+	Vector3 brNorm = GetNormalForVertex(bl_coords.x + 1, bl_coords.y);
+	Vector3 tlNorm = GetNormalForVertex(bl_coords.x, bl_coords.y + 1);
+	Vector3 trNorm = GetNormalForVertex(bl_coords.x + 1, bl_coords.y + 1);
 
-	Vector3 du = GetVertexWorldPos( bl_coords + IntVector2(1, 0) ) 
-		- GetVertexWorldPos( bl_coords - IntVector2(1, 0) ); 
-	Vector3 tangent = du.GetNormalized(); 
+	//DEBUG DRAWING
+	Vector3 blVert = GetVertexWorldPos(bl_coords.x, bl_coords.y);
+	Vector3 brVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y);
+	Vector3 tlVert = GetVertexWorldPos(bl_coords.x, bl_coords.y + 1);
+	Vector3 trVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y + 1);
 
-	Vector3 dv = GetVertexWorldPos( bl_coords + IntVector2(0, 1) ) 
-		- GetVertexWorldPos( bl_coords - IntVector2(0, 1) ); 
-	Vector3 bitan = dv.GetNormalized(); 
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(blVert, blVert + blNorm, RGBA::RED);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(brVert, brVert + brNorm, RGBA::GREEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(tlVert, tlVert + tlNorm, RGBA::BLUE);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(trVert, trVert + trNorm, RGBA::MAGENTA);
 
-	Vector3 normal = Cross( bitan, tangent ); 
-	return normal.GetNormalized(); 
+	// END DEBUG DRAWING
+
+	AABB2 bounds = AABB2(blVert.XZ(), trVert.XZ());
+	Vector2 percentage = bounds.GetPercentageOfPoint(xzCoord);
+
+	//find heights along u edges
+	Vector3 normbottom = Interpolate(blNorm, brNorm, percentage.x);
+	Vector3 normTop = Interpolate(tlNorm, trNorm, percentage.x);
+	Vector3 norm = Interpolate(normbottom, normTop, percentage.y);
+
+	Vector3 pos = GetPositionAtCoord(xzCoord);
+	//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, (pos + normbottom.GetNormalized()), RGBA::RED, RGBA::RED);
+	//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, (pos + normTop.GetNormalized()), RGBA::GREEN, RGBA::GREEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, (pos + norm.GetNormalized()), RGBA::YELLOW, RGBA::YELLOW);
+
+	return norm.GetNormalized();
+}
+
+Vector3 Map::GetNormalForVertex(IntVector2 vertCoords)
+{
+	return GetNormalForVertex(vertCoords.x, vertCoords.y);
+}
+
+Vector3 Map::GetNormalForVertex(int x, int y)
+{
+	int idx = GetIndexFromCoordinates(x, y, m_dimensions.x, m_dimensions.y);
+	ClampInt(idx, 0 , m_dimensions.x * m_dimensions.y);
+	return m_normals[idx];
 }
 
 IntVector2 Map::GetVertexCoordsFromWorldPos(Vector2 xzPos)

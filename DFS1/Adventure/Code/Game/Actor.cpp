@@ -8,7 +8,7 @@
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/SpriteAnimSet.hpp"
 
-Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, float initialRotation)
+Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, float initialRotation, int difficulty)
 	:Entity((EntityDefinition*)definition, entityMap, initialPos, initialRotation)
 {
 	//m_renderable->SetMaterial(Material::GetMaterial("cutout"));
@@ -29,6 +29,9 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 		}
 	}
 	UpdateRenderable();
+	m_health+= (difficulty * 5);
+	Stats difficultyMod = Stats(IntRange(0, difficulty));
+	m_stats.Add(difficultyMod);
 }
 
 Actor::~Actor()
@@ -161,7 +164,9 @@ void Actor::RunEntityPhysics()
 void Actor::SetPosition(Vector2 newPos, Map * newMap)
 {
 	if (newMap != nullptr){
-		m_map->RemoveActorFromMap(this);
+		if (m_map != nullptr){
+			m_map->RemoveActorFromMap(this);
+		}
 		m_map = newMap;
 		m_map->AddActorToMap(this);
 	}

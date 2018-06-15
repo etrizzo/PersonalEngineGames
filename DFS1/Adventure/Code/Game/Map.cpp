@@ -18,12 +18,15 @@
 Map::~Map()
 {
 	for (unsigned int i = 0; i < m_allEntities.size(); i++){
-		delete m_allEntities.at(i);
+		if (m_allEntities[i] != g_theGame->m_player){
+			delete m_allEntities[i];
+		}
 	}
 }
 
-Map::Map(std::string name, MapDefinition* mapDef)
+Map::Map(std::string name, MapDefinition* mapDef, int difficulty)
 {
+	m_difficulty = difficulty;
 	m_scene = new RenderScene2D();
 	m_name = name;
 	m_mapDef = mapDef;
@@ -35,11 +38,6 @@ Map::Map(std::string name, MapDefinition* mapDef)
 	//m_camera = new Camera2D(0.f, ZOOM_FACTOR);
 	g_theGame->m_camera->m_transform.SetLocalPosition(Vector3::ZERO);
 	g_theGame->m_camera->m_orthographicSize = ZOOM_FACTOR;
-
-		//	//m_worldPos = position;
-		//	m_worldPos = Vector2(0.f,0.f);
-		//	m_orientationDegrees = orientation;
-		//	m_numTilesInViewVertically = (int) zoomFactor;
 
 	//find width/height??
 	InitializeTiles();
@@ -141,21 +139,6 @@ void Map::UpdateEntities(float deltaSeconds)
 		}
 	}
 	
-	//for (unsigned int entityIndex = 0; entityIndex < m_allActors.size(); entityIndex++){
-	//	m_allActors.at(entityIndex)->Update(deltaSeconds);
-	//}
-
-	//for (unsigned int entityIndex = 0; entityIndex < m_allProjectiles.size(); entityIndex++){
-	//	m_allProjectiles.at(entityIndex)->Update(deltaSeconds);
-	//}
-
-	//for (unsigned int entityIndex = 0; entityIndex < m_allPortals.size(); entityIndex++){
-	//	m_allPortals.at(entityIndex)->Update(deltaSeconds);
-	//}
-
-
-
-	
 
 }
 
@@ -179,17 +162,6 @@ void Map::RunPhysics()
 		}
 	}
 
-	/*for (unsigned int actorIndex = 0; actorIndex < m_allActors.size(); actorIndex++){
-		m_allActors.at(actorIndex)->RunCorrectivePhysics();
-	}
-
-	for (unsigned int projectileIndex = 0; projectileIndex < m_allProjectiles.size(); projectileIndex++){
-		m_allProjectiles.at(projectileIndex)->RunCorrectivePhysics();
-	}
-
-	for (unsigned int projectileIndex = 0; projectileIndex < m_allPortals.size(); projectileIndex++){
-		m_allPortals.at(projectileIndex)->RunCorrectivePhysics();
-	}*/
 }
 
 void Map::CheckEntityInteractions()
@@ -246,26 +218,13 @@ void Map::CheckEntityInteractions()
 
 void Map::RemoveDoomedEntities()
 {
-	//delete doomed entities
-	//for(int i = 0; i < 2; i++){
-	//	for (unsigned int entityIndex = 0; entityIndex < m_allEntities.size(); entityIndex++){
-	//		Entity* entity = m_allEntities.at(entityIndex);
-	//		if (entity != nullptr && entity->IsAboutToBeDeleted()){
-	//			m_allEntities.erase(m_allEntities.begin() + entityIndex);
-	//			g_theGame->m_currentAdventure->GetScene()->RemoveRenderable(entity->m_renderable);
-	//			//delete(entity);
-	//		}
-	//	}
-	//}
 	for (unsigned int entityIndex = m_allEntities.size()-1; entityIndex < m_allEntities.size(); entityIndex--){
 		Entity* entity = m_allEntities.at(entityIndex);
 		if (entity == nullptr || entity->IsAboutToBeDeleted()){
 			RemoveAtFast(m_allEntities, entityIndex);
-			//m_allEntities.erase(m_allEntities.begin() + entityIndex);
 			if (entity!= nullptr){
-				g_theGame->m_currentAdventure->GetScene()->RemoveRenderable(entity->m_renderable);
+				g_theGame->m_currentState->m_currentAdventure->GetScene()->RemoveRenderable(entity->m_renderable);
 			}
-			//delete(entity);
 		}
 	}
 
@@ -297,16 +256,11 @@ void Map::RemoveDoomedEntities()
 		Entity* entity = m_allItems.at(itemIndex);
 		if (entity == nullptr){
 			m_allItems.erase(m_allItems.begin() + itemIndex);
-			//delete(entity);
 		}else if (entity->IsAboutToBeDeleted()){
 			m_allItems.erase(m_allItems.begin() + itemIndex);
 			delete(entity);
 		}
 	}
-
-
-
-	
 }
 
 void Map::StartMusic()
@@ -321,7 +275,12 @@ void Map::StopMusic()
 }
 
 
-int Map::GetWidth() const 
+std::string Map::GetName() const
+{
+	return m_name;
+}
+
+int Map::GetWidth() const
 {
 	return m_dimensions.x;
 }
@@ -339,7 +298,6 @@ Tile* Map::TileAt(int x, int y)
 
 Tile* Map::TileAt(IntVector2 coordinates) 
 {
-	//IntVector2 clampedCoords = IntVector2(ClampInt(coordinates.x, 0, m_dimensions.x -1), ClampInt(coordinates.y, 0, m_dimensions.y - 1));
 	int index = GetIndexFromCoordinates(coordinates.x, coordinates.y, m_dimensions.x, m_dimensions.y);
 	if (index >= m_numTiles || index < 0){
 		return nullptr;
@@ -627,12 +585,6 @@ void Map::GetNeighbors(IntVector2 coords, Tile (&neighbors)[8])
 	if (checkTile != nullptr){
 		neighbors[7] = *(checkTile);
 	}
-	//neighbors[2] = *(TileAt(coords + STEP_NORTHEAST	));
-	//neighbors[3] = *(TileAt(coords + STEP_WEST		));
-	//neighbors[4] = *(TileAt(coords + STEP_EAST		));
-	//neighbors[5] = *(TileAt(coords + STEP_SOUTHWEST	));
-	//neighbors[6] = *(TileAt(coords + STEP_SOUTH		));
-	//neighbors[7] = *(TileAt(coords + STEP_SOUTHEAST	));
 }
 
 
@@ -734,6 +686,7 @@ AABB2 Map::GetCameraBounds() const
 
 Player * Map::SpawnNewPlayer(Vector2 spawnPosition)
 {
+
 	ActorDefinition* actorDef = ActorDefinition::GetActorDefinition("Player");
 	//spawnPosition = Vector2(5.f,5.f);
 	Player* newPlayer = new Player(actorDef, spawnPosition, this);
@@ -746,12 +699,12 @@ Player * Map::SpawnNewPlayer(Vector2 spawnPosition)
 Actor * Map::SpawnNewActor(std::string actorName, Vector2 spawnPosition, float spawnRotation)
 {
 	ActorDefinition* actorDef = ActorDefinition::GetActorDefinition(actorName);
-	return SpawnNewActor(actorDef, spawnPosition, spawnRotation);
+	return SpawnNewActor(actorDef, spawnPosition, spawnRotation, m_difficulty);
 }
 
-Actor * Map::SpawnNewActor(ActorDefinition * actorDef, Vector2 spawnPosition, float spawnRotation)
+Actor * Map::SpawnNewActor(ActorDefinition * actorDef, Vector2 spawnPosition, float spawnRotation, int difficulty)
 {
-	Actor* newActor = new Actor(actorDef, this, spawnPosition, spawnRotation);
+	Actor* newActor = new Actor(actorDef, this, spawnPosition, spawnRotation, difficulty);
 	m_allEntities.push_back(newActor);
 	m_allActors.push_back(newActor);
 	m_scene->AddRenderable(newActor->m_renderable);
@@ -781,7 +734,7 @@ Portal * Map::SpawnNewPortal(std::string portalName, Vector2 spawnPosition, Map*
 
 Portal * Map::SpawnNewPortal(std::string portalName, Vector2 spawnPosition, std::string destinationMapName, Vector2 toPos, float spawnRotation, bool spawnReciprocal)
 {
-	Map* destinationMap = g_theGame->m_currentAdventure->GetMap(destinationMapName);
+	Map* destinationMap = g_theGame->m_currentState->m_currentAdventure->GetMap(destinationMapName);
 	return SpawnNewPortal(portalName, spawnPosition, destinationMap, toPos, spawnRotation, spawnReciprocal);
 }
 
@@ -816,7 +769,6 @@ Item * Map::SpawnNewItem(ItemDefinition * itemDef, Vector2 spawnPosition)
 void Map::SetCamera()
 {
 	if (g_theGame->m_fullMapMode){
-		//g_theGame->m_camera->SetProjectionOrtho(Vector2(-.5f,-.5f),  Vector2((float) m_dimensions.x + .5f, (float)m_dimensions.y + .5f));
 		int ortho = max(m_dimensions.x, m_dimensions.y);
 		g_theGame->m_camera->SetProjectionOrtho((float) ortho + 1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
 		g_theGame->m_camera->LookAt( Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, -1.f), Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, .5f));
@@ -824,7 +776,6 @@ void Map::SetCamera()
 		float viewWidth = WINDOW_ASPECT * ZOOM_FACTOR;
 		Vector2 halfDimensions = Vector2(viewWidth, ZOOM_FACTOR) * .5f;
 		Vector2 positionToCenter = g_theGame->m_player->GetPosition();
-		//g_theGame->m_camera->m_transform.SetLocalPosition(Vector3(positionToCenter, -1.f));
 		
 
 
@@ -839,35 +790,16 @@ void Map::SetCamera()
 
 		g_theGame->m_camera->LookAt( Vector3(positionToCenter, -1.f), Vector3(positionToCenter, .5f));
 
-		//m_camera->m_topRight = positionToCenter + halfDimensions;
-		//m_camera->m_bottomLeft = positionToCenter - halfDimensions;
-		//g_theGame->m_camera->SetProjectionOrtho(positionToCenter + halfDimensions, positionToCenter - halfDimensions);
 		g_theGame->m_camera->SetProjectionOrtho(ZOOM_FACTOR, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
 		
 		//ClampCameraToMap();
 	}
-	//g_theRenderer->SetOrtho(g_theGame->m_camera->GetBounds().mins, g_theGame->m_camera->GetBounds().maxs);
-	//g_theRenderer->SetOrtho(Vector3(g_theGame->m_camera->GetBounds().mins, 0.f), Vector3(g_theGame->m_camera->GetBounds().maxs, 2.f));
-	//if (g_theGame->m_isPaused){
-	//	g_theRenderer->DrawAABB2(AABB2(m_camera->m_bottomLeft, m_camera->m_topRight), RGBA(0,0,0,128));
-	//}
-
-
-	//float borderX = (float) m_dimensions.y /** (1/ WINDOW_ASPECT)*/ ;
-	//m_camera->m_bottomLeft = Vector2(borderX * -.5f,0.f);
-	//m_camera->m_topRight = Vector2((float)m_dimensions.x + (borderX * .5f), (float)m_dimensions.y);
-
-	//g_theRenderer->SetOrtho(m_camera->m_bottomLeft, m_camera->m_topRight);
 
 
 }
 
 void Map::ClampCameraToMap()
 {
-	/*float minX = m_camera->m_numTilesInViewVertically*WINDOW_ASPECT * .5f;
-	float maxX = m_width - minX;
-	float minY = m_camera->m_numTilesInViewVertically * .5f;
-	float maxY = m_height - minY;*/
 
 	float minX = 0.f;
 	float maxX = (float) m_dimensions.x;
@@ -966,27 +898,6 @@ void Map::ResetPortals()
 		portal->CheckIfTeleport();
 	}
 }
-//
-//Camera2D::Camera2D()
-//{
-//	
-//}
-//
-//Camera2D::Camera2D(float orientation, float zoomFactor)
-//{
-//	//m_worldPos = position;
-//	m_worldPos = Vector2(0.f,0.f);
-//	m_orientationDegrees = orientation;
-//	m_numTilesInViewVertically = (int) zoomFactor;
-//}
-//
-//void Camera2D::Update(float deltaSeconds)
-//{
-//	deltaSeconds;
-//	//m_worldPos = playerPosition;
-//	m_orientationDegrees = 0.f;
-//	m_numTilesInViewVertically = 10;
-//}
 
 RaycastResult2D::RaycastResult2D(bool didImpact, Vector2 impactPos, IntVector2 impactTileCoords, float impactDistance, Vector2 impactNormal)
 {

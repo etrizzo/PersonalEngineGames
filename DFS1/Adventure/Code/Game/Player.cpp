@@ -130,7 +130,7 @@ void Player::SetPosition(Vector2 newPos, Map * newMap)
 {
 	Actor::SetPosition(newPos, newMap);
 	if (newMap != nullptr){
-		g_theGame->m_currentAdventure->SetCurrentMap(newMap);
+		g_theGame->SetCurrentMap(newMap);
 	}
 }
 
@@ -143,10 +143,12 @@ void Player::EnterTile(Tile * tile)
 
 void Player::TakeDamage(int dmg)
 {
-	m_health-=dmg;
-	if (m_health <= 0){
-		m_dead = true;
-		//g_theGame->StartStateTransition(STATE_DEFEAT, .1f, RGBA(0,0,0,200));
+	if (!m_godMode){
+		m_health-=dmg;
+		if (m_health <= 0){
+			m_dead = true;
+			//g_theGame->StartStateTransition(STATE_DEFEAT, .1f, RGBA(0,0,0,200));
+		}
 	}
 }
 

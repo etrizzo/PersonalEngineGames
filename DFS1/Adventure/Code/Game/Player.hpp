@@ -21,7 +21,7 @@ public:
 	std::string GetAnimName();
 
 	
-
+	bool m_godMode = false;
 	bool m_dead;
 	Heatmap m_distanceMap;
 
