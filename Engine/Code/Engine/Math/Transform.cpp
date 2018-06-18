@@ -194,6 +194,11 @@ void Transform::LookAt(const Vector3 & position, const Vector3 & target, const V
 	SetLocalMatrix(Matrix44::LookAt(position, target, up));
 }
 
+Transform* Transform::GetParent() const
+{
+	return m_parent;
+}
+
 void Transform::SetParent(Transform * t)
 {
 

@@ -13,10 +13,11 @@ public:
 
 	Vector2 m_positionXZ;
 	float m_speed			= 10.f;
-	float m_degPerSecond	= 30.f;
+	float m_degPerSecond	= 60.f;
 	StopWatch m_rateOfFire;
 	Transform* m_cameraTarget;
 	Renderable* m_turretRenderable;
+	Vector3 m_target;
 
 private:
 	void SetWorldPosition();

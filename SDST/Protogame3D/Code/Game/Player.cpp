@@ -2,6 +2,7 @@
 #include "Game/Game.hpp"
 #include "Game/Map.hpp"
 #include "Game/DebugRenderSystem.hpp"
+#include "Engine/Renderer/PerspectiveCamera.hpp"
 
 Player::Player(Vector3 position)
 {
@@ -60,10 +61,11 @@ void Player::Update()
 	//	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(1.f, GetPosition());
 	//}
 	UpdateTarget();
+	
 	m_cameraTarget->SetLocalPosition(GetPosition() + GetUp() * .25f);
 	MoveTurretTowardTarget();
-	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, GetPosition(), 1.5f, m_renderable->m_transform.GetWorldMatrix());
-	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->GetPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix());
+	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, GetPosition(), 1.5f, m_renderable->m_transform.GetWorldMatrix());
+	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->GetPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix());
 }
 
 void Player::HandleInput()
@@ -136,23 +138,29 @@ void Player::HandleInput()
 
 }
 
+static Vector2 gPos = Vector2(0.0f, 0.0f); 
+
 void Player::SetWorldPosition()
 {
+	if (g_theInput->WasKeyJustPressed('J')) {
+		gPos = m_positionXZ; 
+	} 
+	if (g_theInput->WasKeyJustPressed('K')) {
+		m_positionXZ = gPos; 
+	}
+
 	Vector3 pos = Vector3(m_positionXZ.x, GetHeightAtCurrentPos() + .3f, m_positionXZ.y);
-	Vector3 normal = g_theGame->m_currentMap->GetNormalAtTile(m_positionXZ);
-	Matrix44 mat = Matrix44::IDENTITY;
 
-	//maintaining Forward
-	mat.SetI(Vector4(Cross( normal, GetForward()).GetNormalized()));
-	mat.SetJ(Vector4(normal));
-	mat.SetK(Vector4(GetForward()));
-	mat.SetT(Vector4(pos));
+	Vector3 normal = g_theGame->m_currentMap->GetNormalAtPosition(m_positionXZ);
+	
 
-	//maintaining Right:
-	//mat.SetI(Vector4(GetRight()));
-	//mat.SetJ(Vector4(normal));
-	//mat.SetK(Vector4(Cross(GetRight(), normal).GetNormalized()));
-	//mat.SetT(Vector4(pos));
+	//maintaining Forward:
+	Vector3 forward = GetForward(); 
+	Vector3 newUp = normal.GetNormalized();
+	Vector3 newRight = Cross(newUp, GetForward()).GetNormalized();
+	Vector3 newForward = Cross(newRight, newUp).GetNormalized();
+
+	Matrix44 mat = Matrix44(newRight, newUp, newForward, pos);
 
 	m_renderable->m_transform.SetLocalMatrix(mat);
 	//SetPosition(pos);
@@ -160,19 +168,28 @@ void Player::SetWorldPosition()
 
 void Player::MoveTurretTowardTarget()
 {
-	//Transform* base = m_turretRenderable->m_transform.GetParent();
-	//Vector3 Local_pos = base->WorldToLocal(m_target);
-	//m_turretRenderable->m_transform.LocalLookAt(localPos);
+	Transform* base = m_turretRenderable->m_transform.GetParent();
+	Vector3 Local_pos = base->WorldToLocal(m_target);
+	m_turretRenderable->m_transform.LocalLookAt(localPos);
 
 }
 
 void Player::UpdateTarget()
 {
-	//raycast against the world from camera forward
-	//RayCast3 ray = RayCast3(g_theGame->m_mainCamera->GetPosition(), g_theGame->m_mainCamera->GetForward() );
-	//
-	//Contact3 contact;
-
+	//ray cast against the world from camera forward
+	Ray3D ray = Ray3D(g_theGame->m_mainCamera->GetPosition(), g_theGame->m_mainCamera->GetForward() );
+	
+	Contact3D contact;
+	if (g_theGame->m_currentMap->Raycast(contact, 1, ray, 1000.f) > 0) {
+		//if we hit something, update target
+		m_target = contact.m_position;
+		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_cameraTarget->GetWorldPosition(), m_target, RGBA::GREEN, RGBA::GREEN);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_target, .1f);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_target, m_target + contact.m_normal, RGBA::RED, RGBA::YELLOW);
+	} else {
+		m_target = ray.Evaluate(1000.f);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_cameraTarget->GetWorldPosition(), m_target, RGBA::RED, RGBA::RED);
+	}
 }
 
 float Player::GetHeightAtCurrentPos()

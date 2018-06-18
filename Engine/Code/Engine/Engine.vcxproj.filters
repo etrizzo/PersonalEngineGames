@@ -274,6 +274,9 @@
     <ClCompile Include="Math\Transform2D.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="Math\Ray.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -550,6 +553,9 @@
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Math\Transform2D.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Ray.hpp">
       <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>

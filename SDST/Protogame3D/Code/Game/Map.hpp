@@ -4,8 +4,6 @@
 #include "Game/Chunk.hpp"
 
 
-const float RAYCAST_STEPS_PER_TILE = 100.f;
-
 //struct RaycastResult2D{
 //public:
 //	RaycastResult2D(){};
@@ -16,17 +14,6 @@ const float RAYCAST_STEPS_PER_TILE = 100.f;
 //	float m_impactDistance;
 //	Vector2 m_impactNormal;
 //};
-
-
-//class GameMapChunk{
-//public:
-//	GameMapChunk();
-//
-//	Renderable* m_renderable;
-//	IntVector2 m_chunkIndex;
-//	Map* m_map;
-//};
-//
 
 
 class Map{
@@ -57,21 +44,27 @@ public:
 	int GetWidth() const;
 	int GetHeight() const;
 
-	float GetHeightForVertex(int x, int y);
-	Vector3 GetVertexWorldPos(int x, int y);		//index of vertex
-	Vector3 GetVertexWorldPos(IntVector2 xy);		//index of vertex
-	float GetHeightAtCoord(Vector2 xzCoord);
-	Vector3 GetPositionAtCoord(Vector2 xzCoord);
-	Vector3 GetNormalAtTile(Vector2 xzCoord);
-	Vector3 GetNormalForVertex(IntVector2 vertCoords);
-	Vector3 GetNormalForVertex(int x, int y);
-	IntVector2 GetVertexCoordsFromWorldPos(Vector2 xzPos);
+	float GetHeightForVertex(int x, int y) const;
+	Vector3 GetVertexWorldPos(int x, int y) const;		//index of vertex
+	Vector3 GetVertexWorldPos(IntVector2 xy) const;		//index of vertex
+	float GetHeightAtCoord(Vector2 xzCoord) const;
+	Vector3 GetPositionAtCoord(Vector2 xzCoord) const;
+	Vector3 GetNormalAtPosition(Vector2 xzCoord) const;
+	Vector3 GetNormalForVertex(IntVector2 vertCoords) const;
+	Vector3 GetNormalForVertex(int x, int y) const;
+	IntVector2 GetVertexCoordsFromWorldPos(Vector2 xzPos) const;
+	bool Raycast( Contact3D& contact, int maxHits, const Ray3D& ray, float maxDistance = 1000.f);
+	bool IsPointAboveTerrain(const Vector3& point) const;
+	float GetVerticalDistanceFromTerrain(const Vector3& point) const;
 
+	void DebugShowTileAtPoint(Vector2 xzPos);
+	void DebugShowNormalsAtPoint(Vector2 xzPos);
 
 	std::vector<Chunk*> m_chunks;
 	std::vector<float> m_heights;
 	std::vector<Vector3> m_normals;
 	Renderable* m_renderable;
+	AABB3 m_bounds;
 
 private:
 	int m_numTiles;

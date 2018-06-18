@@ -305,6 +305,7 @@
     <ClCompile Include="Math\MathUtils.cpp" />
     <ClCompile Include="Math\Matrix44.cpp" />
     <ClCompile Include="Math\RawNoise.cpp" />
+    <ClCompile Include="Math\Ray.cpp" />
     <ClCompile Include="Math\Renderer.cpp" />
     <ClCompile Include="Math\SmoothNoise.cpp" />
     <ClCompile Include="Math\Sphere.cpp" />
@@ -395,6 +396,7 @@
     <ClInclude Include="Math\MathUtils.hpp" />
     <ClInclude Include="Math\Matrix44.hpp" />
     <ClInclude Include="Math\RawNoise.hpp" />
+    <ClInclude Include="Math\Ray.hpp" />
     <ClInclude Include="Math\Renderer.hpp" />
     <ClInclude Include="Math\SmoothNoise.hpp" />
     <ClInclude Include="Math\Sphere.hpp" />

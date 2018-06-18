@@ -86,6 +86,7 @@ public:
 
 	void LookAt(const Vector3& position, const Vector3& target, const Vector3& up = Vector3::UP);
 	
+	Transform* GetParent() const;
 	void SetParent(Transform* t);
 	void AddChild(Transform* t);
 

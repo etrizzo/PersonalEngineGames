@@ -13,8 +13,8 @@
 #include "Engine/Core/Clock.hpp"
 
 
-#define SCREEN_MAX 1000.f
-#define SCREEN_MIN 0.f
+#define SMALL_VALUE .05f
+#define MAX_STEPS 16
 
 const int TILE_WIDTH = 1;
 

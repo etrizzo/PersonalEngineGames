@@ -240,8 +240,9 @@ Matrix44 Matrix44::MakeRotationDegrees3D(float u, float v, float w)
 	
 	
 	R.Append(MakeRotationDegreesY(v));
-	R.Append(MakeRotationDegreesZ(w));
+
 	R.Append(MakeRotationDegreesX(u));
+	R.Append(MakeRotationDegreesZ(w));
 	
 	return R;
 }
@@ -530,8 +531,19 @@ Vector3 Matrix44::GetEulerAngles() const
 		z = Atan2Degreesf(Iy, Jy);
 	} else {
 		z = 0.f;
-		y = Atan2Degreesf(Iz, Ix);
+		y = Atan2Degreesf(Jx, Ix);
 	}
+	
+	//x = Atan2Degreesf(Iy, Ix);
+	//y = Atan2Degreesf(-Iz, sqrtf((Jz * Jz) + (Kz*Kz)));
+	//z = Atan2Degreesf(Jz, Kz)
+
+	//x = Atan2Degreesf(Ky, Kz);
+	//float c2 = sqrtf((Ix * Ix) + (Jx * Jx));
+	//y = Atan2Degreesf(-Kx, c2);
+	//z = Atan2Degreesf(Jx, Ix)
+
+
 	return Vector3(x,y,z);
 }
 

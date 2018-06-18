@@ -244,7 +244,7 @@ AABB2 AABB2::GetPercentageBox(Vector2 minsPercentages, Vector2 maxsPercentages)
 	return newBox;
 }
 
-Vector2 AABB2::GetPercentageOfPoint(Vector2 point)
+Vector2 AABB2::GetPercentageOfPoint(Vector2 point) const
 {
 	float width = GetWidth();
 	float height = GetHeight();

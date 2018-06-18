@@ -31,8 +31,8 @@ public:
 
 
 	//Accessors/queries
-	bool IsPointInside(float x, float y) const;
-	bool IsPointInside(const Vector2& point) const;
+	bool IsPointInside(float x, float y, float z) const;
+	bool IsPointInside(const Vector3& point) const;
 	Vector3 GetDimensions() const;
 	Vector3 GetCenter() const;
 	float GetWidth() const;

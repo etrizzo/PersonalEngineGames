@@ -63,6 +63,8 @@ public: // NOTE: this is one of the few cases where we break both the "m_" namin
 float GetDistance(const Vector3& a, const Vector3& b);
 float GetDistanceSquared(const Vector3& a, const Vector3& b);
 
+Vector3 Average(const Vector3& a, const Vector3& b);
+
 
 //----------------------
 // PROJECTION FUNCTIONS

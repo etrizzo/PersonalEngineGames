@@ -41,7 +41,7 @@ public:
 	AABB2 GetPercentageBox(Vector2 minPercentages, Vector2 maxPercentages);
 
 	//gets percentage into the box the point is
-	Vector2 GetPercentageOfPoint(Vector2 point);
+	Vector2 GetPercentageOfPoint(Vector2 point) const;
 
 
 	//Accessors/queries

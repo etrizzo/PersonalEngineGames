@@ -19,6 +19,7 @@
 #include "Engine/Math/SmoothNoise.hpp"
 #include "Engine/Math/Matrix44.hpp"
 #include "Engine/Math/Transform.hpp"
+#include "Engine/Math/Ray.hpp"
 
 
 #include "Engine/Core/Blackboard.hpp"

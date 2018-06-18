@@ -84,7 +84,7 @@ int Map::GetHeight() const
 	return m_dimensions.y;
 }
 
-float Map::GetHeightForVertex(int x, int y)
+float Map::GetHeightForVertex(int x, int y) const
 {
 	int index = GetIndexFromCoordinates(x, y, m_dimensions.x, m_dimensions.y);
 	if (index >= 0){
@@ -94,49 +94,49 @@ float Map::GetHeightForVertex(int x, int y)
 	}
 }
 
-Vector3 Map::GetVertexWorldPos(int x, int y)
+Vector3 Map::GetVertexWorldPos(int x, int y) const
 {
 	Vector2 xyPos = m_extents.mins + (Vector2(m_tileSize.x * x, m_tileSize.y * y));
 	float height = GetHeightForVertex(x,y);
 	return Vector3(xyPos.x, height, xyPos.y);
 }
 
-Vector3 Map::GetVertexWorldPos(IntVector2 xy)
+Vector3 Map::GetVertexWorldPos(IntVector2 xy) const
 {
 	return GetVertexWorldPos(xy.x, xy.y);
 }
 
-float Map::GetHeightAtCoord(Vector2 xzCoord)
+float Map::GetHeightAtCoord(Vector2 xzCoord) const
 {
 	IntVector2 bl_coords = GetVertexCoordsFromWorldPos(xzCoord);
-	//Vector3 bl_vert = GetVertexWorldPos(bl_coords.x, bl_coords.y);
-	Vector3 blVert = GetVertexWorldPos(bl_coords.x, bl_coords.y);
-	Vector3 brVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y);
-	Vector3 tlVert = GetVertexWorldPos(bl_coords.x, bl_coords.y + 1);
-	Vector3 trVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y + 1);
+	if (bl_coords == IntVector2::INVALID_INDEX){
+		return -INFINITY;
+	} else {
+		Vector3 blVert = GetVertexWorldPos(bl_coords.x, bl_coords.y);
+		Vector3 brVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y);
+		Vector3 tlVert = GetVertexWorldPos(bl_coords.x, bl_coords.y + 1);
+		Vector3 trVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y + 1);
 
-	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, blVert, RGBA::RED);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, brVert, RGBA::GREEN);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, tlVert, RGBA::BLUE);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, trVert, RGBA::MAGENTA);
 
-	AABB2 bounds = AABB2(blVert.XZ(), trVert.XZ());
-	Vector2 percentage = bounds.GetPercentageOfPoint(xzCoord);
 
-	//find heights along u edges
-	float heightbottom = Interpolate(blVert.y, brVert.y, percentage.x);
-	float heightTop = Interpolate(tlVert.y, trVert.y, percentage.x);
-	float height = Interpolate(heightbottom, heightTop, percentage.y);
+		AABB2 bounds = AABB2(blVert.XZ(), trVert.XZ());
+		Vector2 percentage = bounds.GetPercentageOfPoint(xzCoord);
 
-	return height;
+		//find heights along u edges
+		float heightbottom = Interpolate(blVert.y, brVert.y, percentage.x);
+		float heightTop = Interpolate(tlVert.y, trVert.y, percentage.x);
+		float height = Interpolate(heightbottom, heightTop, percentage.y);
+
+		return height;
+	}
 }
 
-Vector3 Map::GetPositionAtCoord(Vector2 xzCoord)
+Vector3 Map::GetPositionAtCoord(Vector2 xzCoord) const
 {
 	return Vector3(xzCoord.x, GetHeightAtCoord(xzCoord), xzCoord.y);
 }
 
-Vector3 Map::GetNormalAtTile(Vector2 xzCoord)
+Vector3 Map::GetNormalAtPosition(Vector2 xzCoord) const
 {
 	//IntVector2 bl_coords = GetVertexCoordsFromWorldPos(xzCoord);
 	///*int numTilesWidth = (int) (m_extents.GetWidth() / m_tileSize.x	);
@@ -176,38 +176,24 @@ Vector3 Map::GetNormalAtTile(Vector2 xzCoord)
 	Vector3 normTop = Interpolate(tlNorm, trNorm, percentage.x);
 	Vector3 norm = Interpolate(normbottom, normTop, percentage.y);
 
-	//DEBUG DRAWING
-	Vector3 brVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y);
-	Vector3 tlVert = GetVertexWorldPos(bl_coords.x, bl_coords.y + 1);
 
-	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(blVert, blVert + blNorm, RGBA::RED);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(brVert, brVert + brNorm, RGBA::GREEN);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(tlVert, tlVert + tlNorm, RGBA::BLUE);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(trVert, trVert + trNorm, RGBA::MAGENTA);
-
-	Vector3 pos = GetPositionAtCoord(xzCoord);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, (pos + normbottom.GetNormalized()), RGBA::RED, RGBA::RED);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, (pos + normTop.GetNormalized()), RGBA::GREEN, RGBA::GREEN);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, (pos + norm.GetNormalized()), RGBA::YELLOW, RGBA::YELLOW);
-
-	// END DEBUG DRAWING
 
 	return norm.GetNormalized();
 }
 
-Vector3 Map::GetNormalForVertex(IntVector2 vertCoords)
+Vector3 Map::GetNormalForVertex(IntVector2 vertCoords) const
 {
 	return GetNormalForVertex(vertCoords.x, vertCoords.y);
 }
 
-Vector3 Map::GetNormalForVertex(int x, int y)
+Vector3 Map::GetNormalForVertex(int x, int y) const
 {
 	int idx = GetIndexFromCoordinates(x, y, m_dimensions.x, m_dimensions.y);
 	idx = ClampInt(idx, 0 , m_dimensions.x * m_dimensions.y);
 	return m_normals[idx];
 }
 
-IntVector2 Map::GetVertexCoordsFromWorldPos(Vector2 xzPos)
+IntVector2 Map::GetVertexCoordsFromWorldPos(Vector2 xzPos) const
 {
 	if (m_extents.IsPointInside(xzPos)){
 		Vector2 percentage = m_extents.GetPercentageOfPoint(xzPos);
@@ -215,8 +201,116 @@ IntVector2 Map::GetVertexCoordsFromWorldPos(Vector2 xzPos)
 		IntVector2 coords = IntVector2((int)floor(coordFloat.x), (int)floor(coordFloat.y));
 		return coords;
 	} else {
-		return IntVector2(0,0);
+		return IntVector2::INVALID_INDEX;
 	}
+}
+
+bool Map::Raycast(Contact3D & contact, int maxHits, const Ray3D & ray, float maxDistance)
+{
+	if (DoesIntersect(ray, m_bounds)){
+		float stepSize = .5f * m_tileSize.x;
+		if (IsPointAboveTerrain(ray.m_position)){		//check that not starting inside terrain
+			//step along the ray until max distance is reached, or you cross the terrain
+			float t = stepSize;
+			Vector3 abovePoint = ray.m_position;
+			Vector3 belowPoint = ray.Evaluate(t);
+			while (IsPointAboveTerrain(belowPoint) && t < maxDistance){
+				t+=stepSize;
+				abovePoint = belowPoint;
+				belowPoint = ray.Evaluate(t);
+			}
+			if ((t >= maxDistance) || IsPointAboveTerrain(belowPoint)){
+				//no hit in specified distance - either went outside of terrain bounds, or went too far
+				return false;
+			}
+
+
+			//focus in by checking midpoint until you find a point close enough to the terrain
+			Vector3 avgPoint = Average(abovePoint, belowPoint);
+			int stepCount = 0;
+			while ((GetVerticalDistanceFromTerrain(avgPoint) > SMALL_VALUE) && (stepCount < MAX_STEPS)){
+				if (IsPointAboveTerrain(avgPoint)){
+					abovePoint = avgPoint;
+				} else {
+					belowPoint = avgPoint;
+				}
+				avgPoint = Average(abovePoint, belowPoint);
+				stepCount++;
+			}
+			contact.m_position = avgPoint;
+			contact.m_normal = GetNormalAtPosition(avgPoint.XZ());
+			return true;
+
+		}
+	} else {
+		//started inside the terrain
+		return false;
+	}
+}
+
+bool Map::IsPointAboveTerrain(const Vector3 & point) const
+{
+	float terrainHeight = GetHeightAtCoord(Vector2(point.x, point.z));
+	if (terrainHeight <= point.y){
+		return true;
+	} else {
+		return false;
+	}
+}
+
+float Map::GetVerticalDistanceFromTerrain(const Vector3 & point) const
+{
+	float terrainHeight = GetHeightAtCoord(Vector2(point.x, point.z));
+	float dist = point.y - terrainHeight;
+	return fabs(dist);
+}
+
+void Map::DebugShowTileAtPoint(Vector2 xzPos)
+{
+	IntVector2 bl_coords = GetVertexCoordsFromWorldPos(xzPos);
+	Vector3 blVert = GetVertexWorldPos(bl_coords.x, bl_coords.y);
+	Vector3 brVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y);
+	Vector3 tlVert = GetVertexWorldPos(bl_coords.x, bl_coords.y + 1);
+	Vector3 trVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y + 1);
+
+	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, blVert, RGBA::RED);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, brVert, RGBA::GREEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, tlVert, RGBA::BLUE);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, trVert, RGBA::MAGENTA);
+}
+
+void Map::DebugShowNormalsAtPoint(Vector2 xzPos)
+{
+	IntVector2 bl_coords = GetVertexCoordsFromWorldPos(xzPos);
+	Vector3 blVert = GetVertexWorldPos(bl_coords.x, bl_coords.y);
+	Vector3 brVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y);
+	Vector3 tlVert = GetVertexWorldPos(bl_coords.x, bl_coords.y + 1);
+	Vector3 trVert = GetVertexWorldPos(bl_coords.x + 1, bl_coords.y + 1);
+
+	Vector3 blNorm = GetNormalForVertex(bl_coords.x, bl_coords.y);
+	Vector3 brNorm = GetNormalForVertex(bl_coords.x + 1, bl_coords.y);
+	Vector3 tlNorm = GetNormalForVertex(bl_coords.x, bl_coords.y + 1);
+	Vector3 trNorm = GetNormalForVertex(bl_coords.x + 1, bl_coords.y + 1);
+
+	AABB2 bounds = AABB2(blVert.XZ(), trVert.XZ());
+	Vector2 percentage = bounds.GetPercentageOfPoint(xzPos);
+
+	Vector3 normbottom = Interpolate(blNorm, brNorm, percentage.x);
+	Vector3 normTop = Interpolate(tlNorm, trNorm, percentage.x);
+	Vector3 norm = Interpolate(normbottom, normTop, percentage.y);
+
+	//DEBUG DRAWING
+
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(blVert, blVert + blNorm, RGBA::RED);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(brVert, brVert + brNorm, RGBA::GREEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(tlVert, tlVert + tlNorm, RGBA::BLUE);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(trVert, trVert + trNorm, RGBA::MAGENTA);
+
+	Vector3 pos = GetPositionAtCoord(xzPos);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, (pos + norm.GetNormalized()), RGBA::YELLOW, RGBA::YELLOW);
+	
+
+	// END DEBUG DRAWING
 }
 
 
@@ -302,7 +396,7 @@ void Map::RunMapGeneration(const Image& img)
 {
 	//int numTilesWidth = (int) (m_extents.GetWidth() / m_tileSize.x	);
 	//int numTilesHeight = (int)( m_extents.GetHeight() / m_tileSize.y);
-
+	m_bounds = AABB3(Vector3(INFINITY, INFINITY, INFINITY), Vector3(-INFINITY, -INFINITY, -INFINITY));
 	m_heights.resize(m_dimensions.x * m_dimensions.y);
 	m_normals.resize(m_dimensions.x * m_dimensions.y);
 	//read vertex heights from image data
@@ -322,7 +416,7 @@ void Map::RunMapGeneration(const Image& img)
 		}
 	}
 	MeshBuilder mb = MeshBuilder();
-	Material* terrainMat = Material::GetMaterial("terrain");
+	Material* terrainMat = Material::GetMaterial("default_lit");
 	for (int chunkX = 0; chunkX < m_chunkDimensions.x; chunkX++){
 		for (int chunkY = 0; chunkY < m_chunkDimensions.y; chunkY++){
 			int startX = chunkX *m_tilesPerChunk;
@@ -351,6 +445,7 @@ void Map::RunMapGeneration(const Image& img)
 					if ( (x + 1) < m_dimensions.x && (y + 1 ) < m_dimensions.y){
 						mb.AppendPlane(blPos, brPos, tlPos, trPos, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
 					}
+					m_bounds.StretchToIncludePoint(blPos);
 				}
 			}
 			mb.End();

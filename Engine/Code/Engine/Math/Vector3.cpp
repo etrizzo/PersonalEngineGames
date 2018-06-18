@@ -234,6 +234,11 @@ float GetDistanceSquared(const Vector3 & a, const Vector3 & b)
 	return ((dx * dx) + (dy*dy) + (dz * dz));
 }
 
+Vector3 Average(const Vector3 & a, const Vector3 & b)
+{
+	return ((a + b ) * .5f);
+}
+
 const Vector3 GetProjectedVector(const Vector3 & vectorToProject, const Vector3 & projectOnto)
 {
 	Vector3 normalizedProjectOnto = projectOnto.GetNormalized();

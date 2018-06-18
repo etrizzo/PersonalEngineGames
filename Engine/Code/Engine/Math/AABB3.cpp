@@ -99,24 +99,21 @@ void AABB3::SetFromText(const char * text)
 //	outTop = AABB3(splitLineLeft, maxs);
 //}
 
-bool AABB3::IsPointInside(float x, float y) const
+bool AABB3::IsPointInside(float x, float y, float z) const
 {
 	if (x <= maxs.x && x >= mins.x){
 		if (y <= maxs.y && y>= mins.y){
-			return true;
+			if (z <= maxs.z && z >= mins.z){
+				return true;
+			}
 		}
 	}
 	return false;
 }
 
-bool AABB3::IsPointInside(const Vector2 & point) const
+bool AABB3::IsPointInside(const Vector3& point) const
 {
-	if (point.x <= maxs.x && point.x >= mins.x){
-		if (point.y <= maxs.y && point.y>= mins.y){
-			return true;
-		}
-	}
-	return false;
+	return IsPointInside(point.x, point.y, point.z);
 }
 
 Vector3 AABB3::GetDimensions() const
