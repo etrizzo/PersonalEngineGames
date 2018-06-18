@@ -840,6 +840,19 @@ void Map::InitializeTiles()
 		m_tiles[i] = Tile(coords, m_mapDef->m_defaultTile);
 	}
 	m_numTiles = numTiles;
+
+	//init generation mask to be the entire map
+	int width = GetWidth();
+	int height = GetHeight();
+
+	float centerX = .5f;
+	float centerY = .5f;
+	IntVector2 center = IntVector2((int) (centerX * width), (int) (centerY * height));
+	float dimX = .5f;
+	float dimY = .5f;
+	IntVector2 halfDims = IntVector2((int) (dimX * width), (int) (dimY * height));
+	m_generationMask = AreaMask(center, halfDims);
+	m_fullMap = AreaMask(center, halfDims);	//should never change, just for resetting
 }
 
 void Map::CreateTileRenderable()

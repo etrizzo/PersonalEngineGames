@@ -195,33 +195,4 @@
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <Xml Include="..\..\Run_Win32\Data\Data\GameConfig.xml">
-      <Filter>Data</Filter>
-    </Xml>
-    <Xml Include="..\..\Run_Win32\Data\Data\Tiles.xml">
-      <Filter>Data</Filter>
-    </Xml>
-    <Xml Include="..\..\Run_Win32\Data\Data\Maps.xml">
-      <Filter>Data</Filter>
-    </Xml>
-    <Xml Include="..\..\Run_Win32\Data\Data\Actors.xml">
-      <Filter>Data</Filter>
-    </Xml>
-    <Xml Include="..\..\Run_Win32\Data\Data\Projectiles.xml">
-      <Filter>Data</Filter>
-    </Xml>
-    <Xml Include="..\..\Run_Win32\Data\Data\Portals.xml">
-      <Filter>Data</Filter>
-    </Xml>
-    <Xml Include="..\..\Run_Win32\Data\Data\Adventures.xml">
-      <Filter>Data</Filter>
-    </Xml>
-    <Xml Include="..\..\Run_Win32\Data\Data\Items.xml">
-      <Filter>Data</Filter>
-    </Xml>
-    <Xml Include="..\..\Run_Win32\Data\Data\Humanoid.xml">
-      <Filter>Data</Filter>
-    </Xml>
-  </ItemGroup>
 </Project>

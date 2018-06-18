@@ -307,7 +307,7 @@ void Game::ToggleState(bool & stateToToggle)
 
 void Game::LookAtNextMap(int direction)
 {
-	//m_currentAdventure->MoveToMapIndex(m_currentAdventure->m_currentMapIndex + direction);
+	m_currentState->m_currentAdventure->MoveToMapIndex(direction);
 }
 
 void Game::ShowActorStats()

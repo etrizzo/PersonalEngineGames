@@ -21,6 +21,7 @@ public:
 	bool m_isPaused;
 	bool m_devMode;
 	bool m_fullMapMode;
+	bool m_isMapViewerMode = false;
 	//float m_gameTime;
 	Clock* m_gameClock;
 	//Map* m_currentMap;

@@ -93,3 +93,15 @@ public:
 	GameState_Encounter* m_encounterGameState;
 	MenuState* m_menuState;
 };
+
+
+class GameState_MapViewer : public GameState{
+public:
+	GameState_MapViewer();
+	void Update(float ds) override;
+	void RenderGame() override;
+	void RenderUI() override;
+
+	void HandleInput() override;
+
+};

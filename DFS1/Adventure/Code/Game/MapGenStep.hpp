@@ -9,6 +9,7 @@ public:
 	MapGenStep( const tinyxml2::XMLElement& genStepXmlElement );
 	~MapGenStep();
 	void RunIterations(Map& map);
+	virtual void SetMask(Map& map);
 	virtual void Run( Map& map ) = 0; // "pure virtual", MUST be overridden by subclasses
 
 public:
@@ -18,6 +19,10 @@ protected:
 	std::string		m_name;
 	IntRange m_iterations = IntRange(1);
 	float m_chanceToRun = 1.f;
+	FloatRange m_subAreaCenter = FloatRange(.5f);
+	FloatRange m_subAreaSize = FloatRange(.5f);
+	AreaMask m_mask;
+	eAreaType m_maskType;
 };
 
 
@@ -81,6 +86,7 @@ public:
 	FloatRange m_noiseRange = FloatRange(0.f);
 	//IntRange m_gridRange	= IntRange(20);
 	float m_gridSize = 20.f;
+	unsigned int m_seed = 1;
 
 protected:
 	bool CheckPerlinNoiseAtTile(Tile* tile);
@@ -133,6 +139,28 @@ public:
 	int m_deathLimit;
 	TileDefinition* m_liveTileDefinition;
 	TileDefinition* m_deadTileDefintion;
+};
+
+class MapGenStep_SetSubArea: public MapGenStep{
+public:
+	MapGenStep_SetSubArea(const tinyxml2::XMLElement& generationStepElement);
+	void Run(Map& map);
+	//void SetMask(Map& map);
+};
+
+class MapGenStep_EndSubArea: public MapGenStep{
+public:
+	MapGenStep_EndSubArea(const tinyxml2::XMLElement& generationStepElement);
+	void Run(Map& map);
+	//void SetMask(Map& map);
+};
+
+class MapGenStep_SubMap: public MapGenStep{
+public:
+	MapGenStep_SubMap(const tinyxml2::XMLElement& generationStepElement);
+	void Run(Map& map);
+
+	std::string m_mapType;		//saving name so we don't have to worry about order of loading maps
 };
 
 

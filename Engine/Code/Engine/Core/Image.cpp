@@ -80,8 +80,8 @@ void * Image::GetImageData() const
 void Image::FlipY()
 {
 	std::vector< RGBA >	tempTexels = m_texels;
-	for (int x = 0; x < m_dimensions.x; x++){
-		for (int y = 0; y < m_dimensions.y; y++){
+	for (int y = 0; y < m_dimensions.y; y++){
+		for (int x = 0; x < m_dimensions.x; x++){
 			IntVector2 flippedCoords = IntVector2(x, m_dimensions.y - y - 1);
 			RGBA newColor = tempTexels[GetIndexFromCoordinates(flippedCoords, m_dimensions)];
 			SetTexel(x,y,newColor);
@@ -121,6 +121,10 @@ void Image::PopulateFromRGBA(unsigned char * imageData, IntVector2 dimensions)
 {
 	int arraySize = dimensions.x * dimensions.y * 4;
 	m_texels.resize(dimensions.x * dimensions.y);
+
+	memcpy( m_texels.data(), imageData, arraySize );
+	/*
+
 	int texelIndex = 0;
 	for (int byteIndex = 0; byteIndex < arraySize; byteIndex+=4){
 		unsigned char r = imageData[byteIndex];
@@ -130,4 +134,5 @@ void Image::PopulateFromRGBA(unsigned char * imageData, IntVector2 dimensions)
 		texelIndex = byteIndex / 4;
 		m_texels[texelIndex] = RGBA(r,g,b,a);
 	}
+	*/
 }

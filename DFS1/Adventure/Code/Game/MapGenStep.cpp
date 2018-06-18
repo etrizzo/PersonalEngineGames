@@ -1,10 +1,21 @@
 #include "MapGenStep.hpp"
 
 MapGenStep::MapGenStep(const tinyxml2::XMLElement & genStepXmlElement)
+	:m_subAreaCenter(.5f),
+	m_subAreaSize(.5f)
 {
 	m_name = genStepXmlElement.Name();
 	m_iterations = ParseXmlAttribute(genStepXmlElement, "iterations",m_iterations);
 	m_chanceToRun = ParseXmlAttribute(genStepXmlElement,  "chanceToRun", 1.f);
+
+	m_subAreaCenter = ParseXmlAttribute(genStepXmlElement, "subAreaCenter", m_subAreaCenter);
+	m_subAreaSize = ParseXmlAttribute(genStepXmlElement, "subAreaSize", m_subAreaSize);
+	std::string areaType = ParseXmlAttribute(genStepXmlElement, "type", "rectangle");
+	if (areaType == "circle"){
+		m_maskType = AREA_TYPE_CIRCLE;
+	} else if (areaType == "rectangle"){
+		m_maskType = AREA_TYPE_RECTANGLE;
+	}
 }
 
 MapGenStep::~MapGenStep()
@@ -17,9 +28,17 @@ void MapGenStep::RunIterations(Map & map)
 	if (CheckRandomChance(m_chanceToRun)){
 		int numIterations = m_iterations.GetRandomInRange();
 		for (int i = 0; i < numIterations; i++){
+			SetMask(map);
 			Run(map);
 		}
 	}
+}
+
+void MapGenStep::SetMask(Map& map)
+{
+	TODO("Find a better way to adjust subarea to constraints (instead of just shrinking)");
+	m_mask = map.m_generationMask.GetSubArea(m_subAreaCenter, m_subAreaSize);
+	m_mask.m_type = m_maskType;
 }
 
 MapGenStep * MapGenStep::CreateMapGenStep(const tinyxml2::XMLElement & genStepXmlElement)
@@ -53,6 +72,15 @@ MapGenStep * MapGenStep::CreateMapGenStep(const tinyxml2::XMLElement & genStepXm
 	if (genName == "SpawnItem"){
 		newMapGenStep = (MapGenStep*) new MapGenStep_SpawnItem(genStepXmlElement);
 	}
+	if (genName == "SetSubArea"){
+		newMapGenStep = (MapGenStep*) new MapGenStep_SetSubArea(genStepXmlElement);
+	}
+	if (genName == "EndSubArea"){
+		newMapGenStep = (MapGenStep*) new MapGenStep_EndSubArea(genStepXmlElement);
+	}
+	if (genName == "SubMap"){
+		newMapGenStep = (MapGenStep*) new MapGenStep_SubMap(genStepXmlElement);
+	}
 
 
 
@@ -78,17 +106,19 @@ void MapGenStep_FillAndEdge::Run(Map & map)
 	int outerBoundY = map.GetHeight() - m_edgeThickness;
 	for(int tileIndex = 0; tileIndex < (int) map.m_tiles.size(); tileIndex++){
 		IntVector2 tileCoords = GetCoordinatesFromIndex(tileIndex, map.GetWidth());
-		if (tileCoords.x <= innerBound || tileCoords.y <= innerBound || tileCoords.x >= outerBoundX || tileCoords.y >= outerBoundY){
-			if (CheckRandomChance(m_chanceToChangeEachTile)){
-				map.m_tiles[tileIndex].SetType(m_edgeTileDef);
+		if (m_mask.IsPointInside(tileCoords)){
+			if ( m_mask.GetDistanceFromEdge(tileCoords.x, tileCoords.y) < m_edgeThickness){
+				if (CheckRandomChance(m_chanceToChangeEachTile)){
+					map.m_tiles[tileIndex].SetType(m_edgeTileDef);
+				} else {
+					if (m_fillTileDef != nullptr){
+						map.m_tiles[tileIndex].SetType(m_fillTileDef);
+					}
+				}
 			} else {
 				if (m_fillTileDef != nullptr){
 					map.m_tiles[tileIndex].SetType(m_fillTileDef);
 				}
-			}
-		} else {
-			if (m_fillTileDef != nullptr){
-				map.m_tiles[tileIndex].SetType(m_fillTileDef);
 			}
 		}
 	}
@@ -143,13 +173,15 @@ void MapGenStep_Mutate::Run(Map & map)
 	int mapHeight = map.GetHeight();
 	for (int tileX = 0; tileX < mapWidth; tileX++){
 		for (int tileY = 0; tileY < mapHeight; tileY++){
-			Tile* tile = map.TileAt(tileX, tileY);
-			if (m_ifType!= nullptr){
-				std::string tileName = tile->m_tileDef->m_name;
-				std::string ifTypeName = m_ifType->m_name;
-				if (!tileName.compare(ifTypeName)){
-					if (CheckRandomChance(m_chanceToMutate)){
-						tile->SetType(m_toType);
+			if (m_mask.IsPointInside(tileX, tileY)){
+				Tile* tile = map.TileAt(tileX, tileY);
+				if (m_ifType!= nullptr){
+					std::string tileName = tile->m_tileDef->m_name;
+					std::string ifTypeName = m_ifType->m_name;
+					if (!tileName.compare(ifTypeName)){
+						if (CheckRandomChance(m_chanceToMutate)){
+							tile->SetType(m_toType);
+						}
 					}
 				}
 			}
@@ -177,31 +209,34 @@ void MapGenStep_Conway::Run(Map & map)
 
 	//set new states from map into cellStates, then update map
 	for(int tileIndex = 0; tileIndex < map.m_numTiles; tileIndex++){
-		Tile neighbors[8];
-		Tile currentTile = map.m_tiles[tileIndex];
-		map.GetNeighbors(currentTile.m_coordinates, neighbors);
-		int liveCount = 0;
-		for(Tile neighborTile : neighbors){
-			if (neighborTile.m_tileDef != nullptr){
-				if (neighborTile.m_tileDef == m_liveTileDefinition){
-					liveCount++;
+		IntVector2 tileCoords = GetCoordinatesFromIndex(tileIndex, map.GetWidth());
+		if (m_mask.IsPointInside(tileCoords)){
+			Tile neighbors[8];
+			Tile currentTile = map.m_tiles[tileIndex];
+			map.GetNeighbors(currentTile.m_coordinates, neighbors);
+			int liveCount = 0;
+			for(Tile neighborTile : neighbors){
+				if (neighborTile.m_tileDef != nullptr){
+					if (neighborTile.m_tileDef == m_liveTileDefinition){
+						liveCount++;
+					}
 				}
 			}
-		}
 
-		if(currentTile.m_tileDef == m_liveTileDefinition){
-			if(liveCount < m_deathLimit){
-				cellStates[tileIndex] = false;
-			}
-			else{
-				cellStates[tileIndex] = true;
-			}
-		} else {		//cell is currently dead
-			if(liveCount > m_birthLimit){
-				cellStates[tileIndex] = true;
-			}
-			else{
-				cellStates[tileIndex] = false;
+			if(currentTile.m_tileDef == m_liveTileDefinition){
+				if(liveCount < m_deathLimit){
+					cellStates[tileIndex] = false;
+				}
+				else{
+					cellStates[tileIndex] = true;
+				}
+			} else {		//cell is currently dead
+				if(liveCount > m_birthLimit){
+					cellStates[tileIndex] = true;
+				}
+				else{
+					cellStates[tileIndex] = false;
+				}
 			}
 		}
 	}
@@ -234,32 +269,36 @@ void MapGenStep_CellularAutomata::Run(Map & map)
 
 	//set new states from map into cellStates, then update map
 	for(int tileIndex = 0; tileIndex < map.m_numTiles; tileIndex++){
-		
-		Tile currentTile = map.m_tiles[tileIndex];
-		if(m_ifTypeDef == nullptr || currentTile.m_tileDef == m_ifTypeDef){
-			Tile neighbors[8];
-			map.GetNeighbors(currentTile.m_coordinates, neighbors);
-			int liveCount = 0;
-			//count neighboring tiles of ifNeighborTypeDef
-			for(Tile neighborTile : neighbors){
-				if (neighborTile.m_tileDef != nullptr){
-					if (neighborTile.m_tileDef == m_ifNeighborTypeDef){
-						liveCount++;
+		IntVector2 tileCoords = GetCoordinatesFromIndex(tileIndex, map.GetWidth());
+		if (m_mask.IsPointInside(tileCoords)){
+			Tile currentTile = map.m_tiles[tileIndex];
+			if(m_ifTypeDef == nullptr || currentTile.m_tileDef == m_ifTypeDef){
+				Tile neighbors[8];
+				map.GetNeighbors(currentTile.m_coordinates, neighbors);
+				int liveCount = 0;
+				//count neighboring tiles of ifNeighborTypeDef
+				for(Tile neighborTile : neighbors){
+					if (neighborTile.m_tileDef != nullptr){
+						if (neighborTile.m_tileDef == m_ifNeighborTypeDef){
+							liveCount++;
+						}
 					}
 				}
-			}
-			// if there are enough neighbors of the type to change, mark for change
-			if(m_requiredNeighborCount.IsIntInRange(liveCount)){
-				if (CheckRandomChance(m_chanceToMutate)){
-					cellsToChange[tileIndex] = true;
-				} else {
+				// if there are enough neighbors of the type to change, mark for change
+				if(m_requiredNeighborCount.IsIntInRange(liveCount)){
+					if (CheckRandomChance(m_chanceToMutate)){
+						cellsToChange[tileIndex] = true;
+					} else {
+						cellsToChange[tileIndex] = false;
+					}
+				}
+				else{
 					cellsToChange[tileIndex] = false;
 				}
-			}
-			else{
-				cellsToChange[tileIndex] = false;
-			}
-		} 
+			} 
+		} else {
+			cellsToChange[tileIndex] = false;
+		}
 	}
 
 	for(int tileIndex = 0; tileIndex < map.m_numTiles; tileIndex++){
@@ -282,11 +321,11 @@ MapGenStep_RoomAndPath::MapGenStep_RoomAndPath(const tinyxml2::XMLElement & gene
 	m_wallTileDef	 = ParseXmlAttribute(*roomsElement, "wall" , m_wallTileDef		);
 	
 	if (pathsElement != nullptr){
-		m_pathTileDef	 = ParseXmlAttribute(*pathsElement, "floor"	, m_pathTileDef	);
+		m_pathTileDef		   = ParseXmlAttribute(*pathsElement, "floor"	, m_pathTileDef	);
 		m_extraPaths		   = ParseXmlAttribute(*pathsElement, "extraCount" , m_extraPaths);
 		m_loopPaths			   = ParseXmlAttribute(*pathsElement, "loop" , m_loopPaths);
 		m_straightPathChance   = ParseXmlAttribute(*pathsElement, "straightChance" , m_straightPathChance );
-		m_straightPathChance	= RangeMapFloat(m_straightPathChance, 0.f, 1.f, .5f, 1.f);
+		m_straightPathChance   = RangeMapFloat(m_straightPathChance, 0.f, 1.f, .5f, 1.f);
 	}
 }
 
@@ -310,22 +349,25 @@ void MapGenStep_RoomAndPath::GenerateRooms(Map& map)
 	int overlapsUsed = 0;
 	int roomsGenerated = 0;
 	while (roomsGenerated <roomsToGenerate && failures < 1000){
-		IntVector2 randomLocation = map.GetRandomTileCoords();
+		IntVector2 randomLocation = m_mask.GetRandomPointInArea(); //map.GetRandomTileCoords();
 		IntVector2 randomSize = IntVector2(m_roomWidth.GetRandomInRange(), m_roomHeight.GetRandomInRange());
 		roomToBuild = new Room(randomLocation, randomSize);
 		bool failedToAdd = false;
-		if (map.IsCoordinateOnMap(roomToBuild->m_minCoords) && map.IsCoordinateOnMap(roomToBuild->m_maxCoords)){
-			for(int i = 0; i < roomsGenerated; i++){
-				Room* previousRoom = m_rooms[i];
-				if (roomToBuild->DoesRoomOverlap(previousRoom)){
-					if (overlapsUsed >= overlapsToAllow){
-						failures++;
-						failedToAdd = true;
-						break;
-					} else {
-						overlapsUsed++;
-					}
-				} 
+		//check that the random room is on the map and inside the mask
+		if (m_mask.IsPointInside(roomToBuild->m_minCoords) && m_mask.IsPointInside(roomToBuild->m_maxCoords)){
+			if (map.IsCoordinateOnMap(roomToBuild->m_minCoords) && map.IsCoordinateOnMap(roomToBuild->m_maxCoords)){
+				for(int i = 0; i < roomsGenerated; i++){
+					Room* previousRoom = m_rooms[i];
+					if (roomToBuild->DoesRoomOverlap(previousRoom)){
+						if (overlapsUsed >= overlapsToAllow){
+							failures++;
+							failedToAdd = true;
+							break;
+						} else {
+							overlapsUsed++;
+						}
+					} 
+				}
 			}
 		} else {
 			failedToAdd = true;
@@ -532,6 +574,7 @@ MapGenStep_PerlinNoise::MapGenStep_PerlinNoise(const tinyxml2::XMLElement & gene
 	m_noiseRange				= ParseXmlAttribute(generationStepElement, "ifNoise", m_noiseRange);
 	FloatRange gridSizeRange	= ParseXmlAttribute(generationStepElement, "gridSize", FloatRange(20.f));
 	m_gridSize = gridSizeRange.GetRandomInRange();
+	m_seed = (unsigned int) GetRandomIntInRange(0, 2000);
 }
 
 void MapGenStep_PerlinNoise::Run(Map & map)
@@ -540,11 +583,17 @@ void MapGenStep_PerlinNoise::Run(Map & map)
 	int mapHeight = map.GetHeight();
 	for (int tileX = 0; tileX < mapWidth; tileX++){
 		for (int tileY = 0; tileY < mapHeight; tileY++){
-			Tile* tile = map.TileAt(tileX, tileY);
-			if (m_ifType!= nullptr){
-				std::string tileName = tile->m_tileDef->m_name;
-				std::string ifTypeName = m_ifType->m_name;
-				if (tileName == ifTypeName){
+			if (m_mask.IsPointInside(tileX, tileY)){
+				Tile* tile = map.TileAt(tileX, tileY);
+				if (m_ifType!= nullptr){
+					std::string tileName = tile->m_tileDef->m_name;
+					std::string ifTypeName = m_ifType->m_name;
+					if (tileName == ifTypeName){
+						if (CheckPerlinNoiseAtTile(tile)){
+							tile->SetType(m_toType);
+						}
+					}
+				} else {
 					if (CheckPerlinNoiseAtTile(tile)){
 						tile->SetType(m_toType);
 					}
@@ -557,7 +606,7 @@ void MapGenStep_PerlinNoise::Run(Map & map)
 bool MapGenStep_PerlinNoise::CheckPerlinNoiseAtTile(Tile * tile)
 {
 	Vector2 tilePos = tile->m_coordinates.GetVector2();
-	float noiseVal = Compute2dPerlinNoise(tilePos.x, tilePos.y, m_gridSize, 1, .5f, 2.f, true, 1);
+	float noiseVal = Compute2dPerlinNoise(tilePos.x, tilePos.y, m_gridSize, 1, .5f, 2.f, true, m_seed);
 	if (m_noiseRange.IsValueInRangeInclusive(noiseVal)){
 		return true;
 	} else {
@@ -601,4 +650,44 @@ void MapGenStep_SpawnItem::Run(Map & map)
 	}
 	Tile spawnTile = map.GetSpawnTileOfType(m_spawnOnTileDef);
 	map.SpawnNewItem(m_itemName, spawnTile.GetCenter());
+}
+
+MapGenStep_SetSubArea::MapGenStep_SetSubArea(const tinyxml2::XMLElement & generationStepElement)
+	: MapGenStep(generationStepElement)
+{
+}
+
+void MapGenStep_SetSubArea::Run(Map & map)
+{
+	map.m_generationMask = m_mask;
+}
+
+MapGenStep_EndSubArea::MapGenStep_EndSubArea(const tinyxml2::XMLElement & generationStepElement)
+	: MapGenStep(generationStepElement)
+{
+}
+
+void MapGenStep_EndSubArea::Run(Map & map)
+{
+	TODO("Support a parent-child relationship for sub-areas - right now can only support one layer deep");
+	map.m_generationMask = map.m_fullMap;
+}
+
+MapGenStep_SubMap::MapGenStep_SubMap(const tinyxml2::XMLElement & generationStepElement)
+	: MapGenStep(generationStepElement)
+{
+	m_mapType = ParseXmlAttribute(generationStepElement, "map", "NONE");
+	
+}
+
+void MapGenStep_SubMap::Run(Map & map)
+{
+	MapDefinition* mapDef = MapDefinition::GetMapDefinition(m_mapType);
+	if (mapDef != nullptr){
+		for(MapGenStep* step : mapDef->m_generationSteps){
+			step->RunIterations(map);
+		}
+	} else {
+		ERROR_AND_DIE("NO MAP DEFINITION");
+	}
 }

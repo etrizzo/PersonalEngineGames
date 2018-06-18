@@ -7,6 +7,7 @@
 
 #include "Engine/Math/AABB2.hpp"
 #include "Engine/Math/AABB3.hpp"
+#include "Engine/Math/AreaMask.hpp"
 #include "Engine/Math/Disc2.hpp"
 #include "Engine/Math/Sphere.hpp"
 #include "Engine/Math/IntVector2.hpp"

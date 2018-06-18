@@ -277,6 +277,9 @@
     <ClCompile Include="Math\Ray.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="Math\AreaMask.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -556,6 +559,9 @@
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="Math\Ray.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\AreaMask.hpp">
       <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>

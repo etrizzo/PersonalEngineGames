@@ -13,7 +13,7 @@ public:
 
 	int GetRandomInRange() const;
 	void SetFromText(const char* text);
-	bool IsIntInRange(int isInRange);
+	bool IsIntInRange(int isInRange) const;
 };
 
 bool DoRangesOverlap( const IntRange& a, const IntRange& b);

@@ -33,7 +33,7 @@ void IntRange::SetFromText(const char * text)
 	}
 }
 
-bool IntRange::IsIntInRange(int isInRange)
+bool IntRange::IsIntInRange(int isInRange) const
 {
 	if (isInRange >= min && isInRange <= max){
 		return true;
