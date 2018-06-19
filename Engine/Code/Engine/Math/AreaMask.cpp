@@ -171,13 +171,14 @@ float AreaMask_Perlin::GetDistanceFromEdge(int x, int y) const
 	int mapWidth = m_xRange.max - m_xRange.min;
 	int mapHeight = m_yRange.max - m_yRange.min;
 	int maxSide = Max(mapWidth, mapHeight);
-	float tileVariation = (float) maxSide / m_noiseScale;	//should be the max difference in value between tiles
+	//float tilesPerCycle = m_noiseScale;
+	float tileVariation = (float) 1.f / (m_noiseScale);	//should be the max difference in value between tiles
 
 	//get how far outside of the edge of the "acceptable range" you are
 	float noiseVal = GetNoiseAtPoint(x,y);
 	float distanceFromAccepted = m_acceptableRange.GetDistanceFromEdge(noiseVal);
 
-	return distanceFromAccepted * tileVariation * 2.f;	//return distance based on average tile variation
+	return distanceFromAccepted * m_noiseScale;	//return distance based on average tile variation
 }
 
 bool AreaMask_Perlin::IsOnEdge(int x, int y) const

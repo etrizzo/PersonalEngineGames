@@ -128,6 +128,7 @@ public:
 	std::vector<Portal*> m_allPortals;
 	std::vector<Item*> m_allItems;
 	int m_difficulty;
+	eAreaType m_maskType = AREA_TYPE_RECTANGLE;
 	AreaMask* m_generationMask;	//feels weird
 	AreaMask* m_fullMap;
 

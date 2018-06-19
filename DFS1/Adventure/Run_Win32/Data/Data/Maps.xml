@@ -1,5 +1,5 @@
 <MapDefinitions>
-  <MapDefinition name="Zoo" defaultTile="Grass" width="50~60" soundtrack="Caketown 1.mp3">
+  <MapDefinition name="Zoo" defaultTile="Grass" width="80~90" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
       <Mutate ifType="Grass" toType="Water" chanceToMutate="0.0" />
       <CellularAutomata iterations="2~3" ifNeighborType="Water" changeToType="Water" chanceToMutate=".5"/>
@@ -18,8 +18,10 @@
 
       <FillAndEdge subAreaCenter=".1~.9" subAreaSize=".05~.1" edgeTile="MossyStoneBrick" fillTile="Sand" edgeThickness="1" type="circle"/>
       <FillAndEdge edgeTile="StoneBrickWall" edgeThickness="1"/>
-
-    <FillAndEdge type="perlin" subAreaSize="-1.0~-0.1" fillTile="Water" edgeTile="Sand"/>
+      <SetSubArea subAreaSize="-1.5~-0.1" type="perlin" />
+        <FillAndEdge fillTile="Water" noiseScale="20" edgeTile="Sand"/>
+        <CellularAutomata iterations="2~3" ifType="Grass" ifNeighborType="Water" changeToType="Sand" />
+      <EndSubArea />
     </GenerationSteps>
   </MapDefinition>
     

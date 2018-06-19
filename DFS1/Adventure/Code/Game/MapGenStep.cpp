@@ -10,13 +10,15 @@ MapGenStep::MapGenStep(const tinyxml2::XMLElement & genStepXmlElement)
 
 	m_subAreaCenter = ParseXmlAttribute(genStepXmlElement, "subAreaCenter", m_subAreaCenter);
 	m_subAreaSize = ParseXmlAttribute(genStepXmlElement, "subAreaSize", m_subAreaSize);
-	std::string areaType = ParseXmlAttribute(genStepXmlElement, "type", "rectangle");
+	std::string areaType = ParseXmlAttribute(genStepXmlElement, "type", "NONE");
 	if (areaType == "circle"){
 		m_maskType = AREA_TYPE_CIRCLE;
 	} else if (areaType == "rectangle"){
 		m_maskType = AREA_TYPE_RECTANGLE;
 	} else if (areaType == "perlin"){
 		m_maskType = AREA_TYPE_PERLIN;
+	} else {
+		m_maskType = NUM_AREA_TYPES;
 	}
 
 	//set defaults for perlin noise seed and noise scale, then check for overwrites
@@ -33,9 +35,6 @@ MapGenStep::~MapGenStep()
 
 void MapGenStep::RunIterations(Map & map)
 {
-	if (m_perlinSeed == 0){	//generate new random seed per iteration
-		m_perlinSeed = GetRandomIntLessThan(2000);
-	}
 	if (CheckRandomChance(m_chanceToRun)){
 		int numIterations = m_iterations.GetRandomInRange();
 		for (int i = 0; i < numIterations; i++){
@@ -48,10 +47,20 @@ void MapGenStep::RunIterations(Map & map)
 void MapGenStep::SetMask(Map& map)
 {
 	TODO("Find a better way to adjust subarea to constraints (instead of just shrinking)");
+	//if no mask type has been specified, use the maps current mask type
+	if (m_maskType == NUM_AREA_TYPES){
+		m_maskType = map.m_maskType;
+	}
+
+	//generate area mask based on type
 	if (m_maskType == AREA_TYPE_RECTANGLE || m_maskType == AREA_TYPE_CIRCLE){
 		m_mask = map.m_generationMask->GetSubArea(m_subAreaCenter, m_subAreaSize);
 	} else if (m_maskType == AREA_TYPE_PERLIN) {
-		m_mask = (AreaMask*) (new AreaMask_Perlin(m_subAreaSize, IntVector2(0, 0), map.m_dimensions, m_perlinSeed, m_noiseScale));
+		unsigned int seed = m_perlinSeed;
+		if (m_perlinSeed == 0){	//generate new random seed per iteration
+			seed = (unsigned int) GetRandomIntLessThan(2000);
+		}
+		m_mask = (AreaMask*) (new AreaMask_Perlin(m_subAreaSize, IntVector2(0, 0), map.m_dimensions, seed, m_noiseScale));
 	}
 }
 
@@ -367,21 +376,21 @@ void MapGenStep_RoomAndPath::GenerateRooms(Map& map)
 		IntVector2 randomSize = IntVector2(m_roomWidth.GetRandomInRange(), m_roomHeight.GetRandomInRange());
 		roomToBuild = new Room(randomLocation, randomSize);
 		bool failedToAdd = false;
-		//check that the random room is on the map and inside the mask
-		if (m_mask->IsPointInside(roomToBuild->m_minCoords) && m_mask->IsPointInside(roomToBuild->m_maxCoords)){
-			if (map.IsCoordinateOnMap(roomToBuild->m_minCoords) && map.IsCoordinateOnMap(roomToBuild->m_maxCoords)){
-				for(int i = 0; i < roomsGenerated; i++){
-					Room* previousRoom = m_rooms[i];
-					if (roomToBuild->DoesRoomOverlap(previousRoom)){
-						if (overlapsUsed >= overlapsToAllow){
-							failures++;
-							failedToAdd = true;
-							break;
-						} else {
-							overlapsUsed++;
-						}
-					} 
-				}
+		//check that the random room is on the map
+		//could check that it's inside the mask, but letting buildings overrun the map feels better
+		/*if (m_mask->IsPointInside(roomToBuild->m_minCoords) && m_mask->IsPointInside(roomToBuild->m_maxCoords)){*/
+		if (map.IsCoordinateOnMap(roomToBuild->m_minCoords) && map.IsCoordinateOnMap(roomToBuild->m_maxCoords)){
+			for(int i = 0; i < roomsGenerated; i++){
+				Room* previousRoom = m_rooms[i];
+				if (roomToBuild->DoesRoomOverlap(previousRoom)){
+					if (overlapsUsed >= overlapsToAllow){
+						failures++;
+						failedToAdd = true;
+						break;
+					} else {
+						overlapsUsed++;
+					}
+				} 
 			}
 		} else {
 			failedToAdd = true;
@@ -675,6 +684,7 @@ MapGenStep_SetSubArea::MapGenStep_SetSubArea(const tinyxml2::XMLElement & genera
 void MapGenStep_SetSubArea::Run(Map & map)
 {
 	map.m_generationMask = m_mask;
+	map.m_maskType = m_maskType;
 }
 
 MapGenStep_EndSubArea::MapGenStep_EndSubArea(const tinyxml2::XMLElement & generationStepElement)
@@ -686,6 +696,7 @@ void MapGenStep_EndSubArea::Run(Map & map)
 {
 	TODO("Support a parent-child relationship for sub-areas - right now can only support one layer deep");
 	map.m_generationMask = map.m_fullMap;
+	map.m_maskType = AREA_TYPE_RECTANGLE;
 }
 
 MapGenStep_SubMap::MapGenStep_SubMap(const tinyxml2::XMLElement & generationStepElement)
