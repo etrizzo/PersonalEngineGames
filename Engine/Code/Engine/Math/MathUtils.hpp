@@ -81,6 +81,8 @@ bool IsInRange(float value, float minInclusive, float maxExclusive);
 
 float Min(const float& x, const float& y);
 int Min(const int& x, const int& y);
+int Max(const int& x, const int& y);
+int Max(const float& x, const float& y);
 
 
 //---------------

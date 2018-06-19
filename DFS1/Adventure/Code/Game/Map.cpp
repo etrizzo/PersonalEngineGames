@@ -851,8 +851,8 @@ void Map::InitializeTiles()
 	float dimX = .5f;
 	float dimY = .5f;
 	IntVector2 halfDims = IntVector2((int) (dimX * width), (int) (dimY * height));
-	m_generationMask = AreaMask(center, halfDims);
-	m_fullMap = AreaMask(center, halfDims);	//should never change, just for resetting
+	m_generationMask = (AreaMask*) new AreaMask_Rectangle(center, halfDims);
+	m_fullMap = (AreaMask*) new AreaMask_Rectangle(center, halfDims);	//should never change, just for resetting
 }
 
 void Map::CreateTileRenderable()

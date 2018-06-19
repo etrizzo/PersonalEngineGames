@@ -280,6 +280,9 @@
     <ClCompile Include="Math\AreaMask.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="MATH\INTAREA2.CPP">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">

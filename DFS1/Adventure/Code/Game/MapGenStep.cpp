@@ -15,7 +15,15 @@ MapGenStep::MapGenStep(const tinyxml2::XMLElement & genStepXmlElement)
 		m_maskType = AREA_TYPE_CIRCLE;
 	} else if (areaType == "rectangle"){
 		m_maskType = AREA_TYPE_RECTANGLE;
+	} else if (areaType == "perlin"){
+		m_maskType = AREA_TYPE_PERLIN;
 	}
+
+	//set defaults for perlin noise seed and noise scale, then check for overwrites
+	
+	m_noiseScale = 20;
+	m_perlinSeed = (unsigned int) ParseXmlAttribute(genStepXmlElement, "seed", (int) 0);
+	m_noiseScale = ParseXmlAttribute(genStepXmlElement, "noiseScale", m_noiseScale);
 }
 
 MapGenStep::~MapGenStep()
@@ -25,6 +33,9 @@ MapGenStep::~MapGenStep()
 
 void MapGenStep::RunIterations(Map & map)
 {
+	if (m_perlinSeed == 0){	//generate new random seed per iteration
+		m_perlinSeed = GetRandomIntLessThan(2000);
+	}
 	if (CheckRandomChance(m_chanceToRun)){
 		int numIterations = m_iterations.GetRandomInRange();
 		for (int i = 0; i < numIterations; i++){
@@ -37,8 +48,11 @@ void MapGenStep::RunIterations(Map & map)
 void MapGenStep::SetMask(Map& map)
 {
 	TODO("Find a better way to adjust subarea to constraints (instead of just shrinking)");
-	m_mask = map.m_generationMask.GetSubArea(m_subAreaCenter, m_subAreaSize);
-	m_mask.m_type = m_maskType;
+	if (m_maskType == AREA_TYPE_RECTANGLE || m_maskType == AREA_TYPE_CIRCLE){
+		m_mask = map.m_generationMask->GetSubArea(m_subAreaCenter, m_subAreaSize);
+	} else if (m_maskType == AREA_TYPE_PERLIN) {
+		m_mask = (AreaMask*) (new AreaMask_Perlin(m_subAreaSize, IntVector2(0, 0), map.m_dimensions, m_perlinSeed, m_noiseScale));
+	}
 }
 
 MapGenStep * MapGenStep::CreateMapGenStep(const tinyxml2::XMLElement & genStepXmlElement)
@@ -106,8 +120,8 @@ void MapGenStep_FillAndEdge::Run(Map & map)
 	int outerBoundY = map.GetHeight() - m_edgeThickness;
 	for(int tileIndex = 0; tileIndex < (int) map.m_tiles.size(); tileIndex++){
 		IntVector2 tileCoords = GetCoordinatesFromIndex(tileIndex, map.GetWidth());
-		if (m_mask.IsPointInside(tileCoords)){
-			if ( m_mask.GetDistanceFromEdge(tileCoords.x, tileCoords.y) < m_edgeThickness){
+		if (m_mask->IsPointInside(tileCoords)){
+			if ( m_mask->GetDistanceFromEdge(tileCoords.x, tileCoords.y) < m_edgeThickness){
 				if (CheckRandomChance(m_chanceToChangeEachTile)){
 					map.m_tiles[tileIndex].SetType(m_edgeTileDef);
 				} else {
@@ -173,7 +187,7 @@ void MapGenStep_Mutate::Run(Map & map)
 	int mapHeight = map.GetHeight();
 	for (int tileX = 0; tileX < mapWidth; tileX++){
 		for (int tileY = 0; tileY < mapHeight; tileY++){
-			if (m_mask.IsPointInside(tileX, tileY)){
+			if (m_mask->IsPointInside(tileX, tileY)){
 				Tile* tile = map.TileAt(tileX, tileY);
 				if (m_ifType!= nullptr){
 					std::string tileName = tile->m_tileDef->m_name;
@@ -210,7 +224,7 @@ void MapGenStep_Conway::Run(Map & map)
 	//set new states from map into cellStates, then update map
 	for(int tileIndex = 0; tileIndex < map.m_numTiles; tileIndex++){
 		IntVector2 tileCoords = GetCoordinatesFromIndex(tileIndex, map.GetWidth());
-		if (m_mask.IsPointInside(tileCoords)){
+		if (m_mask->IsPointInside(tileCoords)){
 			Tile neighbors[8];
 			Tile currentTile = map.m_tiles[tileIndex];
 			map.GetNeighbors(currentTile.m_coordinates, neighbors);
@@ -270,7 +284,7 @@ void MapGenStep_CellularAutomata::Run(Map & map)
 	//set new states from map into cellStates, then update map
 	for(int tileIndex = 0; tileIndex < map.m_numTiles; tileIndex++){
 		IntVector2 tileCoords = GetCoordinatesFromIndex(tileIndex, map.GetWidth());
-		if (m_mask.IsPointInside(tileCoords)){
+		if (m_mask->IsPointInside(tileCoords)){
 			Tile currentTile = map.m_tiles[tileIndex];
 			if(m_ifTypeDef == nullptr || currentTile.m_tileDef == m_ifTypeDef){
 				Tile neighbors[8];
@@ -349,12 +363,12 @@ void MapGenStep_RoomAndPath::GenerateRooms(Map& map)
 	int overlapsUsed = 0;
 	int roomsGenerated = 0;
 	while (roomsGenerated <roomsToGenerate && failures < 1000){
-		IntVector2 randomLocation = m_mask.GetRandomPointInArea(); //map.GetRandomTileCoords();
+		IntVector2 randomLocation = m_mask->GetRandomPointInArea(); //map.GetRandomTileCoords();
 		IntVector2 randomSize = IntVector2(m_roomWidth.GetRandomInRange(), m_roomHeight.GetRandomInRange());
 		roomToBuild = new Room(randomLocation, randomSize);
 		bool failedToAdd = false;
 		//check that the random room is on the map and inside the mask
-		if (m_mask.IsPointInside(roomToBuild->m_minCoords) && m_mask.IsPointInside(roomToBuild->m_maxCoords)){
+		if (m_mask->IsPointInside(roomToBuild->m_minCoords) && m_mask->IsPointInside(roomToBuild->m_maxCoords)){
 			if (map.IsCoordinateOnMap(roomToBuild->m_minCoords) && map.IsCoordinateOnMap(roomToBuild->m_maxCoords)){
 				for(int i = 0; i < roomsGenerated; i++){
 					Room* previousRoom = m_rooms[i];
@@ -583,7 +597,7 @@ void MapGenStep_PerlinNoise::Run(Map & map)
 	int mapHeight = map.GetHeight();
 	for (int tileX = 0; tileX < mapWidth; tileX++){
 		for (int tileY = 0; tileY < mapHeight; tileY++){
-			if (m_mask.IsPointInside(tileX, tileY)){
+			if (m_mask->IsPointInside(tileX, tileY)){
 				Tile* tile = map.TileAt(tileX, tileY);
 				if (m_ifType!= nullptr){
 					std::string tileName = tile->m_tileDef->m_name;
@@ -606,6 +620,7 @@ void MapGenStep_PerlinNoise::Run(Map & map)
 bool MapGenStep_PerlinNoise::CheckPerlinNoiseAtTile(Tile * tile)
 {
 	Vector2 tilePos = tile->m_coordinates.GetVector2();
+	
 	float noiseVal = Compute2dPerlinNoise(tilePos.x, tilePos.y, m_gridSize, 1, .5f, 2.f, true, m_seed);
 	if (m_noiseRange.IsValueInRangeInclusive(noiseVal)){
 		return true;

@@ -12,8 +12,20 @@ enum eAreaType{
 
 class AreaMask{
 public:
-	AreaMask() {};
-	AreaMask(IntVector2 center, IntVector2 halfDimensions);
+	AreaMask(){};
+
+	virtual IntVector2 GetRandomPointInArea() const = 0;
+	virtual bool IsPointInside(IntVector2 xyCoords) const;
+	virtual bool IsPointInside(int x, int y) const = 0;
+	virtual float GetDistanceFromEdge(int x, int y) const = 0;
+	virtual bool IsOnEdge(int x, int y) const;
+	virtual AreaMask* GetSubArea(FloatRange centerRange, FloatRange sizeRange) const;	//not applicable for perlin??
+};
+
+class AreaMask_Rectangle : public AreaMask{
+public:
+	AreaMask_Rectangle() {};
+	AreaMask_Rectangle(IntVector2 center, IntVector2 halfDimensions);
 
 	IntVector2 m_center = IntVector2(0,0);
 	IntVector2 m_halfDims = IntVector2(0,0);
@@ -21,24 +33,53 @@ public:
 	IntRange m_xRange = IntRange(0);
 	IntRange m_yRange = IntRange(0);	//generated on construction
 
-	eAreaType m_type = AREA_TYPE_RECTANGLE; 
+	IntVector2 GetRandomPointInArea() const			override;
+	//bool IsPointInside(IntVector2 xyCoords) const	override;
+	bool IsPointInside(int x, int y) const			override;
+	float GetDistanceFromEdge(int x, int y) const	override;
 
-	IntVector2 GetRandomPointInArea() const;
-	virtual bool IsPointInside(IntVector2 xyCoords) const;
-	virtual bool IsPointInside(int x, int y) const;
-	IntVector2 GetMins() const;
-	IntVector2 GetMaxs() const;
-	virtual int GetDistanceFromEdge(int x, int y) const;
+	IntVector2 GetMins() const						;
+	IntVector2 GetMaxs() const						;
 
-	AreaMask GetSubArea(FloatRange centerRange, FloatRange sizeRange);
-private:
-	bool IsPointInsideCircle(int x, int y) const ;
-	bool IsPointInsideRectangle(int x, int y) const ;
-
-	int GetDistanceFromEdgeCircle(int x, int y) const ;
-	int GetDistanceFromEdgeRectangle(int x, int y) const ;
+	AreaMask* GetSubArea(FloatRange centerRange, FloatRange sizeRange) const override;
 };
 
-//class AreaMask_Rectangle{
-//
-//};
+class AreaMask_Circle : public AreaMask{
+public:
+	AreaMask_Circle(IntVector2 center, int radius);
+
+	IntVector2 m_center = IntVector2(0,0);
+	int m_radius;
+
+	IntVector2 GetRandomPointInArea() const			override;
+	//bool IsPointInside(IntVector2 xyCoords) const	override;
+	bool IsPointInside(int x, int y) const			override;
+	float GetDistanceFromEdge(int x, int y) const	override;
+
+	AreaMask* GetSubArea(FloatRange centerRange, FloatRange sizeRange) const override;
+
+};
+
+class AreaMask_Perlin : public AreaMask{
+public:
+	AreaMask_Perlin(FloatRange acceptableRange, IntVector2 mapMins, IntVector2 mapMaxs, unsigned int seed = 1, float scale = 20.f, unsigned int numOctaves = 1, float octavePersistence = .5f, float octaveScale = 2.f);
+
+	FloatRange m_acceptableRange;
+
+	IntRange m_xRange;
+	IntRange m_yRange;
+	unsigned int m_seed;
+	float m_noiseScale;
+	float m_numOctaves;
+	float m_octavePersistence;
+	float m_octaveScale;
+
+
+	IntVector2 GetRandomPointInArea() const			override;
+	//bool IsPointInside(IntVector2 xyCoords) const	override;
+	bool IsPointInside(int x, int y) const			override;
+	float GetDistanceFromEdge(int x, int y) const	override;
+	bool IsOnEdge(int x, int y) const				override;
+
+	float GetNoiseAtPoint(int x, int y) const;
+};

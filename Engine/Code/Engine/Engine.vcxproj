@@ -300,6 +300,7 @@
     <ClCompile Include="Math\Disc2.cpp" />
     <ClCompile Include="Math\FloatRange.cpp" />
     <ClCompile Include="Math\AreaMask.cpp" />
+    <ClCompile Include="MATH\INTAREA2.CPP" />
     <ClCompile Include="Math\IntRange.cpp" />
     <ClCompile Include="Math\IntVector2.cpp" />
     <ClCompile Include="Math\IntVector3.cpp" />

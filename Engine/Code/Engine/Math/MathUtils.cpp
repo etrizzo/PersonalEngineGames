@@ -246,6 +246,24 @@ int Min(const int & x, const int & y)
 	}
 }
 
+int Max(const int & x, const int & y)
+{
+	if (x > y){
+		return x;
+	} else {
+		return y;
+	}
+}
+
+int Max(const float & x, const float & y)
+{
+	if (x > y){
+		return x;
+	} else {
+		return y;
+	}
+}
+
 const float Interpolate(const float&  start, const float&  end, const float&  fractionTowardEnd)
 {
 	

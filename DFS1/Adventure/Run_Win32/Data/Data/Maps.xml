@@ -1,28 +1,25 @@
 <MapDefinitions>
   <MapDefinition name="Zoo" defaultTile="Grass" width="50~60" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
-      <Mutate ifType="Grass" toType="Water" chanceToMutate=".005" />
+      <Mutate ifType="Grass" toType="Water" chanceToMutate="0.0" />
       <CellularAutomata iterations="2~3" ifNeighborType="Water" changeToType="Water" chanceToMutate=".5"/>
       <CellularAutomata ifType="Grass" changeToType="Sand" ifNeighborType="Water"/>
       <PerlinNoise ifType="Grass" changeToType="Flowers" ifNoise="-1~-.4" />
       <PerlinNoise ifType="Grass" changeToType="LightFlowers" ifNoise="-.4~-.1" />
       <Mutate subAreaCenter=".4~.6" subAreaSize=".15~.6" ifType="LightFlowers" toType="Wood" chanceToMutate=".8"/>
+
       <PerlinNoise subAreaCenter=".1~.9" subAreaSize=".45~.65" changeToType="WeatheredWood" ifNoise=".4~1" />
       <SetSubArea subAreaCenter=".3~.7" subAreaSize=".35~.4" />
         <FillAndEdge edgeTile="Dirt" fillTile="Grass" edgeThickness="1" type="rectangle"/>
         <SubMap map="SmallVillage" />
-        <!--
-        <Mutate ifType="Grass" toType="DarkDirt" chanceToMutate=".7"/>
-        <RoomsAndPaths>
-          <Rooms count="2~4" width="5~7" height="4~5" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
-          <Paths floor="Dirt" straightChance=".05"/>
-        </RoomsAndPaths>
-        -->
         <FillAndEdge edgeTile = "Dirt" />
       <EndSubArea />
+      
+
       <FillAndEdge subAreaCenter=".1~.9" subAreaSize=".05~.1" edgeTile="MossyStoneBrick" fillTile="Sand" edgeThickness="1" type="circle"/>
       <FillAndEdge edgeTile="StoneBrickWall" edgeThickness="1"/>
-    
+
+    <FillAndEdge type="perlin" subAreaSize="-1.0~-0.1" fillTile="Water" edgeTile="Sand"/>
     </GenerationSteps>
   </MapDefinition>
     

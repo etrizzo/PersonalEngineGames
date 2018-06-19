@@ -42,6 +42,13 @@ bool FloatRange::IsValueInRangeInclusive(const float& value) const
 	}
 }
 
+float FloatRange::GetDistanceFromEdge(const float & value) const
+{
+	float distFromMin = fabs( value - min);
+	float distFromMax = fabs(value - max);
+	return Min(distFromMin, distFromMax);
+}
+
 bool DoRangesOverlap(const FloatRange & a, const FloatRange & b)
 {
 	if (a.max < b.min && a.min < b.min){

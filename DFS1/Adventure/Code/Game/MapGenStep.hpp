@@ -21,8 +21,11 @@ protected:
 	float m_chanceToRun = 1.f;
 	FloatRange m_subAreaCenter = FloatRange(.5f);
 	FloatRange m_subAreaSize = FloatRange(.5f);
-	AreaMask m_mask;
+	AreaMask* m_mask;
 	eAreaType m_maskType;
+	//this feels disconnected vv
+	unsigned int m_perlinSeed;
+	float m_noiseScale;
 };
 
 

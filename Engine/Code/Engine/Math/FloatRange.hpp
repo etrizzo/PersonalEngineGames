@@ -13,6 +13,7 @@ public:
 	float GetRandomInRange() const;
 	void SetFromText(const char* text);
 	bool IsValueInRangeInclusive(const float& value) const;
+	float GetDistanceFromEdge(const float& value) const;
 };
 
 
