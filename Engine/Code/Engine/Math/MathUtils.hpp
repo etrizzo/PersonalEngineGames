@@ -5,10 +5,12 @@
 #include "Engine/Math/IntVector2.hpp"
 #include "Engine/Math/Vector3.hpp"
 #include "Engine/Math/IntVector3.hpp"
+#include "Engine/Math/Matrix44.hpp"
 
 
 
 #define PI 3.14159265359
+#define EPSILON .00000001
 
 //-------------------
 // TRIGONOMETRY FUNCTIONS
@@ -95,6 +97,9 @@ const float Interpolate(const float& start, const float&  end, const float&  fra
 int Interpolate(int start, int end, float fractionTowardEnd);
 unsigned char Interpolate( unsigned char start, unsigned char end, float fractionTowardEnd );
 
+Vector3 Slerp(const Vector3& a, const Vector3& b, float t);
+Vector3 SlerpUnit(const Vector3& a, const Vector3& b, float t);
+
 
 //------------------------
 // ANGLE AND VECTOR UTILS
@@ -103,6 +108,7 @@ unsigned char Interpolate( unsigned char start, unsigned char end, float fractio
 float GetAngularDisplacement(float startDegrees, float endDegrees);
 
 float TurnToward(float currentDegrees, float goalDegrees, float maxTurnDegrees);
+
 
 float TurnTowardWithDirection(float currentDegrees, float goalDegrees, float maxTurnDegreesAndDirection);
 

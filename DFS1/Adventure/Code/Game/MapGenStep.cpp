@@ -10,6 +10,11 @@ MapGenStep::MapGenStep(const tinyxml2::XMLElement & genStepXmlElement)
 
 	m_subAreaCenter = ParseXmlAttribute(genStepXmlElement, "subAreaCenter", m_subAreaCenter);
 	m_subAreaSize = ParseXmlAttribute(genStepXmlElement, "subAreaSize", m_subAreaSize);
+
+	m_centerDensity = ParseXmlAttribute(genStepXmlElement, "centerDensity", m_centerDensity);
+	m_edgeDensity	= ParseXmlAttribute(genStepXmlElement, "edgeDensity", m_edgeDensity);
+	m_featherRate	= ParseXmlAttribute(genStepXmlElement, "feather", m_featherRate);
+
 	std::string areaType = ParseXmlAttribute(genStepXmlElement, "type", "NONE");
 	if (areaType == "circle"){
 		m_maskType = AREA_TYPE_CIRCLE;
@@ -53,15 +58,38 @@ void MapGenStep::SetMask(Map& map)
 	}
 
 	//generate area mask based on type
-	if (m_maskType == AREA_TYPE_RECTANGLE || m_maskType == AREA_TYPE_CIRCLE){
+	if (m_maskType == AREA_TYPE_RECTANGLE){
 		m_mask = map.m_generationMask->GetSubArea(m_subAreaCenter, m_subAreaSize);
+	} else if (m_maskType == AREA_TYPE_CIRCLE){
+		float centerX = m_subAreaCenter.GetRandomInRange();
+		float centerY = m_subAreaCenter.GetRandomInRange();
+		IntVector2 center = map.m_generationMask->GetMins() + IntVector2((int) (centerX * map.m_generationMask->GetWidth()), (int) (centerY * map.m_generationMask->GetHeight()));
+		float radius = m_subAreaSize.GetRandomInRange() * map.m_generationMask->GetWidth();
+		m_mask = (AreaMask*) (new AreaMask_Circle(center, (int) radius, m_centerDensity, m_edgeDensity, m_featherRate));
 	} else if (m_maskType == AREA_TYPE_PERLIN) {
 		unsigned int seed = m_perlinSeed;
-		if (m_perlinSeed == 0){	//generate new random seed per iteration
+		if (map.m_generationMask->m_seed != 0){		//if the parent area has a seed, use that
+			seed = map.m_generationMask->m_seed;
+		}
+		if (seed == 0){	//generate new random seed per iteration
 			seed = (unsigned int) GetRandomIntLessThan(2000);
+		}
+		if (m_subAreaSize.min == m_subAreaSize.max){
+			m_subAreaSize = map.m_generationMask->m_acceptableRange;
 		}
 		m_mask = (AreaMask*) (new AreaMask_Perlin(m_subAreaSize, IntVector2(0, 0), map.m_dimensions, seed, m_noiseScale));
 	}
+	//copy values from map if they weren't defined in XML
+	if (m_centerDensity < 0.f){
+		m_centerDensity = map.m_generationMask->m_centerDensity;
+	}
+	if (m_edgeDensity < 0.f){
+		m_edgeDensity = map.m_generationMask->m_edgeDensity;
+	}
+	if (m_featherRate < 0.f){
+		m_featherRate = map.m_generationMask->m_featherRate;
+	}
+	m_mask->SetDensity(m_centerDensity, m_edgeDensity, m_featherRate);
 }
 
 MapGenStep * MapGenStep::CreateMapGenStep(const tinyxml2::XMLElement & genStepXmlElement)
@@ -94,6 +122,9 @@ MapGenStep * MapGenStep::CreateMapGenStep(const tinyxml2::XMLElement & genStepXm
 	}
 	if (genName == "SpawnItem"){
 		newMapGenStep = (MapGenStep*) new MapGenStep_SpawnItem(genStepXmlElement);
+	}
+	if (genName == "SpawnDecoration"){
+		newMapGenStep = (MapGenStep*) new MapGenStep_SpawnDecoration(genStepXmlElement);
 	}
 	if (genName == "SetSubArea"){
 		newMapGenStep = (MapGenStep*) new MapGenStep_SetSubArea(genStepXmlElement);
@@ -129,7 +160,7 @@ void MapGenStep_FillAndEdge::Run(Map & map)
 	int outerBoundY = map.GetHeight() - m_edgeThickness;
 	for(int tileIndex = 0; tileIndex < (int) map.m_tiles.size(); tileIndex++){
 		IntVector2 tileCoords = GetCoordinatesFromIndex(tileIndex, map.GetWidth());
-		if (m_mask->IsPointInside(tileCoords)){
+		if (m_mask->CanDrawOnPoint(tileCoords)){
 			if ( m_mask->GetDistanceFromEdge(tileCoords.x, tileCoords.y) < m_edgeThickness){
 				if (CheckRandomChance(m_chanceToChangeEachTile)){
 					map.m_tiles[tileIndex].SetType(m_edgeTileDef);
@@ -196,7 +227,7 @@ void MapGenStep_Mutate::Run(Map & map)
 	int mapHeight = map.GetHeight();
 	for (int tileX = 0; tileX < mapWidth; tileX++){
 		for (int tileY = 0; tileY < mapHeight; tileY++){
-			if (m_mask->IsPointInside(tileX, tileY)){
+			if (m_mask->CanDrawOnPoint(tileX, tileY)){
 				Tile* tile = map.TileAt(tileX, tileY);
 				if (m_ifType!= nullptr){
 					std::string tileName = tile->m_tileDef->m_name;
@@ -233,7 +264,7 @@ void MapGenStep_Conway::Run(Map & map)
 	//set new states from map into cellStates, then update map
 	for(int tileIndex = 0; tileIndex < map.m_numTiles; tileIndex++){
 		IntVector2 tileCoords = GetCoordinatesFromIndex(tileIndex, map.GetWidth());
-		if (m_mask->IsPointInside(tileCoords)){
+		if (m_mask->CanDrawOnPoint(tileCoords)){
 			Tile neighbors[8];
 			Tile currentTile = map.m_tiles[tileIndex];
 			map.GetNeighbors(currentTile.m_coordinates, neighbors);
@@ -418,7 +449,7 @@ void MapGenStep_RoomAndPath::AddRoomsToMap(Map & map)
 		}
 	}
 
-	// set outer walls in a cellularautomata kinda way ?
+	// set outer walls in a cellular automata kinda way ?
 	for (Room* room : m_rooms){
 		for (int x = room->m_minCoords.x; x < room->m_maxCoords.x; x++){
 			for (int y = room->m_minCoords.y; y < room->m_maxCoords.y; y++){
@@ -559,7 +590,8 @@ Room::Room(IntVector2 center, int roomWidth, int roomHeight)
 	m_maxCoords = m_center + halfSizeInts;
 }
 
-Room::Room(IntVector2 center, IntVector2 dimensions) : Room(center, dimensions.x, dimensions.y)
+Room::Room(IntVector2 center, IntVector2 dimensions) 
+	: Room(center, dimensions.x, dimensions.y)
 {
 }
 
@@ -716,4 +748,21 @@ void MapGenStep_SubMap::Run(Map & map)
 	} else {
 		ERROR_AND_DIE("NO MAP DEFINITION");
 	}
+}
+
+MapGenStep_SpawnDecoration::MapGenStep_SpawnDecoration(const tinyxml2::XMLElement & generationStepElement)
+	: MapGenStep(generationStepElement)
+{
+	m_decoName			= ParseXmlAttribute(generationStepElement, "type", m_decoName);
+	m_spawnOnTileDef	= ParseXmlAttribute(generationStepElement, "onTile", m_spawnOnTileDef);
+
+}
+
+void MapGenStep_SpawnDecoration::Run(Map & map)
+{
+	if (m_spawnOnTileDef == nullptr){
+		m_spawnOnTileDef = map.m_mapDef->m_defaultTile;
+	}
+	Tile spawnTile = map.GetSpawnTileOfType(m_spawnOnTileDef);
+	map.SpawnNewDecoration(m_decoName, spawnTile.GetCenter());
 }

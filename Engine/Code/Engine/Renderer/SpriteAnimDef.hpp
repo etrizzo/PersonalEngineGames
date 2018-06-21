@@ -24,6 +24,8 @@ public:
 	std::vector<int> m_spriteIndexes;
 
 	SpriteAnimSetDef* m_animSetDef;
+	bool m_chooseOneIndexInRange = false;
+	IntRange m_indices = IntRange(0);
 
 
 private:

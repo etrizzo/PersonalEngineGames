@@ -1,27 +1,96 @@
 <MapDefinitions>
+
+  <MapDefinition name="LargeMap" defaultTile="Grass" width="200~300" soundtrack="Caketown 1.mp3">
+    <GenerationSteps>
+      <FillAndEdge edgeTile="StoneBrickWall" fillTile="Water" edgeThickness="1"/> 
+      
+
+      <SetSubArea subAreaSize="-0.5~1.5" type="perlin" noiseScale="80" centerDensity="1" edgeDensity="1" feather="1"/>
+        <FillAndEdge edgeTile="Dirt" fillTile="Sand" edgeThickness="1"/> 
+        <FillAndEdge edgeTile="Sand" fillTile="Grass" edgeThickness="2" edgeDensity=".9" feather=".6"/> 
+        <SetSubArea subAreaSize="0.5~1.5" type="perlin" noiseScale="80" inheritSeed ="true" feather=".05" />
+          <FillAndEdge edgeTile="LightFlowers" fillTile="LightFlowers" />
+        <EndSubArea />
+      <EndSubArea />
+      
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.05" type="rectangle" centerDensity="1" edgeDensity=".9" feather=".1"/>
+              <RoomsAndPaths>
+                <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
+                <Paths floor="Dirt" straightChance=".05"/>
+              </RoomsAndPaths>
+              <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
+      <EndSubArea />
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.05" type="rectangle" centerDensity="1" edgeDensity=".5" feather=".1"/>
+              <RoomsAndPaths>
+                <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
+                <Paths floor="Dirt" straightChance=".05"/>
+              </RoomsAndPaths>
+              <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
+      <EndSubArea />
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.05" type="rectangle" centerDensity="1" edgeDensity=".5" feather=".1"/>
+              <RoomsAndPaths>
+                <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
+                <Paths floor="Dirt" straightChance=".05"/>
+              </RoomsAndPaths>
+              <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
+      <EndSubArea />
+    
+      <SpawnDecoration iterations="90~100" type="GreenTree" onTile="Grass" />
+<!--
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".15~.2" />
+      <FillAndEdge edgeTile = "Dirt" />
+        <SubMap map="SmallVillage" />
+      <EndSubArea />
+      
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".1~.1" />
+      <FillAndEdge edgeTile = "Dirt" />
+        <SubMap map="SmallVillage" />
+        
+      <EndSubArea />
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".15~.2" />
+      <FillAndEdge edgeTile = "Dirt" />
+        <SubMap map="SmallVillage" />
+      <EndSubArea />
+    -->
+    </GenerationSteps>
+  </MapDefinition>
+
   <MapDefinition name="Zoo" defaultTile="Grass" width="80~90" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
+      <!--
       <Mutate ifType="Grass" toType="Water" chanceToMutate="0.0" />
       <CellularAutomata iterations="2~3" ifNeighborType="Water" changeToType="Water" chanceToMutate=".5"/>
       <CellularAutomata ifType="Grass" changeToType="Sand" ifNeighborType="Water"/>
+      
       <PerlinNoise ifType="Grass" changeToType="Flowers" ifNoise="-1~-.4" />
       <PerlinNoise ifType="Grass" changeToType="LightFlowers" ifNoise="-.4~-.1" />
+   
       <Mutate subAreaCenter=".4~.6" subAreaSize=".15~.6" ifType="LightFlowers" toType="Wood" chanceToMutate=".8"/>
 
       <PerlinNoise subAreaCenter=".1~.9" subAreaSize=".45~.65" changeToType="WeatheredWood" ifNoise=".4~1" />
-      <SetSubArea subAreaCenter=".3~.7" subAreaSize=".35~.4" />
-        <FillAndEdge edgeTile="Dirt" fillTile="Grass" edgeThickness="1" type="rectangle"/>
-        <SubMap map="SmallVillage" />
-        <FillAndEdge edgeTile = "Dirt" />
+      --> 
+
+      <SetSubArea subAreaCenter=".3~.7" subAreaSize="0.0~2.0" type="perlin" centerDensity="1" edgeDensity="1" feather=".1"/>
+        <FillAndEdge edgeTile="Dirt" fillTile="Sand" edgeThickness="1"/> 
+        <FillAndEdge edgeTile="Sand" fillTile="Water" edgeThickness="2" feather="1"/> 
       <EndSubArea />
       
-
+      <SetSubArea subAreaCenter=".3~.7" subAreaSize=".05~.05" type="rectangle" centerDensity="1" edgeDensity=".5" feather=".1"/>
+              <RoomsAndPaths>
+                <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
+                <Paths floor="Dirt" straightChance=".05"/>
+              </RoomsAndPaths>
+              <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
+      <EndSubArea />
+<!--
       <FillAndEdge subAreaCenter=".1~.9" subAreaSize=".05~.1" edgeTile="MossyStoneBrick" fillTile="Sand" edgeThickness="1" type="circle"/>
       <FillAndEdge edgeTile="StoneBrickWall" edgeThickness="1"/>
-      <SetSubArea subAreaSize="-1.5~-0.1" type="perlin" />
+      
+      <SetSubArea subAreaSize=".1~.3" type="circle" />
         <FillAndEdge fillTile="Water" noiseScale="20" edgeTile="Sand"/>
         <CellularAutomata iterations="2~3" ifType="Grass" ifNeighborType="Water" changeToType="Sand" />
       <EndSubArea />
+      -->
     </GenerationSteps>
   </MapDefinition>
     

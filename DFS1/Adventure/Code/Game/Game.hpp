@@ -103,6 +103,7 @@ private:
 	void LoadProjectileDefinitions();
 	void LoadPortalDefinitions();
 	void LoadItemDefinitions();
+	void LoadDecorationDefinitions();
 	void LoadAdventureDefinitions();
 
 	int m_screenWidth = 10;

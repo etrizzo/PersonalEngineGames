@@ -72,7 +72,7 @@ void Game::PostStartup()
 	//m_debugRenderSystem->DetachCamera();
 
 	m_currentState = new GameState_Attract();
-	m_currentMap = new Map("Heightmap_2.png", AABB2(-100.f, -100.f, 100.f, 100.f), -5.f, 2.f, IntVector2(20,20), 40.f);
+	m_currentMap = new Map("Heightmap_2.png", AABB2(-100.f, -100.f, 100.f, 100.f), -5.f, 1.f, IntVector2(20,20), 40.f);
 	//m_currentMap = new Map("Heightmap.png", AABB2(-100.f, -100.f, 100.f, 100.f), -5.f, 2.f, IntVector2(20,20), 40.f);
 
 
@@ -88,23 +88,6 @@ void Game::Update()
 
 void Game::Render()
 {
-	//float quadZ = 12.f;
-	//Vector2 quadSize = Vector2(3.f, .2f);
-	//RGBA xrayColor = RGBA(255,200,0,255);
-	//m_debugRenderSystem->MakeDebugRender3DText("Use Depth!", 0.f, Vector3(-4.f, 1.f, quadZ), quadSize.y, Vector3::UP, Vector3::RIGHT, RGBA::RED, RGBA::RED, DEBUG_RENDER_USE_DEPTH);
-	//m_debugRenderSystem->MakeDebugRenderQuad(0.f, Vector3(0.f, 1.f, quadZ), quadSize, Vector3::RIGHT, Vector3::UP, RGBA::RED, RGBA::RED, DEBUG_RENDER_USE_DEPTH);
-
-	//m_debugRenderSystem->MakeDebugRender3DText("Ignore Depth!", 0.f, Vector3(-4.f, .25f, quadZ), quadSize.y, Vector3::UP, Vector3::RIGHT, RGBA::CYAN, RGBA::CYAN, DEBUG_RENDER_IGNORE_DEPTH);
-	//m_debugRenderSystem->MakeDebugRenderQuad(0.f, Vector3(0.f, .25f, quadZ), quadSize, Vector3::RIGHT, Vector3::UP, RGBA::CYAN, RGBA::CYAN, DEBUG_RENDER_IGNORE_DEPTH);
-
-	//m_debugRenderSystem->MakeDebugRender3DText("Hidden!", 0.f, Vector3(-4.f, -.5f, quadZ), quadSize.y, Vector3::UP, Vector3::RIGHT, RGBA::YELLOW, RGBA::YELLOW, DEBUG_RENDER_HIDDEN);
-	//m_debugRenderSystem->MakeDebugRenderQuad(0.f, Vector3(0.f, -.5f, quadZ), quadSize, Vector3::RIGHT, Vector3::UP, RGBA::YELLOW, RGBA::YELLOW, DEBUG_RENDER_HIDDEN);
-
-	//m_debugRenderSystem->MakeDebugRender3DText("XRAY!", 0.f, Vector3(-4.f, -1.25f, quadZ), quadSize.y, Vector3::UP, Vector3::RIGHT,xrayColor, xrayColor, DEBUG_RENDER_XRAY);
-	//m_debugRenderSystem->MakeDebugRenderQuad(0.f, Vector3(0.f, -1.25f, quadZ), quadSize, Vector3::RIGHT, Vector3::UP, xrayColor, xrayColor, DEBUG_RENDER_XRAY);
-	//m_debugRenderSystem->MakeDebugRender3DText("(0,0)", 0.f, Vector3::ZERO, .5f, Vector3::UP, Vector3::RIGHT, RGBA::RED, RGBA::RED, DEBUG_RENDER_IGNORE_DEPTH);
-
-
 	m_currentState->Render();
 	//RenderGame();
 	//RenderUI();

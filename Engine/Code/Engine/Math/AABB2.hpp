@@ -52,6 +52,8 @@ public:
 	float GetWidth() const;
 	float GetHeight() const;
 	Vector2 GetRandomPointInBox() const;
+	Vector2 GetClosestPointOnEdge(float x, float y) const;
+	Vector2 GetClosestPointOnEdge(Vector2 point) const;
 
 	float GetAspect() const;
 

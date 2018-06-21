@@ -302,6 +302,84 @@ Vector2 AABB2::GetRandomPointInBox() const
 	return Vector2(x,y);
 }
 
+Vector2 AABB2::GetClosestPointOnEdge(float x, float y) const
+{
+	return GetClosestPointOnEdge(Vector2(x,y));
+}
+
+Vector2 AABB2::GetClosestPointOnEdge(Vector2 point) const
+{
+	if (IsPointInside(point)){	//veronoi region: center
+		Vector2 northPoint = Vector2( point.x, maxs.y);
+		Vector2 southPoint = Vector2( point.x, mins.y);
+		Vector2 eastPoint  = Vector2( mins.x, point.y);
+		Vector2 westPoint  = Vector2( maxs.x, point.y);
+
+		float northDist = GetDistance(northPoint, point);
+		float southDist = GetDistance(southPoint, point);
+		float eastDist = GetDistance(eastPoint, point);
+		float westDist = GetDistance(westPoint, point);
+
+		Vector2 xPoint;
+		Vector2 yPoint;
+		//get closest points along axes
+		if (northDist < southDist){
+			yPoint = northPoint;
+		} else {
+			yPoint = southPoint;
+		}
+
+		if (eastDist < westDist){
+			xPoint = eastPoint;
+		} else {
+			xPoint = westPoint;
+		}
+
+		if (GetDistance(xPoint, point) < GetDistance(yPoint, point)){
+			return xPoint;
+		} else {
+			return yPoint;
+		}
+	} else {
+		//top left
+		if (point.x <= mins.x && point.y >= maxs.y){
+			return Vector2 (mins.x, maxs.y);
+		}
+		//bottom left
+		if (point.x <= mins.x && point.y <= mins.y){
+			return mins;
+		}
+		//top right
+		if (point.x >= maxs.x && point.y >= maxs.y){
+			return maxs;
+		}
+		//bottom right
+		if (point.x >= maxs.x && point.y <= mins.y){
+			return Vector2(maxs.x, mins.y);
+		}
+
+		//straight left or straight right
+		if (point.y < maxs.y && point.y > mins.y){
+			if (point.x <= mins.x){		//straight left
+				return Vector2(mins.x, point.y);
+			}
+			if (point.x >= maxs.x){		//straight right
+				return Vector2(maxs.x, point.y);
+			}
+		}
+		//straight bottom or straight top
+		if (point.x > mins.x && point.x < maxs.x ){
+			if (point.y <= mins.y){		//straight bottom
+				return Vector2(point.x, mins.y);
+			}
+			if (point.y >= maxs.y){
+				return Vector2(point.x, maxs.y);
+			}
+		}
+	}
+	return GetCenter();	//should never reach this point
+}
+
 float AABB2::GetAspect() const
 {
 	return (GetWidth() / GetHeight());

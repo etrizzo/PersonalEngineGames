@@ -19,3 +19,13 @@ void DrawCall::SetLights(Light * lights[MAX_LIGHTS])
 		m_lights[i] = lights[i];
 	}
 }
+
+int DrawCall2D::GetSpriteLayer()
+{
+	return m_spriteLayer;
+}
+
+float DrawCall2D::GetYCoord()
+{
+	return m_yCoord;
+}

@@ -103,6 +103,12 @@
     <ClCompile Include="Menu.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="Decoration.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="DecorationDefinition.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -192,6 +198,12 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="Menu.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Decoration.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="DecorationDefinition.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

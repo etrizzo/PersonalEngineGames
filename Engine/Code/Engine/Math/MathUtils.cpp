@@ -9,7 +9,7 @@ float ConvertRadiansToDegrees(float radians)
 
 float ConvertDegreesToRadians(float degrees)
 {
-	return (degrees * (static_cast<float>(PI)/180.f));
+	return (degrees * ((float) (PI)/180.f));
 }
 
 float CosDegreesf(float degrees)
@@ -287,6 +287,31 @@ unsigned char Interpolate(unsigned char start, unsigned char end, float fraction
 	return (unsigned char) Interpolate((int) start, (int) end, fractionTowardEnd);
 }
 
+Vector3 Slerp(const Vector3 & a, const Vector3 & b, float t)
+{
+	float al = a.GetLength();
+	float bl = b.GetLength();
+
+	float len = Interpolate( al, bl, t );
+	Vector3 u = SlerpUnit( a / al, b / bl, t ); 
+	return len * u;
+}
+
+Vector3 SlerpUnit(const Vector3 & a, const Vector3 & b, float t)
+{
+	float cosangle = ClampFloat(DotProduct(a, b), -1.0f, 1.0f);
+	float angle = acosf(cosangle);
+	if (angle < EPSILON) {
+		return Interpolate( a, b, t );
+	} else {
+		float pos_num = sinf( t * angle );
+		float neg_num = sinf( (1.0f - t) * angle );
+		float den = sinf(angle);
+
+		return (neg_num / den) * a + (pos_num / den) * b;
+	}
+}
+
 float GetAngularDisplacement(float startDegrees, float endDegrees)
 {
 	float angularDisp = endDegrees - startDegrees;
@@ -312,6 +337,7 @@ float TurnToward(float currentDegrees, float goalDegrees, float maxTurnDegrees)
 		return currentDegrees - maxTurnDegrees;
 	}
 }
+
 
 float TurnTowardWithDirection(float currentDegrees, float goalDegrees, float maxTurnDegreesAndDirection)
 {

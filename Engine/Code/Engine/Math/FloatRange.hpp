@@ -14,6 +14,9 @@ public:
 	void SetFromText(const char* text);
 	bool IsValueInRangeInclusive(const float& value) const;
 	float GetDistanceFromEdge(const float& value) const;
+	float GetCenter() const;
+	float GetDistanceFromCenter(const float& value) const;
+	float GetSize() const;
 };
 
 

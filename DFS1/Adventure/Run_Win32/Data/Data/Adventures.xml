@@ -1,29 +1,33 @@
 <AdventureDefinitions>
 
   <AdventureDefinition name="Balrog" title="Kill the Balrog">
-    <StartConditions startMap="My Zoo" startOnTileType="Grass"/>
+    <StartConditions startMap="Large Map" startOnTileType="Grass"/>
     <VictoryConditions>
      <!--<KillActor actorToKill="Goblin" numToKill="3"/>-->
       <KillActor actorToKill="Goblin" numToKill="1"/>
     </VictoryConditions>
 
+    
+
     <Map name="My Zoo" mapDefinition="Zoo">
       <Actor type="Goblin" onTileType="Grass"/>
       <Item type="Platemail Chestpiece" onTileType="Grass"/>
     </Map>
-    
+=
+    <Map name="Large Map" mapDefinition="LargeMap">
+    </Map>
+<!--
     <Map name="The Village" mapDefinition="SmallVillage">
       <Item type="Leather Chestpiece" onTileType="Wood"/>
       <Item type="Leather Leggings" onTileType="Wood"/>
       <Item type="Greatbow" onTileType="Wood"/>
-      <!-- 
       <Portal type="StairsDown" onTileType="Grass" toMap="The Cave"
                   toTileType="DarkDirt" reciprocalType="StairsUp"/>
       <Portal type="StairsDown" onTileType="Wood" toMap="The Cellar"
                   toTileType="StoneBrick" reciprocalType="StairsUp"/>
-                -->
+              
     </Map>
-    <!--
+    
     <Map name="The Cellar" mapDefinition="Cellar">
       <Actor type="Balrog" onTileType="MossyStoneBrick"/>
     </Map>

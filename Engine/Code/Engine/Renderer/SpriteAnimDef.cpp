@@ -41,10 +41,16 @@ void SpriteAnimDef::ParseSpriteIndices(tinyxml2::XMLElement* spriteAnimElement){
 	std::string stringText = ParseXmlAttribute(*spriteAnimElement, "spriteIndexes", (std::string) " " );
 	unsigned int tildeIndex = (unsigned int) stringText.find('~');
 	if (tildeIndex != std::string::npos){
-		IntRange indices = IntRange(0);
-		indices.SetFromText(stringText.c_str());
-		for(int i = indices.min; i < indices.max; i++){
-			m_spriteIndexes.push_back(i);
+		m_indices = IntRange(0);
+		m_indices.SetFromText(stringText.c_str());
+		//determine how to read the sprite indices: in order, or choose one randomly from the range
+		std::string type = ParseXmlAttribute(*spriteAnimElement, "type", "inOrder");
+		if (type == "inOrder"){
+			for(int i = m_indices.min; i < m_indices.max; i++){
+				m_spriteIndexes.push_back(i);
+			}
+		} else if (type == "oneInRange"){
+			m_chooseOneIndexInRange = true;
 		}
 	} else {
 		unsigned int oldIndex = 0;

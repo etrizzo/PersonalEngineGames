@@ -12,6 +12,8 @@ class Portal;
 class PortalDefinition;
 class Item;
 class ItemDefinition;
+class Decoration;
+class DecorationDefinition;
 
 const float RAYCAST_STEPS_PER_TILE = 100.f;
 const bool USE_ALL_ENTITIES = false;
@@ -106,6 +108,8 @@ public:
 	Portal* SpawnNewPortal(PortalDefinition* portalDef, Vector2 spawnPosition, Map* destinationMap, Vector2 toPos, float spawnRotation, bool spawnReciprocal = true);
 	Item* SpawnNewItem(std::string itemName, Vector2 spawnPosition);
 	Item* SpawnNewItem(ItemDefinition* itemDef, Vector2 spawnPosition);
+	Decoration* SpawnNewDecoration(std::string itemName, Vector2 spawnPosition);
+	Decoration* SpawnNewDecoration(DecorationDefinition* itemDef, Vector2 spawnPosition);
 
 	void AddEntityToMap(Entity* entity);
 	void RemoveEntityFromMap(Entity* entity);
@@ -127,6 +131,7 @@ public:
 	std::vector<Projectile*> m_allProjectiles;
 	std::vector<Portal*> m_allPortals;
 	std::vector<Item*> m_allItems;
+	std::vector<Decoration*> m_allDecorations;
 	int m_difficulty;
 	eAreaType m_maskType = AREA_TYPE_RECTANGLE;
 	AreaMask* m_generationMask;	//feels weird

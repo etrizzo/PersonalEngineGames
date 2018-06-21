@@ -461,7 +461,7 @@ void Matrix44::SetValues(const float * sixteenValuesBasisMajor)
 	Tz = sixteenValuesBasisMajor[Tstart + 2];
 	Tw = sixteenValuesBasisMajor[Tstart + 3];
 
-	delete sixteenValuesBasisMajor;
+	//delete sixteenValuesBasisMajor;
 }
 
 float Matrix44::Dot4114(float x1, float y1, float z1, float w1, float x2, float y2, float z2, float w2)
@@ -488,6 +488,26 @@ Vector4 Matrix44::GetK() const
 Vector4 Matrix44::GetT() const
 {
 	return Vector4(Tx,Ty,Tz,Tw);
+}
+
+Vector3 Matrix44::GetRight() const
+{
+	return GetI().XYZ();
+}
+
+Vector3 Matrix44::GetUp() const
+{
+	return GetJ().XYZ();
+}
+
+Vector3 Matrix44::GetForward() const
+{
+	return GetK().XYZ();
+}
+
+Vector3 Matrix44::GetTranslation() const
+{
+	return GetT().XYZ();
 }
 
 Vector4 Matrix44::GetX() const
@@ -551,6 +571,159 @@ Vector3 Matrix44::GetPosition() const
 {
 	return GetT().XYZ();
 }
+
+void Matrix44::Invert()
+{
+	double inv[16];
+	double det;
+	double m[16];
+	unsigned int i;
+
+	float data[16] = {Ix, Iy, Iz, Iw, Jx, Jy, Jz, Jw, Kx, Ky, Kz, Kw, Tx, Ty, Tz, Tw };
+
+
+	for (i = 0; i < 16; ++i) {
+		m[i] = (double) data[i];
+	}
+
+	inv[0] = m[5]  * m[10] * m[15] - 
+		m[5]  * m[11] * m[14] - 
+		m[9]  * m[6]  * m[15] + 
+		m[9]  * m[7]  * m[14] +
+		m[13] * m[6]  * m[11] - 
+		m[13] * m[7]  * m[10];
+
+	inv[4] = -m[4]  * m[10] * m[15] + 
+		m[4]  * m[11] * m[14] + 
+		m[8]  * m[6]  * m[15] - 
+		m[8]  * m[7]  * m[14] - 
+		m[12] * m[6]  * m[11] + 
+		m[12] * m[7]  * m[10];
+
+	inv[8] = m[4]  * m[9] * m[15] - 
+		m[4]  * m[11] * m[13] - 
+		m[8]  * m[5] * m[15] + 
+		m[8]  * m[7] * m[13] + 
+		m[12] * m[5] * m[11] - 
+		m[12] * m[7] * m[9];
+
+	inv[12] = -m[4]  * m[9] * m[14] + 
+		m[4]  * m[10] * m[13] +
+		m[8]  * m[5] * m[14] - 
+		m[8]  * m[6] * m[13] - 
+		m[12] * m[5] * m[10] + 
+		m[12] * m[6] * m[9];
+
+	inv[1] = -m[1]  * m[10] * m[15] + 
+		m[1]  * m[11] * m[14] + 
+		m[9]  * m[2] * m[15] - 
+		m[9]  * m[3] * m[14] - 
+		m[13] * m[2] * m[11] + 
+		m[13] * m[3] * m[10];
+
+	inv[5] = m[0]  * m[10] * m[15] - 
+		m[0]  * m[11] * m[14] - 
+		m[8]  * m[2] * m[15] + 
+		m[8]  * m[3] * m[14] + 
+		m[12] * m[2] * m[11] - 
+		m[12] * m[3] * m[10];
+
+	inv[9] = -m[0]  * m[9] * m[15] + 
+		m[0]  * m[11] * m[13] + 
+		m[8]  * m[1] * m[15] - 
+		m[8]  * m[3] * m[13] - 
+		m[12] * m[1] * m[11] + 
+		m[12] * m[3] * m[9];
+
+	inv[13] = m[0]  * m[9] * m[14] - 
+		m[0]  * m[10] * m[13] - 
+		m[8]  * m[1] * m[14] + 
+		m[8]  * m[2] * m[13] + 
+		m[12] * m[1] * m[10] - 
+		m[12] * m[2] * m[9];
+
+	inv[2] = m[1]  * m[6] * m[15] - 
+		m[1]  * m[7] * m[14] - 
+		m[5]  * m[2] * m[15] + 
+		m[5]  * m[3] * m[14] + 
+		m[13] * m[2] * m[7] - 
+		m[13] * m[3] * m[6];
+
+	inv[6] = -m[0]  * m[6] * m[15] + 
+		m[0]  * m[7] * m[14] + 
+		m[4]  * m[2] * m[15] - 
+		m[4]  * m[3] * m[14] - 
+		m[12] * m[2] * m[7] + 
+		m[12] * m[3] * m[6];
+
+	inv[10] = m[0]  * m[5] * m[15] - 
+		m[0]  * m[7] * m[13] - 
+		m[4]  * m[1] * m[15] + 
+		m[4]  * m[3] * m[13] + 
+		m[12] * m[1] * m[7] - 
+		m[12] * m[3] * m[5];
+
+	inv[14] = -m[0]  * m[5] * m[14] + 
+		m[0]  * m[6] * m[13] + 
+		m[4]  * m[1] * m[14] - 
+		m[4]  * m[2] * m[13] - 
+		m[12] * m[1] * m[6] + 
+		m[12] * m[2] * m[5];
+
+	inv[3] = -m[1] * m[6] * m[11] + 
+		m[1] * m[7] * m[10] + 
+		m[5] * m[2] * m[11] - 
+		m[5] * m[3] * m[10] - 
+		m[9] * m[2] * m[7] + 
+		m[9] * m[3] * m[6];
+
+	inv[7] = m[0] * m[6] * m[11] - 
+		m[0] * m[7] * m[10] - 
+		m[4] * m[2] * m[11] + 
+		m[4] * m[3] * m[10] + 
+		m[8] * m[2] * m[7] - 
+		m[8] * m[3] * m[6];
+
+	inv[11] = -m[0] * m[5] * m[11] + 
+		m[0] * m[7] * m[9] + 
+		m[4] * m[1] * m[11] - 
+		m[4] * m[3] * m[9] - 
+		m[8] * m[1] * m[7] + 
+		m[8] * m[3] * m[5];
+
+	inv[15] = m[0] * m[5] * m[10] - 
+		m[0] * m[6] * m[9] - 
+		m[4] * m[1] * m[10] + 
+		m[4] * m[2] * m[9] + 
+		m[8] * m[1] * m[6] - 
+		m[8] * m[2] * m[5];
+
+	det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
+	det = 1.0 / det;
+
+	for (i = 0; i < 16; i++) {
+		data[i] = (float)(inv[i] * det);
+	}
+	SetValues(data);
+}
+
+Matrix44 Matrix44::GetInverse() const
+{
+	Matrix44 inv = Matrix44(GetRight(), GetUp(), GetForward(), GetTranslation());
+	inv.Invert();
+	return inv;
+}
+
+float Matrix44::GetTrace3() const
+{
+	float sum = 0.0f; 
+	sum+= Ix;
+	sum+= Jy;
+	sum+= Kz;
+	//sum+= Tw;
+	return sum; 
+}
+
 
 void Matrix44::SetI(Vector4 vals)
 {
@@ -682,4 +855,60 @@ Matrix44 InvertFast(const Matrix44 & matrix)
 	//newMat.SetW(w * -1.f);
 
 	return RInverse;
+}
+
+Matrix44 Interpolate(const Matrix44 & a, const Matrix44 & b, float t)
+{
+	Vector3 a_right = a.GetRight();
+	Vector3 b_right = b.GetRight(); 
+	Vector3 a_up = a.GetUp();
+	Vector3 b_up = b.GetUp(); 
+	Vector3 a_forward = a.GetForward(); 
+	Vector3 b_forward = b.GetForward();
+	Vector3 a_translation = a.GetTranslation();
+	Vector3 b_translation = b.GetTranslation(); 
+
+	Vector3 right = Slerp( a_right, b_right, t ); 
+	Vector3 up = Slerp( a_up, b_up, t ); 
+	Vector3 forward = Slerp( a_forward, b_forward, t ); 
+	Vector3 translation = Interpolate( a_translation, b_translation, t ); 
+
+	return Matrix44( right, up, forward, translation ); 
+}
+
+Matrix44 TurnToward(const Matrix44 & current, const Matrix44 & target, float maxTurnDegrees)
+{
+	float maxTurnRadians = ConvertDegreesToRadians(maxTurnDegrees);
+	//Matrix44 ci = current.GetInverse();
+	//Matrix44 r = target;
+	//r.Append(ci); 
+
+	//// trace is 1 + 2 cos(theta) == sum of diagonal
+	//float trace = r.GetTrace3(); 
+
+	//// trace = 1 + 2.* cos(theta)
+	//// theta = acos( (trace - 1) *.5f ); 
+	//float inner = (trace - 1.0f) * .5f; 
+	//inner = ClampFloat( inner, -1.0f, 1.0f ); 
+	//float theta = acosf( inner - 1.0f ); 
+
+	//float t = Min( theta * maxTurnRadians, 1.0f );
+
+	//Matrix44 ret = Interpolate( current, target, t ); 
+	//ret.SetT( current.GetT() ); 
+
+	float cosAngle_f = DotProduct(current.GetForward(), target.GetForward());		//	Using forward is good enough for this assignment - if we wanted to be very thorough we would do some weird shit
+
+	float angle = acosf(cosAngle_f);
+	//now we have an angle, and we wanna turn towards that.
+	// need to find t for a Lerp between current and target
+
+	float x = angle / maxTurnDegrees;
+
+	float t = Min(x, 1.f);		//if angle > maxTurnDegrees, want to turn and stop, not go past it and waggle ;^o
+
+	Matrix44 ret = Interpolate(current, target, t);
+	ret.SetT(current.GetT());
+
+	return ret; 
 }

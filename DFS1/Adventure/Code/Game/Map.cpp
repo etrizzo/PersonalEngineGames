@@ -11,6 +11,8 @@
 #include "Game/PortalDefinition.hpp"
 #include "Game/Item.hpp"
 #include "Game/ItemDefinition.hpp"
+#include "Game/Decoration.hpp"
+#include "Game/DecorationDefinition.hpp"
 #include "Game/Adventure.hpp"
 
 
@@ -35,6 +37,7 @@ Map::Map(std::string name, MapDefinition* mapDef, int difficulty)
 	m_allProjectiles = std::vector<Projectile*>();
 	m_allPortals = std::vector<Portal*>();
 	m_allItems = std::vector<Item*>();
+	m_allDecorations = std::vector<Decoration*>();
 	//m_camera = new Camera2D(0.f, ZOOM_FACTOR);
 	g_theGame->m_camera->m_transform.SetLocalPosition(Vector3::ZERO);
 	g_theGame->m_camera->m_orthographicSize = ZOOM_FACTOR;
@@ -760,6 +763,21 @@ Item * Map::SpawnNewItem(ItemDefinition * itemDef, Vector2 spawnPosition)
 	m_allItems.push_back(newItem);
 	m_scene->AddRenderable(newItem->m_renderable);
 	return newItem;
+}
+
+Decoration * Map::SpawnNewDecoration(std::string decoName, Vector2 spawnPosition)
+{
+	DecorationDefinition* decoDef = DecorationDefinition::GetDecorationDefinition(decoName);
+	return SpawnNewDecoration(decoDef, spawnPosition);
+}
+
+Decoration * Map::SpawnNewDecoration(DecorationDefinition * decoDef, Vector2 spawnPosition)
+{
+	Decoration* newDecoration = new Decoration(decoDef, this, spawnPosition);
+	m_allEntities.push_back( newDecoration);
+	m_allDecorations.push_back(newDecoration);
+	m_scene->AddRenderable(newDecoration->m_renderable);
+	return newDecoration;
 }
 
 

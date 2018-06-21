@@ -22,6 +22,9 @@ SpriteAnim::SpriteAnim(SpriteAnimDef * animDef)
 	m_isFinished = false;
 	m_isPlaying = true;
 	m_playForward = true;
+	if (m_definition->m_chooseOneIndexInRange){
+		m_randomIndex = m_definition->m_indices.GetRandomInRange();
+	}
 }
 
 SpriteAnim::~SpriteAnim()
@@ -56,18 +59,22 @@ void SpriteAnim::Update(float deltaSeconds)
 AABB2 SpriteAnim::GetCurrentTexCoords() const
 {
 	if (m_definition != nullptr){
-		int endFrameIndex = (int) m_definition->m_spriteIndexes.size()-1;
-
-		
-		float percentThroughAnim = m_elapsedSeconds / m_definition->GetDuration();
-		int texCoordIndex;
-		if (m_playForward){
-			texCoordIndex = Interpolate(0, endFrameIndex, percentThroughAnim);
+		if (m_definition->m_chooseOneIndexInRange){
+			return m_definition->GetSpriteSheet()->GetTexCoordsForSpriteIndex(m_randomIndex);
 		} else {
-			texCoordIndex = Interpolate(0, endFrameIndex, 1 - percentThroughAnim);
+			int endFrameIndex = (int) m_definition->m_spriteIndexes.size()-1;
+
+			
+			float percentThroughAnim = m_elapsedSeconds / m_definition->GetDuration();
+			int texCoordIndex;
+			if (m_playForward){
+				texCoordIndex = Interpolate(0, endFrameIndex, percentThroughAnim);
+			} else {
+				texCoordIndex = Interpolate(0, endFrameIndex, 1 - percentThroughAnim);
+			}
+			texCoordIndex = ClampInt(texCoordIndex, 0, endFrameIndex);
+			return m_definition->GetSpriteSheet()->GetTexCoordsForSpriteIndex(m_definition->m_spriteIndexes[texCoordIndex]);
 		}
-		texCoordIndex = ClampInt(texCoordIndex, 0, endFrameIndex);
-		return m_definition->GetSpriteSheet()->GetTexCoordsForSpriteIndex(m_definition->m_spriteIndexes[texCoordIndex]);
 	} else {
 		float percentThroughAnim = m_elapsedSeconds / m_duration;
 		int texCoordIndex;

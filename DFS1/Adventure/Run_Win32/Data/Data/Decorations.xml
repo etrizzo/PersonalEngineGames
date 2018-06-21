@@ -1,0 +1,14 @@
+<DecorationDefinitions>
+
+  <DecorationDefinition name="GreenTree">
+    <Size physicsRadius=".45" drawRadius="1.9" aspect=".7" pivot="0.5,0.2"/>
+    <SpriteAnimSet spriteSheet="DECORATIONS/green_trees.png" spriteLayout="2,1">
+      <SpriteAnim name="Idle" spriteIndexes="0~1" type="oneInRange"/>
+    </SpriteAnimSet>
+    <Collision
+		  allowsWalking="false"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+	/>
+  </DecorationDefinition>
+</DecorationDefinitions>

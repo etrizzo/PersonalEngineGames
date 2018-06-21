@@ -8,6 +8,8 @@
 #include "Game/Adventure.hpp"
 #include "Game/ItemDefinition.hpp"
 #include "Game/Item.hpp"
+#include "Game/DecorationDefinition.hpp"
+#include "Game/Decoration.hpp"
 #include "Game/VictoryCondition.hpp"
 #include "Engine/Renderer/SpriteAnimSetDef.hpp"
 #include "Engine/Renderer/Camera.hpp"
@@ -377,6 +379,7 @@ void Game::LoadEntityDefinitions()
 	LoadActorDefinitions();
 	LoadProjectileDefinitions();
 	LoadPortalDefinitions();
+	LoadDecorationDefinitions();
 }
 
 void Game::LoadActorDefinitions()
@@ -425,6 +428,18 @@ void Game::LoadItemDefinitions()
 	for (tinyxml2::XMLElement* itemDefElement = root->FirstChildElement("ItemDefinition"); itemDefElement != NULL; itemDefElement = itemDefElement->NextSiblingElement("ItemDefinition")){
 		ItemDefinition* newDefinition = new ItemDefinition(itemDefElement);
 		ItemDefinition::s_definitions.insert(std::pair<std::string, ItemDefinition*>(newDefinition->m_name, newDefinition));
+	}
+}
+
+void Game::LoadDecorationDefinitions()
+{
+	tinyxml2::XMLDocument decoDefDoc;
+	decoDefDoc.LoadFile("Data/Data/Decorations.xml");
+
+	tinyxml2::XMLElement* root = decoDefDoc.FirstChildElement("DecorationDefinitions");
+	for (tinyxml2::XMLElement* decoDefElement = root->FirstChildElement("DecorationDefinition"); decoDefElement != NULL; decoDefElement = decoDefElement->NextSiblingElement("DecorationDefinition")){
+		DecorationDefinition* newDefinition = new DecorationDefinition(decoDefElement);
+		DecorationDefinition::s_definitions.insert(std::pair<std::string, DecorationDefinition*>(newDefinition->m_name, newDefinition));
 	}
 }
 

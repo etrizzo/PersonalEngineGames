@@ -49,6 +49,21 @@ float FloatRange::GetDistanceFromEdge(const float & value) const
 	return Min(distFromMin, distFromMax);
 }
 
+float FloatRange::GetCenter() const
+{
+	return (max + min) * .5f;
+}
+
+float FloatRange::GetDistanceFromCenter(const float & value) const
+{
+	return fabs(GetCenter() - value);
+}
+
+float FloatRange::GetSize() const
+{
+	return max - min;
+}
+
 bool DoRangesOverlap(const FloatRange & a, const FloatRange & b)
 {
 	if (a.max < b.min && a.min < b.min){

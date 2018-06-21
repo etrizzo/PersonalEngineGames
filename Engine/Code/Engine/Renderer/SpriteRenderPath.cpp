@@ -27,21 +27,21 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 	//for (ParticleSystem* s : scene->m_particleSystems){
 	//	s->PreRenderForCamera(cam);
 	//}
-	std::vector<DrawCall> drawCalls;
+	std::vector<DrawCall2D> drawCalls;
 	//now we want to generate the draw calls
 	for(Renderable2D* r : scene->m_renderables){
 		//this will change for multi-pass shaders or multi-material meshes
 		for (int i = 0; i < (int) r->m_mesh->m_subMeshes.size(); i++){
 			if (r->m_mesh->m_subMeshes[i] != nullptr){
-				DrawCall dc;
+				DrawCall2D dc;
 				//set up the draw call for this renderable :)
 				// the layer/queue comes from the shader!
 				dc.m_mesh = r->m_mesh->m_subMeshes[i];
 				dc.m_model = r->m_transform.GetWorldMatrix();
 				dc.m_material = r->GetEditableMaterial(i);
-				dc.m_layer = r->GetZOrder();
-				dc.m_queue = 0;
-				//dc.m_queue = r->m_transform.GetWorldPosition().y;
+				dc.m_spriteLayer = r->GetZOrder();
+				//dc.m_queue = 0;
+				dc.m_yCoord = r->m_transform.GetWorldPosition().y;
 
 				if (r->GetEditableMaterial(i)->UsesLights()){
 					//compute most contributing lights based on renderable's position and puts them in the draw calls lights
@@ -57,7 +57,7 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 	SortDrawCalls(drawCalls);
 	//sort alpha by distance to camera, etc.
 
-	for(DrawCall dc: drawCalls){
+	for(DrawCall2D dc: drawCalls){
 		//an optimization would be to only bind the thing if it's different from the previous bind.
 		m_renderer->BindMaterial(dc.m_material);
 		m_renderer->BindModel(dc.m_model);
@@ -111,7 +111,7 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 //	}
 //}
 
-void SpriteRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls)
+void SpriteRenderPath::SortDrawCalls(std::vector<DrawCall2D>& drawCalls)
 {
 	//sort by sort layer
 	bool sorted = false;
@@ -119,23 +119,25 @@ void SpriteRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls)
 		sorted = true;
 		for (int j = 1; j < (int) drawCalls.size(); j++){
 			
-			DrawCall dc = drawCalls[j];
-			DrawCall prevDC = drawCalls[j-1];
-			if (dc.GetSortLayer() < prevDC.GetSortLayer()){		//sort layer is now 
+			DrawCall2D dc = drawCalls[j];
+			DrawCall2D prevDC = drawCalls[j-1];
+			if (dc.GetSpriteLayer() < prevDC.GetSpriteLayer()){		//sort layer is now 
 				//swap l and prevLight
-				drawCalls[j] = prevDC;
-				drawCalls[j-1] = dc;
+				std::swap(drawCalls[j], drawCalls[j-1]);
+				//drawCalls[j] = prevDC;
+				//drawCalls[j-1] = dc;
 				sorted = false;
 			}
 			//sort alpha layer by distance to camera
-			//if (dc.GetSortLayer() >= 1 && prevDC.GetSortLayer() >= 1){
-			//	//sort by distance to camera
-			//	if (dc.GetDistance(camPos) > prevDC.GetDistance(camPos)){
-			//		drawCalls[j] = prevDC;
-			//		drawCalls[j-1] = dc;
-			//		sorted = false;
-			//	}
-			//}
+			if (dc.GetSpriteLayer() >= 1 && prevDC.GetSpriteLayer() >= 1){
+				//sort by distance to camera
+				if (dc.m_yCoord > prevDC.m_yCoord){
+					std::swap(drawCalls[j], drawCalls[j-1]);
+					//drawCalls[j] = prevDC;
+					//drawCalls[j-1] = dc;
+					sorted = false;
+				}
+			}
 
 		}
 		if (sorted){

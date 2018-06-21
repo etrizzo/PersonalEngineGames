@@ -77,12 +77,6 @@ Transform::~Transform()
 
 Matrix44 Transform::GetWorldMatrix() const
 {
-	//m_worldMatrix = Matrix44(m_localMatrix);
-	//if (m_parent != nullptr){
-	//	Matrix44 parent = m_parent->GetWorldMatrix();
-	//	parent.Append(m_worldMatrix);
-	//	return parent;
-	//}
 	return m_worldMatrix;
 }
 
@@ -95,6 +89,11 @@ void Transform::SetLocalMatrix(Matrix44 const & mat)
 {
 	m_transformStruct.SetMatrix(mat);
 	SetMatrices();
+}
+
+void Transform::SetWorldMatrix(Matrix44 const & mat)
+{
+
 }
 
 void Transform::SetLocalPosition(Vector3 pos)
@@ -149,30 +148,29 @@ Vector3 Transform::GetScale() const
 	return m_transformStruct.GetScale();
 }
 
-//void Transform::SetLocalPosition2D(Vector2 pos, float z)
-//{
-//	SetLocalPosition(Vector3(pos, z));
-//}
-//
-//void Transform::TranslateLocal2D(Vector2 offset)
-//{
-//	TranslateLocal(Vector3(offset, 0.f));
-//}
-//
-//void Transform::SetRotationEuler2D(float rotation)
-//{
-//	SetRotationEuler(Vector3(0.f,0.f,rotation));
-//}
-//
-//void Transform::RotateByEuler2D(float rotationOffset)
-//{
-//	RotateByEuler(Vector3(0.f,0.f,rotationOffset));
-//}
-//
-//void Transform::SetScale2D(Vector2 s)
-//{
-//	SetScale(Vector3(s,1.f));
-//}
+Vector3 Transform::WorldToLocal(Vector3 worldPos) const
+{
+	Matrix44 inv = GetWorldMatrix();
+	inv.Invert();
+	Vector3 localPos = Matrix44::TransformPosition(worldPos, inv);
+	return localPos;
+}
+
+void Transform::LocalLookAt(Vector3 target)
+{
+	Vector3 pos = GetLocalPosition();
+	Matrix44 lookAt = Matrix44::LookAt(pos, target, GetUp());	//what should up be?
+
+	SetLocalMatrix(lookAt);
+}
+
+void Transform::WorldLookAt(Vector3 target)
+{
+	Vector3 pos = GetWorldPosition();
+	Matrix44 lookAt = Matrix44::LookAt(pos, target, GetUp());
+	SetWorldMatrix(lookAt);
+}
+
 
 Vector3 Transform::GetForward() const
 {

@@ -64,7 +64,7 @@ void Player::Update()
 	
 	m_cameraTarget->SetLocalPosition(GetPosition() + GetUp() * .25f);
 	MoveTurretTowardTarget();
-	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, GetPosition(), 1.5f, m_renderable->m_transform.GetWorldMatrix());
+	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, GetPosition(), 1.5f, m_renderable->m_transform.GetWorldMatrix());
 	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->GetPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix());
 }
 
@@ -168,9 +168,19 @@ void Player::SetWorldPosition()
 
 void Player::MoveTurretTowardTarget()
 {
+	m_turretRenderable->m_transform.SetRotationEuler(Vector3::ZERO);
 	Transform* base = m_turretRenderable->m_transform.GetParent();
-	Vector3 Local_pos = base->WorldToLocal(m_target);
-	m_turretRenderable->m_transform.LocalLookAt(localPos);
+	Vector3 localPos = base->WorldToLocal(m_target);
+	//m_turretRenderable->m_transform.LocalLookAt(localPos);
+
+	Matrix44 targetTransform = Matrix44::LookAt(m_turretRenderable->m_transform.GetLocalPosition(), localPos, m_turretRenderable->m_transform.GetUp());
+	Matrix44 currentTransform = m_turretRenderable->m_transform.GetLocalMatrix();
+
+	float turnThisFrame = m_degPerSecond * g_theGame->GetDeltaSeconds() * .25f;
+	Matrix44 localMat = TurnToward(currentTransform, targetTransform, turnThisFrame);
+	m_turretRenderable->m_transform.SetLocalMatrix(localMat);
+	
+	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->m_transform.GetWorldPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix(), RGBA::YELLOW);
 
 }
 

@@ -23,7 +23,13 @@ protected:
 	FloatRange m_subAreaSize = FloatRange(.5f);
 	AreaMask* m_mask;
 	eAreaType m_maskType;
+
+	float m_centerDensity = -1.f;	  //invalid values
+	float m_edgeDensity = -1.f;		  //invalid values
+	float m_featherRate = -1.f;		  //invalid values
+
 	//this feels disconnected vv
+	bool m_inheritSeed = true;
 	unsigned int m_perlinSeed;
 	float m_noiseScale;
 };
@@ -59,13 +65,22 @@ public:
 	TileDefinition* m_spawnOnTileDef	= nullptr;
 };
 
+class MapGenStep_SpawnDecoration: public MapGenStep{
+public:
+	MapGenStep_SpawnDecoration(const tinyxml2::XMLElement& generationStepElement);
+	void Run(Map& map);
+
+	std::string m_decoName				= std::string();
+	TileDefinition* m_spawnOnTileDef	= nullptr;
+};
+
 
 class MapGenStep_FromFile: public MapGenStep{
 public:
 	MapGenStep_FromFile(const tinyxml2::XMLElement& generationStepElement);
 	void Run( Map& map );
 
-	std::string m_fileName = (std::string) "";
+	std::string m_fileName = "";
 	IntVector2 m_startCoordinates = IntVector2(0,0);
 };
 

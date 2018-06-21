@@ -198,6 +198,8 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="DebugRenderSystem.cpp" />
     <ClCompile Include="DebugRenderTask.cpp" />
+    <ClCompile Include="Decoration.cpp" />
+    <ClCompile Include="DecorationDefinition.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityDefinition.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -236,6 +238,8 @@
     <ClInclude Include="App.hpp" />
     <ClInclude Include="DebugRenderSystem.hpp" />
     <ClInclude Include="DebugRenderTask.hpp" />
+    <ClInclude Include="Decoration.hpp" />
+    <ClInclude Include="DecorationDefinition.hpp" />
     <ClInclude Include="EngineBuildPreferences.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="EntityDefinition.hpp" />

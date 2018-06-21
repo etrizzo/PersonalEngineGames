@@ -104,6 +104,10 @@ public:
 	Vector4 GetJ() const;
 	Vector4 GetK() const;
 	Vector4 GetT() const;
+	Vector3 GetRight()			const;
+	Vector3 GetUp()				const;
+	Vector3 GetForward()		const;
+	Vector3 GetTranslation()	const;
 				   
 	Vector4 GetX() const;
 	Vector4 GetY() const;
@@ -113,6 +117,11 @@ public:
 	Vector3 GetScale() const;
 	Vector3 GetEulerAngles() const;
 	Vector3 GetPosition() const;
+
+	void Invert();
+	Matrix44 GetInverse() const;
+
+	float GetTrace3() const;
 
 
 	void SetI(Vector4 vals);
@@ -133,3 +142,7 @@ private:
 };
 
 Matrix44 InvertFast( const Matrix44& matrix);
+Matrix44 Interpolate( const Matrix44& a, const Matrix44& b, float t);
+
+
+Matrix44 TurnToward(const Matrix44& current, const Matrix44& target, float maxTurnDegrees);

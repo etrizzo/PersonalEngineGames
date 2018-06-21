@@ -43,5 +43,6 @@ private:
 	bool m_isFinished;
 	bool m_isPlaying;
 	bool m_playForward;
+	int m_randomIndex = 0;
 
 };
