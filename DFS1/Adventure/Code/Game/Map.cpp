@@ -641,7 +641,7 @@ Tile Map::GetSpawnTileOfType(TileDefinition * tileType) const
 	int randomTileIndex = GetIndexFromCoordinates(randomTileX, randomTileY, m_dimensions.x, m_dimensions.y);
 	int tries = 0;
 	Tile randomTile = m_tiles[randomTileIndex];
-	while (((randomTile.m_tileDef->m_name != tileType->m_name) || (randomTile.m_extraInfo->m_spawnedOn)) && tries < 1000){
+	while (((randomTile.m_tileDef->m_name != tileType->m_name) || (randomTile.HasBeenSpawnedOn())) && tries < 1000){
 		randomTileX = GetRandomIntInRange(1,m_dimensions.x-2);
 		randomTileY = GetRandomIntInRange(1,m_dimensions.y-2);
 		randomTileIndex = GetIndexFromCoordinates(randomTileX, randomTileY, m_dimensions.x, m_dimensions.y);
@@ -788,13 +788,14 @@ void Map::SetCamera()
 {
 	if (g_theGame->m_fullMapMode){
 		int ortho = max(m_dimensions.x, m_dimensions.y);
+		g_theGame->m_player->SetScale(m_dimensions.x * .05f);
 		g_theGame->m_camera->SetProjectionOrtho((float) ortho + 1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
 		g_theGame->m_camera->LookAt( Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, -1.f), Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, .5f));
 	} else {
 		float viewWidth = WINDOW_ASPECT * ZOOM_FACTOR;
 		Vector2 halfDimensions = Vector2(viewWidth, ZOOM_FACTOR) * .5f;
 		Vector2 positionToCenter = g_theGame->m_player->GetPosition();
-		
+		g_theGame->m_player->SetScale(1.f);
 
 
 		float minX = ZOOM_FACTOR * WINDOW_ASPECT * .5f;

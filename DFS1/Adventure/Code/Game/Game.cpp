@@ -288,6 +288,11 @@ void Game::DebugSetDifficulty(int difficulty)
 	}
 }
 
+void Game::DebugSetPlayerSpeed(int newSpeed)
+{
+	g_theGame->m_player->m_stats.SetStat(STAT_MOVEMENT, newSpeed);
+}
+
 void Game::SetCurrentMap(Map * newMap)
 {
 	m_currentState->m_currentAdventure->SetCurrentMap(newMap);

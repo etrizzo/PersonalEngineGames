@@ -123,6 +123,7 @@ void App::RegisterCommands()
 	CommandRegister("print_map_names", CommandPrintMapNames, "Prints map names for current adventure");
 	CommandRegister("win_adventure", CommandWinAdventure, "Automatically wins current adventure");
 	CommandRegister("complete_quest", CommandCompleteQuest, "Automatically completes the quest at specified index", "complete_quest <index>");
+	CommandRegister("set_speed", CommandSetSpeed, "Sets player walking speed", "set_speed <int>");
 }
 void App::HandleInput()
 {
@@ -210,5 +211,11 @@ void CommandCompleteQuest(Command & cmd)
 {
 	g_theGame->DebugCompleteQuest(cmd.GetNextInt());
 	g_devConsole->Close();
+}
+
+void CommandSetSpeed(Command & cmd)
+{
+	int speed = cmd.GetNextInt();
+	g_theGame->DebugSetPlayerSpeed(speed);
 }
 

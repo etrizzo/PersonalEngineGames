@@ -2,6 +2,7 @@
 #include "DecorationDefinition.hpp"
 #include "Map.hpp"
 #include "Game/Game.hpp"
+#include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/SpriteAnimSet.hpp"
 #include "Game/Actor.hpp"
 
@@ -16,7 +17,17 @@ Decoration::Decoration(DecorationDefinition * definition, Map * entityMap, Vecto
 
 void Decoration::Update(float deltaSeconds)
 {
-	Entity::Update(deltaSeconds);
+	m_physicsDisc.center=GetPosition();
+	m_ageInSeconds+=deltaSeconds;
+
+	std::string animName = GetAnimName();
+	m_animSet->SetCurrentAnim(animName);		//sets IF it's different from the last frame
+	m_animSet->Update(deltaSeconds);
+
+	UpdateRenderable();
+	if (g_theGame->m_devMode){
+		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, m_physicsDisc, true , DEBUG_RENDER_IGNORE_DEPTH, RGBA::MAGENTA, RGBA::MAGENTA);
+	}
 }
 
 void Decoration::Render()

@@ -28,7 +28,12 @@ void Player::Update(float deltaSeconds)
 
 		std::string animName = GetAnimName();
 		m_animSet->SetCurrentAnim(animName);		//sets IF it's different from the last frame
-		m_animSet->Update(deltaSeconds);
+		//update anim set - scale speed of anim if you've got movement stat
+		if (m_stats.GetStat(STAT_MOVEMENT) > 4){
+			m_animSet->Update(deltaSeconds * ((float) m_stats.GetStat(STAT_MOVEMENT) * .25f));
+		} else {
+			m_animSet->Update(deltaSeconds);
+		}
 
 		UpdateRenderable();
 

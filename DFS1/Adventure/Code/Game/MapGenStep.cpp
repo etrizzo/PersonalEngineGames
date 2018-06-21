@@ -755,7 +755,8 @@ MapGenStep_SpawnDecoration::MapGenStep_SpawnDecoration(const tinyxml2::XMLElemen
 {
 	m_decoName			= ParseXmlAttribute(generationStepElement, "type", m_decoName);
 	m_spawnOnTileDef	= ParseXmlAttribute(generationStepElement, "onTile", m_spawnOnTileDef);
-
+	m_chanceToSpawn		= ParseXmlAttribute(generationStepElement, "chanceToSpawn", m_chanceToSpawn);
+	m_spawnType			= ParseXmlAttribute(generationStepElement, "spawnType", m_spawnType);
 }
 
 void MapGenStep_SpawnDecoration::Run(Map & map)
@@ -763,6 +764,33 @@ void MapGenStep_SpawnDecoration::Run(Map & map)
 	if (m_spawnOnTileDef == nullptr){
 		m_spawnOnTileDef = map.m_mapDef->m_defaultTile;
 	}
-	Tile spawnTile = map.GetSpawnTileOfType(m_spawnOnTileDef);
-	map.SpawnNewDecoration(m_decoName, spawnTile.GetCenter());
+	if (m_spawnType == "mutate"){
+		RunAsMutate(map);
+	} else {
+		Tile spawnTile = map.GetSpawnTileOfType(m_spawnOnTileDef);
+		map.SpawnNewDecoration(m_decoName, spawnTile.GetCenter());
+	}
+}
+
+void MapGenStep_SpawnDecoration::RunAsMutate(Map & map)
+{
+	int mapWidth = map.GetWidth();
+	int mapHeight = map.GetHeight();
+	for (int tileX = 0; tileX < mapWidth; tileX++){
+		for (int tileY = 0; tileY < mapHeight; tileY++){
+			if (m_mask->CanDrawOnPoint(tileX, tileY)){
+				Tile* tile = map.TileAt(tileX, tileY);
+				if (!tile->HasBeenSpawnedOn() && m_spawnOnTileDef!= nullptr){
+					std::string tileName = tile->m_tileDef->m_name;
+					std::string ifTypeName = m_spawnOnTileDef->m_name;
+					if (tileName == ifTypeName){
+						if (CheckRandomChance(m_chanceToSpawn)){
+							tile->MarkAsSpawned();
+							map.SpawnNewDecoration(m_decoName, tile->GetCenter());
+						}
+					}
+				}
+			}
+		}
+	}
 }

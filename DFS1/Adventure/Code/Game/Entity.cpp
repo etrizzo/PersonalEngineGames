@@ -95,7 +95,6 @@ void Entity::Update(float deltaSeconds)
 	UpdateRenderable();
 	if (g_theGame->m_devMode){
 		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, m_physicsDisc, true , DEBUG_RENDER_IGNORE_DEPTH, RGBA::MAGENTA, RGBA::MAGENTA);
-		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, GetPosition(), m_localDrawingBox.GetWidth() * .5f, true, DEBUG_RENDER_IGNORE_DEPTH, RGBA::CYAN);
 		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, GetPosition(), m_localDrawingBox.GetHeight() * .5f, true, DEBUG_RENDER_IGNORE_DEPTH, RGBA::YELLOW);
 	}
 

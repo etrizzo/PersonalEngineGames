@@ -64,7 +64,6 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 		//m_renderer->BindLightUniforms(dc.m_lights);
 		m_renderer->DrawMesh(dc.m_mesh);
 	}
-
 	TODO("Add post-processing to forward render path");
 	////post-processing? it go here
 	//for(Material * effect in cam-> m_effects){

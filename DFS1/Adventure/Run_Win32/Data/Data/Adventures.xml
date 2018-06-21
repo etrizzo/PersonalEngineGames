@@ -16,6 +16,9 @@
 =
     <Map name="Large Map" mapDefinition="LargeMap">
     </Map>
+
+    <Map name="TreeZoo" mapDefinition="Forest">
+    </Map>
 <!--
     <Map name="The Village" mapDefinition="SmallVillage">
       <Item type="Leather Chestpiece" onTileType="Wood"/>

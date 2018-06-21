@@ -69,7 +69,10 @@ class MapGenStep_SpawnDecoration: public MapGenStep{
 public:
 	MapGenStep_SpawnDecoration(const tinyxml2::XMLElement& generationStepElement);
 	void Run(Map& map);
+	void RunAsMutate(Map& map);
 
+	float m_chanceToSpawn				= 1.f;
+	std::string m_spawnType				= "random";			//decorations are different than other entities, may want to use different gensteps to spawn them
 	std::string m_decoName				= std::string();
 	TileDefinition* m_spawnOnTileDef	= nullptr;
 };

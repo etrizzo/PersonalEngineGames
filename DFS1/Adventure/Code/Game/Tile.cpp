@@ -34,6 +34,16 @@ Tile::Tile(IntVector2 & coords, TileDefinition* tileDef)
 // 3 x 4
 // 5 6 7
 
+bool Tile::HasBeenSpawnedOn() const
+{
+	return m_extraInfo->m_spawnedOn;
+}
+
+void Tile::MarkAsSpawned()
+{
+	m_extraInfo->m_spawnedOn = true;
+}
+
 //for destructible tiles, if i'm #feelinthat
 void Tile::DamageTile(TileDefinition* typeIfDestroyed, int damage)
 {

@@ -23,7 +23,7 @@ public:
 	bool IsPlaying() const							{ return m_isPlaying; }
 	float GetDurationSeconds() const				{ return m_definition->GetDuration(); }
 	float GetSecondsElapsed() const					{ return m_elapsedSeconds; }
-	SpriteAnimDef* GetDefinition() const		{return m_definition;}
+	SpriteAnimDef* GetDefinition() const			{return m_definition;}
 	float GetSecondsRemaining() const;
 	float GetFractionElapsed() const;
 	float GetFractionRemaining() const;

@@ -18,6 +18,8 @@ public:
 	TileExtraInfo* m_extraInfo = nullptr;
 	//int m_type;
 
+	bool HasBeenSpawnedOn() const;
+	void MarkAsSpawned();
 	void DamageTile(TileDefinition* typeIfDestroyed, int damage = 1);
 	//void GetNeighbors(Tile (&neighbors)[8]);
 	AABB2 GetBounds() const;

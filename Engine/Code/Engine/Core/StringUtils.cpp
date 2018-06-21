@@ -44,7 +44,7 @@ const void Split(std::string stringToSplit, const char splitOn, Strings & splitV
 {
 	splitVector = std::vector<std::string>();
 	unsigned int oldIndex = 0;
-	unsigned int newIndex = (unsigned int) stringToSplit.find(splitOn);
+	size_t newIndex = (size_t) stringToSplit.find(splitOn);
 	while (newIndex != std::string::npos){
 		std::string indexString = stringToSplit.substr(oldIndex,newIndex - oldIndex);
 		if (indexString != ""){
@@ -52,7 +52,7 @@ const void Split(std::string stringToSplit, const char splitOn, Strings & splitV
 		}
 
 		oldIndex = newIndex + 1;
-		newIndex = (unsigned int) stringToSplit.find(splitOn, oldIndex);
+		newIndex = (size_t) stringToSplit.find(splitOn, oldIndex);
 	}
 	std::string indexString = stringToSplit.substr(oldIndex);
 	if (indexString != ""){

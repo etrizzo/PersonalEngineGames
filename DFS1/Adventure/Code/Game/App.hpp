@@ -41,3 +41,4 @@ void CommandGoToMap(Command& cmd);
 void CommandPrintMapNames(Command& cmd);
 void CommandWinAdventure(Command& cmd);
 void CommandCompleteQuest(Command& cmd);
+void CommandSetSpeed(Command& cmd);

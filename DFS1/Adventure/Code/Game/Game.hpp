@@ -84,6 +84,7 @@ public:
 	void DebugWinAdventure();
 	void DebugCompleteQuest(int index = 0);
 	void DebugSetDifficulty(int difficulty);
+	void DebugSetPlayerSpeed(int newSpeed);
 	void SetCurrentMap(Map* newMap);
 	void GoToMap(std::string mapName);
 

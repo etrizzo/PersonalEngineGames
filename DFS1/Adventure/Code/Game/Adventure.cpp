@@ -157,7 +157,7 @@ void Adventure::DebugCompleteQuest(int index)
 
 Player * Adventure::SpawnPlayer()
 {
-	Tile spawnTile = m_startingMap->GetRandomTileOfType(m_definition->m_startTileDef);
+	Tile spawnTile = m_startingMap->GetSpawnTileOfType(m_definition->m_startTileDef);
 	Player* newPlayer = m_currentMap->SpawnNewPlayer(spawnTile.GetCenter());
 	return newPlayer;
 }

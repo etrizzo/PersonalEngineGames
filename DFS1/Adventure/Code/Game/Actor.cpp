@@ -42,8 +42,31 @@ Actor::~Actor()
 
 void Actor::Update(float deltaSeconds)
 {
-	Entity::Update(deltaSeconds);
+	m_physicsDisc.center=GetPosition();
+	m_ageInSeconds+=deltaSeconds;
+
+	Tile* newTile = m_map->TileAtFloat(GetPosition());
+	if (newTile != m_currentTile){
+		EnterTile(newTile);
+	}
+
+	//UpdateSpeed();
+
 	std::string animName = GetAnimName();
+	m_animSet->SetCurrentAnim(animName);		//sets IF it's different from the last frame
+	//update anim set - scale speed of anim if you've got movement stat
+	if (m_stats.GetStat(STAT_MOVEMENT) > 4){
+		m_animSet->Update(deltaSeconds * ((float) m_stats.GetStat(STAT_MOVEMENT) * .25f));
+	} else {
+		m_animSet->Update(deltaSeconds);
+	}
+	
+
+	UpdateRenderable();
+	if (g_theGame->m_devMode){
+		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, m_physicsDisc, true , DEBUG_RENDER_IGNORE_DEPTH, RGBA::MAGENTA, RGBA::MAGENTA);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, GetPosition(), m_localDrawingBox.GetHeight() * .5f, true, DEBUG_RENDER_IGNORE_DEPTH, RGBA::YELLOW);
+	}
 	if (m_isFiring){
 		if (m_animSet->IsCurrentAnimFinished()){
 			FireArrow();
