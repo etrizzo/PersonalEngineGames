@@ -155,6 +155,19 @@ SubMesh * MeshBuilder::CreateSubMesh(eVertexType vertType)
 	return m;
 }
 
+void MeshBuilder::AppendLine(Vector3 start, Vector3 end, RGBA startColor, RGBA endColor)
+{
+	SetNormal(Vector3::UP);
+	SetColor(startColor);
+	SetUV(Vector2::ZERO);
+	PushVertex(start);
+
+	SetColor(endColor);
+	SetUV(Vector2::ONE);
+	PushVertex(end);
+
+}
+
 void MeshBuilder::AppendPlane(Vector3 nbl, Vector3 nbr, Vector3 ftl, Vector3 ftr, const RGBA & color, Vector2 uvMins, Vector2 uvMaxs)
 {
 	Vector3 right = (nbr - nbl).GetNormalized();

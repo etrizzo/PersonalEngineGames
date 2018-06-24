@@ -3,7 +3,7 @@
 
 class Player :public Entity{
 public:
-	Player(Vector3 position = Vector3::ZERO);
+	Player(GameState_Playing* playState, Vector3 position = Vector3::ZERO);
 	~Player() {};
 
 	void Update() override;
@@ -12,11 +12,13 @@ public:
 	void HandleInput();
 
 	Vector2 m_positionXZ;
-	float m_speed			= 10.f;
+	float m_speed			= 5.f;
 	float m_degPerSecond	= 60.f;
 	StopWatch m_rateOfFire;
 	Transform* m_cameraTarget;
 	Renderable* m_turretRenderable;
+	Renderable* m_laserSightRenderable;
+	Transform* m_barrelPosition;
 	Vector3 m_target;
 
 private:

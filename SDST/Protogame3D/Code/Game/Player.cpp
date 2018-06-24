@@ -4,21 +4,23 @@
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 
-Player::Player(Vector3 position)
+Player::Player(GameState_Playing* playState, Vector3 position)
 {
 	float size = 1.f;
 	m_renderable = new Renderable();//new Renderable(RENDERABLE_CUBE, 1.f);
 	m_turretRenderable = new Renderable();
+	//make tank
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendCube(position, Vector3(1.f, .3f, 1.f), RGBA::GREEN);
+	mb.AppendCube(position, Vector3(.8f, .3f, 1.f), RGBA::GREEN);
 	mb.End();
 	m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
 
+	//make turret
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	Vector3 sphere = position; //+ Vector3::UP * .5f;
+	Vector3 sphere = position - (Vector3::UP * .08f);
 	mb.AppendSphere(sphere, .2f, 10, 10, RGBA::RED);
-	mb.AppendCube(sphere + Vector3::FORWARD * .5f, Vector3(.1f, .1f, 1.f), RGBA::RED);
+	mb.AppendCube(position + Vector3::FORWARD * .4f, Vector3(.1f, .1f, .8f), RGBA::RED);
 	mb.End();
 	m_turretRenderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
 	
@@ -40,12 +42,30 @@ Player::Player(Vector3 position)
 
 	m_rateOfFire = StopWatch();
 	m_rateOfFire.SetTimer(.3f);
+
 	m_positionXZ = position.XZ();
+
+	//set up auxilary transforms: camera target, turret renderable, barrel fire position, laser sight...
 	m_cameraTarget = new Transform();
 	m_cameraTarget->SetLocalPosition(GetPosition());
 	m_turretRenderable->SetPosition(GetPosition() + GetUp() * .25f);
 	m_turretRenderable->m_transform.SetParent(&m_renderable->m_transform);
+	m_barrelPosition = new Transform();
+	m_barrelPosition->SetParent(&m_turretRenderable->m_transform);
+	m_barrelPosition->SetLocalPosition(Vector3(0.f, 0.f, .8f));
+
+	mb.Clear();
+	mb.Begin(PRIMITIVE_LINES, false);
+	mb.AppendLine(Vector3::ZERO, Vector3::FORWARD * 5.f, RGBA::RED, RGBA::RED);
+	mb.End();
+	m_laserSightRenderable = new Renderable();
+	m_laserSightRenderable->SetMesh(mb.CreateMesh());
+	m_laserSightRenderable->SetMaterial(Material::GetMaterial("default_unlit"));
+	m_laserSightRenderable->m_transform.SetParent(m_barrelPosition);
+
 	//m_turretRenderable->m_transform.SetParent(m_cameraTarget);
+
+	m_playState = playState;
 }
 
 void Player::Update()
@@ -64,6 +84,7 @@ void Player::Update()
 	
 	m_cameraTarget->SetLocalPosition(GetPosition() + GetUp() * .25f);
 	MoveTurretTowardTarget();
+	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_barrelPosition->GetWorldPosition(), .5f, m_barrelPosition->GetWorldMatrix());
 	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, GetPosition(), 1.5f, m_renderable->m_transform.GetWorldMatrix());
 	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->GetPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix());
 }
@@ -71,6 +92,12 @@ void Player::Update()
 void Player::HandleInput()
 {
 	float ds = g_theGame->GetDeltaSeconds();
+
+	if (g_theInput->IsKeyDown(VK_SPACE)){
+		if (m_rateOfFire.CheckAndReset()){
+			m_playState->AddNewBullet(*m_barrelPosition);
+		}
+	}
 
 	Vector3 camRotation = Vector3::ZERO;
 
@@ -168,19 +195,20 @@ void Player::SetWorldPosition()
 
 void Player::MoveTurretTowardTarget()
 {
-	m_turretRenderable->m_transform.SetRotationEuler(Vector3::ZERO);
+	//m_turretRenderable->m_transform.SetRotationEuler(Vector3::ZERO);
 	Transform* base = m_turretRenderable->m_transform.GetParent();
 	Vector3 localPos = base->WorldToLocal(m_target);
 	//m_turretRenderable->m_transform.LocalLookAt(localPos);
 
-	Matrix44 targetTransform = Matrix44::LookAt(m_turretRenderable->m_transform.GetLocalPosition(), localPos, m_turretRenderable->m_transform.GetUp());
+	Matrix44 targetTransform = Matrix44::LookAt(m_turretRenderable->m_transform.GetLocalPosition(), localPos);
 	Matrix44 currentTransform = m_turretRenderable->m_transform.GetLocalMatrix();
+	//currentTransform.RotateDegrees3D(Vector3(0.f, 60.f, 0.f));
 
-	float turnThisFrame = m_degPerSecond * g_theGame->GetDeltaSeconds() * .25f;
+	float turnThisFrame = m_degPerSecond * g_theGame->GetDeltaSeconds() * .8f;
 	Matrix44 localMat = TurnToward(currentTransform, targetTransform, turnThisFrame);
 	m_turretRenderable->m_transform.SetLocalMatrix(localMat);
 	
-	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->m_transform.GetWorldPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix(), RGBA::YELLOW);
+	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->m_transform.GetWorldPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix(), RGBA::YELLOW);
 
 }
 
@@ -190,15 +218,16 @@ void Player::UpdateTarget()
 	Ray3D ray = Ray3D(g_theGame->m_mainCamera->GetPosition(), g_theGame->m_mainCamera->GetForward() );
 	
 	Contact3D contact;
-	if (g_theGame->m_currentMap->Raycast(contact, 1, ray, 1000.f) > 0) {
+	if (g_theGame->m_currentMap->Raycast(contact, 1, ray, 1000.f)) {
 		//if we hit something, update target
 		m_target = contact.m_position;
-		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_cameraTarget->GetWorldPosition(), m_target, RGBA::GREEN, RGBA::GREEN);
-		g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_target, .1f);
-		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_target, m_target + contact.m_normal, RGBA::RED, RGBA::YELLOW);
+		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_cameraTarget->GetWorldPosition(), m_target, RGBA::GREEN, RGBA::GREEN);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderQuad(0.f, m_target, Vector2::HALF * .2f, g_theGame->GetCurrentCameraRight(), Vector3::UP, RGBA::RED, RGBA::RED, DEBUG_RENDER_IGNORE_DEPTH);
+		//g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_target, .1f);
+		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_target, m_target + contact.m_normal, RGBA::RED, RGBA::YELLOW);
 	} else {
 		m_target = ray.Evaluate(1000.f);
-		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_cameraTarget->GetWorldPosition(), m_target, RGBA::RED, RGBA::RED);
+		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_cameraTarget->GetWorldPosition(), m_target, RGBA::RED, RGBA::RED);
 	}
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "Game/GameState.hpp"
 #include "Game/GameCommon.hpp"
+#include "Game/Bullet.hpp"
 
 class Camera;
 class PerspectiveCamera;
@@ -24,17 +25,24 @@ public:
 	ForwardRenderPath* m_renderPath;
 	RenderScene* m_scene;
 
+	std::vector<Bullet*> m_bullets;
+	std::vector<Entity*> m_allEntities;
+
 	void Update(float ds);
 	void RenderGame();
 	void RenderUI();
 	void HandleInput();
 
-	void AddNewLight(std::string type, RGBA color = RGBA::WHITE);		//adds in front of camera
-	void AddNewLight(std::string type, Vector3 pos, RGBA color = RGBA::WHITE);
-	void AddNewPointLight(Vector3 pos, RGBA color);
-	void AddNewSpotLight(Vector3 pos, RGBA color, float innerAngle = 20.f, float outerAngle = 25.f);
-	void AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotation = Vector3::ZERO);
+
+	Bullet* AddNewBullet(const Transform& t);
+
+	Light* AddNewLight(std::string type, RGBA color = RGBA::WHITE);		//adds in front of camera
+	Light* AddNewLight(std::string type, Vector3 pos, RGBA color = RGBA::WHITE);
+	Light* AddNewPointLight(Vector3 pos, RGBA color);
+	Light* AddNewSpotLight(Vector3 pos, RGBA color, float innerAngle = 20.f, float outerAngle = 25.f);
+	Light* AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotation = Vector3::ZERO);
 	void RemoveLight(int idx = 0);
+	void RemoveLight(Light* light);
 	void SetLightPosition(Vector3 newPos, unsigned int idx = 0);
 	void SetLightColor(RGBA newColor, unsigned int idx = 0);
 	void SetLightColor(Vector4 newColor, unsigned int idx = 0);
@@ -57,6 +65,8 @@ protected:
 	void UpdateShader(int direction);
 	void SetShader();		//sets which shader to draw scene with
 	std::string GetShaderName() const;
+
+	void DeleteEntities();
 
 	//for objects drawn using drawmeshimmediate
 	Material* m_couchMaterial;

@@ -35,6 +35,9 @@ public:
 
 	Mesh* CreateMesh(eVertexType vertType = VERTEX_TYPE_LIT);
 	SubMesh* CreateSubMesh(eVertexType vertType = VERTEX_TYPE_LIT);
+	
+	//LINE
+	void AppendLine(Vector3 start, Vector3 end, RGBA startColor, RGBA endColor);
 
 	//PLANE
 	void AppendPlane(Vector3 nbl, Vector3 nbr, Vector3 ftl, Vector3 ftr, const RGBA& color, Vector2 uvMins, Vector2 uvMaxs );

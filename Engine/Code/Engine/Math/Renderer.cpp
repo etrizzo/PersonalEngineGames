@@ -1356,6 +1356,7 @@ void Renderer::DrawPlane(const Vector3& nearBottomLeft, const Vector3& nearBotto
 void Renderer::DrawPlane(const Plane & plane, const RGBA & color, const Vector2 & uvMins, const Vector2 & uvMaxs)
 {
 	SubMesh* planeMesh = CreatePlane(plane.m_center, plane.m_up, plane.m_right, plane.m_size, color, uvMins, uvMaxs);
+	BindModel(m_modelMatrix.m_top);
 	DrawMesh(planeMesh);
 	delete(planeMesh);
 }

@@ -52,31 +52,31 @@ void RenderScene::RemoveLight(Light * l)
 }
 
 
-void RenderScene::AddNewLight(std::string type, Vector3 pos, RGBA color)
+Light* RenderScene::AddNewLight(std::string type, Vector3 pos, RGBA color)
 {
 	if (type == "point"){
-		AddNewPointLight(pos, color);
+		return AddNewPointLight(pos, color);
 	} else if (type == "dir" || type == "directional"){
-		AddNewDirectionalLight(pos, color);
+		return AddNewDirectionalLight(pos, color);
 	} else if (type == "spot" || type == "cone"){
-		AddNewSpotLight(pos, color);
+		return AddNewSpotLight(pos, color);
 	} else {
 		ConsolePrintf(RGBA::RED, "%s is not a valid light type. Valid types are: < point | dir | spot >", type.c_str());
-		return;
+		return nullptr;
 	}
 }
 
-void RenderScene::AddNewLight(std::string type, Transform t, RGBA color)
+Light* RenderScene::AddNewLight(std::string type, Transform t, RGBA color)
 {
 	if (type == "point"){
-		AddNewPointLight(t.GetWorldPosition(), color);
+		return AddNewPointLight(t.GetWorldPosition(), color);
 	} else if (type == "dir" || type == "directional"){
-		AddNewDirectionalLight(t.GetWorldPosition(), color, t.GetEulerAngles());
+		return AddNewDirectionalLight(t.GetWorldPosition(), color, t.GetEulerAngles());
 	} else if (type == "spot" || type == "cone"){
-		AddNewSpotLight(t, color);
+		return AddNewSpotLight(t, color);
 	} else {
 		ConsolePrintf(RGBA::RED, "%s is not a valid light type. Valid types are: < point | dir | spot >", type.c_str());
-		return;
+		return nullptr;
 	}
 }
 
@@ -87,23 +87,26 @@ Light* RenderScene::AddNewPointLight(Vector3 pos, RGBA color)
 	return newLight;
 }
 
-void RenderScene::AddNewSpotLight(Vector3 pos, RGBA color, float innerAngle, float outerAngle)
+Light* RenderScene::AddNewSpotLight(Vector3 pos, RGBA color, float innerAngle, float outerAngle)
 {
 	SpotLight* s = new SpotLight(pos, color, innerAngle,outerAngle);
 	AddLight(s);
+	return (Light*) s;
 }
 
-void RenderScene::AddNewSpotLight(Transform t, RGBA color, float innerAngle, float outerAngle)
+Light* RenderScene::AddNewSpotLight(Transform t, RGBA color, float innerAngle, float outerAngle)
 {
 	SpotLight* s = new SpotLight(t.GetWorldPosition(), color, innerAngle,outerAngle);
 	s->SetTransform(t);
 	AddLight((Light*) s);
+	return (Light*) s;
 }
 
-void RenderScene::AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotation)
+Light* RenderScene::AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotation)
 {
 	DirectionalLight* d = new DirectionalLight(pos, color, rotation);
 	AddLight((Light*) d);
+	return (Light*) d;
 }
 
 void RenderScene::RemoveLight(int idx)

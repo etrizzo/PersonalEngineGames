@@ -34,7 +34,7 @@ Game::Game()
 
 
 	m_mainCamera->SetPerspectiveOrtho(70.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.1f, 150.f);
-	m_mainCamera->LookAt(Vector3(0.f, 3.f, -5.f), Vector3(0.f, 1.f, 0.f));
+	m_mainCamera->LookAt(Vector3(0.f, 3.f, -2.f), Vector3(0.f, 1.f, 0.f));
 
 	m_uiCamera = new Camera();
 
@@ -72,7 +72,7 @@ void Game::PostStartup()
 	//m_debugRenderSystem->DetachCamera();
 
 	m_currentState = new GameState_Attract();
-	m_currentMap = new Map("Heightmap_2.png", AABB2(-100.f, -100.f, 100.f, 100.f), -5.f, 1.f, IntVector2(20,20), 40.f);
+	m_currentMap = new Map("Heightmap_2.png", AABB2(-150.f, -150.f, 150.f, 150.f), -5.f, 5.f, IntVector2(30,30), 5.f);
 	//m_currentMap = new Map("Heightmap.png", AABB2(-100.f, -100.f, 100.f, 100.f), -5.f, 2.f, IntVector2(20,20), 40.f);
 
 
@@ -121,6 +121,7 @@ void Game::TriggerTransition()
 	m_currentState = m_transitionToState;
 	m_transitionToState = nullptr;
 	m_timeEnteredState = m_gameClock->GetCurrentSeconds();
+	m_currentState->EnterState();
 	//m_currentState->ResetTime();
 }
 

@@ -46,6 +46,10 @@ void GameState::RenderTransitionEffect(float t)
 	g_theGame->SetGameCamera();
 }
 
+void GameState::EnterState()
+{
+}
+
 void GameState::StartTransition()
 {
 	m_startTransitionTime = m_timeInState;
@@ -190,7 +194,8 @@ void GameState_Select::HandleInput()
 GameState_Paused::GameState_Paused(GameState_Playing* playState)
 {
 	m_encounterGameState = playState;
-	g_theGame->m_gameClock->SetScale(0.f);
+	m_transitionLength = .2f;
+	//g_theGame->m_gameClock->SetScale(0.f);
 }
 
 void GameState_Paused::Update(float ds)
@@ -227,7 +232,7 @@ void GameState_Paused::RenderUI()
 	
 }
 
-void GameState_Paused::RenderTransitionEffect()
+void GameState_Paused::RenderTransitionEffect( float t)
 {
 
 }
@@ -238,6 +243,11 @@ void GameState_Paused::HandleInput()
 		g_theGame->m_gameClock->SetScale(1.f);
 		g_theGame->TransitionToState(m_encounterGameState);
 	}
+}
+
+void GameState_Paused::EnterState()
+{
+	g_theGame->m_gameClock->SetScale(0.f);
 }
 
 void GameState_Loading::Render()

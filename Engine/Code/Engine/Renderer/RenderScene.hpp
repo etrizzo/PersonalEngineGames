@@ -24,12 +24,12 @@ public:
 
 	void SortCameras(){};		//todo
 
-	void AddNewLight(std::string type, Vector3 pos, RGBA color = RGBA::WHITE);
-	void AddNewLight(std::string type, Transform t, RGBA color = RGBA::WHITE);
+	Light* AddNewLight(std::string type, Vector3 pos, RGBA color = RGBA::WHITE);
+	Light* AddNewLight(std::string type, Transform t, RGBA color = RGBA::WHITE);
 	Light* AddNewPointLight(Vector3 pos, RGBA color);
-	void AddNewSpotLight(Vector3 pos, RGBA color, float innerAngle = 20.f, float outerAngle = 25.f);
-	void AddNewSpotLight(Transform t, RGBA color, float innerAngle = 20.f, float outerAngle = 25.f);
-	void AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotation = Vector3::ZERO);
+	Light* AddNewSpotLight(Vector3 pos, RGBA color, float innerAngle = 20.f, float outerAngle = 25.f);
+	Light* AddNewSpotLight(Transform t, RGBA color, float innerAngle = 20.f, float outerAngle = 25.f);
+	Light* AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotation = Vector3::ZERO);
 	void RemoveLight(int idx = 0);
 	void SetLightPosition(Vector3 newPos, unsigned int idx = 0);
 	void SetLightColor(RGBA newColor, unsigned int idx = 0);

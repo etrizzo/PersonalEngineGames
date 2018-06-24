@@ -17,7 +17,7 @@ GameState_Playing::GameState_Playing()
 
 	m_couchMaterial = Material::GetMaterial("couch");
 
-	m_player = new Player(Vector3::ZERO);
+	m_player = new Player(this, Vector3::ZERO);
 
 	//m_thaShip = new Entity(Vector3::ZERO, "scifi_fighter_mk6.obj");
 	//m_thaShip->SetDiffuseTexture("SciFi_Fighter-MK6-diffuse.png");
@@ -35,6 +35,7 @@ GameState_Playing::GameState_Playing()
 	//m_scene->AddRenderable(m_particleSystem->m_emitters[0]->m_renderable);
 	m_scene->AddRenderable(m_player->m_renderable);
 	m_scene->AddRenderable(m_player->m_turretRenderable);
+	m_scene->AddRenderable(m_player->m_laserSightRenderable);
 
 
 	//m_scene->AddNewPointLight(Vector3::ZERO, RGBA::WHITE);
@@ -68,6 +69,11 @@ void GameState_Playing::Update(float ds)
 	//m_couchMaterial->SetProperty("SPECULAR_POWER", m_specFactor);
 	//m_particleSystem->Update(deltaSeconds);
 	m_player->Update();
+	for (Entity* entity : m_allEntities){
+		entity->Update();
+	}
+
+	DeleteEntities();
 	//g_theGame->m_mainCamera->m_transform.SetLocalPosition(m_player->GetPosition() + Vector3(0.f, 3.f, -5.f));
 	
 }
@@ -174,36 +180,50 @@ void GameState_Playing::HandleInput()
 
 
 
-void GameState_Playing::AddNewLight(std::string type, RGBA color)
+Bullet * GameState_Playing::AddNewBullet(const Transform& t)
+{
+	Bullet* b = new Bullet(t, this);
+	m_scene->AddRenderable(b->m_renderable);
+	m_bullets.push_back(b);
+	m_allEntities.push_back(b);
+	return nullptr;
+}
+
+Light* GameState_Playing::AddNewLight(std::string type, RGBA color)
 {
 	Vector3 pos = g_theGame->m_currentCamera->GetPosition() + g_theGame->m_currentCamera->GetForward();
-	m_scene->AddNewLight(type, pos, color);
+	return m_scene->AddNewLight(type, pos, color);
 }
 
-void GameState_Playing::AddNewLight(std::string type, Vector3 pos, RGBA color)
+Light* GameState_Playing::AddNewLight(std::string type, Vector3 pos, RGBA color)
 {
-	m_scene->AddNewLight(type, pos, color);
+	return m_scene->AddNewLight(type, pos, color);
 }
 
-void GameState_Playing::AddNewPointLight(Vector3 pos, RGBA color)
+Light* GameState_Playing::AddNewPointLight(Vector3 pos, RGBA color)
 {
-	m_scene->AddNewPointLight(pos, color);
+	return m_scene->AddNewPointLight(pos, color);
 }
 
-void GameState_Playing::AddNewSpotLight(Vector3 pos, RGBA color, float innerAngle, float outerAngle)
+Light* GameState_Playing::AddNewSpotLight(Vector3 pos, RGBA color, float innerAngle, float outerAngle)
 {
-	m_scene->AddNewSpotLight(pos, color, innerAngle, outerAngle);
+	return m_scene->AddNewSpotLight(pos, color, innerAngle, outerAngle);
 }
 
-void GameState_Playing::AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotation)
+Light* GameState_Playing::AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotation)
 {
-	m_scene->AddNewDirectionalLight(pos, color, rotation);
+	return m_scene->AddNewDirectionalLight(pos, color, rotation);
 
 }
 
 void GameState_Playing::RemoveLight(int idx)
 {
 	m_scene->RemoveLight(idx);
+}
+
+void GameState_Playing::RemoveLight(Light * light)
+{
+	m_scene->RemoveLight(light);
 }
 
 void GameState_Playing::SetLightPosition(Vector3 newPos, unsigned int idx)
@@ -310,4 +330,16 @@ std::string GameState_Playing::GetShaderName() const
 
 	}
 	return "NO_SHADER";
+}
+
+void GameState_Playing::DeleteEntities()
+{
+	for (int i = (int) m_allEntities.size() - 1; i > 0; i--){
+		Entity* entity = m_allEntities[i];
+		if (entity->m_aboutToBeDeleted){
+			m_scene->RemoveRenderable(m_allEntities[i]->m_renderable);
+			RemoveAtFast(m_allEntities, i);
+			delete entity;
+		}
+	}
 }

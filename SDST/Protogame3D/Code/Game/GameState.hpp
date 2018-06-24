@@ -22,7 +22,9 @@ public:
 	virtual void RenderTransition();
 	virtual void RenderTransitionEffect(float t);
 	virtual void HandleInput() = 0;
-
+	
+	virtual void EnterState(); //do any setup for when you immediately enter the state 
+	
 	virtual void StartTransition();
 	virtual RenderScene* GetScene();
 	void ResetTime();
@@ -72,11 +74,13 @@ public:
 class GameState_Paused: public GameState{
 public:
 	GameState_Paused(GameState_Playing* playstate);
-	void Update(float ds);
-	void RenderGame();
-	void RenderUI();
-	void RenderTransitionEffect();
-	void HandleInput();
+	void Update(float ds) override;
+	void RenderGame() override;
+	void RenderUI() override;
+	void RenderTransitionEffect(float t) override;
+	void HandleInput() override;
+
+	void EnterState() override;
 
 	GameState_Playing* m_encounterGameState;
 };

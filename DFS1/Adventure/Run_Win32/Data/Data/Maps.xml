@@ -81,19 +81,17 @@
       <Mutate subAreaCenter=".4~.6" subAreaSize=".15~.6" ifType="LightFlowers" toType="Wood" chanceToMutate=".8"/>
 
       <PerlinNoise subAreaCenter=".1~.9" subAreaSize=".45~.65" changeToType="WeatheredWood" ifNoise=".4~1" />
-      --> 
+      
 
       <SetSubArea subAreaCenter=".3~.7" subAreaSize="0.0~2.0" type="perlin" centerDensity="1" edgeDensity="1" feather=".1"/>
         <FillAndEdge edgeTile="Dirt" fillTile="Sand" edgeThickness="1"/> 
         <FillAndEdge edgeTile="Sand" fillTile="Water" edgeThickness="2" feather="1"/> 
       <EndSubArea />
+      --> 
       
-      <SetSubArea subAreaCenter=".3~.7" subAreaSize=".05~.05" type="rectangle" centerDensity="1" edgeDensity=".5" feather=".1"/>
-              <RoomsAndPaths>
-                <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
-                <Paths floor="Dirt" straightChance=".05"/>
-              </RoomsAndPaths>
-              <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
+      <SetSubArea subAreaCenter=".3~.7" subAreaSize=".25~.25" type="circle" centerDensity="1" edgeDensity="1" feather=".05"/>
+              <FillAndEdge edgeTile="Dirt" />
+              <SubMap map="SmallVillage" />
       <EndSubArea />
 <!--
       <FillAndEdge subAreaCenter=".1~.9" subAreaSize=".05~.1" edgeTile="MossyStoneBrick" fillTile="Sand" edgeThickness="1" type="circle"/>

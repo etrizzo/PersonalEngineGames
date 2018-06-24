@@ -207,6 +207,7 @@ IntVector2 Map::GetVertexCoordsFromWorldPos(Vector2 xzPos) const
 
 bool Map::Raycast(Contact3D & contact, int maxHits, const Ray3D & ray, float maxDistance)
 {
+	UNUSED(maxHits);
 	if (DoesIntersect(ray, m_bounds)){
 		float stepSize = .5f * m_tileSize.x;
 		if (IsPointAboveTerrain(ray.m_position)){		//check that not starting inside terrain
@@ -246,6 +247,7 @@ bool Map::Raycast(Contact3D & contact, int maxHits, const Ray3D & ray, float max
 		//started inside the terrain
 		return false;
 	}
+	return false;
 }
 
 bool Map::IsPointAboveTerrain(const Vector3 & point) const
@@ -416,13 +418,13 @@ void Map::RunMapGeneration(const Image& img)
 		}
 	}
 	MeshBuilder mb = MeshBuilder();
-	Material* terrainMat = Material::GetMaterial("default_lit");
+	Material* terrainMat = Material::GetMaterial("terrain");
 	for (int chunkX = 0; chunkX < m_chunkDimensions.x; chunkX++){
 		for (int chunkY = 0; chunkY < m_chunkDimensions.y; chunkY++){
-			int startX = chunkX *m_tilesPerChunk;
-			int startY = chunkY *m_tilesPerChunk;
-			int endX = startX + m_tilesPerChunk;
-			int endY = startY + m_tilesPerChunk;
+			int startX = (int) (chunkX * m_tilesPerChunk);
+			int startY = (int) (chunkY * m_tilesPerChunk);
+			int endX = (int) (startX + m_tilesPerChunk);
+			int endY = (int) (startY + m_tilesPerChunk);
 
 			//generate mesh
 			mb.Clear();

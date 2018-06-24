@@ -892,20 +892,42 @@ Matrix44 TurnToward(const Matrix44 & current, const Matrix44 & target, float max
 	//inner = ClampFloat( inner, -1.0f, 1.0f ); 
 	//float theta = acosf( inner - 1.0f ); 
 
-	//float t = Min( theta * maxTurnRadians, 1.0f );
+	//float t = Min( theta / maxTurnRadians, 1.0f );
 
 	//Matrix44 ret = Interpolate( current, target, t ); 
 	//ret.SetT( current.GetT() ); 
 
 	float cosAngle_f = DotProduct(current.GetForward(), target.GetForward());		//	Using forward is good enough for this assignment - if we wanted to be very thorough we would do some weird shit
 
-	float angle = acosf(cosAngle_f);
-	//now we have an angle, and we wanna turn towards that.
-	// need to find t for a Lerp between current and target
+	if (cosAngle_f < .95f){
+		int y = 1;
+	}
 
-	float x = angle / maxTurnDegrees;
+	cosAngle_f = ClampFloat(cosAngle_f, -1.f, 1.f);
+	float angleRadians = acosf(cosAngle_f);
 
-	float t = Min(x, 1.f);		//if angle > maxTurnDegrees, want to turn and stop, not go past it and waggle ;^o
+	float cosMaxAngle = cosf(maxTurnRadians);
+	float t;
+	
+	if (maxTurnRadians < angleRadians){
+		t = maxTurnRadians / angleRadians;
+	} else {
+		t = 1.f;
+	}
+
+	if (cosAngle_f < .95f){
+		int y = 1;
+	}
+
+	//float x = cosAngle_f/ cosMaxAngle;
+
+	//float angle = acosf(cosAngle_f);
+	////now we have an angle, and we wanna turn towards that.
+	//// need to find t for a Lerp between current and target
+
+	//float x = angle / maxTurnRadians;
+
+	t = Min(t, 1.f);		//if angle > maxTurnDegrees, want to turn and stop, not go past it and waggle ;^o
 
 	Matrix44 ret = Interpolate(current, target, t);
 	ret.SetT(current.GetT());

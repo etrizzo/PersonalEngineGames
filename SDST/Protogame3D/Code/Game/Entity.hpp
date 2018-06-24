@@ -5,6 +5,7 @@
 #include "Engine/Renderer/Renderable.hpp"
 
 class Map;
+class GameState_Playing;
 
 class Entity{
 public:
@@ -64,5 +65,6 @@ public:
 	bool m_noClipMode;
 
 	Renderable* m_renderable;
+	GameState_Playing* m_playState;
 
 };
