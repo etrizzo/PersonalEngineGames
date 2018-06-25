@@ -8,6 +8,7 @@ class PerspectiveCamera;
 class DebugRenderSystem;
 class Entity;
 class Player;
+class Enemy;
 class Light;
 class SpotLight;
 class ParticleSystem;
@@ -25,6 +26,7 @@ public:
 	ForwardRenderPath* m_renderPath;
 	RenderScene* m_scene;
 
+	std::vector<Enemy*> m_enemies;
 	std::vector<Bullet*> m_bullets;
 	std::vector<Entity*> m_allEntities;
 
@@ -32,8 +34,9 @@ public:
 	void RenderGame();
 	void RenderUI();
 	void HandleInput();
+	void EnterState() override;
 
-
+	Enemy* AddNewEnemy(const Vector2& pos);
 	Bullet* AddNewBullet(const Transform& t);
 
 	Light* AddNewLight(std::string type, RGBA color = RGBA::WHITE);		//adds in front of camera

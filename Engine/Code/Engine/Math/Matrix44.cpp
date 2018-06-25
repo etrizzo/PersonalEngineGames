@@ -890,7 +890,7 @@ Matrix44 TurnToward(const Matrix44 & current, const Matrix44 & target, float max
 	//// theta = acos( (trace - 1) *.5f ); 
 	//float inner = (trace - 1.0f) * .5f; 
 	//inner = ClampFloat( inner, -1.0f, 1.0f ); 
-	//float theta = acosf( inner - 1.0f ); 
+	//float angleRadians = acosf( inner - 1.0f ); 
 
 	//float t = Min( theta / maxTurnRadians, 1.0f );
 
@@ -915,9 +915,9 @@ Matrix44 TurnToward(const Matrix44 & current, const Matrix44 & target, float max
 		t = 1.f;
 	}
 
-	if (cosAngle_f < .95f){
+	/*if (cosAngle_f < .95f){
 		int y = 1;
-	}
+	}*/
 
 	//float x = cosAngle_f/ cosMaxAngle;
 

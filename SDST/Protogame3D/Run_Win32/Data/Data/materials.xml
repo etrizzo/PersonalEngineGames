@@ -82,20 +82,23 @@
 	</properties>
 </material>
 
-
-<material name="particle" shader="unlit_alpha">
+<material name="minion" shader="lit_alpha">
 	<textures>
-		<texture type="diffuse" path="particle.png" />
+		<texture type="diffuse" path="minion.png" />
+		<texture type="normal" path="flat" />
 	</textures>
 	<properties>
+		<property type="float" name="SPECULAR_AMOUNT" value=".5" />
+		<property type="float" name="SPECULAR_POWER" value="2" />
 		<property type="RGBA" name="TINT" value="255,255,255,255"/>
 	</properties>
 </material>
 
 
-<material name="additive" shader="additive">
+
+<material name="particle" shader="unlit_alpha">
 	<textures>
-		<texture type="diffuse" path="couch_albedo.png" />
+		<texture type="diffuse" path="particle.png" />
 	</textures>
 	<properties>
 		<property type="RGBA" name="TINT" value="255,255,255,255"/>

@@ -3,6 +3,7 @@
 #include "Game/Map.hpp"
 #include "Game/Entity.hpp"
 #include "Game/Player.hpp"
+#include "game/Enemy.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
@@ -17,7 +18,7 @@ GameState_Playing::GameState_Playing()
 
 	m_couchMaterial = Material::GetMaterial("couch");
 
-	m_player = new Player(this, Vector3::ZERO);
+
 
 	//m_thaShip = new Entity(Vector3::ZERO, "scifi_fighter_mk6.obj");
 	//m_thaShip->SetDiffuseTexture("SciFi_Fighter-MK6-diffuse.png");
@@ -33,9 +34,7 @@ GameState_Playing::GameState_Playing()
 	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
 
 	//m_scene->AddRenderable(m_particleSystem->m_emitters[0]->m_renderable);
-	m_scene->AddRenderable(m_player->m_renderable);
-	m_scene->AddRenderable(m_player->m_turretRenderable);
-	m_scene->AddRenderable(m_player->m_laserSightRenderable);
+
 
 
 	//m_scene->AddNewPointLight(Vector3::ZERO, RGBA::WHITE);
@@ -45,7 +44,6 @@ GameState_Playing::GameState_Playing()
 	m_scene->AddNewDirectionalLight(Vector3(-10.f, 0.f, -10.f), RGBA::WHITE, Vector3(0.f, -90.f, -10.f));		//bluish directional light
 
 	m_scene->AddCamera(g_theGame->m_currentCamera);
-	g_theGame->m_mainCamera->m_transform.SetParent(m_player->m_cameraTarget);
 	g_theGame->m_mainCamera->AddSkybox("skybox.png");
 }
 
@@ -178,15 +176,43 @@ void GameState_Playing::HandleInput()
 	}
 }
 
+void GameState_Playing::EnterState()
+{
+	m_player = new Player(this, Vector3::ZERO);
 
+	AddNewEnemy(Vector2(5.f, 5.f));
+	AddNewEnemy(Vector2(10.f, 8.f));
+	AddNewEnemy(Vector2(30.f, -35.f));
+	AddNewEnemy(Vector2(GetRandomFloatInRange(-100.f, 100.f), GetRandomFloatInRange(-100.f, 100.f)));
+	AddNewEnemy(Vector2(GetRandomFloatInRange(-100.f, 100.f), GetRandomFloatInRange(-100.f, 100.f)));
+	AddNewEnemy(Vector2(GetRandomFloatInRange(-100.f, 100.f), GetRandomFloatInRange(-100.f, 100.f)));
+	AddNewEnemy(Vector2(GetRandomFloatInRange(-100.f, 100.f), GetRandomFloatInRange(-100.f, 100.f)));
+
+	m_scene->AddRenderable(m_player->m_renderable);
+	m_scene->AddRenderable(m_player->m_turretRenderable);
+	m_scene->AddRenderable(m_player->m_laserSightRenderable);
+
+	g_theGame->m_mainCamera->m_transform.SetParent(m_player->m_cameraTarget);
+}
+
+
+
+Enemy * GameState_Playing::AddNewEnemy(const Vector2 & pos)
+{
+	Enemy* enemy = new Enemy(pos, this);
+	m_scene->AddRenderable(enemy->m_renderable);
+	m_enemies.push_back(enemy);
+	m_allEntities.push_back((Entity*) enemy);
+	return enemy;
+}
 
 Bullet * GameState_Playing::AddNewBullet(const Transform& t)
 {
 	Bullet* b = new Bullet(t, this);
 	m_scene->AddRenderable(b->m_renderable);
 	m_bullets.push_back(b);
-	m_allEntities.push_back(b);
-	return nullptr;
+	m_allEntities.push_back((Entity*) b);
+	return b;
 }
 
 Light* GameState_Playing::AddNewLight(std::string type, RGBA color)

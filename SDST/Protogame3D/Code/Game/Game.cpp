@@ -3,7 +3,7 @@
 #include "Game/Map.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 #include "Game/DebugRenderSystem.hpp"
-#include "Game/Entity.hpp"
+#include "Game/Player.hpp"
 #include "Engine/Renderer/Light.hpp"
 #include "Engine/Renderer/ParticleSystem.hpp"
 #include <map>
@@ -133,6 +133,22 @@ float Game::GetDeltaSeconds()
 		ds = 0.f;
 	}
 	return ds;
+}
+
+Vector2 Game::GetPlayerPositionXZ() const
+{
+	if (m_playState != nullptr){
+		return m_playState->m_player->m_positionXZ;
+	}
+	return Vector2::ZERO;
+}
+
+Player * Game::GetPlayer() const
+{
+	if (m_playState != nullptr){
+		return m_playState->m_player;
+	}
+	return nullptr;
 }
 
 

@@ -150,9 +150,15 @@ Vector3 Transform::GetScale() const
 
 Vector3 Transform::WorldToLocal(Vector3 worldPos) const
 {
-	Matrix44 inv = GetWorldMatrix();
-	inv.Invert();
-	Vector3 localPos = Matrix44::TransformPosition(worldPos, inv);
+	Vector3 localPos;
+	//if (m_parent != nullptr){
+		Matrix44 inv = GetWorldMatrix();
+		inv.Invert();
+		localPos = Matrix44::TransformPosition(worldPos, inv);
+	/*} else {
+		Vector3 pos = GetWorldPosition();
+		localPos = worldPos - pos;
+	}*/
 	return localPos;
 }
 

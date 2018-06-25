@@ -43,6 +43,11 @@ public:
 
 	Clock* m_gameClock = nullptr;
 
+	float m_enemySeparateRadius = 2.f;
+	float m_enemySeekWeight = 1.5f;		//these are in game to make them easy to change with console commands
+	float m_enemySeparateWeight = 1.f;
+	
+
 
 	DebugRenderSystem* m_debugRenderSystem;
 	void PostStartup();
@@ -57,6 +62,8 @@ public:
 	void TriggerTransition();
 
 	float GetDeltaSeconds();
+	Vector2 GetPlayerPositionXZ() const;
+	Player* GetPlayer() const;
 
 	AABB2 SetMainCamera();
 	AABB2 SetUICamera();

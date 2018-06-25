@@ -169,12 +169,6 @@ static Vector2 gPos = Vector2(0.0f, 0.0f);
 
 void Player::SetWorldPosition()
 {
-	if (g_theInput->WasKeyJustPressed('J')) {
-		gPos = m_positionXZ; 
-	} 
-	if (g_theInput->WasKeyJustPressed('K')) {
-		m_positionXZ = gPos; 
-	}
 
 	Vector3 pos = Vector3(m_positionXZ.x, GetHeightAtCurrentPos() + .3f, m_positionXZ.y);
 
