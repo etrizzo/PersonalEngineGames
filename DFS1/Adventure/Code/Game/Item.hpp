@@ -21,6 +21,7 @@ public:
 	ItemDefinition* m_definition;
 	Stats m_stats;
 	bool m_currentlyEquipped = false;
+	Texture* GetEquipTexture() const;
 private:
 	void RenderEquipmentIcon(AABB2 boxToRenderIn);
 	void GetRandomStatsFromDefinition();

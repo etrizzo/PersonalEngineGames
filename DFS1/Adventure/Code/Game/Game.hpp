@@ -114,6 +114,7 @@ private:
 	RGBA m_startFadeColor;
 };
 
+RENDER_SLOT GetRenderSlotForEquipSlot(EQUIPMENT_SLOT slot);
 
 bool WasBackJustPressed();		//'back' functionality - esc, b
 bool WasStartJustPressed();		//BROAD 'start' functionality - p, enter, start, a

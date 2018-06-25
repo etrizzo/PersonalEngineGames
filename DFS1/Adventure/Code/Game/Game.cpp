@@ -476,6 +476,24 @@ bool WasPauseJustPressed()
 	return g_theInput->WasKeyJustPressed('P') || g_primaryController->WasButtonJustPressed(XBOX_START);
 }
 
+RENDER_SLOT GetRenderSlotForEquipSlot(EQUIPMENT_SLOT slot)
+{
+	switch(slot){
+	case EQUIP_SLOT_CHEST:
+		return CHEST_SLOT;
+		break;
+	case EQUIP_SLOT_HEAD:
+		return HEAD_SLOT;
+		break;
+	case EQUIP_SLOT_LEGS:
+		return LEGS_SLOT;
+		break;
+	case EQUIP_SLOT_WEAPON:
+		return WEAPON_SLOT;
+	}
+	return NUM_RENDER_SLOTS;
+}
+
 bool WasBackJustPressed()
 {
 	return g_theInput->WasKeyJustPressed(VK_ESCAPE) || g_primaryController->WasButtonJustPressed(XBOX_B);

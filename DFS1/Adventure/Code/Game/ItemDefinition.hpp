@@ -12,6 +12,7 @@ public:
 	EQUIPMENT_SLOT m_equipSlot = NOT_EQUIPPABLE;
 	Stats m_minStats;
 	Stats m_maxStats;
+	Texture* m_equipTexture;
 
 	static std::map< std::string, ItemDefinition* >		s_definitions;
 	static ItemDefinition* GetItemDefinition(std::string definitionName);

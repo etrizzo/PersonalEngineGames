@@ -68,6 +68,19 @@
     </GenerationSteps>
   </MapDefinition>
 
+  <MapDefinition name="ItemZoo" defaultTile="Grass" width="30" soundtrack="Caketown 1.mp3">
+    <GenerationSteps>
+      <FillAndEdge edgeTile="StoneBrickWall" />
+      <SpawnItem type="Platemail Chestpiece" />
+      <SpawnItem type="Platemail Helmet" />
+      <SpawnItem type="Platemail Leggings" />
+      <SpawnItem type="Leather Chestpiece" />
+      <SpawnItem type="Leather Leggings" />
+      <SpawnItem type="Leather Hat" />
+    </GenerationSteps>
+  </MapDefinition>
+
+
   <MapDefinition name="Zoo" defaultTile="Grass" width="80~90" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
       <!--
@@ -90,7 +103,7 @@
       --> 
       
       <SetSubArea subAreaCenter=".3~.7" subAreaSize=".25~.25" type="circle" centerDensity="1" edgeDensity="1" feather=".05"/>
-              <FillAndEdge edgeTile="Dirt" />
+              <!--<FillAndEdge edgeTile="Dirt" /> -->
               <SubMap map="SmallVillage" />
       <EndSubArea />
 <!--

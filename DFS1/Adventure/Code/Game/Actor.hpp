@@ -29,9 +29,11 @@ public:
 	ActorDefinition* m_definition;
 	float m_timeLastUpdatedDirection;
 	bool m_moving;
+	std::vector<Texture*> m_layerTextures;
 	Item* m_equippedItems[NUM_EQUIP_SLOTS];
 	Stats m_stats;
 	Stats m_baseStats;
+	bool m_changedClothes;
 
 	void StartFiringArrow();
 	

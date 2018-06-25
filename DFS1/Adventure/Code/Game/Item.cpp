@@ -88,6 +88,11 @@ void Item::RunCorrectivePhysics()
 {
 }
 
+Texture * Item::GetEquipTexture() const
+{
+	return m_definition->m_equipTexture;
+}
+
 void Item::RenderEquipmentIcon(AABB2 boxToRenderIn)
 {
 	std::string letterToRender = "";

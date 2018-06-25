@@ -7,6 +7,12 @@ ItemDefinition::ItemDefinition(tinyxml2::XMLElement * itemElement)
 	:EntityDefinition(itemElement)
 {
 	std::string equipSlotName = ParseXmlAttribute(*itemElement, "equipSlot", "NONE");
+	std::string equipTextureName = ParseXmlAttribute(*itemElement, "equipTexture", "NONE");
+	if (equipTextureName != "NONE"){
+		m_equipTexture = Texture::CreateOrGetTexture(equipTextureName);
+	} else {
+		m_equipTexture = nullptr;
+	}
 	SetEquipSlot(equipSlotName);
 	ParseStats(itemElement->FirstChildElement("Stats"));	
 }

@@ -1,7 +1,7 @@
 <AdventureDefinitions>
 
   <AdventureDefinition name="Balrog" title="Kill the Balrog">
-    <StartConditions startMap="My Zoo" startOnTileType="Grass"/>
+    <StartConditions startMap="Items" startOnTileType="Grass"/>
     <VictoryConditions>
      <!--<KillActor actorToKill="Goblin" numToKill="3"/>-->
       <KillActor actorToKill="Goblin" numToKill="1"/>
@@ -12,6 +12,9 @@
     <Map name="My Zoo" mapDefinition="Zoo">
       <Actor type="Goblin" onTileType="Grass"/>
       <Item type="Platemail Chestpiece" onTileType="Grass"/>
+    </Map>
+
+    <Map name="Items" mapDefinition="ItemZoo">
     </Map>
 =
     <Map name="Large Map" mapDefinition="LargeMap">

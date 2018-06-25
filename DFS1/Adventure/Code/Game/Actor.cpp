@@ -20,8 +20,11 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 	GetRandomStatsFromDefinition();
 	//m_animSets = std::vector<SpriteAnimSet*>();
 	//m_animSets.resize(NUM_RENDER_SLOTS);
+	m_layerTextures = std::vector<Texture*>();
 	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
 		if (m_definition->m_layerTextures[i] != nullptr){
+			//copy default textures
+			m_layerTextures.push_back(m_definition->m_layerTextures[i]);
 			//m_animSets[i] = new SpriteAnimSet(m_definition->m_spriteSetDefs[i]);
 			//m_renderable->SetDiffuseTexture(m_animSets[i]->GetCurrentTexture(), i);
 			m_renderable->SetSubMesh(m_localDrawingBox, m_lastUVs, RGBA::WHITE, i);
@@ -114,15 +117,18 @@ std::string Actor::GetAnimName()
 void Actor::UpdateRenderable()
 {
 	AABB2 uvs = m_animSet->GetCurrentUVs();
-	if (!(uvs == m_lastUVs)){		//every anim set should have the same UVs so this should be fine
+	if (!(uvs == m_lastUVs) || m_changedClothes){		//every anim set should have the same UVs so this should be fine
 		m_lastUVs = uvs;
 		for (int i = BODY_SLOT; i  < NUM_RENDER_SLOTS; i++){
-			if (m_definition->m_layerTextures[i] != nullptr){
+			if (m_layerTextures[i] != nullptr){
 				//Texture* baseTexture = m_animSets[i]->GetCurrentTexture();	//base, legs, torso, head (, weapon)
 				m_renderable->SetSubMesh(m_localDrawingBox, uvs, RGBA::WHITE, i);
-
+				if (m_changedClothes){
+					m_renderable->SetDiffuseTexture(m_layerTextures[i], i);
+				}
 			}
 		}
+		m_changedClothes = false;
 	}
 }
 
@@ -217,9 +223,12 @@ void Actor::EquipOrUnequipItem(Item * itemToEquip)
 {
 	EQUIPMENT_SLOT slotToEquipIn = itemToEquip->m_definition->m_equipSlot;
 	if (slotToEquipIn != NOT_EQUIPPABLE){
+		RENDER_SLOT texSlot =GetRenderSlotForEquipSlot(slotToEquipIn);
 		if (itemToEquip->m_currentlyEquipped){		//un-equip item
 			m_equippedItems[slotToEquipIn] = nullptr;
 			itemToEquip->m_currentlyEquipped = false;
+			m_layerTextures[texSlot] = m_definition->m_layerTextures[texSlot];
+			m_changedClothes = true;
 		} else {
 			if (m_equippedItems[slotToEquipIn] == nullptr){		//equip to empty slot	
 				m_equippedItems[slotToEquipIn] = itemToEquip;
@@ -228,6 +237,8 @@ void Actor::EquipOrUnequipItem(Item * itemToEquip)
 				m_equippedItems[slotToEquipIn] = itemToEquip;
 			}
 			itemToEquip->m_currentlyEquipped = true;
+			m_layerTextures[texSlot] = itemToEquip->GetEquipTexture();
+			m_changedClothes = true;
 		}
 		UpdateStats();
 	}
