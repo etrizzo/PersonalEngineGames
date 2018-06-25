@@ -22,6 +22,7 @@ public:
 	Stats m_stats;
 	bool m_currentlyEquipped = false;
 	Texture* GetEquipTexture() const;
+	bool ShowsHair() const;
 private:
 	void RenderEquipmentIcon(AABB2 boxToRenderIn);
 	void GetRandomStatsFromDefinition();

@@ -10,6 +10,7 @@ ItemDefinition::ItemDefinition(tinyxml2::XMLElement * itemElement)
 	std::string equipTextureName = ParseXmlAttribute(*itemElement, "equipTexture", "NONE");
 	if (equipTextureName != "NONE"){
 		m_equipTexture = Texture::CreateOrGetTexture(equipTextureName);
+		m_showHair = ParseXmlAttribute(*itemElement, "showHair", m_showHair);
 	} else {
 		m_equipTexture = nullptr;
 	}

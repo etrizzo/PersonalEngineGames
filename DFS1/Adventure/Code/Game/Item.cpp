@@ -93,6 +93,11 @@ Texture * Item::GetEquipTexture() const
 	return m_definition->m_equipTexture;
 }
 
+bool Item::ShowsHair() const
+{
+	return m_definition->m_showHair;
+}
+
 void Item::RenderEquipmentIcon(AABB2 boxToRenderIn)
 {
 	std::string letterToRender = "";

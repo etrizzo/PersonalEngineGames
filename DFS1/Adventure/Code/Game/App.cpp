@@ -84,7 +84,7 @@ void App::Update()
 	if (g_theInput->IsKeyDown('T')){
 		ds/=10.f;
 	}
-	ds  = ClampFloat(ds, .005f, .4f);
+	//ds  = ClampFloat(ds, .005f, .4f);
 
 	if (g_theGame->m_isPaused){
 		ds = 0.f;

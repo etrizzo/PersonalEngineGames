@@ -1,4 +1,4 @@
-    <SpriteAnimSet name="humanoid" spriteSheet="HUMANOIDS/BODY/body_human_f_1.png" spriteLayout="13,21" fps="6" defaultAnim ="IdleSouth">
+    <SpriteAnimSet name="humanoid" spriteSheet="HUMANOIDS/BODY/body_human_f_1.png" spriteLayout="13,21" fps="12" defaultAnim ="IdleSouth">
       <SpriteAnim name="MoveNorth"    spriteIndexes="105~112"   />
       <SpriteAnim name="MoveWest"     spriteIndexes="117~125"  />
       <SpriteAnim name="MoveSouth"    spriteIndexes="131~138" />
@@ -17,7 +17,7 @@
 
 
 
-<SpriteAnimSet spriteSheet="HUMANOIDS/BODY/body_human_f_1.png" spriteLayout="9,4" fps="6" defaultAnim ="IdleSouth">
+<SpriteAnimSet name="humanoid_old" spriteSheet="HUMANOIDS/BODY/body_human_f_1.png" spriteLayout="9,4" fps="6" defaultAnim ="IdleSouth">
       <SpriteAnim name="MoveNorth"    spriteIndexes="0~8"/>
       <SpriteAnim name="MoveWest"     spriteIndexes="9~17"/>
       <SpriteAnim name="MoveSouth"    spriteIndexes="18~26"/>

@@ -68,7 +68,7 @@
     </GenerationSteps>
   </MapDefinition>
 
-  <MapDefinition name="ItemZoo" defaultTile="Grass" width="30" soundtrack="Caketown 1.mp3">
+  <MapDefinition name="ItemZoo" defaultTile="Grass" width="15" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
       <FillAndEdge edgeTile="StoneBrickWall" />
       <SpawnItem type="Platemail Chestpiece" />

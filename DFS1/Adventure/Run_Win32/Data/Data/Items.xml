@@ -51,7 +51,7 @@
     </SpriteAnimSet>
   </ItemDefinition>
 
-  <ItemDefinition name="Leather Hat" equipSlot="head" equipTexture="HUMANOIDS/HEAD/HATS/leathercap_f.png">
+  <ItemDefinition name="Leather Hat" equipSlot="head" equipTexture="HUMANOIDS/HEAD/HATS/leathercap_f.png" showHair="true">
     <Stats baseMovement="1~3" baseStrength="0" baseDefense="1~3" />
     <SpriteAnimSet spriteSheet="armor_16x16.png" spriteLayout="16,16">
       <SpriteAnim name="Idle" spriteIndexes="4"/>

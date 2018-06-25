@@ -135,6 +135,7 @@ void Matrix44::Append(const Matrix44 & matrixToAppend)
 	newVals[Tstart + 3] = T.DotProduct(W);
 	
 	SetValues(newVals);
+	delete newVals;
 
 }
 
