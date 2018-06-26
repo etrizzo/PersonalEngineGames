@@ -1,5 +1,7 @@
 #include "ItemDefinition.hpp"
 #include "Game/Stats.hpp"
+#include "Game/ClothingSet.hpp"
+#include "Game/Game.hpp"
 
 std::map<std::string, ItemDefinition*>	ItemDefinition::s_definitions;
 
@@ -7,12 +9,14 @@ ItemDefinition::ItemDefinition(tinyxml2::XMLElement * itemElement)
 	:EntityDefinition(itemElement)
 {
 	std::string equipSlotName = ParseXmlAttribute(*itemElement, "equipSlot", "NONE");
-	std::string equipTextureName = ParseXmlAttribute(*itemElement, "equipTexture", "NONE");
-	if (equipTextureName != "NONE"){
-		m_equipTexture = Texture::CreateOrGetTexture(equipTextureName);
+	std::string clothingSetName = ParseXmlAttribute(*itemElement, "clothingSet", "NONE");
+	if (clothingSetName != "NONE"){
+		m_clothingSetDefinition = ClothingSetDefinition::GetDefinition(clothingSetName);
 		m_showHair = ParseXmlAttribute(*itemElement, "showHair", m_showHair);
+		m_defaultSet = m_clothingSetDefinition->GetRandomSet();
 	} else {
-		m_equipTexture = nullptr;
+		m_clothingSetDefinition = nullptr;
+		m_defaultEquipTexture = ParseXmlAttribute(*itemElement, "equipTexture", (Texture*) nullptr);
 	}
 	SetEquipSlot(equipSlotName);
 	ParseStats(itemElement->FirstChildElement("Stats"));	
@@ -21,6 +25,15 @@ ItemDefinition::ItemDefinition(tinyxml2::XMLElement * itemElement)
 ItemDefinition::~ItemDefinition()
 {
 
+}
+
+Texture * ItemDefinition::GetEquipTexture() const
+{
+	if (m_defaultSet != nullptr){
+		return m_defaultSet->GetTexture(GetRenderSlotForEquipSlot(m_equipSlot));
+	} else {
+		return m_defaultEquipTexture;
+	}
 }
 
 ItemDefinition * ItemDefinition::GetItemDefinition(std::string definitionName)

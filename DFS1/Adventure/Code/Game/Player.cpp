@@ -95,9 +95,9 @@ void Player::RenderStatsInBox(AABB2 boxToDrawIn, RGBA tint)
 	//pictureBox.AddPaddingToSides(height *-.1f, height *-.1f);
 	AABB2 texCoords = m_animSet->GetUVsForAnim("IdleSouth", 0.f);
 	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
-		if (m_layerTextures[i] != nullptr){
+		if (m_currentLook->GetTexture(i) != nullptr){
 			//const Texture* entityTexture = m_animSets[i]->GetTextureForAnim("IdleSouth");
-			g_theRenderer->DrawTexturedAABB2(pictureBox, *m_layerTextures[i], texCoords.mins, texCoords.maxs, RGBA());
+			g_theRenderer->DrawTexturedAABB2(pictureBox, *m_currentLook->GetTexture(i), texCoords.mins, texCoords.maxs, RGBA());
 		}
 	}
 

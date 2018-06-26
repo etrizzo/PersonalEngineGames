@@ -196,6 +196,8 @@
     <ClCompile Include="AdventureDefinition.cpp" />
     <ClCompile Include="AIBehavior.cpp" />
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="ClothingSet.cpp" />
+    <ClCompile Include="ClothingSetDefinition.cpp" />
     <ClCompile Include="DebugRenderSystem.cpp" />
     <ClCompile Include="DebugRenderTask.cpp" />
     <ClCompile Include="Decoration.cpp" />
@@ -236,6 +238,8 @@
     <ClInclude Include="AdventureDefinition.hpp" />
     <ClInclude Include="AIBehavior.hpp" />
     <ClInclude Include="App.hpp" />
+    <ClInclude Include="ClothingSet.hpp" />
+    <ClInclude Include="ClothingSetDefinition.hpp" />
     <ClInclude Include="DebugRenderSystem.hpp" />
     <ClInclude Include="DebugRenderTask.hpp" />
     <ClInclude Include="Decoration.hpp" />

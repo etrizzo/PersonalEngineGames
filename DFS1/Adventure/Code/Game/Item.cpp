@@ -90,7 +90,7 @@ void Item::RunCorrectivePhysics()
 
 Texture * Item::GetEquipTexture() const
 {
-	return m_definition->m_equipTexture;
+	return m_definition->GetEquipTexture();
 }
 
 bool Item::ShowsHair() const

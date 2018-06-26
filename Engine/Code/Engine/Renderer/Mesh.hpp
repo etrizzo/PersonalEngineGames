@@ -63,6 +63,7 @@ public:
 	Mesh(eVertexType layout = VERTEX_TYPE_LIT);
 	void AddSubMesh(SubMesh* smesh);
 	void SetSubMesh(SubMesh* smesh, int idx = 0);
+	void ClearSubMeshes();
 	std::vector<SubMesh*> m_subMeshes;
 
 	static std::map <std::string, Mesh*>	s_meshes;

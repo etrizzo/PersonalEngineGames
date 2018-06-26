@@ -23,26 +23,32 @@
         <EndSubArea />
       <EndSubArea />
       
-      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.05" type="rectangle" centerDensity="1" edgeDensity=".9" feather=".1"/>
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.1" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
               <RoomsAndPaths>
                 <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
                 <Paths floor="Dirt" straightChance=".05"/>
               </RoomsAndPaths>
+              <SpawnActor type="Villager" iterations="3~4" onTile="LightFlowers" />
               <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
+                <FillAndEdge edgeTile="Dirt" />
       <EndSubArea />
-      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.05" type="rectangle" centerDensity="1" edgeDensity=".5" feather=".1"/>
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.08" type="circle" centerDensity="1" edgeDensity=".5" feather=".1"/>
               <RoomsAndPaths>
                 <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
                 <Paths floor="Dirt" straightChance=".05"/>
               </RoomsAndPaths>
+               <SpawnActor type="Villager" iterations="3~4" onTile="LightFlowers" />
               <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
+                <FillAndEdge edgeTile="Dirt" />
       <EndSubArea />
-      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.05" type="rectangle" centerDensity="1" edgeDensity=".5" feather=".1"/>
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.15" type="circle" centerDensity="1" edgeDensity=".5" feather=".1"/>
               <RoomsAndPaths>
                 <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
                 <Paths floor="Dirt" straightChance=".05"/>
               </RoomsAndPaths>
+               <SpawnActor type="Villager" iterations="4~6" onTile="LightFlowers" />
               <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
+              <FillAndEdge edgeTile="Dirt" />
       <EndSubArea />
     
       <SetSubArea subAreaCenter=".7~.9" subAreaSize=".25~.35" type="circle" centerDensity="1" edgeDensity=".01" feather=".3" />
@@ -68,15 +74,23 @@
     </GenerationSteps>
   </MapDefinition>
 
-  <MapDefinition name="ItemZoo" defaultTile="Grass" width="15" soundtrack="Caketown 1.mp3">
+  <MapDefinition name="ItemZoo" defaultTile="Grass" width="20" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
-      <FillAndEdge edgeTile="StoneBrickWall" />
+      <FillAndEdge edgeTile="StoneBrickWall" edgeThickness="2"/>
       <SpawnItem type="Platemail Chestpiece" />
       <SpawnItem type="Platemail Helmet" />
       <SpawnItem type="Platemail Leggings" />
       <SpawnItem type="Leather Chestpiece" />
       <SpawnItem type="Leather Leggings" />
       <SpawnItem type="Leather Hat" />
+
+      <SpawnActor type="Villager" iterations="3~4" />
+      <!--
+      <SpawnActor type="Villager" />
+      <SpawnActor type="Villager" />
+      <SpawnActor type="Villager" />
+      <SpawnActor type="Villager" />
+    -->
     </GenerationSteps>
   </MapDefinition>
 

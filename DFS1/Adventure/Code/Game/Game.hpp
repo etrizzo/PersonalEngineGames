@@ -99,6 +99,7 @@ private:
 	void LoadSounds();
 	void LoadTileDefinitions();
 	void LoadMapDefinitions();
+	void LoadClothingDefinitions();
 	void LoadEntityDefinitions();
 	void LoadActorDefinitions();
 	void LoadProjectileDefinitions();

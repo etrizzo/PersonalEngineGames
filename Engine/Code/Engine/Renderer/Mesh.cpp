@@ -103,6 +103,13 @@ void Mesh::SetSubMesh(SubMesh * smesh, int idx)
 	m_subMeshes[idx] = smesh;
 }
 
+void Mesh::ClearSubMeshes()
+{
+	//delete m_subMeshes.data();
+	m_subMeshes.clear();
+	m_subMeshes = std::vector<SubMesh*>();
+}
+
 Mesh * Mesh::CreateOrGetMesh(std::string name)
 {
 	auto containsMesh = s_meshes.find((std::string)name); 

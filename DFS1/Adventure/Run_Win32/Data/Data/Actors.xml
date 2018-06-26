@@ -10,17 +10,9 @@
     <Health max="100" start="100"/>
     <Inventory>
        <Item name="Bow" chanceToSpawn="1.0"/>
-       <Item name="Bow" chanceToSpawn="1.0"/>
-       <Item name="Bow" chanceToSpawn="1.0"/>
     </Inventory>
     <SpriteAnimSet name = "humanoid" />
-    <Layers>
-      <Body name="HUMANOIDS/BODY/body_human_f_1.png" />
-      <Legs name="HUMANOIDS/LEGS/pants_f_1.png" />
-      <Chest name="HUMANOIDS/CHEST/chest_f_1.png" />
-      <Head name="HUMANOIDS/HEAD/hair_human_1.png" />
-      <Weapon name="HUMANOIDS/WEAPON/bow.png" />
-    </Layers>
+    <Clothing set="Player" />
   </ActorDefinition>
 
   <ActorDefinition name="Goblin" faction="evil">
@@ -31,13 +23,7 @@
     </Movement>
     <Health max="30" start="30"/>
     <SpriteAnimSet name = "humanoid" />
-    <Layers>
-      <Body name="HUMANOIDS/BODY/body_orc_f_1.png" />
-      <Legs name="HUMANOIDS/LEGS/pants_f_1.png" />
-      <Chest name="HUMANOIDS/CHEST/chest_f_2.png" />
-      <Head name="HUMANOIDS/HEAD/head_bandana_f.png" />
-      <Weapon name="HUMANOIDS/WEAPON/recurvebow.png" />
-    </Layers>
+    <Clothing set="Orc" />
   </ActorDefinition>
 
 
@@ -50,10 +36,20 @@
     <Health max="80" start="80"/>
     <Stats baseMovement="1" baseStrength="3~4" baseDefense="2~3" />
    <SpriteAnimSet name = "humanoid" />
-    <Layers>
-      <Body name="HUMANOIDS/BODY/body_orc_m_2.png" />
-       <Weapon name="HUMANOIDS/WEAPON/recurvebow.png" />
-    </Layers>
+   <Clothing set="Balrog" />
+  </ActorDefinition>
+
+
+  <ActorDefinition name="Villager" faction="good">
+    <Size physicsRadius=".25" drawRadius="1.0" aspect=".8" pivot="0.5,0.25"/>
+    <Movement>
+      <Walk speed="2.0"/>
+      <Swim speed ="1.0"/>
+    </Movement>
+    <Stats baseMovement="1" baseStrength="1~2" baseDefense="0" />
+    <Health max="100" start="100"/>
+    <SpriteAnimSet name = "humanoid" />
+    <Clothing set="Villager" />
   </ActorDefinition>
 
 </ActorDefinitions>

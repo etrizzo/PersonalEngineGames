@@ -92,6 +92,22 @@ void MapGenStep::SetMask(Map& map)
 	m_mask->SetDensity(m_centerDensity, m_edgeDensity, m_featherRate);
 }
 
+Tile* MapGenStep::GetSpawnTileOfType(TileDefinition * def, Map & map)
+{
+	IntVector2 pos = m_mask->GetRandomPointInArea();
+	Tile* tile = map.TileAt(pos);
+	int tries = 0;
+	while (tries < 1000 && ((tile == nullptr) || ((tile->m_tileDef != def) || tile->HasBeenSpawnedOn()))){
+		pos = m_mask->GetRandomPointInArea();
+		tile = map.TileAt(pos);
+		tries++;
+	}
+	if (tile != nullptr){
+		map.MarkTileForSpawn(pos);
+	}
+	return tile;
+}
+
 MapGenStep * MapGenStep::CreateMapGenStep(const tinyxml2::XMLElement & genStepXmlElement)
 {
 	std::string genName = genStepXmlElement.Name();
@@ -682,11 +698,13 @@ void MapGenStep_SpawnActor::Run(Map & map)
 	if (m_spawnOnTileDef == nullptr){
 		m_spawnOnTileDef = map.m_mapDef->m_defaultTile;
 	}
-	Tile spawnTile = map.GetSpawnTileOfType(m_spawnOnTileDef);
-	map.SpawnNewActor(m_actorName, spawnTile.GetCenter());
-	for (int i = 0; i < map.m_difficulty; i++){		//random chance to add a multiple of the actor
-		if (CheckRandomChance(.05f)){
-			map.SpawnNewActor(m_actorName, spawnTile.GetCenter());
+	Tile* spawnTile = GetSpawnTileOfType(m_spawnOnTileDef, map);
+	if (spawnTile != nullptr){
+		map.SpawnNewActor(m_actorName, spawnTile->GetCenter());
+		for (int i = 0; i < map.m_difficulty; i++){		//random chance to add a multiple of the actor
+			if (CheckRandomChance(.05f)){
+				map.SpawnNewActor(m_actorName, spawnTile->GetCenter());
+			}
 		}
 	}
 	

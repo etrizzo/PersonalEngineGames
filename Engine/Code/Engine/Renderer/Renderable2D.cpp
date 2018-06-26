@@ -9,7 +9,7 @@ Renderable2D::Renderable2D()
 {
 	m_mesh = new Mesh();
 	m_mb = new MeshBuilder();
-	m_materials.push_back(Material::GetMaterial("default_lit"));
+	m_materials.push_back(Material::GetMaterial("default"));
 	//m_materials[0]->SetShader("default_lit");
 }
 
@@ -190,4 +190,11 @@ bool Renderable2D::UsesLights() const
 int Renderable2D::GetZOrder() const
 {
 	return m_zOrder;
+}
+
+void Renderable2D::Clear()
+{
+	m_mesh->ClearSubMeshes();
+	m_materials.clear();
+	m_materials.push_back(Material::GetMaterial("default"));
 }

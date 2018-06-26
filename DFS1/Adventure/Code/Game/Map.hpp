@@ -93,6 +93,7 @@ public:
 	Tile GetRandomTile() const;
 	IntVector2 GetRandomTileCoords() const;
 	bool IsCoordinateOnMap(IntVector2 coordinate);
+	void MarkTileForSpawn(IntVector2 pos);
 
 	bool HasLineOfSight(const Vector2& startPos, const Vector2& endPos, float maxDistance = 20.f);
 	RaycastResult2D Map::Raycast(const Vector2& startPos, const Vector2& direction, float maxDistance) ;

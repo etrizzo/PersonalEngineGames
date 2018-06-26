@@ -641,13 +641,16 @@ Tile Map::GetSpawnTileOfType(TileDefinition * tileType) const
 	int randomTileIndex = GetIndexFromCoordinates(randomTileX, randomTileY, m_dimensions.x, m_dimensions.y);
 	int tries = 0;
 	Tile randomTile = m_tiles[randomTileIndex];
-	while (((randomTile.m_tileDef->m_name != tileType->m_name) || (randomTile.HasBeenSpawnedOn())) && tries < 1000){
+	while (((randomTile.m_tileDef->m_name != tileType->m_name) || (randomTile.HasBeenSpawnedOn())) && tries < 3000){
 		randomTileX = GetRandomIntInRange(1,m_dimensions.x-2);
 		randomTileY = GetRandomIntInRange(1,m_dimensions.y-2);
 		randomTileIndex = GetIndexFromCoordinates(randomTileX, randomTileY, m_dimensions.x, m_dimensions.y);
 		randomTile = m_tiles[randomTileIndex];
 		tries++;
 	}
+	//if (tries >= 3000){
+	//	randomTile
+	//}
 	randomTile.m_extraInfo->m_spawnedOn = true;
 	return randomTile;
 }
@@ -680,6 +683,16 @@ bool Map::IsCoordinateOnMap(IntVector2 coordinate)
 		}
 	}
 	return false;
+}
+
+void Map::MarkTileForSpawn(IntVector2 pos)
+{
+	int index = GetIndexFromCoordinates(pos.x, pos.y, m_dimensions.x, m_dimensions.y);
+	if (index >= m_numTiles || index < 0){
+		return;
+	} else {
+		m_tiles[index].MarkAsSpawned();
+	}
 }
 
 AABB2 Map::GetCameraBounds() const

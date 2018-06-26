@@ -4,6 +4,7 @@
 #include "Engine/Math/IntRange.hpp"
 #include "Engine/Math/FloatRange.hpp"
 #include "Engine/Math/AABB2.hpp"
+#include "Engine/Renderer/Texture.hpp"
 #include "ThirdParty/TinyXML/tinyxml2.h"
 #include <string>
 
@@ -21,7 +22,7 @@ IntVector2 ParseXmlAttribute( const tinyxml2::XMLElement& element, const char* a
 AABB2 ParseXmlAttribute( const tinyxml2::XMLElement& element, const char* attributeName, const AABB2& defaultValue );
 std::string ParseXmlAttribute( const tinyxml2::XMLElement& element, const char* attributeName, const std::string& defaultValue );
 std::string ParseXmlAttribute( const tinyxml2::XMLElement& element, const char* attributeName, const char* defaultValue=nullptr );
-
+Texture* ParseXmlAttribute( const tinyxml2::XMLElement& element, const char* attributeName, Texture* defaultValue=nullptr );
 
 
 bool ParseStringBool(std::string stringToParse);

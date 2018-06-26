@@ -53,4 +53,7 @@ public:
 	bool UsesLights() const;
 	int GetZOrder() const;
 
+	//clears meshes and materials
+	void Clear();
+
 };

@@ -117,6 +117,17 @@ std::string ParseXmlAttribute(const tinyxml2::XMLElement & element, const char *
 	return ParseXmlAttribute(element,attributeName, std::string(defaultValue));
 }
 
+Texture * ParseXmlAttribute(const tinyxml2::XMLElement & element, const char * attributeName, Texture * defaultValue)
+{
+	std::string texName = ParseXmlAttribute(element, attributeName, "NO_TEXTURE");
+	if (texName == "NO_TEXTURE"){
+		//if attribute doesn't exist, return default val (usually nullptr)
+		return defaultValue;
+	}
+	Texture* tex = Texture::CreateOrGetTexture(texName);
+	return tex;
+}
+
 bool ParseStringBool(std::string stringToParse)
 {
 	return (stringToParse == "true");;

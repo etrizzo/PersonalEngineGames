@@ -2,7 +2,9 @@
 #include "Game/GameCommon.hpp"
 #include "EntityDefinition.hpp"
 #include "Game/Stats.hpp"
+
 class Item;
+class ClothingSetDefinition;
 
 class ActorDefinition: public EntityDefinition{
 public:
@@ -13,6 +15,7 @@ public:
 	std::string m_startingFaction;
 	Stats m_minStats;
 	Stats m_maxStats;
+	ClothingSetDefinition* m_clothingSetDef;
 
 
 	static std::map< std::string, ActorDefinition* >		s_definitions;

@@ -11,6 +11,7 @@ public:
 	void RunIterations(Map& map);
 	virtual void SetMask(Map& map);
 	virtual void Run( Map& map ) = 0; // "pure virtual", MUST be overridden by subclasses
+	Tile* GetSpawnTileOfType(TileDefinition* def, Map& map);
 
 public:
 	static MapGenStep* CreateMapGenStep( const tinyxml2::XMLElement& genStepXmlElement );

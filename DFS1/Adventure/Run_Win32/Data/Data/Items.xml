@@ -16,42 +16,42 @@
   
   
 
-  <ItemDefinition name="Platemail Chestpiece" equipSlot="chest" equipTexture="HUMANOIDS/CHEST/chest_plate_f.png">
+  <ItemDefinition name="Platemail Chestpiece" equipSlot="chest" clothingSet="Platemail" >
     <Stats baseMovement="0" baseStrength="0~1" baseDefense="3~5" />
     <SpriteAnimSet spriteSheet="armor_16x16.png" spriteLayout="16,16">
       <SpriteAnim name="Idle" spriteIndexes="130"/>
     </SpriteAnimSet>
   </ItemDefinition>
 
-  <ItemDefinition name="Platemail Helmet" equipSlot="head" equipTexture="HUMANOIDS/HEAD/HATS/helmet_f.png">
+  <ItemDefinition name="Platemail Helmet" equipSlot="head" clothingSet="Platemail">
     <Stats baseMovement="0" baseStrength="0~1" baseDefense="3~5" />
     <SpriteAnimSet spriteSheet="armor_16x16.png" spriteLayout="16,16">
       <SpriteAnim name="Idle" spriteIndexes="25"/>
     </SpriteAnimSet>
   </ItemDefinition>
 
-  <ItemDefinition name="Platemail Leggings" equipSlot="legs" equipTexture="HUMANOIDS/LEGS/pants_plate_f.png">
+  <ItemDefinition name="Platemail Leggings" equipSlot="legs" clothingSet="Platemail">
     <Stats baseMovement="0" baseStrength="0~1" baseDefense="3~5" />
     <SpriteAnimSet spriteSheet="armor_16x16.png" spriteLayout="16,16">
       <SpriteAnim name="Idle" spriteIndexes="190"/>
     </SpriteAnimSet>
   </ItemDefinition>
 
-  <ItemDefinition name="Leather Chestpiece" equipSlot="chest" equipTexture="HUMANOIDS/CHEST/chest_leather_f.png">
+  <ItemDefinition name="Leather Chestpiece" equipSlot="chest" clothingSet="Leather">
     <Stats baseMovement="1~3" baseStrength="0" baseDefense="1~3" />
     <SpriteAnimSet spriteSheet="armor_16x16.png" spriteLayout="16,16">
       <SpriteAnim name="Idle" spriteIndexes="146"/>
     </SpriteAnimSet>
   </ItemDefinition>
 
-  <ItemDefinition name="Leather Leggings" equipSlot="legs" equipTexture="HUMANOIDS/LEGS/pants_leather_f.png">
+  <ItemDefinition name="Leather Leggings" equipSlot="legs" clothingSet="Leather">
     <Stats baseMovement="1~3" baseStrength="0" baseDefense="1~3" />
     <SpriteAnimSet spriteSheet="armor_16x16.png" spriteLayout="16,16">
       <SpriteAnim name="Idle" spriteIndexes="147"/>
     </SpriteAnimSet>
   </ItemDefinition>
 
-  <ItemDefinition name="Leather Hat" equipSlot="head" equipTexture="HUMANOIDS/HEAD/HATS/leathercap_f.png" showHair="true">
+  <ItemDefinition name="Leather Hat" equipSlot="head" clothingSet="Leather" showHair="true">
     <Stats baseMovement="1~3" baseStrength="0" baseDefense="1~3" />
     <SpriteAnimSet spriteSheet="armor_16x16.png" spriteLayout="16,16">
       <SpriteAnim name="Idle" spriteIndexes="4"/>

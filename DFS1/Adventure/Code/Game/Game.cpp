@@ -52,6 +52,7 @@ Game::Game()
 	LoadSounds();
 	LoadTileDefinitions();
 	LoadMapDefinitions();
+	LoadClothingDefinitions();
 	LoadEntityDefinitions();
 	LoadAdventureDefinitions();
 
@@ -372,6 +373,21 @@ void Game::LoadMapDefinitions()
 	}
 }
 
+void Game::LoadClothingDefinitions()
+{
+	tinyxml2::XMLDocument mapDefDoc;
+	mapDefDoc.LoadFile("Data/Data/ClothingSets.xml");
+
+
+	tinyxml2::XMLElement* root = mapDefDoc.FirstChildElement("ClothingSets");
+	for (tinyxml2::XMLElement* setDefElement = root->FirstChildElement("ClothingSet"); setDefElement != NULL; setDefElement = setDefElement->NextSiblingElement("ClothingSet")){
+		//had to make make MapDefinition take in pointer because was getting inaccessible error when trying to derference
+		ClothingSetDefinition* newDefinition = new ClothingSetDefinition(setDefElement);
+
+		ClothingSetDefinition::s_definitions.insert(std::pair<std::string, ClothingSetDefinition*>(newDefinition->m_name, newDefinition));
+	}
+}
+
 void Game::LoadEntityDefinitions()
 {
 	//tinyxml2::XMLDocument humanoidDefDoc;
@@ -483,7 +499,7 @@ RENDER_SLOT GetRenderSlotForEquipSlot(EQUIPMENT_SLOT slot)
 		return CHEST_SLOT;
 		break;
 	case EQUIP_SLOT_HEAD:
-		return HEAD_SLOT;
+		return HAT_SLOT;
 		break;
 	case EQUIP_SLOT_LEGS:
 		return LEGS_SLOT;

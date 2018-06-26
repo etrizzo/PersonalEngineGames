@@ -7,6 +7,7 @@
 #include "ItemDefinition.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/SpriteAnimSet.hpp"
+#include "Game/ClothingSetDefinition.hpp"
 
 Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, float initialRotation, int difficulty)
 	:Entity((EntityDefinition*)definition, entityMap, initialPos, initialRotation)
@@ -20,17 +21,18 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 	GetRandomStatsFromDefinition();
 	//m_animSets = std::vector<SpriteAnimSet*>();
 	//m_animSets.resize(NUM_RENDER_SLOTS);
-	m_layerTextures = std::vector<Texture*>();
+	//m_layerTextures = std::vector<Texture*>();
 	int numTextures = BODY_SLOT;
+	m_currentLook = m_definition->m_clothingSetDef->GetRandomSet();
 	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
 		
 			//copy default textures
-			m_layerTextures.push_back(m_definition->m_layerTextures[i]);
+			//m_layerTextures.push_back(m_definition->m_layerTextures[i]);
 			//m_animSets[i] = new SpriteAnimSet(m_definition->m_spriteSetDefs[i]);
 			//m_renderable->SetDiffuseTexture(m_animSets[i]->GetCurrentTexture(), i);
-		if (m_definition->m_layerTextures[i] != nullptr){
+		if (m_currentLook->GetTexture(i) != nullptr){
 			m_renderable->SetSubMesh(m_localDrawingBox, m_lastUVs, RGBA::WHITE, numTextures);
-			m_renderable->AddDiffuseTexture(m_definition->m_layerTextures[i], numTextures);
+			m_renderable->AddDiffuseTexture(m_currentLook->GetTexture(i), numTextures);
 			numTextures++;
 		}
 	}
@@ -121,14 +123,17 @@ void Actor::UpdateRenderable()
 {
 	AABB2 uvs = m_animSet->GetCurrentUVs();
 	if (!(uvs == m_lastUVs) || m_changedClothes){		//every anim set should have the same UVs so this should be fine
+		if (m_changedClothes){
+			m_renderable->Clear();		//remake the renderable
+		}
 		m_lastUVs = uvs;
 		int numTextures = BODY_SLOT;
 		for (int i = BODY_SLOT; i  < NUM_RENDER_SLOTS; i++){
-			if (m_layerTextures[i] != nullptr){
+			if (m_currentLook->GetTexture(i) != nullptr){
 				//Texture* baseTexture = m_animSets[i]->GetCurrentTexture();	//base, legs, torso, head (, weapon)
 				m_renderable->SetSubMesh(m_localDrawingBox, uvs, RGBA::WHITE, numTextures);
 				if (m_changedClothes){
-					m_renderable->SetDiffuseTexture(m_layerTextures[i], numTextures);
+					m_renderable->AddDiffuseTexture(m_currentLook->GetTexture(i), numTextures);
 				}
 				numTextures++;
 			}
@@ -230,17 +235,22 @@ void Actor::EquipOrUnequipItem(Item * itemToEquip)
 	if (slotToEquipIn != NOT_EQUIPPABLE){
 		RENDER_SLOT texSlot =GetRenderSlotForEquipSlot(slotToEquipIn);
 		//if the head item shows hair, add it to the hat slot instead
-		if (texSlot == HEAD_SLOT){
-			if (itemToEquip->ShowsHair()){
-				texSlot = HAT_SLOT;	
+		if (texSlot == HAT_SLOT){
+			if (!itemToEquip->ShowsHair()){
+				m_currentLook->SetTexture(HEAD_SLOT, (Texture*) nullptr);
+				//m_layerTextures[HAT_SLOT] = nullptr;	//remove the hat texture
 			}
 		}
 		if (itemToEquip->m_currentlyEquipped){		//un-equip item
 			m_equippedItems[slotToEquipIn] = nullptr;
 			itemToEquip->m_currentlyEquipped = false;
-			m_layerTextures[texSlot] = m_definition->m_layerTextures[texSlot];
+			m_currentLook->SetDefaultTexture(texSlot);
+			if (texSlot == HAT_SLOT){
+				m_currentLook->SetDefaultTexture(HEAD_SLOT);		//reset hair to normal
+			}
+			//m_layerTextures[texSlot] = m_definition->m_layerTextures[texSlot];
 			m_changedClothes = true;
-		} else {
+		} else {		//equip item
 			if (m_equippedItems[slotToEquipIn] == nullptr){		//equip to empty slot	
 				m_equippedItems[slotToEquipIn] = itemToEquip;
 			} else {
@@ -248,7 +258,8 @@ void Actor::EquipOrUnequipItem(Item * itemToEquip)
 				m_equippedItems[slotToEquipIn] = itemToEquip;
 			}
 			itemToEquip->m_currentlyEquipped = true;
-			m_layerTextures[texSlot] = itemToEquip->GetEquipTexture();
+			m_currentLook->SetTexture(texSlot, itemToEquip->GetEquipTexture());
+			//m_layerTextures[texSlot] = itemToEquip->GetEquipTexture();
 			m_changedClothes = true;
 		}
 		UpdateStats();

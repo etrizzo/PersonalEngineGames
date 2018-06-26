@@ -109,6 +109,12 @@
     <ClCompile Include="DecorationDefinition.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="ClothingSet.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="ClothingSetDefinition.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -204,6 +210,12 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="DecorationDefinition.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="ClothingSet.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="ClothingSetDefinition.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,7 @@
 #pragma once
 #include "Game/Entity.hpp"
 #include "Game/Stats.hpp"
+#include "Game/ClothingSet.hpp"
 
 class ActorDefinition;
 class Item;
@@ -29,7 +30,8 @@ public:
 	ActorDefinition* m_definition;
 	float m_timeLastUpdatedDirection;
 	bool m_moving;
-	std::vector<Texture*> m_layerTextures;
+	//std::vector<Texture*> m_layerTextures;
+	ClothingSet* m_currentLook;
 	Item* m_equippedItems[NUM_EQUIP_SLOTS];
 	Stats m_stats;
 	Stats m_baseStats;
