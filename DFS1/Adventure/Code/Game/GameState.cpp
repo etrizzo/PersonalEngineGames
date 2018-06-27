@@ -150,7 +150,7 @@ void GameState_Encounter::Transition()
 
 void GameState_Encounter::RenderGame()
 {
-	//g_theRenderer->ClearScreen( RGBA::BLACK ); 
+	g_theRenderer->ClearScreen( RGBA::BLACK ); 
 	//g_theRenderer->ClearDepth( 1.0f ); 
 	//g_theRenderer->EnableDepth( COMPARE_LESS, true ); 
 

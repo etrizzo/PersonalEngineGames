@@ -20,13 +20,16 @@ ClothingSet * ClothingSetDefinition::GetRandomSet() const
 {
 	ClothingSet* set = new ClothingSet();
 
-	//load torso
-	int torsoIndex = GetRandomIntLessThan((int) m_texturesByClothingType[CHEST_SLOT].size());
-	set->InitTexture(CHEST_SLOT, GetTexture(CHEST_SLOT, torsoIndex));
-	if (m_torsoUsesLegs[torsoIndex]){
-		set->InitTexture(LEGS_SLOT, GetRandomOfType(LEGS_SLOT));
+	if ((int)  m_texturesByClothingType[CHEST_SLOT].size() > 0){
+		//load chest clothing
+		int torsoIndex = GetRandomIntLessThan((int) m_texturesByClothingType[CHEST_SLOT].size());
+		set->InitTexture(CHEST_SLOT, GetTexture(CHEST_SLOT, torsoIndex));
+		if (m_torsoUsesLegs[torsoIndex]){
+			set->InitTexture(LEGS_SLOT, GetRandomOfType(LEGS_SLOT));
+		}
 	}
 	if ((int)  m_texturesByClothingType[BODY_SLOT].size() > 0){
+		//load body
 		int bodyIndex = GetRandomIntLessThan((int) m_texturesByClothingType[BODY_SLOT].size());
 		set->InitTexture(BODY_SLOT,		GetTexture(BODY_SLOT, bodyIndex));		//init body and ears of same skin tone
 		set->InitTexture(EARS_SLOT,		GetTexture(EARS_SLOT, bodyIndex));

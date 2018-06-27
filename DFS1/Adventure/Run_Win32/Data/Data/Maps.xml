@@ -1,5 +1,21 @@
 <MapDefinitions>
 
+    <MapDefinition name="Zoo" defaultTile="Sand" width="80~90" soundtrack="Caketown 1.mp3">
+    <GenerationSteps>
+     <FillAndEdge edgeTile="Dirt" fillTile="Grass" subAreaCenter=".3~.8" subAreaSize=".2~.4" type="rectangle" />
+      <!--
+      <SetSubArea subAreaCenter=".3~.7" subAreaSize=".2~.45" type="circle"/>
+              <Mutate ifType="Sand" toType="Water" />
+              <FillAndEdge edgeTile="Dirt" fillTile="Grass"/>
+              
+              <SubMap map="SmallVillage" />
+      <EndSubArea />
+      
+      -->
+
+    </GenerationSteps>
+  </MapDefinition>
+
   <MapDefinition name="Forest" defaultTile="Grass" width="80" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
       <SetSubArea subAreaSize=".3~.4" subAreaCenter=".2~.8" type="circle"/>
@@ -95,42 +111,7 @@
   </MapDefinition>
 
 
-  <MapDefinition name="Zoo" defaultTile="Grass" width="80~90" soundtrack="Caketown 1.mp3">
-    <GenerationSteps>
-      <!--
-      <Mutate ifType="Grass" toType="Water" chanceToMutate="0.0" />
-      <CellularAutomata iterations="2~3" ifNeighborType="Water" changeToType="Water" chanceToMutate=".5"/>
-      <CellularAutomata ifType="Grass" changeToType="Sand" ifNeighborType="Water"/>
-      
-      <PerlinNoise ifType="Grass" changeToType="Flowers" ifNoise="-1~-.4" />
-      <PerlinNoise ifType="Grass" changeToType="LightFlowers" ifNoise="-.4~-.1" />
-   
-      <Mutate subAreaCenter=".4~.6" subAreaSize=".15~.6" ifType="LightFlowers" toType="Wood" chanceToMutate=".8"/>
 
-      <PerlinNoise subAreaCenter=".1~.9" subAreaSize=".45~.65" changeToType="WeatheredWood" ifNoise=".4~1" />
-      
-
-      <SetSubArea subAreaCenter=".3~.7" subAreaSize="0.0~2.0" type="perlin" centerDensity="1" edgeDensity="1" feather=".1"/>
-        <FillAndEdge edgeTile="Dirt" fillTile="Sand" edgeThickness="1"/> 
-        <FillAndEdge edgeTile="Sand" fillTile="Water" edgeThickness="2" feather="1"/> 
-      <EndSubArea />
-      --> 
-      
-      <SetSubArea subAreaCenter=".3~.7" subAreaSize=".25~.25" type="circle" centerDensity="1" edgeDensity="1" feather=".05"/>
-              <!--<FillAndEdge edgeTile="Dirt" /> -->
-              <SubMap map="SmallVillage" />
-      <EndSubArea />
-<!--
-      <FillAndEdge subAreaCenter=".1~.9" subAreaSize=".05~.1" edgeTile="MossyStoneBrick" fillTile="Sand" edgeThickness="1" type="circle"/>
-      <FillAndEdge edgeTile="StoneBrickWall" edgeThickness="1"/>
-      
-      <SetSubArea subAreaSize=".1~.3" type="circle" />
-        <FillAndEdge fillTile="Water" noiseScale="20" edgeTile="Sand"/>
-        <CellularAutomata iterations="2~3" ifType="Grass" ifNeighborType="Water" changeToType="Sand" />
-      <EndSubArea />
-      -->
-    </GenerationSteps>
-  </MapDefinition>
     
   <MapDefinition name="Island" defaultTile="Sand" width="20~30" height="20~30" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
@@ -157,7 +138,7 @@
     </GenerationSteps>
   </MapDefinition>
 
-  <MapDefinition name="Village" defaultTile="Grass" width="30~50" height="30~50" soundtrack="Caketown 1.mp3">
+  <MapDefinition name="Village" defaultTile="Grass" width="50~60" height="50~60" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
       <Mutate ifType="Grass" toType="Water" chanceToMutate=".001" />
       <CellularAutomata iterations="3~4" ifNeighborType="Water" changeToType="Water" chanceToMutate=".5"/>

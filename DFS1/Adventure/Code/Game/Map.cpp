@@ -827,7 +827,7 @@ void Map::SetCamera()
 		//ClampCameraToMap();
 	}
 
-
+	g_theRenderer->ClearScreen( RGBA::BLACK ); 
 }
 
 void Map::ClampCameraToMap()
