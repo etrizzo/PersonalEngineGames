@@ -1,12 +1,11 @@
 #include "Game/GameState_Playing.hpp"
 #include "Game/Game.hpp"
 #include "Game/Map.hpp"
-#include "Game/Entity.hpp"
 #include "Game/Player.hpp"
-#include "game/Enemy.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
+#include "Game/Spawner.hpp"
 
 
 GameState_Playing::GameState_Playing()
@@ -66,9 +65,16 @@ void GameState_Playing::Update(float ds)
 	//m_couchMaterial->SetProperty("SPECULAR_AMOUNT", m_specAmount);
 	//m_couchMaterial->SetProperty("SPECULAR_POWER", m_specFactor);
 	//m_particleSystem->Update(deltaSeconds);
+
 	m_player->Update();
+	//Update spawners before the rest of entities bc it can add entities
+	for (Spawner* spawner : m_spawners){
+		spawner->Update();
+	}
+	int i = 0;
 	for (Entity* entity : m_allEntities){
 		entity->Update();
+		i++;
 	}
 
 	DeleteEntities();
@@ -180,13 +186,12 @@ void GameState_Playing::EnterState()
 {
 	m_player = new Player(this, Vector3::ZERO);
 
-	AddNewEnemy(Vector2(5.f, 5.f));
-	AddNewEnemy(Vector2(10.f, 8.f));
-	AddNewEnemy(Vector2(30.f, -35.f));
-	AddNewEnemy(Vector2(GetRandomFloatInRange(-100.f, 100.f), GetRandomFloatInRange(-100.f, 100.f)));
-	AddNewEnemy(Vector2(GetRandomFloatInRange(-100.f, 100.f), GetRandomFloatInRange(-100.f, 100.f)));
-	AddNewEnemy(Vector2(GetRandomFloatInRange(-100.f, 100.f), GetRandomFloatInRange(-100.f, 100.f)));
-	AddNewEnemy(Vector2(GetRandomFloatInRange(-100.f, 100.f), GetRandomFloatInRange(-100.f, 100.f)));
+	float minSpawnerRange = -100.f;
+	float maxSpawnerRange = 100.f;
+
+	AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
+	AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
+	AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
 
 	m_scene->AddRenderable(m_player->m_renderable);
 	m_scene->AddRenderable(m_player->m_turretRenderable);
@@ -213,6 +218,15 @@ Bullet * GameState_Playing::AddNewBullet(const Transform& t)
 	m_bullets.push_back(b);
 	m_allEntities.push_back((Entity*) b);
 	return b;
+}
+
+Spawner * GameState_Playing::AddNewSpawner(const Vector2 & pos)
+{
+	Spawner* s = new Spawner(pos, this);
+	m_scene->AddRenderable(s->m_renderable);
+	m_spawners.push_back(s);
+	//m_allEntities.push_back((Entity*) s);
+	return s;
 }
 
 Light* GameState_Playing::AddNewLight(std::string type, RGBA color)
@@ -382,6 +396,14 @@ void GameState_Playing::DeleteEntities()
 		if (bullet->m_aboutToBeDeleted){
 			RemoveAtFast(m_bullets,i);
 			delete bullet;
+		}
+	}
+
+	for (int i = (int) m_spawners.size() -1; i >= 0; i--){
+		Spawner* spawner = m_spawners[i];
+		if (spawner->m_aboutToBeDeleted){
+			RemoveAtFast(m_spawners,i);
+			delete spawner;
 		}
 	}
 }

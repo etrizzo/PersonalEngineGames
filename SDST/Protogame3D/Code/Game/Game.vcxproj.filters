@@ -67,6 +67,9 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="Spawner.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -124,6 +127,9 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="Enemy.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Spawner.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

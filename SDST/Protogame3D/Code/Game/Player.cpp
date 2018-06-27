@@ -57,7 +57,7 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 
 	mb.Clear();
 	mb.Begin(PRIMITIVE_LINES, false);
-	mb.AppendLine(Vector3::ZERO, Vector3::FORWARD * 5.f, RGBA::RED, RGBA::RED);
+	mb.AppendLine(Vector3::ZERO, Vector3::FORWARD * 15.f, RGBA::RED, RGBA(100,0,0,128));
 	mb.End();
 	m_laserSightRenderable = new Renderable();
 	m_laserSightRenderable->SetMesh(mb.CreateMesh());
@@ -224,7 +224,7 @@ void Player::UpdateTarget()
 	if (g_theGame->m_currentMap->Raycast(contact, 1, ray, 1000.f)) {
 		//if we hit something, update target
 		m_target = contact.m_position;
-		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_cameraTarget->GetWorldPosition(), m_target, RGBA::GREEN, RGBA::GREEN);
+		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_barrelPosition->GetWorldPosition(), m_target, RGBA::RED.GetColorWithAlpha(128), RGBA::RED.GetColorWithAlpha(128));
 		g_theGame->m_debugRenderSystem->MakeDebugRenderQuad(0.f, m_target, Vector2::HALF * .2f, g_theGame->GetCurrentCameraRight(), g_theGame->GetCurrentCameraUp(), RGBA::RED, RGBA::RED, DEBUG_RENDER_IGNORE_DEPTH);
 		//g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_target, .1f);
 		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_target, m_target + contact.m_normal, RGBA::RED, RGBA::YELLOW);

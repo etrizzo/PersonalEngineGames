@@ -303,6 +303,7 @@
     <ClCompile Include="MapGenStep.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Spawner.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TileDefinition.cpp" />
   </ItemGroup>
@@ -329,6 +330,7 @@
     <ClInclude Include="MapGenStep.hpp" />
     <ClInclude Include="Menu.hpp" />
     <ClInclude Include="Player.hpp" />
+    <ClInclude Include="Spawner.hpp" />
     <ClInclude Include="Tile.hpp" />
     <ClInclude Include="TileDefinition.hpp" />
   </ItemGroup>

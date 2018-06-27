@@ -2,7 +2,7 @@
 #include "Game.hpp"
 #include "Game/MapGenStep.hpp"
 #include "DebugRenderSystem.hpp"
-#include "Game/Enemy.hpp"
+#include "Game/Spawner.hpp"
 
 Map::~Map()
 {
@@ -210,7 +210,7 @@ bool Map::Raycast(Contact3D & contact, int maxHits, const Ray3D & ray, float max
 {
 	UNUSED(maxHits);
 	if (DoesIntersect(ray, m_bounds)){
-		float stepSize = .25f * m_tileSize.x;
+		float stepSize = .2f * m_tileSize.x;
 		if (!HitRaycastTarget(ray.m_position)){		//check that not starting inside terrain
 			//step along the ray until max distance is reached, or you cross the terrain
 			float t = stepSize;
@@ -267,14 +267,19 @@ bool Map::IsPointInEnemy(const Vector3 & point) const
 	//check all enemies
 	for (Enemy* baddy : g_theGame->m_playState->m_enemies){
 		if (baddy->IsPointInside(point)){
-			return false;
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 bool Map::IsPointInSpawner(const Vector3 & point) const
 {
+	for (Spawner* baddy : g_theGame->m_playState->m_spawners){
+		if (baddy->IsPointInside(point)){
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -282,7 +287,10 @@ bool Map::HitRaycastTarget(const Vector3 & point) const
 {
 	bool inTerrain = !IsPointAboveTerrain(point);
 	bool inSpawner = IsPointInSpawner(point);
-	bool inEnemy = IsPointInSpawner(point);
+	bool inEnemy = IsPointInEnemy(point);
+	if (inEnemy){
+		int x = 0;
+	}
 	return inTerrain || inSpawner || inEnemy;
 }
 

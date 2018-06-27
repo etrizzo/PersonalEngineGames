@@ -9,6 +9,7 @@ class DebugRenderSystem;
 class Entity;
 class Player;
 class Enemy;
+class Spawner;
 class Light;
 class SpotLight;
 class ParticleSystem;
@@ -28,7 +29,9 @@ public:
 
 	std::vector<Enemy*> m_enemies;
 	std::vector<Bullet*> m_bullets;
+	std::vector<Spawner*> m_spawners;
 	std::vector<Entity*> m_allEntities;
+
 
 	void Update(float ds);
 	void RenderGame();
@@ -36,8 +39,9 @@ public:
 	void HandleInput();
 	void EnterState() override;
 
-	Enemy* AddNewEnemy(const Vector2& pos);
-	Bullet* AddNewBullet(const Transform& t);
+	Enemy*	 AddNewEnemy(const Vector2& pos);
+	Bullet*  AddNewBullet(const Transform& t);
+	Spawner* AddNewSpawner(const Vector2& pos);
 
 	Light* AddNewLight(std::string type, RGBA color = RGBA::WHITE);		//adds in front of camera
 	Light* AddNewLight(std::string type, Vector3 pos, RGBA color = RGBA::WHITE);

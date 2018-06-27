@@ -66,7 +66,10 @@ void Enemy::RunEntityPhysics()
 
 void Enemy::Damage()
 {
-	m_aboutToBeDeleted = true;
+	m_health--;
+	if (m_health <= 0){
+		m_aboutToBeDeleted = true;
+	}
 }
 
 bool Enemy::IsPointInside(const Vector3 & point) const

@@ -4,7 +4,7 @@
 #include "Game/Map.hpp"
 #include "Game/GameState_Playing.hpp"
 #include "Game/DebugRenderSystem.hpp"
-#include "Game/Enemy.hpp"
+#include "Game/Spawner.hpp"
 
 
 Bullet::Bullet(const Transform& t, GameState_Playing* playState)
@@ -81,6 +81,13 @@ void Bullet::CheckAgainstEnemies()
 	for (Enemy* enemy : m_playState->m_enemies){
 		if (enemy->IsPointInside(pos)){
 			enemy->Damage();
+			Destroy();
+		}
+	}
+
+	for (Spawner* spawner : m_playState->m_spawners){
+		if (spawner->IsPointInside(pos)){
+			spawner->Damage();
 			Destroy();
 		}
 	}
