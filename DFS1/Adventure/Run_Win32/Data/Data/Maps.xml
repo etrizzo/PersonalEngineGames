@@ -146,7 +146,18 @@
     </GenerationSteps>
   </MapDefinition>
 
-  <MapDefinition name="SmallVillage" defaultTile="Grass" width="30~50" height="30~50" soundtrack="Caketown 1.mp3">
+  <MapDefinition name="SmallVillage" defaultTile="Grass" width="20~30" height="20~30" soundtrack="Caketown 1.mp3">
+    <GenerationSteps>
+      <RoomsAndPaths>
+        <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
+        <Paths floor="Dirt" straightChance=".05"/>
+      </RoomsAndPaths>
+      <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
+      <SpawnActor type="Villager" iterations="3~5" />
+    </GenerationSteps>
+  </MapDefinition>
+
+  <MapDefinition name="Village" defaultTile="Grass" width="30~50" height="30~50" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
       <Mutate ifType="Grass" toType="Water" chanceToMutate=".001" />
       <CellularAutomata iterations="3~4" ifNeighborType="Water" changeToType="Water" chanceToMutate=".5"/>
@@ -165,6 +176,7 @@
         <Paths floor="Dirt" straightChance=".05"/>
       </RoomsAndPaths>
       <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
+      <SpawnActor type="Villager" iterations="3~5" />
     </GenerationSteps>
   </MapDefinition>
 

@@ -26,6 +26,9 @@ Entity::Entity(Vector3 position, std::string objFile, std::string materialFile)
 
 	m_noClipMode = false;
 
+	TODO("Expand sphere with object as it gets loaded in");
+	m_collider = Sphere(position, 1.f);
+
 }
 
 void Entity::Update()
@@ -149,6 +152,7 @@ void Entity::Rotate(Vector3 rotation)
 void Entity::SetPosition(Vector3 newPos)
 {
 	m_renderable->m_transform.SetLocalPosition(newPos);
+	m_collider.SetPosition(newPos);
 }
 
 void Entity::SetScale(Vector3 scale)

@@ -360,12 +360,28 @@ std::string GameState_Playing::GetShaderName() const
 
 void GameState_Playing::DeleteEntities()
 {
-	for (int i = (int) m_allEntities.size() - 1; i > 0; i--){
+	for (int i = (int) m_allEntities.size() - 1; i >= 0; i--){
 		Entity* entity = m_allEntities[i];
 		if (entity->m_aboutToBeDeleted){
 			m_scene->RemoveRenderable(m_allEntities[i]->m_renderable);
 			RemoveAtFast(m_allEntities, i);
-			delete entity;
+			//delete entity;
+		}
+	}
+
+	for (int i = (int) m_enemies.size() -1; i >= 0; i--){
+		Enemy* enemy = m_enemies[i];
+		if (enemy->m_aboutToBeDeleted){
+			RemoveAtFast(m_enemies,i);
+			delete enemy;
+		}
+	}
+
+	for (int i = (int) m_bullets.size() -1; i >= 0; i--){
+		Bullet* bullet = m_bullets[i];
+		if (bullet->m_aboutToBeDeleted){
+			RemoveAtFast(m_bullets,i);
+			delete bullet;
 		}
 	}
 }

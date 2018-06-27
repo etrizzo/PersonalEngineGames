@@ -4,6 +4,7 @@
 #include "Game/Map.hpp"
 #include "Game/GameState_Playing.hpp"
 #include "Game/DebugRenderSystem.hpp"
+#include "Game/Enemy.hpp"
 
 
 Bullet::Bullet(const Transform& t, GameState_Playing* playState)
@@ -35,7 +36,7 @@ Bullet::Bullet(const Transform& t, GameState_Playing* playState)
 
 Bullet::~Bullet()
 {
-	Destroy();
+	//Destroy();
 }
 
 void Bullet::Update()
@@ -52,6 +53,7 @@ void Bullet::Update()
 			SetPosition(newPos);
 			CheckPhysics();
 			//Translate(GetForward() * m_speed * g_theGame->GetDeltaSeconds());
+			//g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, pos, .5f);
 			//g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, m_light->GetPosition(), RGBA::RED, RGBA::RED);
 		}
 	}
@@ -59,14 +61,29 @@ void Bullet::Update()
 
 void Bullet::CheckPhysics()
 {
-	if (!IsAboveTerrain()){
-		Destroy();
+	CheckAgainstEnemies();
+	if (!m_aboutToBeDeleted){
+		if (!IsAboveTerrain()){
+			Destroy();
+		} 
 	}
 }
 
 bool Bullet::IsAboveTerrain()
 {
 	return g_theGame->m_currentMap->IsPointAboveTerrain(GetPosition());
+}
+
+void Bullet::CheckAgainstEnemies()
+{
+	Vector3 pos = GetPosition();
+	
+	for (Enemy* enemy : m_playState->m_enemies){
+		if (enemy->IsPointInside(pos)){
+			enemy->Damage();
+			Destroy();
+		}
+	}
 }
 
 void Bullet::Destroy()

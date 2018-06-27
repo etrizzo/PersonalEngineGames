@@ -7,6 +7,7 @@
 Enemy::Enemy(Vector2 startPos, GameState_Playing * playState)
 {
 	m_renderable = new Renderable();
+	m_collider = Sphere(Vector3::ZERO, .5f, 10, 10);
 	//make the sphere
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
@@ -33,19 +34,52 @@ Enemy::Enemy(Vector2 startPos, GameState_Playing * playState)
 	SetPosition(pos);
 }
 
+Enemy::~Enemy()
+{
+	m_playState->m_scene->RemoveRenderable(m_renderable);
+}
+
 void Enemy::Update()
 {
-	float ds = g_theGame->GetDeltaSeconds();
-	m_ageInSeconds+=ds;
+	if (!m_aboutToBeDeleted){
+		float ds = g_theGame->GetDeltaSeconds();
+		
+		m_ageInSeconds+=ds;
+		
+		//Vector2 playerPos = g_theGame->GetPlayerPositionXZ();
+		//Vector2 direction = playerPos - m_positionXZ;
+		//direction.NormalizeAndGetLength();
+		UpdateDirection();
+		m_positionXZ += m_direction * ds * m_speed;
 	
-	//Vector2 playerPos = g_theGame->GetPlayerPositionXZ();
-	//Vector2 direction = playerPos - m_positionXZ;
-	//direction.NormalizeAndGetLength();
-	UpdateDirection();
-	m_positionXZ += m_direction * ds * m_speed;
+		TurnTowardPlayer();
+		SetWorldPosition();
+		CheckForPlayerCollision();
 
-	TurnTowardPlayer();
-	SetWorldPosition();
+		//g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_collider.m_center, m_collider.m_radius, 10, 10, RGBA::RED, RGBA::RED, DEBUG_RENDER_IGNORE_DEPTH);
+	}
+}
+
+void Enemy::RunEntityPhysics()
+{
+}
+
+void Enemy::Damage()
+{
+	m_aboutToBeDeleted = true;
+}
+
+bool Enemy::IsPointInside(const Vector3 & point) const
+{
+	return m_collider.IsPointInside(point);
+}
+
+void Enemy::CheckForPlayerCollision()
+{
+	if (m_collider.DoSpheresOverlap(g_theGame->m_playState->m_player->m_collider)){
+		m_aboutToBeDeleted = true;
+		//damage the player
+	}
 }
 
 void Enemy::UpdateDirection()

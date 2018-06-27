@@ -54,6 +54,8 @@ public:
 	//Mesh* m_mesh;
 	//Texture* m_texture;
 
+	Sphere m_collider;
+
 	float m_spinDegreesPerSecond;
 	float m_ageInSeconds;
 

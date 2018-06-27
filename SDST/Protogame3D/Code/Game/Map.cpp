@@ -2,6 +2,7 @@
 #include "Game.hpp"
 #include "Game/MapGenStep.hpp"
 #include "DebugRenderSystem.hpp"
+#include "Game/Enemy.hpp"
 
 Map::~Map()
 {
@@ -209,18 +210,18 @@ bool Map::Raycast(Contact3D & contact, int maxHits, const Ray3D & ray, float max
 {
 	UNUSED(maxHits);
 	if (DoesIntersect(ray, m_bounds)){
-		float stepSize = .5f * m_tileSize.x;
-		if (IsPointAboveTerrain(ray.m_position)){		//check that not starting inside terrain
+		float stepSize = .25f * m_tileSize.x;
+		if (!HitRaycastTarget(ray.m_position)){		//check that not starting inside terrain
 			//step along the ray until max distance is reached, or you cross the terrain
 			float t = stepSize;
 			Vector3 abovePoint = ray.m_position;
 			Vector3 belowPoint = ray.Evaluate(t);
-			while (IsPointAboveTerrain(belowPoint) && t < maxDistance){
+			while (!HitRaycastTarget(belowPoint) && t < maxDistance){
 				t+=stepSize;
 				abovePoint = belowPoint;
 				belowPoint = ray.Evaluate(t);
 			}
-			if ((t >= maxDistance) || IsPointAboveTerrain(belowPoint)){
+			if ((t >= maxDistance) || !HitRaycastTarget(belowPoint)){
 				//no hit in specified distance - either went outside of terrain bounds, or went too far
 				return false;
 			}
@@ -230,7 +231,7 @@ bool Map::Raycast(Contact3D & contact, int maxHits, const Ray3D & ray, float max
 			Vector3 avgPoint = Average(abovePoint, belowPoint);
 			int stepCount = 0;
 			while ((GetVerticalDistanceFromTerrain(avgPoint) > SMALL_VALUE) && (stepCount < MAX_STEPS)){
-				if (IsPointAboveTerrain(avgPoint)){
+				if (!HitRaycastTarget(avgPoint)){
 					abovePoint = avgPoint;
 				} else {
 					belowPoint = avgPoint;
@@ -253,11 +254,36 @@ bool Map::Raycast(Contact3D & contact, int maxHits, const Ray3D & ray, float max
 bool Map::IsPointAboveTerrain(const Vector3 & point) const
 {
 	float terrainHeight = GetHeightAtCoord(Vector2(point.x, point.z));
+
 	if (terrainHeight <= point.y){
 		return true;
 	} else {
 		return false;
 	}
+}
+
+bool Map::IsPointInEnemy(const Vector3 & point) const
+{
+	//check all enemies
+	for (Enemy* baddy : g_theGame->m_playState->m_enemies){
+		if (baddy->IsPointInside(point)){
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Map::IsPointInSpawner(const Vector3 & point) const
+{
+	return false;
+}
+
+bool Map::HitRaycastTarget(const Vector3 & point) const
+{
+	bool inTerrain = !IsPointAboveTerrain(point);
+	bool inSpawner = IsPointInSpawner(point);
+	bool inEnemy = IsPointInSpawner(point);
+	return inTerrain || inSpawner || inEnemy;
 }
 
 float Map::GetVerticalDistanceFromTerrain(const Vector3 & point) const

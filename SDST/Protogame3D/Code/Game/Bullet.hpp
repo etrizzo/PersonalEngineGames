@@ -20,6 +20,7 @@ public:
 	Light* m_light;
 private:
 	bool IsAboveTerrain();
+	void CheckAgainstEnemies();
 	void Destroy();
 
 };

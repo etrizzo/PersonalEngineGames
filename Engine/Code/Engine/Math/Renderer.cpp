@@ -1312,6 +1312,7 @@ void Renderer::DrawCube(const Vector3 & center, const Vector3 & dimensions, cons
 
 void Renderer::DrawCube(const Vector3 & center, const Vector3 & dimensions, const RGBA & color, AABB2 UV_TOP, AABB2 UV_SIDE, AABB2 UV_BOTTOM)
 {
+	BindModel(Matrix44::IDENTITY);
 	SubMesh* cubeMesh = CreateCube(center, dimensions, color, UV_TOP, UV_SIDE, UV_BOTTOM);
 	DrawMesh(cubeMesh);
 	delete(cubeMesh);
@@ -1319,6 +1320,7 @@ void Renderer::DrawCube(const Vector3 & center, const Vector3 & dimensions, cons
 
 void Renderer::DrawSphere(const Vector3 & center, const float & radius, const int & wedges, const int & slices, const RGBA & color, const AABB2 & uvs)
 {
+	BindModel(Matrix44::IDENTITY);
 	SubMesh* sphereMesh = CreateSphere(center, radius, wedges, slices, color, uvs);
 	DrawMesh(sphereMesh);
 	delete(sphereMesh);

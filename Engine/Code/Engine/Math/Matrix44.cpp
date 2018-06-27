@@ -384,7 +384,7 @@ Matrix44 Matrix44::LookAt(const Vector3 & position, const Vector3 & target, cons
 	//figure out other 2 axes
 	Vector3 newRight = Cross(up, newForward);
 	newRight.NormalizeAndGetLength();
-	Vector3 newUp = Cross(newForward, newRight);
+	Vector3 newUp = Cross(newForward, newRight).GetNormalized();
 	Matrix44 lookMatrix = Matrix44(newRight, newUp, newForward, position);
 	return lookMatrix;
 }

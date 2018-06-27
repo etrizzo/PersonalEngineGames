@@ -55,6 +55,9 @@ public:
 	IntVector2 GetVertexCoordsFromWorldPos(Vector2 xzPos) const;
 	bool Raycast( Contact3D& contact, int maxHits, const Ray3D& ray, float maxDistance = 1000.f);
 	bool IsPointAboveTerrain(const Vector3& point) const;
+	bool IsPointInEnemy(const Vector3& point) const;
+	bool IsPointInSpawner(const Vector3& point) const;
+	bool HitRaycastTarget(const Vector3& point) const;
 	float GetVerticalDistanceFromTerrain(const Vector3& point) const;
 
 	void DebugShowTileAtPoint(Vector2 xzPos);

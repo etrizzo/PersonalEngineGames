@@ -18,6 +18,7 @@ public:
 	Transform* m_cameraTarget;
 	Renderable* m_turretRenderable;
 	Renderable* m_laserSightRenderable;
+	Renderable* m_targetRenderable;
 	Transform* m_barrelPosition;
 	Vector3 m_target;
 

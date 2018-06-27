@@ -7,6 +7,7 @@
 Player::Player(GameState_Playing* playState, Vector3 position)
 {
 	float size = 1.f;
+	m_collider = Sphere(position, size);
 	m_renderable = new Renderable();//new Renderable(RENDERABLE_CUBE, 1.f);
 	m_turretRenderable = new Renderable();
 	//make tank
@@ -63,6 +64,10 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	m_laserSightRenderable->SetMaterial(Material::GetMaterial("default_unlit"));
 	m_laserSightRenderable->m_transform.SetParent(m_barrelPosition);
 
+
+	m_targetRenderable = new Renderable(RENDERABLE_PLANE, .15f);
+	m_targetRenderable->GetEditableMaterial()->SetProperty("TINT", RGBA::RED);
+
 	//m_turretRenderable->m_transform.SetParent(m_cameraTarget);
 
 	m_playState = playState;
@@ -84,6 +89,7 @@ void Player::Update()
 	
 	m_cameraTarget->SetLocalPosition(GetPosition() + GetUp() * .25f);
 	MoveTurretTowardTarget();
+	//g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_collider.m_center, m_collider.m_radius, m_collider.m_slices, m_collider.m_wedges, RGBA::RED, RGBA::RED, DEBUG_RENDER_IGNORE_DEPTH);
 	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_barrelPosition->GetWorldPosition(), .5f, m_barrelPosition->GetWorldMatrix());
 	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, GetPosition(), 1.5f, m_renderable->m_transform.GetWorldMatrix());
 	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->GetPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix());
@@ -165,6 +171,8 @@ void Player::HandleInput()
 
 }
 
+
+
 static Vector2 gPos = Vector2(0.0f, 0.0f); 
 
 void Player::SetWorldPosition()
@@ -184,6 +192,7 @@ void Player::SetWorldPosition()
 	Matrix44 mat = Matrix44(newRight, newUp, newForward, pos);
 
 	m_renderable->m_transform.SetLocalMatrix(mat);
+	m_collider.SetPosition(pos);
 	//SetPosition(pos);
 }
 
@@ -216,7 +225,7 @@ void Player::UpdateTarget()
 		//if we hit something, update target
 		m_target = contact.m_position;
 		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_cameraTarget->GetWorldPosition(), m_target, RGBA::GREEN, RGBA::GREEN);
-		g_theGame->m_debugRenderSystem->MakeDebugRenderQuad(0.f, m_target, Vector2::HALF * .2f, g_theGame->GetCurrentCameraRight(), Vector3::UP, RGBA::RED, RGBA::RED, DEBUG_RENDER_IGNORE_DEPTH);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderQuad(0.f, m_target, Vector2::HALF * .2f, g_theGame->GetCurrentCameraRight(), g_theGame->GetCurrentCameraUp(), RGBA::RED, RGBA::RED, DEBUG_RENDER_IGNORE_DEPTH);
 		//g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_target, .1f);
 		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_target, m_target + contact.m_normal, RGBA::RED, RGBA::YELLOW);
 	} else {
