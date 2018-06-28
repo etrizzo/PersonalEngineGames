@@ -321,6 +321,8 @@ void Renderer::BindGLFunctions()
 	GL_BIND_FUNCTION( glActiveTexture		);
 	GL_BIND_FUNCTION( glBindTexture			);
 	GL_BIND_FUNCTION( glDisable				);
+	GL_BIND_FUNCTION( glGenerateMipmap		);
+	GL_BIND_FUNCTION( glSamplerParameterf	);
 
 	//blending
 	GL_BIND_FUNCTION( glBlendFunc );	
@@ -1601,7 +1603,7 @@ Sprite * Renderer::GetSprite(const std::string & name)
 	return loadedSprite;
 }
 
-Texture * Renderer::CreateOrGetTexture(const std::string & path, const std::string & directory)
+Texture * Renderer::CreateOrGetTexture(const std::string & path, const std::string & directory, bool setMips)
 {
 	return Texture::CreateOrGetTexture(path, directory);		//gotsta go back and remove this from everywhere
 	//int indexOfTexture = -1;
@@ -1631,7 +1633,7 @@ BitmapFont * Renderer::CreateOrGetBitmapFont(const char * bitmapFontName)
 	if (containsFont != m_loadedFonts.end()){
 		loadedFont = containsFont->second;
 	} else {
-		Texture* glyphTexture = CreateOrGetTexture(bitmapFontName + FONT_EXTENSION, FONT_DIRECTORY);
+		Texture* glyphTexture = CreateOrGetTexture(bitmapFontName + FONT_EXTENSION, FONT_DIRECTORY, false);
 		SpriteSheet* glyphSheet = new SpriteSheet(*glyphTexture, 16, 16);
 		loadedFont = new BitmapFont(bitmapFontName, *glyphSheet, 1.f);
 		m_loadedFonts.insert(std::pair<std::string, BitmapFont*> ((std::string)bitmapFontName, loadedFont));

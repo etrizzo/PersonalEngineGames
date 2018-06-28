@@ -67,6 +67,7 @@ public:
 	std::vector<float> m_heights;
 	std::vector<Vector3> m_normals;
 	Renderable* m_renderable;
+	Renderable* m_waterRenderable;
 	AABB3 m_bounds;
 
 private:

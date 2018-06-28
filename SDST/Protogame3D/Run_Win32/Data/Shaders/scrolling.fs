@@ -1,5 +1,7 @@
 #version 420 core
 #include "Includes/lighting.glsl"
+#include "Includes/fog.glsl"
+
 
 
 // Uniforms ==============================================
@@ -32,6 +34,7 @@ in vec3 passWorldPos;   // new
 in vec3 passWorldNormal;// new
 in vec3 passWorldTangent;
 in vec3 passWorldBitangent;
+in vec3 passViewPos;
 
 out vec4 outColor; 
 
@@ -39,8 +42,9 @@ out vec4 outColor;
 void main( void )
 {
     // Get the surface colour
-   vec4 tex_color = texture( gTexDiffuse, passUV ); 
-   vec3 normal_color = texture( gTexNormal, passUV ).xyz;
+   vec2 uv_offset = passUV + vec2(GAME_TIME * .1f); 
+   vec4 tex_color = texture( gTexDiffuse, passUV + uv_offset ); 
+   vec3 normal_color = texture( gTexNormal, passUV + uv_offset ).xyz;
   // vec3 emissive_color = texture( gTexEmissive, passUV ).xyz; 
 
    // Interpolation is linear, so normals become not normal
@@ -72,5 +76,6 @@ void main( void )
   // final_color.xyz = ADD(final_color.xyz, emissive_color); 
 
    final_color = clamp(final_color, vec4(0), vec4(1) ); // not necessary - but overflow should go to bloom target (bloom effect)
+   final_color = ApplyFog(final_color, passViewPos.z);
    outColor = final_color;
 }

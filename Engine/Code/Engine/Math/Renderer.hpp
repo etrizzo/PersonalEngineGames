@@ -30,9 +30,8 @@
 
 
 // Uniform bindings
-#define TIME_BUFFER_BINDING		(1)
 #define LIGHT_BUFFER_BINDING	(2)
-
+#define TIME_BUFFER_BINDING		(8)
 
 typedef RenderBuffer UniformBuffer;
 
@@ -213,7 +212,7 @@ public:
 	//name is the id used in the map - "spritesheetPath_index" i.e. Tiles8x8_14
 	Sprite* CreateOrGetSprite(const std::string& name, const Texture* texture, AABB2 uvs, Vector2 pivot, Vector2 dimensions);		
 	Sprite* GetSprite(const std::string& name);
-	Texture* CreateOrGetTexture(const std::string& path, const std::string& directory = IMAGE_DIRECTORY);
+	Texture* CreateOrGetTexture(const std::string& path, const std::string& directory = IMAGE_DIRECTORY, bool setMips = false);
 
 	BitmapFont* CreateOrGetBitmapFont( const char* bitmapFontName);
 	void DrawText2D(const std::string& asciiText, const Vector2& drawMins, float cellHeight, const RGBA& tint = RGBA::WHITE, const BitmapFont* font = nullptr, float aspectScale = 1.f);

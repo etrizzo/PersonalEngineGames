@@ -1,7 +1,23 @@
 #include "ForwardRenderPath.hpp"
+#include "Engine/Math/Renderer.hpp"
+
+
+ForwardRenderPath::ForwardRenderPath()
+{
+	m_fogData;
+	m_fogData.SetFogBuffer(RGBA::WHITE, 20.f, 45.f, 0.f, .7f);
+}
+
+ForwardRenderPath::ForwardRenderPath(Renderer * r)
+{
+	m_renderer = r;
+	m_fogData;
+	m_fogData.SetFogBuffer(RGBA::WHITE, 5.f, 10.f, .1f, 1.f);
+}
 
 void ForwardRenderPath::Render(RenderScene * scene)
 {
+	BindFog();
 	scene->SortCameras();
 
 	for (Camera* cam : scene->m_cameras){
@@ -142,6 +158,15 @@ void ForwardRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls, Camera* 
 	}
 }
 
+void ForwardRenderPath::BindFog()
+{
+	TODO("Move fog binding to renderer");
+	m_fogBuffer.CopyToGPU( sizeof(m_fogData), &m_fogData);
+	glBindBufferBase( GL_UNIFORM_BUFFER, 
+		FOG_BUFFER_BINDING, 
+		m_fogBuffer.GetHandle() ); 
+}
+
 void ForwardRenderPath::ClearForCamera(Camera * cam)
 {
 	if (cam->m_skybox != nullptr){
@@ -168,3 +193,11 @@ void ForwardRenderPath::RenderSkybox(Camera * cam)
 	}
 }
 
+void fogData_t::SetFogBuffer(RGBA color, float nearPlane, float farPlane, float nearFactor, float farFactor)
+{
+	fogColor = color.GetNormalized();
+	fogNearPlane = nearPlane;
+	fogFarPlane = farPlane;
+	fogNearFactor = nearFactor;
+	fogFarFactor = farFactor;
+}

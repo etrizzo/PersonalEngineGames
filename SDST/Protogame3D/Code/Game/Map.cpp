@@ -32,7 +32,25 @@ Map::Map(std::string imageFile, AABB2 const & extents, float minHeight, float ma
 	//IntVector2 pixelsPerTile = IntVector2(imgSize.x / )
 	//m_dimensions = chunks
 	RunMapGeneration(img);
+
+	//If there is actual height to the terrain, add water renderable
+	if (maxHeight - minHeight > .001f){
+		float waterHeight = Interpolate(minHeight, maxHeight, .3f);
+		Vector3 planeCenter = Vector3(m_extents.GetCenter().x, waterHeight, m_extents.GetCenter().y);
+		m_waterRenderable = new Renderable();
+		MeshBuilder mb = MeshBuilder();
+		mb.Begin(PRIMITIVE_TRIANGLES, true);
+		mb.AppendPlane(planeCenter, Vector3::FORWARD, Vector3::RIGHT, m_extents.GetDimensions(), RGBA::WHITE.GetColorWithAlpha(200), Vector2::ZERO, (Vector2::ONE * 128));
+		mb.End();
+
+		m_waterRenderable->SetMesh(mb.CreateMesh());
+		m_waterRenderable->SetMaterial(Material::GetMaterial("water"));
+		g_theGame->m_playState->m_scene->AddRenderable(m_waterRenderable);
+	}
+
 	g_theGame->m_playState->m_scene->AddRenderable(m_renderable);
+	
+	
 }
 
 

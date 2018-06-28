@@ -91,6 +91,8 @@ PFNGLBINDSAMPLERPROC			glBindSampler		= nullptr;
 PFNGLACTIVETEXTUREPROC			glActiveTexture		= nullptr;
 PFNGLBINDTEXTUREPROC			glBindTexture		= nullptr;
 PFNGLDISABLEPROC				glDisable			= nullptr;
+PFNGLGENERATEMIPMAPPROC			glGenerateMipmap	= nullptr;
+PFNGLSAMPLERPARAMETERFPROC		glSamplerParameterf	= nullptr;
 
 //blending
 PFNGLBLENDFUNCPROC		glBlendFunc	 = nullptr;

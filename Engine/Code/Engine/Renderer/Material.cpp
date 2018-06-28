@@ -32,7 +32,7 @@ Material::Material(tinyxml2::XMLElement * matElement)
 			if (idx == -1){
 				idx = m_textures.size();
 			}
-			SetTexture(idx, Texture::CreateOrGetTexture(path));
+			SetTexture(idx, Texture::CreateOrGetTexture(path, IMAGE_DIRECTORY));
 		}
 	}
 

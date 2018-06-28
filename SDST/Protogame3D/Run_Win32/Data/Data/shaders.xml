@@ -19,6 +19,11 @@
 	<depth write="true" test="less"/>
 </shader>
 
+<shader name="lit_fog" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="lit_fog" />
+	<depth write="true" test="less"/>
+</shader>
+
 <shader name="lit_alpha" sort="1" cull="back" fill="solid" frontface="ccw" blend = "alpha">
 	<program id="lit" />
 	<depth write="false" test="less"/>
@@ -55,7 +60,7 @@
 
 <shader name="inverse" cull="back" fill="solid" frontface="ccw" blend = "alpha">
 	<program id="inverse" />
-	<depth write="true" test="less"/>
+	<depth write="false" test="less"/>
 </shader>
 
 
@@ -71,6 +76,11 @@
 <shader name="cutout_lit" cull="back" fill="solid" frontface="ccw" blend = "alpha">
 	<program id="cutout_lit" />
 	<depth write="true" test="less"/>
+</shader>
+
+<shader name="water" sort="1" cull="back" fill="solid" frontface="ccw" blend="alpha">
+	<program id="scrolling" />
+	<depth write="true" text="less" />
 </shader>
 
 

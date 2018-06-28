@@ -26,10 +26,10 @@ class Texture
 
 private:
 	Texture(){};
-	Texture( const std::string& imageFilePath ); // Use renderer->CreateOrGetTexture() instead!
-	Texture( const Image* image);
+	Texture( const std::string& imageFilePath, bool setMips = true); // Use renderer->CreateOrGetTexture() instead!
+	Texture( const Image* image, bool setMips = true);
 	void PopulateFromData( unsigned char* imageData, const IntVector2& texelSize, int numComponents );
-	void PopulateFromImage( const Image* image );
+	void PopulateFromImage( const Image* image, bool setMips);
 	bool CreateRenderTarget(unsigned int width, unsigned int height, eTextureFormat format);
 
 public:
@@ -50,6 +50,8 @@ private:
 	IntVector2		m_dimensions;
 	eTextureFormat	m_format;	
 	std::string		m_path;
+
+	unsigned int CalculateMipCount(int size);
 };
 
 

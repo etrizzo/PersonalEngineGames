@@ -112,6 +112,8 @@ extern PFNGLBINDSAMPLERPROC			glBindSampler		;
 extern PFNGLACTIVETEXTUREPROC		glActiveTexture		;
 extern PFNGLBINDTEXTUREPROC			glBindTexture		;
 extern PFNGLDISABLEPROC				glDisable			;
+extern PFNGLGENERATEMIPMAPPROC		glGenerateMipmap	;
+extern PFNGLSAMPLERPARAMETERFPROC	glSamplerParameterf	;
 
 //blending
 extern PFNGLBLENDFUNCPROC		glBlendFunc	;

@@ -27,6 +27,7 @@ public:
 	ForwardRenderPath* m_renderPath;
 	RenderScene* m_scene;
 
+
 	std::vector<Enemy*> m_enemies;
 	std::vector<Bullet*> m_bullets;
 	std::vector<Spawner*> m_spawners;

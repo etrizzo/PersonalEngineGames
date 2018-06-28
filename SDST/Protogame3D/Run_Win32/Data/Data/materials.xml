@@ -22,7 +22,7 @@
 
 <!-- default mats -->
 
-<material name="default_lit" shader="default_lit">
+<material name="default_lit" shader="lit_fog">
 	<textures>
 		<texture type="diffuse" path="white" />
 		<texture type="normal" path="flat" />
@@ -58,7 +58,7 @@
 
 
 <!-- special mats -->
-<material name="couch" shader="default_lit">
+<material name="couch" shader="lit_fog">
 	<textures>
 		<texture type="diffuse" path="couch_albedo.png" />
 		<texture type="normal" path="couch_normal.png" />
@@ -70,7 +70,19 @@
 	</properties>
 </material>
 
-<material name="terrain" shader="default_lit">
+<material name="water" shader="water">
+	<textures>
+		<texture type="diffuse" path="water_2.png" />
+	</textures>
+	<properties>
+		<property type="float" name="SPECULAR_AMOUNT" value="1.0" />
+		<property type="float" name="SPECULAR_POWER" value="5" />
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+
+<material name="terrain" shader="lit_fog">
 	<textures>
 		<texture type="diffuse" path="grass_green_d.png" />
 		<texture type="normal" path="grass_green_n.png" />

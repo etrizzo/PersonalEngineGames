@@ -1,5 +1,6 @@
 #version 420 core
 #include "Includes/lighting.glsl"
+#include "Includes/fog.glsl"
 
 
 // Uniforms ==============================================
@@ -32,6 +33,7 @@ in vec3 passWorldPos;   // new
 in vec3 passWorldNormal;// new
 in vec3 passWorldTangent;
 in vec3 passWorldBitangent;
+in vec3 passViewPos;
 
 out vec4 outColor; 
 
@@ -71,6 +73,7 @@ void main( void )
    vec4 final_color = (vec4(lf.diffuse, 1) * tex_color * passColor) + vec4(lf.specular, 0); 
   // final_color.xyz = ADD(final_color.xyz, emissive_color); 
 
+   final_color = ApplyFog( final_color, passViewPos.z);
    final_color = clamp(final_color, vec4(0), vec4(1) ); // not necessary - but overflow should go to bloom target (bloom effect)
    outColor = final_color;
 }
