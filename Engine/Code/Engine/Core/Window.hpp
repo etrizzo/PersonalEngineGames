@@ -29,6 +29,11 @@ public:
 
 	void SetInputSystem(InputSystem* inputSystem);
 
+	Vector2 GetCenter() const;
+	Vector2 GetCenterInDesktopCoords() const;
+
+	Vector2 ClientToScreenCoord(Vector2 clientPos);
+
 	// ** EXTRAS ** //
 	// void SetTitle( char const *new_title ); 
 

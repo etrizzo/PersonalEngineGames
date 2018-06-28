@@ -29,6 +29,11 @@
 	<depth write="false" test="less"/>
 </shader>
 
+<shader name="lit_alpha_fog" sort="1" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="lit_fog" />
+	<depth write="false" test="less"/>
+</shader>
+
 <!-- variations on default shader -->
 
 <shader name="unlit_alpha" sort="1" cull="back" fill="solid" frontface="ccw" blend = "alpha">

@@ -294,6 +294,13 @@ unsigned int GameState_Playing::GetNumActiveLights() const
 
 
 
+void GameState_Playing::CheckForVictory()
+{
+	if (m_enemies.size() == 0 && m_spawners.size() == 0){
+		g_theGame->TransitionToState((GameState*) new GameState_Victory());
+	}
+}
+
 void GameState_Playing::UpdateShader(int direction)
 {
 	//m_debugShader= eDebugShaders(ClampInt(m_debugShader + direction, 0, NUM_DEBUG_SHADERS - 1));

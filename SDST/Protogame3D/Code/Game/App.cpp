@@ -44,7 +44,8 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_theInput = new InputSystem();
 	g_theAudio = new AudioSystem();
 	g_theGame = new Game();
-
+	g_theInput->LockMouse();
+	g_theInput->ShowCursor(false);
 
 	g_Window->SetInputSystem(g_theInput);
 	AABB2 UIBounds = g_theGame->m_uiCamera->GetBounds();
@@ -165,7 +166,10 @@ void App::HandleInput()
 		} else {
 			g_devConsole->Close();
 		}
+		g_theInput->ToggleMouseLock();
+		g_theInput->ToggleCursor();
 	}
+
 
 	if (!DevConsoleIsOpen()){
 		//universal keys

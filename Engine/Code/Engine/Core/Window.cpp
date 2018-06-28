@@ -119,6 +119,39 @@ void Window::SetInputSystem(InputSystem * inputSystem)
 	m_inputSystem = inputSystem;
 }
 
+Vector2 Window::GetCenter() const
+{
+	return m_dimensions * .5f;
+}
+
+Vector2 Window::GetCenterInDesktopCoords() const
+{
+	HWND hwnd = (HWND) GetHandle(); // Get your windows HWND
+
+	RECT client_rect; // window class RECT
+	::GetClientRect( hwnd, &client_rect ); 
+
+	Vector2 center = GetCenter();
+	POINT c; 
+	c.x = center.x; 
+	c.y = center.y; 
+	::ClientToScreen( hwnd, &c ); 
+
+	Vector2 desktopCenter = Vector2(c.x, c.y);
+	return desktopCenter;
+}
+
+Vector2 Window::ClientToScreenCoord(Vector2 clientPos)
+{
+	HWND hwnd = (HWND) GetInstance()->GetHandle();
+	POINT desktopPos;
+	desktopPos.x = clientPos.x;
+	desktopPos.y = clientPos.y;
+	::ClientToScreen( hwnd, &desktopPos);
+
+	return Vector2((float) desktopPos.x, (float) desktopPos.y);
+}
+
 Window * Window::GetInstance()
 {
 	return g_Window;
@@ -174,6 +207,19 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure( HWND hwnd,
 			//returnVal = g_theApp->ProcessKeyUp(asKey);
 			//break;
 		}
+		//handle mouse input
+		case WM_LBUTTONDOWN:
+			g_Window->m_inputSystem->HandleMouseButton( MOUSE_LEFT_BUTTON_DOWN ); 
+			break; 
+		case WM_LBUTTONUP:
+			g_Window->m_inputSystem->HandleMouseButton( MOUSE_LEFT_BUTTON_UP ); 
+			break; 
+		case WM_RBUTTONDOWN:
+			g_Window->m_inputSystem->HandleMouseButton( MOUSE_RIGHT_BUTTON_DOWN ); 
+			break; 
+		case WM_RBUTTONUP:
+			g_Window->m_inputSystem->HandleMouseButton( MOUSE_RIGHT_BUTTON_UP ); 
+			break; 
 	}; 
 
 	// do default windows behaviour (return before this if you don't want default windows behavior for certain messages)

@@ -286,6 +286,7 @@
     <ClCompile Include="Input\Command.cpp" />
     <ClCompile Include="Input\InputSystem.cpp" />
     <ClCompile Include="Input\KeyButtonState.cpp" />
+    <ClCompile Include="Input\Mouse.cpp" />
     <ClCompile Include="Input\XboxController.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4309</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='DebugInline|Win32'">4309</DisableSpecificWarnings>
@@ -386,6 +387,7 @@
     <ClInclude Include="Input\Command.hpp" />
     <ClInclude Include="Input\InputSystem.hpp" />
     <ClInclude Include="Input\KeyButtonState.hpp" />
+    <ClInclude Include="Input\Mouse.hpp" />
     <ClInclude Include="Input\XboxController.hpp" />
     <ClInclude Include="Math\AABB2.hpp" />
     <ClInclude Include="Math\AABB3.hpp" />

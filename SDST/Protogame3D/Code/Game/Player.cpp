@@ -99,7 +99,7 @@ void Player::HandleInput()
 {
 	float ds = g_theGame->GetDeltaSeconds();
 
-	if (g_theInput->IsKeyDown(VK_SPACE)){
+	if (g_theInput->IsKeyDown(VK_SPACE) || g_theInput->IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
 		if (m_rateOfFire.CheckAndReset()){
 			m_playState->AddNewBullet(*m_barrelPosition);
 		}
@@ -122,6 +122,9 @@ void Player::HandleInput()
 
 	Vector2 controllerRotation = g_theInput->GetController(0)->GetRightThumbstickCoordinates();
 	camRotation+=Vector3(controllerRotation.y, controllerRotation.x, 0.f);
+
+	Vector2 mouseMovement = g_theInput->GetMouseDirection()  * .3f;
+	camRotation+=Vector3(-mouseMovement.y, mouseMovement.x, 0.f);
 
 	m_cameraTarget->RotateByEuler(camRotation * m_degPerSecond * ds);
 

@@ -70,6 +70,8 @@ protected:
 
 	eDebugShaders m_debugShader = SHADER_LIT;
 
+	void CheckForVictory();
+
 	void UpdateShader(int direction);
 	void SetShader();		//sets which shader to draw scene with
 	std::string GetShaderName() const;

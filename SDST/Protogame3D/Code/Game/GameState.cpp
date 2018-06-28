@@ -274,3 +274,23 @@ void GameState_Loading::HandleInput()
 {
 }
 
+GameState_Victory::GameState_Victory(GameState_Playing * playState)
+{
+	m_encounterGameState = playState;
+}
+
+void GameState_Victory::Update(float ds)
+{
+}
+
+void GameState_Victory::RenderGame()
+{
+}
+
+void GameState_Victory::RenderUI()
+{
+}
+
+void GameState_Victory::HandleInput()
+{
+}
