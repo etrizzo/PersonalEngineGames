@@ -4,7 +4,7 @@
 class Player :public Entity{
 public:
 	Player(GameState_Playing* playState, Vector3 position = Vector3::ZERO);
-	~Player() {};
+	~Player();
 
 	void Update() override;
 

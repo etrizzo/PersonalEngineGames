@@ -17,33 +17,37 @@ GameState_Playing::GameState_Playing()
 
 	m_couchMaterial = Material::GetMaterial("couch");
 
-
-
-	//m_thaShip = new Entity(Vector3::ZERO, "scifi_fighter_mk6.obj");
-	//m_thaShip->SetDiffuseTexture("SciFi_Fighter-MK6-diffuse.png");
-
-	//m_thaMiku = new Entity(Vector3(0.f, 3.f, 10.f), "miku.obj", "miku.mtl");
-	//m_thaMiku->Rotate(Vector3(0.f,180.f,0.f));
-	//m_thaMiku->m_renderable->SetShader("lit_alpha", 0);
-	//m_thaMiku->m_renderable->SetShader("lit_alpha", 1);
-	//m_thaMiku->m_renderable->SetShader("default_lit", 2);
-
 	m_particleSystem = new ParticleSystem();
 	m_particleSystem->CreateEmitter(Vector3(0.f, 4.f, 0.f));
 	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
 
-	//m_scene->AddRenderable(m_particleSystem->m_emitters[0]->m_renderable);
 
-
-
-	//m_scene->AddNewPointLight(Vector3::ZERO, RGBA::WHITE);
-	//m_scene->AddNewSpotLight(Vector3(0.f, 4.f, -5.f), RGBA::WHITE, 20.f, 23.f);		//camera light
-	//m_scene->AddNewSpotLight(Vector3(0.f, 5.f, 5.f), RGBA(255,255,128,255));			//orbiting light
-	//m_scene->AddNewPointLight(Vector3(0.f, 5.f, 15.f), RGBA(255, 128, 70,255));		//reddish point light
 	m_scene->AddNewDirectionalLight(Vector3(-10.f, 0.f, -10.f), RGBA::WHITE, Vector3(0.f, -90.f, -10.f));		//bluish directional light
 
 	m_scene->AddCamera(g_theGame->m_currentCamera);
 	g_theGame->m_mainCamera->AddSkybox("skybox.png");
+}
+
+void GameState_Playing::EnterState()
+{
+	m_gameWon = false;
+	if (m_player != nullptr){
+		delete m_player;
+	}
+	m_player = new Player(this, Vector3::ZERO);
+
+	float minSpawnerRange = -100.f;
+	float maxSpawnerRange = 100.f;
+
+	AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
+	AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
+	AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
+
+	m_scene->AddRenderable(m_player->m_renderable);
+	m_scene->AddRenderable(m_player->m_turretRenderable);
+	m_scene->AddRenderable(m_player->m_laserSightRenderable);
+
+	g_theGame->m_mainCamera->m_transform.SetParent(m_player->m_cameraTarget);
 }
 
 void GameState_Playing::Update(float ds)
@@ -62,10 +66,6 @@ void GameState_Playing::Update(float ds)
 		Vector3 pos = Vector3( xz_pos.x, 5.f, xz_pos.y ); 
 	}
 
-	//m_couchMaterial->SetProperty("SPECULAR_AMOUNT", m_specAmount);
-	//m_couchMaterial->SetProperty("SPECULAR_POWER", m_specFactor);
-	//m_particleSystem->Update(deltaSeconds);
-
 	m_player->Update();
 	//Update spawners before the rest of entities bc it can add entities
 	for (Spawner* spawner : m_spawners){
@@ -78,6 +78,7 @@ void GameState_Playing::Update(float ds)
 	}
 
 	DeleteEntities();
+	CheckForVictory();
 	//g_theGame->m_mainCamera->m_transform.SetLocalPosition(m_player->GetPosition() + Vector3(0.f, 3.f, -5.f));
 	
 }
@@ -182,23 +183,7 @@ void GameState_Playing::HandleInput()
 	}
 }
 
-void GameState_Playing::EnterState()
-{
-	m_player = new Player(this, Vector3::ZERO);
 
-	float minSpawnerRange = -100.f;
-	float maxSpawnerRange = 100.f;
-
-	AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
-	AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
-	AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
-
-	m_scene->AddRenderable(m_player->m_renderable);
-	m_scene->AddRenderable(m_player->m_turretRenderable);
-	m_scene->AddRenderable(m_player->m_laserSightRenderable);
-
-	g_theGame->m_mainCamera->m_transform.SetParent(m_player->m_cameraTarget);
-}
 
 
 
@@ -296,8 +281,11 @@ unsigned int GameState_Playing::GetNumActiveLights() const
 
 void GameState_Playing::CheckForVictory()
 {
-	if (m_enemies.size() == 0 && m_spawners.size() == 0){
-		g_theGame->TransitionToState((GameState*) new GameState_Victory());
+	if (!m_gameWon){
+		if (m_enemies.size() == 0 && m_spawners.size() == 0){
+			g_theGame->TransitionToState((GameState*) new GameState_Victory(this));
+			m_gameWon = true;
+		}
 	}
 }
 

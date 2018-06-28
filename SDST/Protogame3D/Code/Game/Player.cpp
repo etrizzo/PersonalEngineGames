@@ -73,6 +73,19 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	m_playState = playState;
 }
 
+Player::~Player()
+{
+	g_theGame->GetScene()->RemoveRenderable(m_laserSightRenderable);
+	g_theGame->GetScene()->RemoveRenderable(m_targetRenderable);
+	g_theGame->GetScene()->RemoveRenderable(m_turretRenderable);
+
+	delete m_cameraTarget;
+	delete m_turretRenderable;
+	delete m_laserSightRenderable;
+	delete m_targetRenderable;
+	delete m_barrelPosition;
+}
+
 void Player::Update()
 {
 

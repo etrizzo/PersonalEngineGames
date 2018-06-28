@@ -51,7 +51,7 @@ bool IsDownDown()
 
 bool AcceptJustPressed()
 {
-	return (g_theInput->WasKeyJustPressed(VK_RETURN) || g_theInput->GetController(0)->WasButtonJustPressed(XBOX_A));
+	return (g_theInput->WasKeyJustPressed(VK_RETURN) || g_theInput->GetController(0)->WasButtonJustPressed(XBOX_A) || g_theInput->WasMouseButtonJustPressed(MOUSE_BUTTON_LEFT));
 }
 
 bool BackJustPressed()

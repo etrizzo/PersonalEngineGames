@@ -33,12 +33,12 @@ public:
 	std::vector<Spawner*> m_spawners;
 	std::vector<Entity*> m_allEntities;
 
-
+	void EnterState() override;
 	void Update(float ds);
 	void RenderGame();
 	void RenderUI();
 	void HandleInput();
-	void EnterState() override;
+	
 
 	Enemy*	 AddNewEnemy(const Vector2& pos);
 	Bullet*  AddNewBullet(const Transform& t);
@@ -61,6 +61,8 @@ public:
 	unsigned int GetNumActiveLights() const;
 
 	RenderScene* GetScene() { return m_scene; }
+
+	bool m_gameWon = false;
 
 
 protected:

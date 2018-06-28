@@ -206,16 +206,6 @@ void GameState_Paused::Update(float ds)
 
 void GameState_Paused::RenderGame()
 {
-	//GameState_Encounter::RenderGame();
-	//m_encounterGameState->RenderGame();
-	//g_theRenderer->ClearScreen( RGBA::BLACK ); 
-	//g_theRenderer->ClearDepth( 1.0f ); 
-	//g_theRenderer->EnableDepth( COMPARE_LESS, true ); 
-
-	//if (g_theGame->IsDevMode()){		//draw cube at origin
-	//	g_theRenderer->DrawCube(Vector3::ZERO,Vector3::ONE, RGBA::RED);
-	//}
-
 	m_encounterGameState->RenderGame();
 }
 
@@ -281,16 +271,31 @@ GameState_Victory::GameState_Victory(GameState_Playing * playState)
 
 void GameState_Victory::Update(float ds)
 {
+	m_encounterGameState->Update(0.f);
+	m_timeInState+=ds;
 }
 
 void GameState_Victory::RenderGame()
 {
+	m_encounterGameState->Render();
 }
 
 void GameState_Victory::RenderUI()
 {
+	m_encounterGameState->RenderUI();
+	g_theRenderer->ClearDepth(1.f);
+
+	AABB2 UIBounds = g_theGame->SetUICamera(); 
+	g_theRenderer->DrawAABB2(UIBounds, RGBA(0, 32, 32, 104));
+	if (!m_isTransitioning){
+		g_theRenderer->DrawTextInBox2D("VICTORY", UIBounds, Vector2(.5f,.5f), .1f);
+		g_theRenderer->DrawTextInBox2D("Press\nspace\nto return to main menu", UIBounds, Vector2(.5f, .3f), .05f, TEXT_DRAW_SHRINK_TO_FIT);
+	}
 }
 
 void GameState_Victory::HandleInput()
 {
+	if (AcceptJustPressed() || g_theInput->WasKeyJustPressed(VK_SPACE)){
+		g_theGame->TransitionToState( new GameState_Attract());
+	}
 }
