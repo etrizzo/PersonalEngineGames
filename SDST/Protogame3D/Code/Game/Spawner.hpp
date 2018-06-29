@@ -12,7 +12,7 @@ public:
 
 	Vector2 m_positionXZ;
 	StopWatch m_spawnRate;
-	int m_maxEnemies = 10;
+	int m_maxEnemies = 25;
 	//reference to enemies this spawner has created
 	// Note: spawner doesn't own entities once they're created, the playstate does
 	std::vector<Enemy*> m_spawnedEnemies;	

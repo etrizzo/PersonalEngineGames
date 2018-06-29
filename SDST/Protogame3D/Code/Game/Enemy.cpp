@@ -81,7 +81,7 @@ bool Enemy::IsPointInside(const Vector3 & point) const
 void Enemy::CheckForPlayerCollision()
 {
 	if (m_collider.DoSpheresOverlap(g_theGame->m_playState->m_player->m_collider)){
-		m_aboutToBeDeleted = true;
+		Damage();
 		//damage the player
 		g_theGame->m_playState->m_player->Damage();
 	}
@@ -90,8 +90,8 @@ void Enemy::CheckForPlayerCollision()
 void Enemy::UpdateDirection()
 {
 	//get the average of all weighted factors
-	m_direction = GetSeekDirection() + GetSeparateDirection();
-	m_direction *= .5f;	
+	m_direction = GetSeekDirection() + GetSeparateDirection() + GetAlignmentDirection() + GetCohesionDirection();
+	m_direction *= .25f;	
 }
 
 void Enemy::TurnTowardPlayer()
@@ -146,4 +146,47 @@ Vector2 Enemy::GetSeparateDirection()
 	}
 
 	return dir * g_theGame->m_enemySeparateWeight;
+}
+
+Vector2 Enemy::GetCohesionDirection()
+{
+	Vector2 pos = Vector2::ZERO;
+	int numToAverage = 0;
+	for(Enemy* enemy : m_playState->m_enemies){
+		if (enemy != this){
+			Vector2 displacement = m_positionXZ - enemy->m_positionXZ;
+			float distance = displacement.NormalizeAndGetLength();
+			if (distance < g_theGame->m_enemyCohesionRadius){
+				pos = pos + (enemy->m_positionXZ);
+				numToAverage++;
+			}
+		}
+	}
+	if (numToAverage > 0){
+		pos = pos * (1.f / (float) numToAverage);
+	}
+	Vector2 dir = pos - m_positionXZ;
+	dir.NormalizeAndGetLength();
+	return dir * g_theGame->m_enemyCohesionWeight;
+}
+
+Vector2 Enemy::GetAlignmentDirection()
+{
+	Vector2 dir = Vector2::ZERO;
+	int numToAverage = 0;
+	for(Enemy* enemy : m_playState->m_enemies){
+		if (enemy != this){
+			Vector2 displacement = m_positionXZ - enemy->m_positionXZ;
+			float distance = displacement.NormalizeAndGetLength();
+			if (distance < g_theGame->m_enemyAlignmentRadius){
+				dir = dir + enemy->m_direction;
+				numToAverage++;
+			}
+		}
+	}
+	if (numToAverage > 0){
+		dir = dir * (1.f / (float) numToAverage);
+	}
+
+	return dir * g_theGame->m_enemyAlignmentWeight;
 }

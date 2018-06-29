@@ -196,9 +196,11 @@ void Player::HandleInput()
 
 void Player::Damage()
 {
-	m_health--;
-	if (m_health <= 0){
-		m_aboutToBeDeleted = true;
+	if (!g_theGame->m_godMode){
+		m_health--;
+		if (m_health <= 0){
+			m_aboutToBeDeleted = true;
+		}
 	}
 }
 

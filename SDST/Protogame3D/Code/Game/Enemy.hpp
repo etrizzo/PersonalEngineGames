@@ -27,4 +27,6 @@ private:
 
 	Vector2 GetSeekDirection();
 	Vector2 GetSeparateDirection();
+	Vector2 GetCohesionDirection();
+	Vector2 GetAlignmentDirection();
 };

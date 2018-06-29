@@ -158,6 +158,10 @@ void App::RegisterCommands()
 	CommandRegister("set_light_attenuation", CommandSetLightAttenuation, "Sets attenuation for light i to a0,a1,a2", "set_light_attenuation <i> <a0,a1,a2>");
 	CommandRegister("set_ambient_light", CommandSetAmbientLight, "Sets ambient light on renderer.", "set_ambient_light <r,g,b,a>");
 
+	CommandRegister("set_god_mode", CommandSetGodMode, "Sets god mode", "set_god_mode <bool>");
+	CommandRegister("toggle_god_mode", CommandToggleGodMode, "Toggles god mode");
+	CommandRegister("tgm", CommandToggleGodMode, "Toggles god mode");
+
 }
 
 void App::HandleInput()
@@ -384,4 +388,22 @@ void CommandSetLightAttenuation(Command & cmd)
 		g_theGame->SetLightAttenuation(idx, att);
 		ConsolePrintf("Set light %i attenuation to: %f,%f,%f", idx, att.x, att.y, att.z);
 	}
+}
+
+void CommandSetGodMode(Command & cmd)
+{
+	std::string gm = cmd.GetNextString();
+	if (gm=="false"){
+		g_theGame->m_godMode = false;
+		ConsolePrintf("God mode is off");
+	} else {
+		g_theGame->m_godMode = true;
+		ConsolePrintf("God mode is off");
+	}
+}
+
+void CommandToggleGodMode(Command & cmd)
+{
+	g_theGame->m_godMode = !g_theGame->m_godMode;
+	ConsolePrintf(("God mode is: " +  std::to_string(g_theGame->m_godMode)).c_str());
 }

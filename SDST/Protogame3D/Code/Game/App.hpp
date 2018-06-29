@@ -57,3 +57,6 @@ void CommandSetAmbientLight(Command& cmd);
 void CommandRemoveLight(Command& cmd);
 void CommandRemoveAllLights(Command& cmd);
 void CommandSetLightAttenuation(Command& cmd);
+
+void CommandSetGodMode(Command& cmd);
+void CommandToggleGodMode(Command& cmd);
