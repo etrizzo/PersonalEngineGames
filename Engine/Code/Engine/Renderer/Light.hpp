@@ -26,10 +26,16 @@ public:
 	virtual void RenderAsPoint(Renderer* r);
 
 	virtual light_t GetBuffer() const;
+
+	void SetShadowMatrix(const Matrix44& mat);
+	bool UsesShadows() const { return m_createsShadow; };
+	void SetUsesShadows(bool shadow = true) { m_createsShadow = shadow; };
 	
 	Transform m_transform;
 	RGBA m_lightColor;
 	Vector3 m_attenuation = Vector3(.1f, .06f, .05f);
+	bool m_createsShadow = false;
+	Matrix44 m_shadowVP = Matrix44::IDENTITY;
 };
 
 

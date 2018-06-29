@@ -14,6 +14,8 @@ public:
 	void SetColorTarget( Texture *color_target );
 	void SetDepthStencilTarget( Texture *depth_target );
 
+	Texture*  GetDepthTarget();
+
 	// model setters
 	void LookAt( Vector3 position, Vector3 target, Vector3 up = Vector3::UP ); 
 
@@ -22,6 +24,8 @@ public:
 	void SetProjectionOrtho( float size, float aspect, float nearVal, float farVal ); //how can you set screenMin to anything but 0,0??
 	void SetProjectionOrtho( const Vector3 & nearBottomLeft, const Vector3 & farTopRight );
 	void SetProjectionOrtho( const Vector2 & nearBottomLeft, const Vector2 & farTopRight );
+
+
 
 	void Translate(Vector3 translation);
 	void Rotate(Vector3 eulerChange);
@@ -46,6 +50,7 @@ public:
 	float GetOrthographicSize() const;
 
 	Matrix44 GetViewMatrix();
+	Matrix44 GetProjectionMatrix();
 
 	AABB2 GetBounds() const;
 

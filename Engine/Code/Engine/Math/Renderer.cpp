@@ -445,14 +445,15 @@ void Renderer::DrawMesh(SubMesh * mesh)
 	// Describe the buffer - first, figure out where the shader is expecting
 	// position to be.
 	BindRendererUniforms();
-
+	GL_CHECK_ERROR();
 	BindMeshToProgram(m_currentShader->m_program, mesh);
+	GL_CHECK_ERROR();
 	BindRenderState(m_currentShader->m_state);
-	
+	GL_CHECK_ERROR();
 	//GL_CHECK_ERROR();
 
 	glBindFramebuffer( GL_FRAMEBUFFER, m_currentCamera->GetFramebufferHandle() );
-
+	GL_CHECK_ERROR();
 
 	//--------------------------------------------------------------------------------------------------------------
 
@@ -664,6 +665,7 @@ void Renderer::BindCamera(Camera * cam)
 	if (proj_bind >= 0) {
 		glUniformMatrix4fv( proj_bind, 1, GL_FALSE, (GLfloat*)&m_currentCamera->m_projMatrix.m_top );
 	}
+	GL_CHECK_ERROR();
 }
 
 void Renderer::BindModel(Matrix44 mat, Shader* shader)

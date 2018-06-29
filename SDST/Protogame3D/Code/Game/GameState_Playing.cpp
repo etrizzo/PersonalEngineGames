@@ -10,8 +10,8 @@
 
 GameState_Playing::GameState_Playing()
 {
-	m_renderPath = new ForwardRenderPath();
-	m_renderPath->m_renderer = g_theRenderer;
+	m_renderPath = new ForwardRenderPath(g_theRenderer);
+	//m_renderPath->m_renderer = g_theRenderer;
 	m_scene = new RenderScene();
 
 
@@ -22,7 +22,9 @@ GameState_Playing::GameState_Playing()
 	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
 
 
-	m_scene->AddNewDirectionalLight(Vector3(-10.f, 0.f, -10.f), RGBA::WHITE, Vector3(0.f, -90.f, -10.f));		//bluish directional light
+	Light* dir = m_scene->AddNewDirectionalLight(Vector3(-50.f, 0.f, -50.f), RGBA::WHITE, Vector3(0.f, -90.f, -10.f));	
+
+	dir->SetUsesShadows(true);
 
 	m_scene->AddCamera(g_theGame->m_currentCamera);
 	g_theGame->m_mainCamera->AddSkybox("skybox.png");

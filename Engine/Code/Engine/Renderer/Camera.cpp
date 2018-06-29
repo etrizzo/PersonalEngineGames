@@ -39,6 +39,11 @@ void Camera::SetDepthStencilTarget(Texture * depth_target)
 	m_output.SetDepthStencilTarget(depth_target);
 }
 
+Texture * Camera::GetDepthTarget()
+{
+	return m_output.m_depthStencilTarget;
+}
+
 
 void Camera::LookAt(Vector3 position, Vector3 target, Vector3 up)
 {
@@ -75,6 +80,11 @@ void Camera::SetProjectionOrtho(const Vector2 & nearBottomLeft, const Vector2 & 
 	m_orthographicSize = farTopRight.x - nearBottomLeft.x;
 	m_bounds = AABB2(nearBottomLeft, farTopRight);
 	SetProjection(Matrix44::MakeOrtho2D(nearBottomLeft, farTopRight));
+}
+
+Matrix44 Camera::GetProjectionMatrix()
+{
+	return m_projMatrix.GetTop();
 }
 
 void Camera::Translate(Vector3 translation)

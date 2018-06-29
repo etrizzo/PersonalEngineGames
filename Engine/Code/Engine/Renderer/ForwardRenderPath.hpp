@@ -21,6 +21,7 @@ class ForwardRenderPath{
 public:
 	ForwardRenderPath();
 	ForwardRenderPath(Renderer* r);
+	void Initialize();
 
 	void Render(RenderScene* scene);
 	void RenderSceneForCamera(Camera* cam, RenderScene* scene);
@@ -29,13 +30,19 @@ public:
 	void SortDrawCalls(std::vector<DrawCall> &drawCalls, Camera* cam);
 
 	void BindFog();
+	void SetShadows(RenderScene* scene);
 	
 	Renderer* m_renderer;
 
 private:
 	fogData_t	m_fogData;
 	UniformBuffer m_fogBuffer;
+
 	void ClearForCamera(Camera* cam);
 	float GetLightFactor(Light* l, Vector3 position);
 	void RenderSkybox(Camera* cam);
+	void RenderShadowsForLight(Light* l, RenderScene* scene);
+
+	Texture* m_shadowDepthTarget;
+	Texture* m_shadowColorTarget;
 };

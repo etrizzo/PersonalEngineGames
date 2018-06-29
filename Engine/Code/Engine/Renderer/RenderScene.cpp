@@ -1,5 +1,10 @@
 #include "RenderScene.hpp"
 
+RenderScene::RenderScene()
+{
+	m_shadowCamera = new Camera();
+}
+
 void RenderScene::AddRenderable(Renderable * r)
 {
 	m_renderables.push_back(r);
@@ -143,4 +148,9 @@ void RenderScene::SetLightAttenuation(int lightIndex, Vector3 att)
 	if (lightIndex < (int) m_lights.size()){
 		m_lights[lightIndex]->SetAttenuation(att);
 	}
+}
+
+void RenderScene::SetShadowCameraPosition(Vector3 worldPos)
+{
+	m_shadowCamera->m_transform.SetLocalPosition(worldPos);
 }

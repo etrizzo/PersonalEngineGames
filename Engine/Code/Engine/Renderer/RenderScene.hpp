@@ -12,7 +12,7 @@
 
 class RenderScene{
 public:
-
+	 RenderScene();
 	void AddRenderable(Renderable *r);
 	void AddLight(Light * l);
 	void AddCamera(Camera* c);	//optional?
@@ -37,12 +37,17 @@ public:
 
 	void SetLightAttenuation(int lightIndex, Vector3 att);
 
+	void SetShadowCameraPosition(Vector3 worldPos);
+
 
 public:
 	std::vector<Renderable*> m_renderables;
 	std::vector<Light*> m_lights;		// we only support 8 per draw call, so we have to figure out which 8 we want to keep
 	std::vector<Camera*> m_cameras; 		//or could just have one camera
 	std::vector<ParticleSystem*> m_particleSystems;
+
+	Camera* m_shadowCamera;
+
 
 	// //for particle emitters splitscreen
 	// std::vector<CameraPreRenderCB> m_preRenders;

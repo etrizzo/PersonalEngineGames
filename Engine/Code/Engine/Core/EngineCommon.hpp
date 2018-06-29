@@ -182,7 +182,7 @@ struct light_t
 	Vector4 color;
 
 	Vector3 pos;
-	float padding;
+	float usesShadows;
 	
 	Vector3 direction;				//for a point light, this isn't really used in the final value, but still used in calculations so don't fuck it!
 	float is_point_light;		//is a directional light = 0.f? or point light = 1.f?
@@ -192,6 +192,8 @@ struct light_t
 	
 	Vector3 spec_attenuation;		//if you want it to be different :)
 	float dot_outer_angle;		//for cone light
+
+	Matrix44 shadowVP;
 	
 };
 

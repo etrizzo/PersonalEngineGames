@@ -18,7 +18,7 @@ struct light_t
    vec4 LIGHT_COLOR;
 
    vec3 LIGHT_POSITION;
-   float padding00;
+   float USES_SHADOWS;
    
    vec3 LIGHT_FORWARD_DIR;
    float IS_POINT_LIGHT;
@@ -28,6 +28,8 @@ struct light_t
    
    vec3 SPECULAR_ATTENUATION;
    float DOT_OUTER_ANGLE;
+
+   mat4 SHADOW_VP;
 }; 
 
 

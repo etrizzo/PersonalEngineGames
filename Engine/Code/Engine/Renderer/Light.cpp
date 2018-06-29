@@ -81,6 +81,11 @@ light_t Light::GetBuffer() const
 
 	buffer.color = m_lightColor.GetNormalized();
 	buffer.pos	 = m_transform.GetWorldPosition();
+	if (m_createsShadow){
+		buffer.usesShadows = 1.f;
+	} else {
+		buffer.usesShadows = 0.f;
+	}
 	
 	buffer.direction		= m_transform.GetForward();				//for a point light, this isn't really used in the final value, but still used in calculations so don't fuck it!
 	buffer.is_point_light	= 1.f;		//is a directional light = 0.f? or point light = 1.f?
@@ -91,7 +96,16 @@ light_t Light::GetBuffer() const
 	buffer.spec_attenuation = Vector3(.2f,0.f,0.01f);;		//if you want it to be different :)
 	buffer.dot_outer_angle	= CosDegreesf(180.f);		//for cone light
 
+	if (m_createsShadow){
+		Matrix44 shadowVP;
+	}
+
 	return buffer;
+}
+
+void Light::SetShadowMatrix(const Matrix44 & mat)
+{
+	m_shadowVP = mat;
 }
 
 DirectionalLight::DirectionalLight(Vector3 pos, RGBA color, Vector3 rotation)

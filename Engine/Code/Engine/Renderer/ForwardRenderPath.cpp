@@ -11,13 +11,21 @@ ForwardRenderPath::ForwardRenderPath()
 ForwardRenderPath::ForwardRenderPath(Renderer * r)
 {
 	m_renderer = r;
+	Initialize();
+}
+
+void ForwardRenderPath::Initialize()
+{
 	m_fogData;
 	m_fogData.SetFogBuffer(RGBA::WHITE, 5.f, 10.f, .1f, 1.f);
+	m_shadowDepthTarget = m_renderer->CreateDepthStencilTarget(2048, 2048);
+	m_shadowColorTarget = m_renderer->CreateRenderTarget(2048,2048);
 }
 
 void ForwardRenderPath::Render(RenderScene * scene)
 {
 	BindFog();
+	//SetShadows(scene);
 	scene->SortCameras();
 
 	for (Camera* cam : scene->m_cameras){
@@ -167,6 +175,15 @@ void ForwardRenderPath::BindFog()
 		m_fogBuffer.GetHandle() ); 
 }
 
+void ForwardRenderPath::SetShadows(RenderScene* scene)
+{
+	for (Light* light : scene->m_lights){
+		if (light->UsesShadows()){
+			RenderShadowsForLight(light, scene);
+		}
+	}
+}
+
 void ForwardRenderPath::ClearForCamera(Camera * cam)
 {
 	if (cam->m_skybox != nullptr){
@@ -191,6 +208,61 @@ void ForwardRenderPath::RenderSkybox(Camera * cam)
 		//m_renderer->BindModel(cam->m_transform.GetWorldMatrix());
 		m_renderer->DrawSkybox(cam->m_skybox);
 	}
+}
+
+void ForwardRenderPath::RenderShadowsForLight(Light * l, RenderScene * scene)
+{
+	m_renderer->BindCamera(scene->m_shadowCamera);
+
+	//set shadow camera's transform to be the light's transform
+	scene->m_shadowCamera->m_transform.SetWorldMatrix(l->m_transform.GetWorldMatrix());
+	
+	TODO("Add ability to do multiple light shadows");
+	scene->m_shadowCamera->SetDepthStencilTarget(m_shadowDepthTarget);
+	scene->m_shadowCamera->SetColorTarget(m_shadowColorTarget);
+	//scene->m_shadowCamera->SetDepthStencilTarget(m_renderer->m_defaultDepthTarget);
+	//scene->m_shadowCamera->SetColorTarget(m_renderer->m_defaultColorTarget);
+	scene->m_shadowCamera->SetProjectionOrtho(500.f, 1.f, -50, 100.f);
+	scene->m_shadowCamera->Finalize();
+
+	Matrix44 shadowVP;
+	shadowVP.Append(scene->m_shadowCamera->GetProjectionMatrix());
+	shadowVP.Append(scene->m_shadowCamera->GetViewMatrix());
+	l->SetShadowMatrix(shadowVP);
+
+	// Render scene to shadow camera
+	std::vector<DrawCall> drawCalls;
+	// generate the draw calls
+	for(Renderable* r : scene->m_renderables){
+		//this will change for multi-pass shaders or multi-material meshes
+		for (int i = 0; i < (int) r->m_mesh->m_subMeshes.size(); i++){
+			DrawCall dc;
+			//set up the draw call for this renderable :)
+			// the layer/queue comes from the shader!
+			dc.m_mesh = r->m_mesh->m_subMeshes[i];
+			dc.m_model = r->m_transform.GetWorldMatrix();
+			dc.m_material = Material::GetMaterial("default_unlit");
+			dc.m_layer = r->GetEditableMaterial()->m_shader->m_sortLayer;
+			dc.m_queue = 0;
+			//add the draw call to your list of draw calls
+			drawCalls.push_back(dc);
+		}
+	}
+
+	//now we sort draw calls by layer/queue
+	SortDrawCalls(drawCalls, scene->m_shadowCamera);
+	//sort alpha by distance to camera, etc.
+
+	for(DrawCall dc: drawCalls){
+		//an optimization would be to only bind the thing if it's different from the previous bind.
+		m_renderer->BindMaterial(dc.m_material);
+		GL_CHECK_ERROR();
+		m_renderer->BindModel(dc.m_model);
+		GL_CHECK_ERROR();
+		m_renderer->DrawMesh(dc.m_mesh);
+		GL_CHECK_ERROR();
+	}
+
 }
 
 void fogData_t::SetFogBuffer(RGBA color, float nearPlane, float farPlane, float nearFactor, float farFactor)
