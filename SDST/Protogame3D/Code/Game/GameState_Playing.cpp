@@ -22,7 +22,7 @@ GameState_Playing::GameState_Playing()
 	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
 
 
-	Light* dir = m_scene->AddNewDirectionalLight(Vector3(-50.f, 0.f, -50.f), RGBA::WHITE, Vector3(0.f, -90.f, -10.f));	
+	Light* dir = m_scene->AddNewDirectionalLight(Vector3(-10.f, 50, -10.f), RGBA::WHITE, Vector3(0.f, -90.f, -20.f));	
 
 	dir->SetUsesShadows(true);
 

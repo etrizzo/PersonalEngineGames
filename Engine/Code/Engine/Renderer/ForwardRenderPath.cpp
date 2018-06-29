@@ -25,7 +25,7 @@ void ForwardRenderPath::Initialize()
 void ForwardRenderPath::Render(RenderScene * scene)
 {
 	BindFog();
-	//SetShadows(scene);
+	SetShadows(scene);
 	scene->SortCameras();
 
 	for (Camera* cam : scene->m_cameras){
@@ -222,8 +222,9 @@ void ForwardRenderPath::RenderShadowsForLight(Light * l, RenderScene * scene)
 	scene->m_shadowCamera->SetColorTarget(m_shadowColorTarget);
 	//scene->m_shadowCamera->SetDepthStencilTarget(m_renderer->m_defaultDepthTarget);
 	//scene->m_shadowCamera->SetColorTarget(m_renderer->m_defaultColorTarget);
-	scene->m_shadowCamera->SetProjectionOrtho(500.f, 1.f, -50, 100.f);
+	scene->m_shadowCamera->SetProjectionOrtho(50.f, 1.f, -50, 100.f);
 	scene->m_shadowCamera->Finalize();
+	m_renderer->ClearDepth(1.f);
 
 	Matrix44 shadowVP;
 	shadowVP.Append(scene->m_shadowCamera->GetProjectionMatrix());
