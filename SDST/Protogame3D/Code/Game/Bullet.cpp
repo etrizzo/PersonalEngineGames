@@ -82,6 +82,7 @@ void Bullet::CheckAgainstEnemies()
 		if (enemy->IsPointInside(pos)){
 			enemy->Damage();
 			Destroy();
+			break;
 		}
 	}
 
@@ -89,6 +90,7 @@ void Bullet::CheckAgainstEnemies()
 		if (spawner->IsPointInside(pos)){
 			spawner->Damage();
 			Destroy();
+			break;
 		}
 	}
 }
@@ -97,7 +99,9 @@ void Bullet::Destroy()
 {
 	m_aboutToBeDeleted = true;
 	m_playState->RemoveLight(m_light);
-	delete m_light;
+	if (m_light != nullptr){
+		delete m_light;
+	}
 	m_playState->m_scene->RemoveRenderable(m_renderable);
 }
 

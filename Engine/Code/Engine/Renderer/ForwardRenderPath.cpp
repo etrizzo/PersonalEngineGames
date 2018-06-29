@@ -17,7 +17,7 @@ ForwardRenderPath::ForwardRenderPath(Renderer * r)
 void ForwardRenderPath::Initialize()
 {
 	m_fogData;
-	m_fogData.SetFogBuffer(RGBA::WHITE, 5.f, 10.f, .1f, 1.f);
+	m_fogData.SetFogBuffer(RGBA::WHITE, 20.f, 45.f, 0.f, .7f);
 	m_shadowDepthTarget = m_renderer->CreateDepthStencilTarget(2048, 2048);
 	m_shadowColorTarget = m_renderer->CreateRenderTarget(2048,2048);
 }

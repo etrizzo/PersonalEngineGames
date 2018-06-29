@@ -81,6 +81,7 @@ light_t Light::GetBuffer() const
 
 	buffer.color = m_lightColor.GetNormalized();
 	buffer.pos	 = m_transform.GetWorldPosition();
+	buffer.usesShadows = 0.f;
 	if (m_createsShadow){
 		buffer.usesShadows = 1.f;
 	} else {
