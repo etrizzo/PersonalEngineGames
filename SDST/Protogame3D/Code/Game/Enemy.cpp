@@ -68,6 +68,7 @@ void Enemy::Damage()
 {
 	m_health--;
 	if (m_health <= 0){
+		g_theAudio->PlayOneOffSoundFromGroup("minion");
 		m_aboutToBeDeleted = true;
 	}
 }
@@ -82,6 +83,7 @@ void Enemy::CheckForPlayerCollision()
 	if (m_collider.DoSpheresOverlap(g_theGame->m_playState->m_player->m_collider)){
 		m_aboutToBeDeleted = true;
 		//damage the player
+		g_theGame->m_playState->m_player->Damage();
 	}
 }
 

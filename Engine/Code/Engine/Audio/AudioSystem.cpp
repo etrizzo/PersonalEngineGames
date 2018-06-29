@@ -2,6 +2,7 @@
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Core/ErrorWarningAssert.hpp"
 #include "Engine/Core/StringUtils.hpp"
+#include "Engine/Audio/AudioSystem.hpp"
 
 //-----------------------------------------------------------------------------------------------
 // To disable audio entirely (and remove requirement for fmod.dll / fmod64.dll) for any game,
@@ -197,6 +198,28 @@ void AudioSystem::ValidateResult( FMOD_RESULT result )
 	{
 		ERROR_RECOVERABLE( Stringf( "Engine/Audio SYSTEM ERROR: Got error result code %i - error codes listed in fmod_common.h\n", (int) result ) );
 	}
+}
+
+void AudioSystem::LoadAudioGroupsFromFile(std::string filePath)
+{
+	tinyxml2::XMLDocument audioGroupDoc;
+	audioGroupDoc.LoadFile(("Data/Data/" + filePath).c_str());
+	tinyxml2::XMLElement* audioGroups = audioGroupDoc.FirstChildElement("AudioGroups");
+
+	for (tinyxml2::XMLElement* audioGroupNode = audioGroups->FirstChildElement("AudioGroup"); audioGroupNode != NULL; audioGroupNode = audioGroupNode->NextSiblingElement("AudioGroup")){
+		new AudioGroup(audioGroupNode, this);
+	}
+}
+
+SoundID AudioSystem::GetRandomSoundFromGroup(std::string groupName)
+{
+	return AudioGroup::GetRandomSoundFromGroup(groupName);
+}
+
+SoundPlaybackID AudioSystem::PlayOneOffSoundFromGroup(std::string groupName)
+{
+	SoundID id = GetRandomSoundFromGroup(groupName);
+	return PlaySound(id);
 }
 
 

@@ -100,6 +100,8 @@ public:
 
 	unsigned int GetNumActiveLights() const;
 
+	SoundID m_soundTrackID;
+	SoundPlaybackID m_soundtrackPlayback;
 
 private:
 	void LoadTileDefinitions();

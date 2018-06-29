@@ -56,12 +56,16 @@ Game::Game()
 
 	m_gameClock = new Clock(masterClock);
 
+
 	m_currentState = new GameState_Loading();
+
 	
 }
 
 void Game::PostStartup()
 {
+	m_soundTrackID = g_theAudio->CreateOrGetSound("Data/Audio/OrbitalColossus.mp3");
+
 	m_currentMap = nullptr;
 	m_playState = new GameState_Playing();
 
@@ -74,6 +78,9 @@ void Game::PostStartup()
 	m_currentState = new GameState_Attract();
 	m_currentMap = new Map("Heightmap_2.png", AABB2(-150.f, -150.f, 150.f, 150.f), -5.f, 5.f, IntVector2(30,30), 20.f);
 	//m_currentMap = new Map("Heightmap.png", AABB2(-100.f, -100.f, 100.f, 100.f), -5.f, 2.f, IntVector2(20,20), 40.f);
+
+	m_soundtrackPlayback = g_theAudio->PlaySound(m_soundTrackID, true, .5f);
+	
 }
 
 void Game::Update()

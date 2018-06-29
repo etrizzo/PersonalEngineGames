@@ -3,15 +3,13 @@
 
 //-----------------------------------------------------------------------------------------------
 #include "ThirdParty/fmod/fmod.hpp"
+#include "Engine/Audio/AudioGroup.hpp"
 #include <string>
 #include <vector>
 #include <map>
 
 
-//-----------------------------------------------------------------------------------------------
-typedef size_t SoundID;
-typedef size_t SoundPlaybackID;
-constexpr size_t MISSING_SOUND_ID = (size_t)(-1); // for bad SoundIDs and SoundPlaybackIDs
+
 
 
 //-----------------------------------------------------------------------------------------------
@@ -37,6 +35,11 @@ public:
 	virtual void				SetSoundPlaybackSpeed( SoundPlaybackID soundPlaybackID, float speed );		// speed is frequency multiplier (1.0 == normal)
 
 	virtual void				ValidateResult( FMOD_RESULT result );
+
+	//Audio Groups
+	void				LoadAudioGroupsFromFile(std::string filePath);
+	SoundID				GetRandomSoundFromGroup(std::string groupName);
+	SoundPlaybackID		PlayOneOffSoundFromGroup(std::string groupName);
 
 	//SoundPlaybackID				GetPlaybackID(SoundID soundID);
 

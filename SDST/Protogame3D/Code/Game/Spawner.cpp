@@ -48,6 +48,7 @@ void Spawner::Damage()
 {
  	m_health--;
 	if (m_health <= 0){
+		g_theAudio->PlayOneOffSoundFromGroup("explosion");
 		m_aboutToBeDeleted = true;
 	}
 }

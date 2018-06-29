@@ -43,6 +43,8 @@ App::App(HINSTANCE applicationInstanceHandle)
 	
 	g_theInput = new InputSystem();
 	g_theAudio = new AudioSystem();
+	g_theAudio->LoadAudioGroupsFromFile("Audio.xml");
+	
 	g_theGame = new Game();
 	g_theInput->LockMouse();
 	g_theInput->ShowCursor(false);

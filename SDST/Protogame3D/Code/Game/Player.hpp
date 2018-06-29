@@ -7,9 +7,14 @@ public:
 	~Player();
 
 	void Update() override;
-
-
 	void HandleInput();
+	
+	void Damage();
+	void Respawn();
+	void RemoveRenderable();
+	void AddRenderable();
+
+	float GetPercentageOfHealth() const;
 
 	Vector2 m_positionXZ;
 	float m_speed			= 5.f;

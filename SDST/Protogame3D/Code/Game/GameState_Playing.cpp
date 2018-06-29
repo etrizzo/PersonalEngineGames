@@ -31,23 +31,22 @@ GameState_Playing::GameState_Playing()
 void GameState_Playing::EnterState()
 {
 	m_gameWon = false;
-	if (m_player != nullptr){
-		delete m_player;
+	if (!m_playing){
+		//initialize map
+		m_playing = true;
+		m_gameLost = false;
+
+		SpawnPlayer(Vector3::ZERO);
+
+		float minSpawnerRange = -100.f;
+		float maxSpawnerRange = 100.f;
+
+		AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
+		AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
+		AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
+
+	
 	}
-	m_player = new Player(this, Vector3::ZERO);
-
-	float minSpawnerRange = -100.f;
-	float maxSpawnerRange = 100.f;
-
-	AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
-	AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
-	AddNewSpawner(Vector2(GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange), GetRandomFloatInRange(minSpawnerRange, maxSpawnerRange)));
-
-	m_scene->AddRenderable(m_player->m_renderable);
-	m_scene->AddRenderable(m_player->m_turretRenderable);
-	m_scene->AddRenderable(m_player->m_laserSightRenderable);
-
-	g_theGame->m_mainCamera->m_transform.SetParent(m_player->m_cameraTarget);
 }
 
 void GameState_Playing::Update(float ds)
@@ -58,6 +57,7 @@ void GameState_Playing::Update(float ds)
 	if (!g_theGame->m_isPaused){
 		//the game stuff happens here
 		//g_theGame->m_gameTime+=deltaSeconds;
+
 
 
 		float degrees = 15.f * g_theGame->m_gameClock->GetCurrentSeconds(); 
@@ -79,6 +79,7 @@ void GameState_Playing::Update(float ds)
 
 	DeleteEntities();
 	CheckForVictory();
+	CheckForDefeat();
 	//g_theGame->m_mainCamera->m_transform.SetLocalPosition(m_player->GetPosition() + Vector3(0.f, 3.f, -5.f));
 	
 }
@@ -118,14 +119,9 @@ void GameState_Playing::RenderGame()
 void GameState_Playing::RenderUI()
 {
 	AABB2 bounds = g_theGame->SetUICamera();
-	std::string specFactor = std::to_string(m_specFactor);
-	specFactor.resize(5);
-	//specFactor = "Spec Factor (J/K): " + specFactor;
-
-	std::string specAmount = std::to_string(m_specAmount);
-	specAmount.resize(5);
-	//g_theGame->m_debugRenderSystem->MakeDebugRender2DText("Spec Amount(N/M): %s\nSpec Power(J/K): %s", specAmount.c_str(), specFactor.c_str());
-	//g_theGame->m_debugRenderSystem->MakeDebugRender2DText(0.f, .01f, Vector2(1.f, .95f), "Shader ([/]): %s", GetShaderName().c_str());
+	
+	RenderPlayerHealth();
+	RenderEnemyStatus();
 }
 
 void GameState_Playing::HandleInput()
@@ -160,27 +156,18 @@ void GameState_Playing::HandleInput()
 	}
 	float ds = g_theGame->GetDeltaSeconds();
 	float factorScale = 10.f;
-	if (g_theInput->IsKeyDown('K')){
-		m_specFactor+=(ds * factorScale);
-		m_specFactor = ClampFloat(m_specFactor, 1.f, 99.999f);
-	}
-	if (g_theInput->IsKeyDown('J')){
-		m_specFactor-=(ds * factorScale);
-		m_specFactor = ClampFloat(m_specFactor, 1.f, 99.999f);
-	}
-
-	if (g_theInput->IsKeyDown('M')){
-		m_specAmount+=ds;
-		m_specAmount = ClampFloat(m_specAmount, 0.f, 1.f);
-	}
-	if (g_theInput->IsKeyDown('N')){
-		m_specAmount-=ds;
-		m_specAmount = ClampFloat(m_specAmount, 0.f, 1.f);
-	}
 
 	if (!g_theGame->m_debugRenderSystem->m_isDetached){
-		m_player->HandleInput();
+		if (!m_gameLost){
+			m_player->HandleInput();
+		}
 	}
+}
+
+void GameState_Playing::RespawnPlayer()
+{
+	m_player->Respawn();
+	m_gameLost = false;
 }
 
 
@@ -285,8 +272,34 @@ void GameState_Playing::CheckForVictory()
 		if (m_enemies.size() == 0 && m_spawners.size() == 0){
 			g_theGame->TransitionToState((GameState*) new GameState_Victory(this));
 			m_gameWon = true;
+			m_playing = false;
 		}
 	}
+}
+
+void GameState_Playing::CheckForDefeat()
+{
+	if (!m_gameLost){
+		if (m_player->m_aboutToBeDeleted){
+			m_gameLost = true;
+			m_player->RemoveRenderable();
+			g_theGame->TransitionToState(new GameState_Defeat(this));
+		}
+	}
+}
+
+void GameState_Playing::SpawnPlayer(Vector3 pos)
+{
+	if (m_player != nullptr){
+		delete m_player;
+	}
+	m_player = new Player(this, pos);
+
+	m_scene->AddRenderable(m_player->m_renderable);
+	m_scene->AddRenderable(m_player->m_turretRenderable);
+	m_scene->AddRenderable(m_player->m_laserSightRenderable);
+
+	g_theGame->m_mainCamera->m_transform.SetParent(m_player->m_cameraTarget);
 }
 
 void GameState_Playing::UpdateShader(int direction)
@@ -401,4 +414,33 @@ void GameState_Playing::DeleteEntities()
 			delete spawner;
 		}
 	}
+}
+
+void GameState_Playing::RenderPlayerHealth() const
+{
+	AABB2 UIBounds = g_theGame->GetUIBounds();
+	AABB2 playerHealth = UIBounds.GetPercentageBox(Vector2(.05f,.05f), Vector2(.2f, .1f));
+	g_theRenderer->DrawAABB2(playerHealth, RGBA::BLACK);		//draw border
+	playerHealth.AddPaddingToSides(-.01f,-.01f);
+	g_theRenderer->DrawAABB2(playerHealth, RGBA::RED);		//draw red background
+
+	float percentage = m_player->GetPercentageOfHealth();
+	AABB2 currentHealth = playerHealth.GetPercentageBox(Vector2(0.f,0.f), Vector2(percentage, 1.f));
+	g_theRenderer->DrawAABB2(currentHealth, RGBA::GREEN);
+}
+
+void GameState_Playing::RenderEnemyStatus() const
+{
+	AABB2 UIBounds = g_theGame->GetUIBounds();
+	AABB2 enemyBox = UIBounds.GetPercentageBox(Vector2(.8f,.05f), Vector2(.95f, .1f));
+
+	std::string numEnemies = std::to_string(m_enemies.size());
+	std::string numBases = std::to_string(m_spawners.size());
+	numEnemies.resize(5);
+	numBases.resize(5);
+
+	std::string enemyText = "Enemies: " + numEnemies;
+	std::string baseText = "Bases: " + numBases;
+	std::string drawText = enemyText + "\n" + baseText;
+	g_theRenderer->DrawTextInBox2D(drawText, enemyBox, Vector2(1.f, .5f), .075, TEXT_DRAW_SHRINK_TO_FIT);
 }

@@ -7,26 +7,25 @@
 Player::Player(GameState_Playing* playState, Vector3 position)
 {
 	float size = 1.f;
-	m_collider = Sphere(position, size);
+	m_collider = Sphere(Vector3::ZERO, size);
 	m_renderable = new Renderable();//new Renderable(RENDERABLE_CUBE, 1.f);
 	m_turretRenderable = new Renderable();
 	//make tank
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendCube(position, Vector3(.8f, .3f, 1.f), RGBA::GREEN);
+	mb.AppendCube(Vector3::ZERO, Vector3(.8f, .3f, 1.f), RGBA::GREEN);
 	mb.End();
 	m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
 
 	//make turret
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	Vector3 sphere = position - (Vector3::UP * .08f);
+	Vector3 sphere = Vector3::ZERO - (Vector3::UP * .08f);
 	mb.AppendSphere(sphere, .2f, 10, 10, RGBA::RED);
-	mb.AppendCube(position + Vector3::FORWARD * .4f, Vector3(.1f, .1f, .8f), RGBA::RED);
+	mb.AppendCube(Vector3::FORWARD * .4f, Vector3(.1f, .1f, .8f), RGBA::RED);
 	mb.End();
 	m_turretRenderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
 	
-	SetPosition(position);
-	SetScale(Vector3(size,size,size));
+	
 	Material* mat = Material::GetMaterial("couch");
 	if (mat != nullptr){
 		SetMaterial(mat);
@@ -48,8 +47,8 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 
 	//set up auxilary transforms: camera target, turret renderable, barrel fire position, laser sight...
 	m_cameraTarget = new Transform();
-	m_cameraTarget->SetLocalPosition(GetPosition());
-	m_turretRenderable->SetPosition(GetPosition() + GetUp() * .25f);
+	m_cameraTarget->SetLocalPosition(Vector3::ZERO);
+	m_turretRenderable->SetPosition(Vector3::ZERO + GetUp() * .25f);
 	m_turretRenderable->m_transform.SetParent(&m_renderable->m_transform);
 	m_barrelPosition = new Transform();
 	m_barrelPosition->SetParent(&m_turretRenderable->m_transform);
@@ -71,6 +70,12 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	//m_turretRenderable->m_transform.SetParent(m_cameraTarget);
 
 	m_playState = playState;
+
+	m_health = 50;
+	m_maxHealth = m_health;
+
+	SetPosition(position);
+	SetScale(Vector3(size,size,size));
 }
 
 Player::~Player()
@@ -114,6 +119,8 @@ void Player::HandleInput()
 
 	if (g_theInput->IsKeyDown(VK_SPACE) || g_theInput->IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
 		if (m_rateOfFire.CheckAndReset()){
+			g_theAudio->PlayOneOffSoundFromGroup("laser1");
+			//g_theAudio->PlaySound(g_theAudio->CreateOrGetSound("TestSound.mp3"));
 			m_playState->AddNewBullet(*m_barrelPosition);
 		}
 	}
@@ -136,7 +143,7 @@ void Player::HandleInput()
 	Vector2 controllerRotation = g_theInput->GetController(0)->GetRightThumbstickCoordinates();
 	camRotation+=Vector3(controllerRotation.y, controllerRotation.x, 0.f);
 
-	Vector2 mouseMovement = g_theInput->GetMouseDirection()  * .3f;
+	Vector2 mouseMovement = g_theInput->GetMouseDirection()  * .2f;
 	camRotation+=Vector3(-mouseMovement.y, mouseMovement.x, 0.f);
 
 	m_cameraTarget->RotateByEuler(camRotation * m_degPerSecond * ds);
@@ -187,6 +194,42 @@ void Player::HandleInput()
 
 }
 
+void Player::Damage()
+{
+	m_health--;
+	if (m_health <= 0){
+		m_aboutToBeDeleted = true;
+	}
+}
+
+void Player::Respawn()
+{
+	AddRenderable();
+	m_aboutToBeDeleted = false;
+	m_health = m_maxHealth;
+}
+
+void Player::RemoveRenderable()
+{
+	g_theGame->GetScene()->RemoveRenderable(m_renderable);
+	g_theGame->GetScene()->RemoveRenderable(m_laserSightRenderable);
+	g_theGame->GetScene()->RemoveRenderable(m_turretRenderable);
+}
+
+void Player::AddRenderable()
+{
+	g_theGame->GetScene()->AddRenderable(m_renderable);
+	g_theGame->GetScene()->AddRenderable(m_laserSightRenderable);
+	g_theGame->GetScene()->AddRenderable(m_targetRenderable);
+	g_theGame->GetScene()->AddRenderable(m_turretRenderable);
+}
+
+float Player::GetPercentageOfHealth() const
+{
+	float t = RangeMapFloat((float) m_health, 0.f, (float) m_maxHealth, 0.f, 1.f);
+	return t;
+}
+
 
 
 static Vector2 gPos = Vector2(0.0f, 0.0f); 
@@ -223,7 +266,7 @@ void Player::MoveTurretTowardTarget()
 	Matrix44 currentTransform = m_turretRenderable->m_transform.GetLocalMatrix();
 	//currentTransform.RotateDegrees3D(Vector3(0.f, 60.f, 0.f));
 
-	float turnThisFrame = m_degPerSecond * g_theGame->GetDeltaSeconds() * .8f;
+	float turnThisFrame = m_degPerSecond * g_theGame->GetDeltaSeconds();
 	Matrix44 localMat = TurnToward(currentTransform, targetTransform, turnThisFrame);
 	m_turretRenderable->m_transform.SetLocalMatrix(localMat);
 	

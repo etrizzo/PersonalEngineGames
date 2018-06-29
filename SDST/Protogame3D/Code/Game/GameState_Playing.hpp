@@ -38,6 +38,7 @@ public:
 	void RenderGame();
 	void RenderUI();
 	void HandleInput();
+	void RespawnPlayer();
 	
 
 	Enemy*	 AddNewEnemy(const Vector2& pos);
@@ -63,6 +64,8 @@ public:
 	RenderScene* GetScene() { return m_scene; }
 
 	bool m_gameWon = false;
+	bool m_gameLost = false;
+	bool m_playing = false;
 
 
 protected:
@@ -73,12 +76,18 @@ protected:
 	eDebugShaders m_debugShader = SHADER_LIT;
 
 	void CheckForVictory();
+	void CheckForDefeat();
+	void SpawnPlayer(Vector3 pos);
 
 	void UpdateShader(int direction);
 	void SetShader();		//sets which shader to draw scene with
 	std::string GetShaderName() const;
 
 	void DeleteEntities();
+
+	//UI
+	void RenderPlayerHealth() const;
+	void RenderEnemyStatus() const;
 
 	//for objects drawn using drawmeshimmediate
 	Material* m_couchMaterial;

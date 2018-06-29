@@ -91,3 +91,14 @@ public:
 
 	GameState_Playing* m_encounterGameState;
 };
+
+class GameState_Defeat: public GameState{
+public:
+	GameState_Defeat(GameState_Playing* playState);
+	void Update(float ds) override;
+	void RenderGame() override;
+	void RenderUI() override;
+	void HandleInput() override;
+
+	GameState_Playing* m_encounterGameState;
+};

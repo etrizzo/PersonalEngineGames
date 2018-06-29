@@ -266,6 +266,7 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4457;4456;4244</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\ThirdParty\TinyXML\tinyxml2.cpp" />
+    <ClCompile Include="Audio\AudioGroup.cpp" />
     <ClCompile Include="Audio\AudioSystem.cpp" />
     <ClCompile Include="Core\Blackboard.cpp" />
     <ClCompile Include="Core\Clock.cpp" />
@@ -367,6 +368,7 @@
     <ClInclude Include="..\ThirdParty\fmod\fmod_output.h" />
     <ClInclude Include="..\ThirdParty\stb\stb_image.h" />
     <ClInclude Include="..\ThirdParty\TinyXML\tinyxml2.h" />
+    <ClInclude Include="Audio\AudioGroup.hpp" />
     <ClInclude Include="Audio\AudioSystem.hpp" />
     <ClInclude Include="Core\Blackboard.hpp" />
     <ClInclude Include="Core\Clock.hpp" />

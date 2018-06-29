@@ -299,3 +299,39 @@ void GameState_Victory::HandleInput()
 		g_theGame->TransitionToState( new GameState_Attract());
 	}
 }
+GameState_Defeat::GameState_Defeat(GameState_Playing * playState)
+{
+	m_encounterGameState = playState;
+}
+
+void GameState_Defeat::Update(float ds)
+{
+	m_encounterGameState->Update(0.f);
+	m_timeInState+=ds;
+}
+
+void GameState_Defeat::RenderGame()
+{
+	m_encounterGameState->Render();
+}
+
+void GameState_Defeat::RenderUI()
+{
+	m_encounterGameState->RenderUI();
+	g_theRenderer->ClearDepth(1.f);
+
+	AABB2 UIBounds = g_theGame->SetUICamera(); 
+	g_theRenderer->DrawAABB2(UIBounds, RGBA(0, 32, 32, 104));
+	if (!m_isTransitioning){
+		g_theRenderer->DrawTextInBox2D("DEFEAT", UIBounds, Vector2(.5f,.5f), .1f);
+		g_theRenderer->DrawTextInBox2D("Press space\nto respawn", UIBounds, Vector2(.5f, .3f), .05f, TEXT_DRAW_SHRINK_TO_FIT);
+	}
+}
+
+void GameState_Defeat::HandleInput()
+{
+	if (AcceptJustPressed() || g_theInput->WasKeyJustPressed(VK_SPACE)){
+		m_encounterGameState->RespawnPlayer();
+		g_theGame->TransitionToState(m_encounterGameState);
+	}
+}
