@@ -43,6 +43,15 @@
 	</properties>
 </material>
 
+<material name="default_alpha" shader="lit_alpha">
+	<textures>
+		<texture type="diffuse" path="white" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
 
 <material name="wireframe" shader="wireframe">
 	<textures>

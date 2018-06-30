@@ -4,6 +4,8 @@
 #include "Engine/Renderer/DrawCall.hpp"
 
 #define FOG_BUFFER_BINDING (0)
+#define SHADOW_DEPTH_BINDING (8)
+#define SORT_LAYER_ALPHA (1)
 
 struct fogData_t{
 	void SetFogBuffer(RGBA color, float nearPlane, float farPlane, float nearFactor = .1f, float farFactor = .8f);
@@ -33,6 +35,7 @@ public:
 	void SetShadows(RenderScene* scene);
 	
 	Renderer* m_renderer;
+	bool m_usingShadows;
 
 private:
 	fogData_t	m_fogData;

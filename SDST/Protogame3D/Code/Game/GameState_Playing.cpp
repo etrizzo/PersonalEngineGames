@@ -12,7 +12,7 @@ GameState_Playing::GameState_Playing()
 {
 	m_renderPath = new ForwardRenderPath(g_theRenderer);
 	//m_renderPath->m_renderer = g_theRenderer;
-	m_scene = new RenderScene();
+	m_scene = new RenderScene(g_theRenderer);
 
 
 	m_couchMaterial = Material::GetMaterial("couch");
@@ -22,9 +22,10 @@ GameState_Playing::GameState_Playing()
 	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
 
 
-	Light* dir = m_scene->AddNewDirectionalLight(Vector3(-10.f, 50, -10.f), RGBA::WHITE, Vector3(0.f, -90.f, -20.f));	
+	m_sun = m_scene->AddNewDirectionalLight(Vector3(-0, 20, -0.f), RGBA::WHITE.GetColorWithAlpha(180), Vector3(-35.f, -30.f, 0.f));	
 
-	dir->SetUsesShadows(true);
+	m_sun->SetUsesShadows(true);
+	m_scene->SetShadowCameraTransform(m_sun->m_transform);
 
 	m_scene->AddCamera(g_theGame->m_currentCamera);
 	g_theGame->m_mainCamera->AddSkybox("skybox.png");
@@ -103,9 +104,11 @@ void GameState_Playing::RenderGame()
 
 	g_theRenderer->BindModel(Matrix44::IDENTITY);
 
+	
 
-
-
+	//set shadow camera's position for this frame
+	m_scene->SetShadowCameraTransform(*m_player->m_shadowCameraTransform);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_scene->m_shadowCamera->m_transform.GetWorldPosition(), 5.f, m_scene->m_shadowCamera->m_transform.GetWorldMatrix());
 	m_renderPath->Render(m_scene);
 
 	g_theRenderer->ReleaseTexture(0);

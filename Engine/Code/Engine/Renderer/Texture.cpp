@@ -168,7 +168,7 @@ bool Texture::CreateRenderTarget(unsigned int width, unsigned int height, eTextu
 	GLenum channels = GL_RGBA;  
 	GLenum pixel_layout = GL_UNSIGNED_BYTE;  
 	if (format == TEXTURE_FORMAT_D24S8) {
-		internal_format = GL_DEPTH_STENCIL; 
+		internal_format = GL_DEPTH24_STENCIL8; 
 		channels = GL_DEPTH_STENCIL; 
 		pixel_layout = GL_UNSIGNED_INT_24_8; 
 	}
@@ -178,14 +178,21 @@ bool Texture::CreateRenderTarget(unsigned int width, unsigned int height, eTextu
 	glBindTexture( GL_TEXTURE_2D, m_textureID );    // bind our texture to our current texture unit (0)
 
 												 // Copy data into it;
-	glTexImage2D( GL_TEXTURE_2D, 0, 
-		internal_format, // what's the format OpenGL should use
-		width, 
-		height,        
-		0,             // border, use 0
-		channels,      // how many channels are there?
-		pixel_layout,  // how is the data laid out
-		nullptr );     // don't need to pass it initialization data 
+	//glTexImage2D( GL_TEXTURE_2D, 0, 
+	//	internal_format, // what's the format OpenGL should use
+	//	width, 
+	//	height,        
+	//	0,             // border, use 0
+	//	channels,      // how many channels are there?
+	//	pixel_layout,  // how is the data laid out
+	//	nullptr );     // don't need to pass it initialization data 
+
+	unsigned int mip_count = 1;							  // only this is needed for render targets; 
+
+	glTexStorage2D( GL_TEXTURE_2D, 
+		mip_count,       // number of levels (mip-layers)           CHANGED FROM ONE!!
+		internal_format, // how is the memory stored on the GPU
+		width, height); // dimenions
 
 					   // make sure it suceeded
 	GL_CHECK_ERROR(); 

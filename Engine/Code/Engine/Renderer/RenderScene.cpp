@@ -1,8 +1,16 @@
 #include "RenderScene.hpp"
 
-RenderScene::RenderScene()
+RenderScene::RenderScene(Renderer* r)
 {
 	m_shadowCamera = new Camera();
+	m_shadowDepthTarget = r->CreateDepthStencilTarget(2048, 2048);
+	m_shadowColorTarget = r->CreateRenderTarget(2048,2048);
+	//m_shadowCamera->SetDepthStencilTarget(m_shadowDepthTarget);
+	//m_shadowCamera->SetColorTarget(m_shadowColorTarget);
+	////m_shadowCamera->SetDepthStencilTarget(m_renderer->m_defaultDepthTarget);
+	////m_shadowCamera->SetColorTarget(m_renderer->m_defaultColorTarget);
+	//m_shadowCamera->SetProjectionOrtho(50.f, 1.f, .001, 500.f);
+	//m_shadowCamera->Finalize();
 }
 
 void RenderScene::AddRenderable(Renderable * r)
@@ -153,4 +161,10 @@ void RenderScene::SetLightAttenuation(int lightIndex, Vector3 att)
 void RenderScene::SetShadowCameraPosition(Vector3 worldPos)
 {
 	m_shadowCamera->m_transform.SetLocalPosition(worldPos);
+	//m_shadowCamera->
+}
+
+void RenderScene::SetShadowCameraTransform(const Transform& t)
+{
+	m_shadowCamera->m_transform.SetLocalMatrix(t.GetWorldMatrix());
 }

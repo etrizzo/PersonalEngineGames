@@ -13,6 +13,10 @@ uniform float SPECULAR_AMOUNT; // shininess (0 to 1)
 uniform float SPECULAR_POWER; // smoothness (1 to whatever)
 
 
+//--------------------------------------------------------------------------------------
+// if using shadow; 
+layout(binding = 8) uniform sampler2D gTexShadow; 
+
 struct light_t 
 {
    vec4 LIGHT_COLOR;
@@ -53,6 +57,50 @@ float GetAttenuation( float i, float d, vec3 a )
 
 
 //--------------------------------------------------------------------------------------
+// return 1 if fully lit, 0 if should be fully in shadow (ignores light)
+float GetShadowFactor( vec3 position, vec3 normal, light_t light )
+{
+   float shadow = light.USES_SHADOWS;
+   if (shadow == 0.0f) {
+      return 1.0f; 
+   }
+
+   // so, we're lit, so we will use the shadow sampler
+   float bias_factor = max( dot( light.LIGHT_FORWARD_DIR, normal ), 0.0f ); 
+   bias_factor = sqrt(1 - (bias_factor * bias_factor)); 
+   position -= light.LIGHT_FORWARD_DIR * bias_factor * .25f; 
+
+   vec4 clip_pos = light.SHADOW_VP * vec4(position, 1.0f);
+   vec3 ndc_pos = clip_pos.xyz / clip_pos.w; 
+
+   // put from -1 to 1 range to 0 to 1 range
+   ndc_pos = (ndc_pos + vec3(1)) * .5f;
+   
+   // can give this a "little" bias
+   // treat every surface as "slightly" closer"
+   // returns how many times I'm pass (GL_LESSEQUAL)
+   float depthAtPosition = texture( gTexShadow, ndc_pos.xy ).r; 
+   float my_depth = ndc_pos.z; 
+   
+   // use this to feathre shadows near the border
+   float min_uv = min( ndc_pos.x, ndc_pos.y ); 
+   float max_uv = max( ndc_pos.x, ndc_pos.y ); 
+   float blend = 1.0f - min( smoothstep(0.0f, .05f, min_uv), smoothstep(1.0, .95, max_uv) ); 
+
+   // step returns 0 if nearest_depth is less than my_depth, 1 otherwise.
+   // if (nearest_depth) is less (closer) than my depth, that is shadow, so 0 -> shaded, 1 implies light
+   float is_lit = step( my_depth, depthAtPosition ); // 
+   float litDiff = depthAtPosition - my_depth;
+   float litFactor = litDiff;
+   clamp(litFactor, 0.0, 1.0);
+
+   // scale by shadow amount
+  return mix( light.USES_SHADOWS * is_lit, 1.0f, blend ); 
+  //return light.USES_SHADOWS * litFactor; 
+}
+
+
+//--------------------------------------------------------------------------------------
 light_factor_t CalculateLightFactor( vec3 position, 
    vec3 eye_dir, 
    vec3 normal, 
@@ -68,6 +116,8 @@ light_factor_t CalculateLightFactor( vec3 position,
    vec3 light_dir = light.LIGHT_POSITION - position; // direction TO the light
    float dist = length(light_dir); 
    light_dir /= dist; 
+
+   float shadowing = GetShadowFactor( position, normal, light ); 
 
    // 
    vec3 light_forward = normalize(light.LIGHT_FORWARD_DIR); 
@@ -100,8 +150,8 @@ light_factor_t CalculateLightFactor( vec3 position,
    float spec_amount = max(dot(r, eye_dir), 0.0f); 
    float spec_intensity = (spec_attenuation * spec_factor) * pow(spec_amount, spec_power); 
 
-   lf.diffuse = light_color * diffuse_factor;
-   lf.specular = light_color * spec_intensity; 
+   lf.diffuse = shadowing * light_color * diffuse_factor;
+   lf.specular = shadowing * light_color * spec_intensity; 
 
    return lf; 
 }

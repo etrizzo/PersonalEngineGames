@@ -85,6 +85,7 @@ extern PFNGLBUFFERDATAPROC		glBufferData	;
 extern PFNGLDELETEBUFFERSPROC	glDeleteBuffers	;
 extern PFNGLGENVERTEXARRAYSPROC	glGenVertexArrays;
 extern PFNGLBINDVERTEXARRAYPROC	glBindVertexArray;
+extern PFNGLVIEWPORTPROC		glViewport;
 
 //drawing mesh
 extern PFNGLGETATTRIBLOCATIONPROC		glGetAttribLocation			;

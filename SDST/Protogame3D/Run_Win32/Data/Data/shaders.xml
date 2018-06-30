@@ -83,9 +83,9 @@
 	<depth write="true" test="less"/>
 </shader>
 
-<shader name="water" sort="1" cull="back" fill="solid" frontface="ccw" blend="alpha">
+<shader name="water" sort="1" cull="none" fill="solid" frontface="ccw" blend="alpha">
 	<program id="scrolling" />
-	<depth write="true" text="less" />
+	<depth write="false" text="less" />
 </shader>
 
 

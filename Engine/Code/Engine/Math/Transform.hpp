@@ -57,7 +57,7 @@ public:
 	Matrix44 GetWorldMatrix() const;
 	Matrix44 GetLocalMatrix() const;  //local to parent matrix, not local to world.
 	void SetLocalMatrix( Matrix44 const &mat ); 
-	void SetWorldMatrix(Matrix44 const & mat);
+	//void SetWorldMatrix(Matrix44 const & mat);
 
 	// 3D utilities
 	void SetLocalPosition( Vector3 pos );         //this is allllll local transforming

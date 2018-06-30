@@ -25,6 +25,8 @@ public:
 	Renderable* m_laserSightRenderable;
 	Renderable* m_targetRenderable;
 	Transform* m_barrelPosition;
+	Transform* m_shadowCameraTransform;
+	Vector3 m_shadowCameraOffset;
 	Vector3 m_target;
 
 private:

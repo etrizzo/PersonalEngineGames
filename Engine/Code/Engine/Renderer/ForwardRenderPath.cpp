@@ -24,9 +24,12 @@ void ForwardRenderPath::Initialize()
 
 void ForwardRenderPath::Render(RenderScene * scene)
 {
+	m_usingShadows = false;
 	BindFog();
 	SetShadows(scene);
 	scene->SortCameras();
+
+
 
 	for (Camera* cam : scene->m_cameras){
 		RenderSceneForCamera(cam, scene);
@@ -62,6 +65,9 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 			dc.m_mesh = r->m_mesh->m_subMeshes[i];
 			dc.m_model = r->m_transform.GetWorldMatrix();
 			dc.m_material = r->GetEditableMaterial(i);
+			if (m_usingShadows){
+				dc.m_material->SetTexture(SHADOW_DEPTH_BINDING, scene->m_shadowCamera->GetDepthTarget());
+			}
 			dc.m_layer = r->GetEditableMaterial()->m_shader->m_sortLayer;
 			dc.m_queue = 0;
 			if (r->GetEditableMaterial(i)->UsesLights()){
@@ -77,6 +83,7 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 	//sort alpha by distance to camera, etc.
 
 	for(DrawCall dc: drawCalls){
+		
 		//an optimization would be to only bind the thing if it's different from the previous bind.
 		m_renderer->BindMaterial(dc.m_material);
 		m_renderer->BindModel(dc.m_model);
@@ -150,7 +157,7 @@ void ForwardRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls, Camera* 
 				sorted = false;
 			}
 			//sort alpha layer by distance to camera
-			if (dc.GetSortLayer() == 1 && prevDC.GetSortLayer() == 1){
+			if (dc.GetSortLayer() >= SORT_LAYER_ALPHA && prevDC.GetSortLayer() >= SORT_LAYER_ALPHA){
 				//sort by distance to camera
 				if (dc.GetDistance(camPos) > prevDC.GetDistance(camPos)){
 					drawCalls[j] = prevDC;
@@ -180,6 +187,7 @@ void ForwardRenderPath::SetShadows(RenderScene* scene)
 	for (Light* light : scene->m_lights){
 		if (light->UsesShadows()){
 			RenderShadowsForLight(light, scene);
+			m_usingShadows = true;
 		}
 	}
 }
@@ -212,21 +220,25 @@ void ForwardRenderPath::RenderSkybox(Camera * cam)
 
 void ForwardRenderPath::RenderShadowsForLight(Light * l, RenderScene * scene)
 {
-	m_renderer->BindCamera(scene->m_shadowCamera);
+
 
 	//set shadow camera's transform to be the light's transform
-	scene->m_shadowCamera->m_transform.SetWorldMatrix(l->m_transform.GetWorldMatrix());
+	//scene->m_shadowCamera->m_transform.SetWorldMatrix(l->m_transform.GetWorldMatrix());
 	
 	TODO("Add ability to do multiple light shadows");
 	scene->m_shadowCamera->SetDepthStencilTarget(m_shadowDepthTarget);
 	scene->m_shadowCamera->SetColorTarget(m_shadowColorTarget);
 	//scene->m_shadowCamera->SetDepthStencilTarget(m_renderer->m_defaultDepthTarget);
 	//scene->m_shadowCamera->SetColorTarget(m_renderer->m_defaultColorTarget);
-	scene->m_shadowCamera->SetProjectionOrtho(50.f, 1.f, -50, 100.f);
+	scene->m_shadowCamera->SetProjectionOrtho(100, 1.f, 0.f, 100.f);
 	scene->m_shadowCamera->Finalize();
+	m_renderer->BindCamera(scene->m_shadowCamera);
 	m_renderer->ClearDepth(1.f);
 
-	Matrix44 shadowVP;
+	Matrix44 shadowVP = Matrix44::IDENTITY;
+	
+	//shadowVP.Append(scene->m_shadowCamera->m_transform.GetWorldMatrix());
+
 	shadowVP.Append(scene->m_shadowCamera->GetProjectionMatrix());
 	shadowVP.Append(scene->m_shadowCamera->GetViewMatrix());
 	l->SetShadowMatrix(shadowVP);
@@ -235,18 +247,20 @@ void ForwardRenderPath::RenderShadowsForLight(Light * l, RenderScene * scene)
 	std::vector<DrawCall> drawCalls;
 	// generate the draw calls
 	for(Renderable* r : scene->m_renderables){
-		//this will change for multi-pass shaders or multi-material meshes
-		for (int i = 0; i < (int) r->m_mesh->m_subMeshes.size(); i++){
-			DrawCall dc;
-			//set up the draw call for this renderable :)
-			// the layer/queue comes from the shader!
-			dc.m_mesh = r->m_mesh->m_subMeshes[i];
-			dc.m_model = r->m_transform.GetWorldMatrix();
-			dc.m_material = Material::GetMaterial("default_unlit");
-			dc.m_layer = r->GetEditableMaterial()->m_shader->m_sortLayer;
-			dc.m_queue = 0;
-			//add the draw call to your list of draw calls
-			drawCalls.push_back(dc);
+		//don't render alpha meshes for shadows
+		if ( r->GetEditableMaterial()->m_shader->m_sortLayer < SORT_LAYER_ALPHA){
+			for (int i = 0; i < (int) r->m_mesh->m_subMeshes.size(); i++){
+				DrawCall dc;
+				//set up the draw call for this renderable :)
+				// the layer/queue comes from the shader!
+				dc.m_mesh = r->m_mesh->m_subMeshes[i];
+				dc.m_model = r->m_transform.GetWorldMatrix();
+				dc.m_material = Material::GetMaterial("default_unlit");
+				dc.m_layer = r->GetEditableMaterial()->m_shader->m_sortLayer;
+				dc.m_queue = 0;
+				//add the draw call to your list of draw calls
+				drawCalls.push_back(dc);
+			}
 		}
 	}
 

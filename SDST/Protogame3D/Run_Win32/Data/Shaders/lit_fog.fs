@@ -40,6 +40,19 @@ out vec4 outColor;
 // Entry Point ===========================================
 void main( void )
 {
+
+   light_t l = LIGHTS[0];
+
+   vec4 x = l.SHADOW_VP * vec4(passWorldPos, 1);
+   x = x / x.w;
+   x = (x + vec4(1)) * .5F;
+
+   vec4 shadowDepth = texture( gTexShadow, vec2(x.x, x.y) );
+  
+   vec4 is_lit = vec4(vec3(shadowDepth.r),1); 
+   outColor = is_lit;
+  // return;
+
     // Get the surface colour
    vec4 tex_color = texture( gTexDiffuse, passUV ); 
    vec3 normal_color = texture( gTexNormal, passUV ).xyz;

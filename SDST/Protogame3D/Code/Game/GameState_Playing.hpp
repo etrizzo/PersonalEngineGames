@@ -66,6 +66,7 @@ public:
 	bool m_gameWon = false;
 	bool m_gameLost = false;
 	bool m_playing = false;
+	Light* m_sun;
 
 
 protected:

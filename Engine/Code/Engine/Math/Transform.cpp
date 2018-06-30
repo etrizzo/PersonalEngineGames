@@ -91,10 +91,6 @@ void Transform::SetLocalMatrix(Matrix44 const & mat)
 	SetMatrices();
 }
 
-void Transform::SetWorldMatrix(Matrix44 const & mat)
-{
-
-}
 
 void Transform::SetLocalPosition(Vector3 pos)
 {
@@ -174,7 +170,7 @@ void Transform::WorldLookAt(Vector3 target)
 {
 	Vector3 pos = GetWorldPosition();
 	Matrix44 lookAt = Matrix44::LookAt(pos, target, GetUp());
-	SetWorldMatrix(lookAt);
+	//SetWorldMatrix(lookAt);
 }
 
 

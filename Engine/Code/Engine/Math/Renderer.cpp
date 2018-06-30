@@ -294,6 +294,7 @@ void Renderer::BindGLFunctions()
 	GL_BIND_FUNCTION( glDeleteBuffers	);
 	GL_BIND_FUNCTION( glGenVertexArrays	);
 	GL_BIND_FUNCTION( glBindVertexArray	);
+	GL_BIND_FUNCTION( glViewport)		;
 
 	//draw mesh immediate
 	GL_BIND_FUNCTION( glGetAttribLocation		);	
@@ -627,8 +628,10 @@ void Renderer::BindMaterial(Material * mat)
 	GLuint handle = mat->m_shader->GetProgramHandle();
 
 	for (unsigned int texIdx = 0; texIdx < mat->m_textures.size(); texIdx++){
-		BindTexture(*mat->m_textures[texIdx], texIdx);
-		BindSampler(*mat->m_samplers[texIdx], texIdx);
+		if (mat->m_textures[texIdx] != nullptr){
+			BindTexture(*mat->m_textures[texIdx], texIdx);
+			BindSampler(*mat->m_samplers[texIdx], texIdx);
+		}
 	}
 
 	//BindSurfaceUniforms(m_specAmount, m_specFactor);
@@ -659,6 +662,8 @@ void Renderer::BindProjection()
 
 void Renderer::BindCamera(Camera * cam)
 {
+	IntVector2 dimensions = cam->GetDepthTarget()->GetDimensions();
+	glViewport(0, 0, dimensions.x, dimensions.y);
 	m_currentCamera = cam;		//???
 	GLuint program_handle = m_currentShader->GetProgramHandle(); 
 	GLint proj_bind  = glGetUniformLocation(program_handle, "PROJECTION" );

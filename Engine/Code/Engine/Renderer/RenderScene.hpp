@@ -12,7 +12,7 @@
 
 class RenderScene{
 public:
-	 RenderScene();
+	 RenderScene(Renderer* r);
 	void AddRenderable(Renderable *r);
 	void AddLight(Light * l);
 	void AddCamera(Camera* c);	//optional?
@@ -38,6 +38,7 @@ public:
 	void SetLightAttenuation(int lightIndex, Vector3 att);
 
 	void SetShadowCameraPosition(Vector3 worldPos);
+	void SetShadowCameraTransform(const Transform& t);
 
 
 public:
@@ -47,6 +48,8 @@ public:
 	std::vector<ParticleSystem*> m_particleSystems;
 
 	Camera* m_shadowCamera;
+	Texture* m_shadowDepthTarget;
+	Texture* m_shadowColorTarget;
 
 
 	// //for particle emitters splitscreen

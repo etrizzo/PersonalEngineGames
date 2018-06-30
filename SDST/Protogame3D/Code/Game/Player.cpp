@@ -21,6 +21,7 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
 	Vector3 sphere = Vector3::ZERO - (Vector3::UP * .08f);
 	mb.AppendSphere(sphere, .2f, 10, 10, RGBA::RED);
+	//mb.AppendCube(sphere, Vector3::ONE * .5f, RGBA::RED);
 	mb.AppendCube(Vector3::FORWARD * .4f, Vector3(.1f, .1f, .8f), RGBA::RED);
 	mb.End();
 	m_turretRenderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
@@ -60,7 +61,7 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	mb.End();
 	m_laserSightRenderable = new Renderable();
 	m_laserSightRenderable->SetMesh(mb.CreateMesh());
-	m_laserSightRenderable->SetMaterial(Material::GetMaterial("default_unlit"));
+	m_laserSightRenderable->SetMaterial(Material::GetMaterial("default_alpha"));
 	m_laserSightRenderable->m_transform.SetParent(m_barrelPosition);
 
 
@@ -73,6 +74,15 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 
 	m_health = 50;
 	m_maxHealth = m_health;
+
+	m_shadowCameraTransform = new Transform();
+	Vector3 lightEuler = g_theGame->m_playState->m_sun->m_transform.GetEulerAngles();
+	Vector3 sunDirection = g_theGame->m_playState->m_sun->m_transform.GetForward();
+	m_shadowCameraOffset = sunDirection * -25.f;
+	m_shadowCameraTransform->SetRotationEuler(lightEuler);
+	m_shadowCameraTransform->SetLocalPosition(position + m_shadowCameraOffset);
+
+
 
 	SetPosition(position);
 	SetScale(Vector3(size,size,size));
@@ -254,6 +264,12 @@ void Player::SetWorldPosition()
 
 	m_renderable->m_transform.SetLocalMatrix(mat);
 	m_collider.SetPosition(pos);
+
+
+	m_shadowCameraTransform->SetLocalPosition(pos + m_shadowCameraOffset);
+
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, pos + m_shadowCameraOffset, RGBA::RED, RGBA::GREEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, pos + m_shadowCameraOffset, 1.f, m_shadowCameraTransform->GetWorldMatrix());
 	//SetPosition(pos);
 }
 

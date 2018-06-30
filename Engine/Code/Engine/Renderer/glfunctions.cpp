@@ -63,6 +63,7 @@ PFNGLBUFFERDATAPROC			glBufferData		= nullptr;
 PFNGLDELETEBUFFERSPROC		glDeleteBuffers		= nullptr;
 PFNGLGENVERTEXARRAYSPROC	glGenVertexArrays	= nullptr;
 PFNGLBINDVERTEXARRAYPROC	glBindVertexArray	= nullptr;
+PFNGLVIEWPORTPROC			glViewport			= nullptr;	
 
 //draw mesh immediate
 PFNGLGETATTRIBLOCATIONPROC			glGetAttribLocation			= nullptr;
