@@ -14,6 +14,7 @@ class Item;
 class ItemDefinition;
 class Decoration;
 class DecorationDefinition;
+class DialogueSet;
 
 const float RAYCAST_STEPS_PER_TILE = 100.f;
 const bool USE_ALL_ENTITIES = false;
@@ -69,6 +70,7 @@ public:
 	void CheckEntityInteractions();
 
 	void Render();
+	void RenderUI();		//renders dialogue
 	void RenderTiles();
 	void RenderEntities();
 	bool RunBubbleSortPassOnEntities();
@@ -126,7 +128,14 @@ public:
 	void GetNeighbors(Tile* tile, Tile (&neighbors)[8]);
 	void GetNeighbors(IntVector2 coords, Tile (&neighbors)[8]);
 
-	//SURELY these can be private somehow
+
+	void StartDialogue(DialogueSet* d);
+	void ProgressDialogue();
+	bool IsDialogueOpen();
+
+	DialogueSet* m_activeDialogueSet;
+
+
 	std::vector<Entity*> m_allEntities;
 	std::vector<Actor*> m_allActors;
 	std::vector<Projectile*> m_allProjectiles;
@@ -137,6 +146,7 @@ public:
 	eAreaType m_maskType = AREA_TYPE_RECTANGLE;
 	AreaMask* m_generationMask;	//feels weird
 	AreaMask* m_fullMap;
+	Player* m_player = nullptr;
 
 private:
 	void SetCamera();

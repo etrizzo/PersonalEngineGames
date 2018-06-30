@@ -133,6 +133,11 @@ GameState_Encounter::GameState_Encounter(std::string lvlToLoad, int difficulty)
 	//m_currentAdventure->Begin();
 }
 
+GameState_Encounter::~GameState_Encounter()
+{
+	delete m_currentAdventure;
+}
+
 
 void GameState_Encounter::Update(float ds)
 {
@@ -164,6 +169,7 @@ void GameState_Encounter::RenderUI()
 {
 	g_theGame->SetUICamera();
 	m_currentAdventure->RenderUI();
+
 }
 
 void GameState_Encounter::HandleInput()
@@ -208,6 +214,8 @@ void GameState_Encounter::HandleInput()
 
 	//g_theGame->m_currentAdventure->HandleInput();
 }
+
+
 
 GameState_Paused::GameState_Paused(GameState_Encounter* encounter)
 {
@@ -334,18 +342,24 @@ GameState_Victory::GameState_Victory(GameState_Encounter * encounter)
 
 void GameState_Victory::Update(float ds)
 {
-	m_encounterGameState->Update(0.f);
+	if (m_encounterGameState != nullptr){
+		m_encounterGameState->Update(0.f);
+	}
 	m_timeInState+=ds;
 }
 
 void GameState_Victory::RenderGame()
 {
-	m_encounterGameState->Render();
+	if (m_encounterGameState != nullptr){
+		m_encounterGameState->Render();
+	}
 }
 
 void GameState_Victory::RenderUI()
 {
-	m_encounterGameState->RenderUI();
+	if (m_encounterGameState != nullptr){
+		m_encounterGameState->RenderUI();
+	}
 	//g_theRenderer->ApplyEffect("timeeffect");
 	//g_theRenderer->FinishEffects();
 	g_theRenderer->ClearDepth(1.f);
@@ -382,6 +396,8 @@ void GameState_Victory::HandleInput()
 {
 		if (WasStartJustPressed()){
 			int difficulty = m_encounterGameState->m_currentAdventure->m_difficulty;
+			delete m_encounterGameState;
+			m_encounterGameState = nullptr;
 			g_theGame->TransitionToState(new GameState_Encounter("Balrog", difficulty + 1));
 		}
 }

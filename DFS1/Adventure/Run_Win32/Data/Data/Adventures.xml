@@ -1,7 +1,7 @@
 <AdventureDefinitions>
 
   <AdventureDefinition name="Balrog" title="Kill the Balrog">
-    <StartConditions startMap="Zoo" startOnTileType="Grass"/>
+    <StartConditions startMap="ItemZoo" startOnTileType="Grass"/>
     <VictoryConditions>
      <!--<KillActor actorToKill="Goblin" numToKill="3"/>-->
       <KillActor actorToKill="Goblin" numToKill="1"/>

@@ -2,6 +2,7 @@
 #include "Game/GameCommon.hpp"
 #include "EntityDefinition.hpp"
 #include "Game/Stats.hpp"
+#include "Game/DialogueSetDefinition.hpp"
 
 class Item;
 class ClothingSetDefinition;
@@ -22,6 +23,7 @@ public:
 	static ActorDefinition* GetActorDefinition(std::string definitionName);
 
 	std::vector<Texture*> m_layerTextures;
+	DialogueSetDefinition* m_dialogueDefinition;
 
 protected:
 	void ParseStats(tinyxml2::XMLElement* statsElement);

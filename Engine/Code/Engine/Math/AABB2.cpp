@@ -230,12 +230,12 @@ void AABB2::SplitAABB2Horizontal(float yDivide, AABB2 &outTop, AABB2 &outBottom)
 	outTop = AABB2(splitLineLeft, maxs);
 }
 
-AABB2 AABB2::GetPercentageBox(float xPercentMin, float yPercentMin, float xPercentMax, float yPercentMax)
+AABB2 AABB2::GetPercentageBox(float xPercentMin, float yPercentMin, float xPercentMax, float yPercentMax) const
 {
 	return GetPercentageBox(Vector2(xPercentMin, yPercentMin), Vector2(xPercentMax, yPercentMax));
 }
 
-AABB2 AABB2::GetPercentageBox(Vector2 minsPercentages, Vector2 maxsPercentages)
+AABB2 AABB2::GetPercentageBox(Vector2 minsPercentages, Vector2 maxsPercentages) const
 {
 	Vector2 dims = GetDimensions();
 	Vector2 minsOffset = Vector2(dims.x * minsPercentages.x, dims.y * minsPercentages.y);

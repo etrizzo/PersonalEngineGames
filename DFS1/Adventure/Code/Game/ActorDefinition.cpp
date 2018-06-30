@@ -40,6 +40,13 @@ ActorDefinition::ActorDefinition(tinyxml2::XMLElement * actorElement): EntityDef
 	} else {
 		m_clothingSetDef = nullptr;
 	}
+
+	tinyxml2::XMLElement* dialogueElement = actorElement->FirstChildElement("Dialogues");
+	if (dialogueElement != nullptr){
+		m_dialogueDefinition = new DialogueSetDefinition(dialogueElement);
+	} else {
+		m_dialogueDefinition = nullptr;
+	}
 }
 
 ActorDefinition::~ActorDefinition()

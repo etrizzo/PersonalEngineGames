@@ -78,7 +78,7 @@ Game::Game()
 	m_uiCamera->LookAt( Vector3( uicenter.x, uicenter.y, -1.f ), Vector3(uicenter.x, uicenter.y, .5f)); 
 
 
-
+	m_dialogueBox = m_uiCamera->GetBounds().GetPercentageBox(.3f,0.f,.7f,.1f);
 
 	g_theRenderer->SetCamera( m_camera ); 
 
@@ -179,6 +179,16 @@ void Game::RenderXboxBackButton(AABB2 boxToDrawIn)
 	AABB2 texCoords = m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(2,0));
 	g_theRenderer->DrawTexturedAABB2(boxToDrawIn, *buttonTexture, texCoords.mins, texCoords.maxs, RGBA::WHITE );
 
+}
+
+void Game::Pause()
+{
+	m_isPaused = true;
+}
+
+void Game::Unpause()
+{
+	m_isPaused = false;
 }
 
 void Game::TogglePause()

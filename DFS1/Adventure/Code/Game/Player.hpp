@@ -26,6 +26,8 @@ public:
 	Heatmap m_distanceMap;
 
 private:
+	float m_speakRadius = 1.f;
+	void SpeakToActor();
 	void UpdateDistanceMap();
 	virtual void FireArrow();
 	Vector2 GetClosestAngle();

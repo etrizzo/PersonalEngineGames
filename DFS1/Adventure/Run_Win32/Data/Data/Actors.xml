@@ -50,6 +50,10 @@
     <Health max="100" start="100"/>
     <SpriteAnimSet name = "humanoid" />
     <Clothing set="Villager" />
+    <Dialogues>
+      <Dialogue content="Hello world!" />
+      <Dialogue content="How are you?" />
+    </Dialogues>
   </ActorDefinition>
 
 </ActorDefinitions>

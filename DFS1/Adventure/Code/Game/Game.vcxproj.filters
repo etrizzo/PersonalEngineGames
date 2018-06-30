@@ -115,6 +115,15 @@
     <ClCompile Include="ClothingSetDefinition.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="Dialogue.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogueSetDefinition.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogueSet.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -216,6 +225,15 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="ClothingSetDefinition.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Dialogue.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogueSetDefinition.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogueSet.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

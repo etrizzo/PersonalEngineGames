@@ -2,6 +2,7 @@
 #include "Game/Entity.hpp"
 #include "Game/Stats.hpp"
 #include "Game/ClothingSet.hpp"
+#include "Game/DialogueSet.hpp"
 
 class ActorDefinition;
 class Item;
@@ -23,6 +24,8 @@ public:
 	void SetPosition(Vector2 newPos, Map* newMap = nullptr) override;
 	void EnterTile(Tile* tile) override;
 
+	void Speak();
+
 	virtual void TakeDamage(int dmg);
 
 	void EquipOrUnequipItem(Item* itemToEquip);
@@ -36,6 +39,10 @@ public:
 	Stats m_stats;
 	Stats m_baseStats;
 	bool m_changedClothes;
+
+	DialogueSet* m_dialogue;
+	//std::queue<Dialogue*> m_dialogue;
+	//Dialogue* m_activeDialogue;
 
 	void StartFiringArrow();
 	
@@ -51,6 +58,8 @@ protected:
 	void UpdateWithController(float deltaSeconds);
 	void RunSimpleAI(float deltaSeconds);
 	void Wander(float deltaSeconds);
+
+	void RenderDialogue();
 
 	virtual void FireArrow();
 

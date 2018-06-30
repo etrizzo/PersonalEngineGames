@@ -47,6 +47,7 @@ public:
 	SoundPlaybackID m_attractPlayback;
 	SoundID m_victoryMusicID;
 	SoundPlaybackID m_victoryPlayback;
+	AABB2 m_dialogueBox;
 
 	//static SpriteAnimSetDef* s_humanoidAnimSetDef;
 
@@ -64,6 +65,8 @@ public:
 	void RenderXboxStartButton(AABB2 boxToDrawIn);
 	void RenderXboxBackButton(AABB2 boxToDrawIn);
 
+	void Pause();
+	void Unpause();
 	void TogglePause();
 	void ToggleDevMode();
 

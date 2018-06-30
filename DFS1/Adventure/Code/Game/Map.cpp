@@ -14,6 +14,7 @@
 #include "Game/Decoration.hpp"
 #include "Game/DecorationDefinition.hpp"
 #include "Game/Adventure.hpp"
+#include "Game/DialogueSet.hpp"
 
 
 
@@ -24,6 +25,7 @@ Map::~Map()
 			delete m_allEntities[i];
 		}
 	}
+	m_tiles.clear();
 }
 
 Map::Map(std::string name, MapDefinition* mapDef, int difficulty)
@@ -54,6 +56,13 @@ void Map::Render()
 	SetCamera();
 	//RenderTiles();
 	//RenderEntities();
+}
+
+void Map::RenderUI()
+{
+	if (m_activeDialogueSet != nullptr){
+		m_activeDialogueSet->Render(g_theGame->m_dialogueBox);
+	}
 }
 
 
@@ -140,6 +149,10 @@ void Map::UpdateEntities(float deltaSeconds)
 		if (currentEntity != nullptr && !currentEntity->m_aboutToBeDeleted){
 			m_allEntities.at(entityIndex)->Update(deltaSeconds);
 		}
+	}
+
+	if (m_player != nullptr){
+		m_player->Update(deltaSeconds);
 	}
 	
 
@@ -541,8 +554,10 @@ void Map::GetManhattanNeighbors(IntVector2 coords, Tile(&neighbors)[4])
 
 void Map::GetNeighbors(Tile * tile, Tile (&neighbors)[8])
 {
-	IntVector2 coords = tile->m_coordinates;
-	GetNeighbors(coords, neighbors);
+	if (tile != nullptr){
+		IntVector2 coords = tile->m_coordinates;
+		GetNeighbors(coords, neighbors);
+	}
 }
 
 void Map::GetNeighbors(IntVector2 coords, Tile (&neighbors)[8])
@@ -589,6 +604,29 @@ void Map::GetNeighbors(IntVector2 coords, Tile (&neighbors)[8])
 		neighbors[7] = *(checkTile);
 	}
 }
+
+
+void Map::StartDialogue(DialogueSet * d)
+{
+	m_activeDialogueSet = d;
+	g_theGame->Pause();
+	ProgressDialogue();
+}
+
+void Map::ProgressDialogue()
+{
+	//progress dialogue - if the dialogue finishes, set active dialogue set to nullptr
+	if (m_activeDialogueSet->ProgressAndCheckFinish()){
+		m_activeDialogueSet = nullptr;
+		g_theGame->Unpause();
+	}
+}
+
+bool Map::IsDialogueOpen()
+{
+	return m_activeDialogueSet != nullptr;
+}
+
 
 
 RaycastResult2D Map::Raycast(const Vector2& startPos, const Vector2& direction, float maxDistance) 
@@ -706,8 +744,9 @@ Player * Map::SpawnNewPlayer(Vector2 spawnPosition)
 	ActorDefinition* actorDef = ActorDefinition::GetActorDefinition("Player");
 	//spawnPosition = Vector2(5.f,5.f);
 	Player* newPlayer = new Player(actorDef, spawnPosition, this);
-	m_allEntities.push_back((Entity*) newPlayer);
-	m_allActors.push_back( (Actor*) newPlayer);
+	//m_allEntities.push_back((Entity*) newPlayer);
+	//m_allActors.push_back( (Actor*) newPlayer);
+	m_player = newPlayer;
 	m_scene->AddRenderable(newPlayer->m_renderable);
 	return newPlayer;
 }

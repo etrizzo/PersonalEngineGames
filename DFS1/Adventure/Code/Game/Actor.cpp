@@ -31,7 +31,7 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 			//m_animSets[i] = new SpriteAnimSet(m_definition->m_spriteSetDefs[i]);
 			//m_renderable->SetDiffuseTexture(m_animSets[i]->GetCurrentTexture(), i);
 		if (m_currentLook->GetTexture(i) != nullptr){
-			m_renderable->SetSubMesh(m_localDrawingBox, m_lastUVs, RGBA::WHITE, numTextures);
+			m_renderable->SetSubMesh(m_localDrawingBox, m_lastUVs, m_currentLook->GetTint(i), numTextures);
 			m_renderable->AddDiffuseTexture(m_currentLook->GetTexture(i), numTextures);
 			numTextures++;
 		}
@@ -40,6 +40,8 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 	m_health+= (difficulty * 5);
 	Stats difficultyMod = Stats(IntRange(0, difficulty));
 	m_stats.Add(difficultyMod);
+
+	m_dialogue = new DialogueSet(m_definition->m_dialogueDefinition);
 }
 
 Actor::~Actor()
@@ -90,6 +92,7 @@ void Actor::Render()
 	//Entity::Render();
 	Entity::RenderHealthBar();
 	Entity::RenderName();
+	//RenderDialogue();
 }
 
 std::string Actor::GetAnimName()
@@ -131,7 +134,7 @@ void Actor::UpdateRenderable()
 		for (int i = BODY_SLOT; i  < NUM_RENDER_SLOTS; i++){
 			if (m_currentLook->GetTexture(i) != nullptr){
 				//Texture* baseTexture = m_animSets[i]->GetCurrentTexture();	//base, legs, torso, head (, weapon)
-				m_renderable->SetSubMesh(m_localDrawingBox, uvs, RGBA::WHITE, numTextures);
+				m_renderable->SetSubMesh(m_localDrawingBox, uvs, m_currentLook->GetTint(i), numTextures);
 				if (m_changedClothes){
 					m_renderable->AddDiffuseTexture(m_currentLook->GetTexture(i), numTextures);
 				}
@@ -155,38 +158,40 @@ void Actor::RunWorldPhysics()
 	Vector2 pos = GetPosition();
 	//Get Tile
 	Tile* currentTile = m_map->TileAtFloat(pos);
-	//Get Neighbors
-	Tile neighbors[8];
-	m_map->GetNeighbors(currentTile, neighbors);
-	Vector2 tileCenter = currentTile->GetCenter();
+	if(currentTile != nullptr){
+		//Get Neighbors
+		Tile neighbors[8];
+		m_map->GetNeighbors(currentTile, neighbors);
+		Vector2 tileCenter = currentTile->GetCenter();
 
-	//If a neighbor is solid, check if overlapping
+		//If a neighbor is solid, check if overlapping
 
 
 
-	if (!CanEnterTile(neighbors[0])){
-		CheckTileForCollisions(neighbors[0], tileCenter + Vector2(-.5f,.5f));
-	}
-	if (!CanEnterTile(neighbors[1])){
-		CheckTileForCollisions(neighbors[1], Vector2(pos.x, tileCenter.y + .5f));
-	}
-	if (!CanEnterTile(neighbors[2])){
-		CheckTileForCollisions(neighbors[2], tileCenter + Vector2(.5f,.5f));
-	}
-	if (!CanEnterTile(neighbors[3])){
-		CheckTileForCollisions(neighbors[3], Vector2(tileCenter.x - .5f, pos.y));
-	}
-	if (!CanEnterTile(neighbors[4])){
-		CheckTileForCollisions(neighbors[4], Vector2(tileCenter.x + .5f, pos.y));
-	}
-	if (!CanEnterTile(neighbors[5])){
-		CheckTileForCollisions(neighbors[5], tileCenter + Vector2(-.5f,-.5f));
-	}
-	if (!CanEnterTile(neighbors[6])){
-		CheckTileForCollisions(neighbors[6], Vector2(pos.x, tileCenter.y - .5f));
-	}
-	if (!CanEnterTile(neighbors[7])){
-		CheckTileForCollisions(neighbors[7], tileCenter + Vector2(.5f,-.5f));
+		if (!CanEnterTile(neighbors[0])){
+			CheckTileForCollisions(neighbors[0], tileCenter + Vector2(-.5f,.5f));
+		}
+		if (!CanEnterTile(neighbors[1])){
+			CheckTileForCollisions(neighbors[1], Vector2(pos.x, tileCenter.y + .5f));
+		}
+		if (!CanEnterTile(neighbors[2])){
+			CheckTileForCollisions(neighbors[2], tileCenter + Vector2(.5f,.5f));
+		}
+		if (!CanEnterTile(neighbors[3])){
+			CheckTileForCollisions(neighbors[3], Vector2(tileCenter.x - .5f, pos.y));
+		}
+		if (!CanEnterTile(neighbors[4])){
+			CheckTileForCollisions(neighbors[4], Vector2(tileCenter.x + .5f, pos.y));
+		}
+		if (!CanEnterTile(neighbors[5])){
+			CheckTileForCollisions(neighbors[5], tileCenter + Vector2(-.5f,-.5f));
+		}
+		if (!CanEnterTile(neighbors[6])){
+			CheckTileForCollisions(neighbors[6], Vector2(pos.x, tileCenter.y - .5f));
+		}
+		if (!CanEnterTile(neighbors[7])){
+			CheckTileForCollisions(neighbors[7], tileCenter + Vector2(.5f,-.5f));
+		}
 	}
 }
 
@@ -215,6 +220,17 @@ void Actor::SetPosition(Vector2 newPos, Map * newMap)
 void Actor::EnterTile(Tile * tile)
 {
 	Entity::EnterTile(tile);
+}
+
+void Actor::Speak()
+{
+	if (m_dialogue != nullptr){
+		if (!m_map->IsDialogueOpen()){
+			m_map->StartDialogue(m_dialogue);
+		} else {
+			m_map->ProgressDialogue();
+		}
+	}
 }
 
 void Actor::TakeDamage(int dmg)
@@ -392,6 +408,13 @@ void Actor::Wander(float deltaSeconds)
 		//m_facing = Vector2::MakeDirectionAtDegrees(GetRandomFloatInRange(-180.f,180.f));
 		m_facing = m_facing - (2 * m_facing);
 		m_timeLastUpdatedDirection = m_ageInSeconds;
+	}
+}
+
+void Actor::RenderDialogue()
+{
+	if (m_dialogue != nullptr){
+		m_dialogue->Render(g_theGame->m_dialogueBox);
 	}
 }
 

@@ -126,7 +126,14 @@ void Player::RenderDistanceMap() const
 void Player::HandleInput()
 {
 	if (!m_isFiring){
-		Actor::UpdateWithController(g_theGame->GetDeltaSeconds());
+		if (!m_map->IsDialogueOpen()){
+			Actor::UpdateWithController(g_theGame->GetDeltaSeconds());
+		}
+
+		if (g_theInput->WasMouseButtonJustPressed(MOUSE_BUTTON_LEFT)){
+			SpeakToActor();
+		}
+
 	}
 	m_physicsDisc.center=GetPosition();
 }
@@ -194,6 +201,24 @@ std::string Player::GetAnimName()
 }
 
 
+
+void Player::SpeakToActor()
+{
+	Actor* closestActor = nullptr;
+	float closestDistance = m_speakRadius;
+	for (Actor* actor : m_map->m_allActors){
+		if (actor != this){
+			float dist = GetDistance(actor->GetPosition(), GetPosition());
+			if ( dist < closestDistance){
+				closestActor = actor;
+				closestDistance = dist;
+			}
+		}
+	}
+	if (closestActor != nullptr){
+		closestActor->Speak();
+	}
+}
 
 void Player::UpdateDistanceMap()
 {

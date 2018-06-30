@@ -37,8 +37,8 @@ public:
 	void SplitAABB2Horizontal(float yDivide, AABB2 &outTop, AABB2 &outBottom);
 
 	//gets a portion of the AABB2 by percentages - useful for UI boxes in screen space
-	AABB2 GetPercentageBox(float xPercentMin, float yPercentMin, float xPercentMax,  float yPercentMax);
-	AABB2 GetPercentageBox(Vector2 minPercentages, Vector2 maxPercentages);
+	AABB2 GetPercentageBox(float xPercentMin, float yPercentMin, float xPercentMax,  float yPercentMax) const;
+	AABB2 GetPercentageBox(Vector2 minPercentages, Vector2 maxPercentages) const;
 
 	//gets percentage into the box the point is
 	Vector2 GetPercentageOfPoint(Vector2 point) const;

@@ -403,16 +403,19 @@ bool Entity::CanEnterTile(Tile tileToEnter)
 void Entity::UpdateSpeed()
 {
 	Tile* currentTile = m_map->TileAtFloat(GetPosition());
-	float defaultSpeed = 0.f;
-	if (m_definition->m_canFly && currentTile->m_tileDef->m_allowsFlying){
-		defaultSpeed = m_definition->m_flySpeed;
-	} else if (m_definition->m_canWalk && currentTile->m_tileDef->m_allowsWalking){
-		defaultSpeed = m_definition->m_walkSpeed;
-	} else if (m_definition->m_canSwim && currentTile->m_tileDef->m_allowsSwimming){
-		defaultSpeed = m_definition->m_swimSpeed;
+	TODO("Fix spawning on small maps so that tile can't be nullptr");
+	if (currentTile != nullptr){
+		float defaultSpeed = 0.f;
+		if (m_definition->m_canFly && currentTile->m_tileDef->m_allowsFlying){
+			defaultSpeed = m_definition->m_flySpeed;
+		} else if (m_definition->m_canWalk && currentTile->m_tileDef->m_allowsWalking){
+			defaultSpeed = m_definition->m_walkSpeed;
+		} else if (m_definition->m_canSwim && currentTile->m_tileDef->m_allowsSwimming){
+			defaultSpeed = m_definition->m_swimSpeed;
+		}
+		//apply movement penalties by tile here
+		m_speed = defaultSpeed;
 	}
-	//apply movement penalties by tile here
-	m_speed = defaultSpeed;
 
 }
 

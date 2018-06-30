@@ -23,7 +23,7 @@ ClothingSet * ClothingSetDefinition::GetRandomSet() const
 	if ((int)  m_texturesByClothingType[CHEST_SLOT].size() > 0){
 		//load chest clothing
 		int torsoIndex = GetRandomIntLessThan((int) m_texturesByClothingType[CHEST_SLOT].size());
-		set->InitTexture(CHEST_SLOT, GetTexture(CHEST_SLOT, torsoIndex));
+		set->InitTexture(CHEST_SLOT, GetTexture(CHEST_SLOT, torsoIndex), RGBA::GetRandomRainbowColor());
 		if (m_torsoUsesLegs[torsoIndex]){
 			set->InitTexture(LEGS_SLOT, GetRandomOfType(LEGS_SLOT));
 		}
