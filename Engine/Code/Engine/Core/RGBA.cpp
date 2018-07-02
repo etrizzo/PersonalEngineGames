@@ -195,6 +195,14 @@ RGBA RGBA::GetRandomRainbowColor()
 	return ret;
 }
 
+RGBA RGBA::GetRandomColor()
+{
+	int r = GetRandomIntLessThan(256);
+	int g = GetRandomIntLessThan(256);
+	int b = GetRandomIntLessThan(256);
+	return RGBA(r,g,b);
+}
+
 const RGBA Interpolate(const RGBA & start, const RGBA & end, float fractionTowardEnd)
 {
 

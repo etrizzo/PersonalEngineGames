@@ -93,6 +93,11 @@ Texture * Item::GetEquipTexture() const
 	return m_definition->GetEquipTexture();
 }
 
+ClothingLayer * Item::GetEquipLayer() const
+{
+	return m_definition->GetEquipLayer();
+}
+
 bool Item::ShowsHair() const
 {
 	return m_definition->m_showHair;

@@ -1,5 +1,6 @@
 #pragma once
 #include "Game/GameCommon.hpp"
+#include "Game/ClothingLayer.hpp"
 
 class ClothingSetDefinition;
 
@@ -21,15 +22,21 @@ public:
 
 	//all textures loaded in 2D array by RenderSlot
 		//i.e. m_texturesByClothingType[0] is all body textures
-	std::vector<Texture*> m_defaultTextures;
-	std::vector<Texture*> m_currentTextures;
-	std::vector<RGBA> m_currentTints;
-	std::vector<RGBA> m_defaultTints;
+	//std::vector<Texture*> m_defaultTextures;
+	//std::vector<Texture*> m_currentTextures;
+	//std::vector<RGBA> m_currentTints;
+	//std::vector<RGBA> m_defaultTints;
+	std::vector<ClothingLayer*> m_defaultLayers;
+	std::vector<ClothingLayer*> m_currentLayers;
 
-	void InitTexture(RENDER_SLOT slot, Texture* texture, RGBA tint = RGBA::WHITE);
-	void SetDefaultTexture(RENDER_SLOT slot);
-	void SetTexture(RENDER_SLOT slot, Texture* newTexture, RGBA tint = RGBA::WHITE);
-	void SetTexture(RENDER_SLOT slot, ClothingSetDefinition* setDefinitionName, RGBA tint= RGBA::WHITE);
+	void InitLayer(RENDER_SLOT slot, ClothingLayer* layer);
+	void SetDefaultLayer(RENDER_SLOT slot);
+	void SetLayer(RENDER_SLOT slot, ClothingLayer* layer);
+
+	//void InitTexture(RENDER_SLOT slot, Texture* texture, RGBA tint = RGBA::WHITE);
+	//void SetTexture(RENDER_SLOT slot, Texture* newTexture, RGBA tint = RGBA::WHITE);
+	//void SetTexture(RENDER_SLOT slot, ClothingSetDefinition* setDefinitionName, RGBA tint= RGBA::WHITE);
+	ClothingLayer* GetLayer(RENDER_SLOT slot) const;
 	Texture* GetTexture(RENDER_SLOT slot) const;
 	Texture* GetTexture(int i) const;	//for getting from a for loop
 	RGBA GetTint(RENDER_SLOT slot) const;

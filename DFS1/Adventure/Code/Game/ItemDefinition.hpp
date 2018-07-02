@@ -14,10 +14,11 @@ public:
 	Stats m_minStats;
 	Stats m_maxStats;
 	ClothingSetDefinition* m_clothingSetDefinition;
-	ClothingSet* m_defaultSet;
-	Texture* m_defaultEquipTexture;
+	ClothingSet* m_defaultSet;		//if there's a set that this item uses (i.e., the "platemail" set)
+	ClothingLayer* m_defaultEquipLayer;		//used if there's no default set
 	bool m_showHair = false;
 	Texture* GetEquipTexture() const;
+	ClothingLayer* GetEquipLayer() const;
 
 	static std::map< std::string, ItemDefinition* >		s_definitions;
 	static ItemDefinition* GetItemDefinition(std::string definitionName);

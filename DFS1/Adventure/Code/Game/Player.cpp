@@ -97,7 +97,7 @@ void Player::RenderStatsInBox(AABB2 boxToDrawIn, RGBA tint)
 	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
 		if (m_currentLook->GetTexture(i) != nullptr){
 			//const Texture* entityTexture = m_animSets[i]->GetTextureForAnim("IdleSouth");
-			g_theRenderer->DrawTexturedAABB2(pictureBox, *m_currentLook->GetTexture(i), texCoords.mins, texCoords.maxs, RGBA());
+			g_theRenderer->DrawTexturedAABB2(pictureBox, *m_currentLook->GetTexture(i), texCoords.mins, texCoords.maxs, m_currentLook->GetTint(i));
 		}
 	}
 

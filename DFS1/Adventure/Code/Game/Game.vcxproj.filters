@@ -124,6 +124,9 @@
     <ClCompile Include="DialogueSet.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="ClothingLayer.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -234,6 +237,9 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="DialogueSet.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="ClothingLayer.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

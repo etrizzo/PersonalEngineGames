@@ -41,6 +41,7 @@ public:
 	RGBA GetColorWithAlpha(unsigned char alpha) const;
 
 	static RGBA GetRandomRainbowColor();
+	static RGBA GetRandomColor();
 
 
 	const static RGBA WHITE;

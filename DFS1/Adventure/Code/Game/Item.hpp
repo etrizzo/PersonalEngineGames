@@ -1,6 +1,7 @@
 #pragma once
 #include "Game/Entity.hpp"
 #include "Game/Stats.hpp"
+#include "Game/ClothingLayer.hpp"
 class ItemDefinition;
 
 class Item: public Entity{
@@ -22,6 +23,7 @@ public:
 	Stats m_stats;
 	bool m_currentlyEquipped = false;
 	Texture* GetEquipTexture() const;
+	ClothingLayer* GetEquipLayer() const;
 	bool ShowsHair() const;
 private:
 	void RenderEquipmentIcon(AABB2 boxToRenderIn);

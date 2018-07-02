@@ -10,15 +10,18 @@ ItemDefinition::ItemDefinition(tinyxml2::XMLElement * itemElement)
 {
 	std::string equipSlotName = ParseXmlAttribute(*itemElement, "equipSlot", "NONE");
 	std::string clothingSetName = ParseXmlAttribute(*itemElement, "clothingSet", "NONE");
+	SetEquipSlot(equipSlotName);
+
 	if (clothingSetName != "NONE"){
 		m_clothingSetDefinition = ClothingSetDefinition::GetDefinition(clothingSetName);
 		m_showHair = ParseXmlAttribute(*itemElement, "showHair", m_showHair);
 		m_defaultSet = m_clothingSetDefinition->GetRandomSet();
 	} else {
 		m_clothingSetDefinition = nullptr;
-		m_defaultEquipTexture = ParseXmlAttribute(*itemElement, "equipTexture", (Texture*) nullptr);
+		Texture* equipTex = ParseXmlAttribute(*itemElement, "equipTexture", (Texture*) nullptr);
+		RGBA tint = ParseXmlAttribute(*itemElement, "equipTint", RGBA::WHITE);
+		m_defaultEquipLayer = new ClothingLayer(GetRenderSlotForEquipSlot(m_equipSlot), equipTex, tint);
 	}
-	SetEquipSlot(equipSlotName);
 	ParseStats(itemElement->FirstChildElement("Stats"));	
 }
 
@@ -32,7 +35,16 @@ Texture * ItemDefinition::GetEquipTexture() const
 	if (m_defaultSet != nullptr){
 		return m_defaultSet->GetTexture(GetRenderSlotForEquipSlot(m_equipSlot));
 	} else {
-		return m_defaultEquipTexture;
+		return m_defaultEquipLayer->GetTexture();
+	}
+}
+
+ClothingLayer * ItemDefinition::GetEquipLayer() const
+{
+	if (m_defaultSet != nullptr){
+		return m_defaultSet->GetLayer(GetRenderSlotForEquipSlot(m_equipSlot));
+	} else {
+		return m_defaultEquipLayer;
 	}
 }
 

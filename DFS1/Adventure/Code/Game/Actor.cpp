@@ -253,16 +253,16 @@ void Actor::EquipOrUnequipItem(Item * itemToEquip)
 		//if the head item shows hair, add it to the hat slot instead
 		if (texSlot == HAT_SLOT){
 			if (!itemToEquip->ShowsHair()){
-				m_currentLook->SetTexture(HEAD_SLOT, (Texture*) nullptr);
+				m_currentLook->SetLayer(HEAD_SLOT, (ClothingLayer*) nullptr);
 				//m_layerTextures[HAT_SLOT] = nullptr;	//remove the hat texture
 			}
 		}
 		if (itemToEquip->m_currentlyEquipped){		//un-equip item
 			m_equippedItems[slotToEquipIn] = nullptr;
 			itemToEquip->m_currentlyEquipped = false;
-			m_currentLook->SetDefaultTexture(texSlot);
+			m_currentLook->SetDefaultLayer(texSlot);
 			if (texSlot == HAT_SLOT){
-				m_currentLook->SetDefaultTexture(HEAD_SLOT);		//reset hair to normal
+				m_currentLook->SetDefaultLayer(HEAD_SLOT);		//reset hair to normal
 			}
 			//m_layerTextures[texSlot] = m_definition->m_layerTextures[texSlot];
 			m_changedClothes = true;
@@ -274,7 +274,7 @@ void Actor::EquipOrUnequipItem(Item * itemToEquip)
 				m_equippedItems[slotToEquipIn] = itemToEquip;
 			}
 			itemToEquip->m_currentlyEquipped = true;
-			m_currentLook->SetTexture(texSlot, itemToEquip->GetEquipTexture());
+			m_currentLook->SetLayer(texSlot, itemToEquip->GetEquipLayer());
 			//m_layerTextures[texSlot] = itemToEquip->GetEquipTexture();
 			m_changedClothes = true;
 		}
