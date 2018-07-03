@@ -18,7 +18,7 @@ ClothingSetDefinition::ClothingSetDefinition(tinyxml2::XMLElement * setElement)
 	ParseLegs(setElement);
 	ParseHairs(setElement);
 	ParseHats(setElement);
-	//ParseWeapons(setElement);
+	ParseWeapons(setElement);
 }
 
 ClothingSet * ClothingSetDefinition::GetRandomSet() const
@@ -211,12 +211,6 @@ void ClothingSetDefinition::ParseHats(tinyxml2::XMLElement * setElement)
 	if (allHatElements != nullptr){
 		//parse all body elements
 		for(tinyxml2::XMLElement* hatElement = allHatElements->FirstChildElement("Hat"); hatElement != nullptr; hatElement = hatElement->NextSiblingElement("Hat")){
-			/*Texture* hatTexture = ParseXmlAttribute(*hatElement, "texture", (Texture*) nullptr);
-			m_texturesByClothingType[HAT_SLOT].push_back(hatTexture);
-
-			std::string colorType = ParseXmlAttribute(*hatElement, "color", "NONE");
-			RGBA tint = GetColorFromXML(colorType);
-			m_tintsByClothingType[HAT_SLOT].push_back(tint);*/
 			Texture* hatTexture = ParseXmlAttribute(*hatElement, "texture", (Texture*) nullptr);
 			std::string colorType = ParseXmlAttribute(*hatElement, "color", "NONE");
 			RGBA tint = GetColorFromXML(colorType);
@@ -225,6 +219,24 @@ void ClothingSetDefinition::ParseHats(tinyxml2::XMLElement * setElement)
 
 			ClothingLayer* layer = new ClothingLayer(HAT_SLOT, hatTexture, tint, usesLegs, usesHair);
 			m_layersByClothingType[HAT_SLOT].push_back(layer);
+		}
+	}
+}
+
+void ClothingSetDefinition::ParseWeapons(tinyxml2::XMLElement * setElement)
+{
+	tinyxml2::XMLElement* allWeapons = setElement->FirstChildElement("Weapons");
+	if (allWeapons != nullptr){
+		//parse all body elements
+		for(tinyxml2::XMLElement* weaponElement = allWeapons->FirstChildElement("Weapon"); weaponElement != nullptr; weaponElement = weaponElement->NextSiblingElement("Weapon")){
+			Texture* texture = ParseXmlAttribute(*weaponElement, "texture", (Texture*) nullptr);
+			std::string colorType = ParseXmlAttribute(*weaponElement, "color", "NONE");
+			RGBA tint = GetColorFromXML(colorType);
+			bool usesLegs = ParseXmlAttribute(*weaponElement, "useLegs", true);
+			bool usesHair = ParseXmlAttribute(*weaponElement, "usesHair", true);
+
+			ClothingLayer* layer = new ClothingLayer(WEAPON_SLOT, texture, tint, usesLegs, usesHair);
+			m_layersByClothingType[WEAPON_SLOT].push_back(layer);
 		}
 	}
 }

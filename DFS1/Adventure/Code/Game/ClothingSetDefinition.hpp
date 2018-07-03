@@ -43,6 +43,7 @@ private:
 	void ParseLegs	 (tinyxml2::XMLElement* setElement);
 	void ParseHairs	 (tinyxml2::XMLElement* setElement);
 	void ParseHats	 (tinyxml2::XMLElement* setElement);
+	void ParseWeapons(tinyxml2::XMLElement* setElement);
 
 	//parses a single body element - ears and base
 	void ParseBody(tinyxml2::XMLElement* bodyElement);

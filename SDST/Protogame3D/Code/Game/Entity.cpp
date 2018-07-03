@@ -38,25 +38,6 @@ void Entity::Update()
 
 }
 
-//void Entity::Render()
-//{
-//	//if (m_texture != nullptr){
-//	//	g_theRenderer->BindTexture(*m_texture);
-//	//	g_theRenderer->BindTexture("flat", 1);
-//	//}
-//
-//	g_theRenderer->BindMaterial(m_renderable->m_materials[0]);
-//
-//	//g_theRenderer->PushAndTransform(m_transform.GetLocalMatrix());
-//	g_theRenderer->DrawMesh(m_renderable->m_mesh);
-//	//g_theRenderer->Pop();
-//	g_theRenderer->ReleaseTexture();
-//	//RenderHealthBar();
-//	if (g_theGame->m_devMode){
-//		RenderDevMode();
-//	}
-//}
-
 void Entity::RenderDevMode()
 {
 	//g_theRenderer->SetFillMode(FILL_MODE_WIRE);

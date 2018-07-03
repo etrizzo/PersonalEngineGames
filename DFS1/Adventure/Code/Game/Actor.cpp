@@ -25,11 +25,6 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 	int numTextures = BODY_SLOT;
 	m_currentLook = m_definition->m_clothingSetDef->GetRandomSet();
 	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
-		
-			//copy default textures
-			//m_layerTextures.push_back(m_definition->m_layerTextures[i]);
-			//m_animSets[i] = new SpriteAnimSet(m_definition->m_spriteSetDefs[i]);
-			//m_renderable->SetDiffuseTexture(m_animSets[i]->GetCurrentTexture(), i);
 		if (m_currentLook->GetTexture(i) != nullptr){
 			m_renderable->SetSubMesh(m_localDrawingBox, m_lastUVs, m_currentLook->GetTint(i), numTextures);
 			m_renderable->AddDiffuseTexture(m_currentLook->GetTexture(i), numTextures);

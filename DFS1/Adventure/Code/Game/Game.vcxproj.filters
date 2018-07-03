@@ -127,6 +127,15 @@
     <ClCompile Include="ClothingLayer.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="Quest.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestReward.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestDefinition.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -240,6 +249,15 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="ClothingLayer.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Quest.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestReward.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestDefinition.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

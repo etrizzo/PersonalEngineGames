@@ -24,7 +24,7 @@ AdventureDefinition::AdventureDefinition(tinyxml2::XMLElement* defElement)
 	m_startTileDef = ParseXmlAttribute(*startElement, "startOnTileType", (TileDefinition*) nullptr);
 
 	tinyxml2::XMLElement* victoryElement = defElement->FirstChildElement("VictoryConditions");
-	ParseVictoryConditions(victoryElement);
+	ParseQuests(victoryElement);
 
 	m_mapsToGenerate = std::vector<MapToGenerate*>();
 	for (tinyxml2::XMLElement* mapElement = defElement->FirstChildElement("Map"); mapElement != NULL; mapElement = mapElement->NextSiblingElement("Map")){
@@ -50,7 +50,7 @@ AdventureDefinition * AdventureDefinition::GetAdventureDefinition(std::string de
 	return adventureDef;
 }
 
-void AdventureDefinition::ParseVictoryConditions(tinyxml2::XMLElement * victoryElement)
+void AdventureDefinition::ParseQuests(tinyxml2::XMLElement * victoryElement)
 {
 	m_victoryConditions = std::vector<VictoryCondition*>();
 	for (tinyxml2::XMLElement* victoryConditionElement = victoryElement->FirstChildElement(); victoryConditionElement != NULL; victoryConditionElement = victoryConditionElement->NextSiblingElement()){

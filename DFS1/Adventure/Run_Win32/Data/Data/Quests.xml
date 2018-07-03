@@ -1,0 +1,14 @@
+<Quests>
+	<Quest name="KillGoblins" mainQuest="true" giverType="Villager" sequential="true">
+		<Reward type="giveItem" item="Greatbow" />
+		<SpeakToActor actorToSpeakTo="giver"/>
+		<KillActor actorToKill="Goblin" numToKill="2~4" />
+		<CollectItem itemToCollect="Leather Hat" numToCollect="1" keepItem="false" />
+		<SpeakToActor actorToSpeakTo="giver" />
+	</Quest>
+
+	<Quest name="KillBalrog" mainQuest="false" giverType="None" sequential="false">
+		<Reward type="giveStats" statStrength="5" />
+		<KillActor actorToKill="Balrog" numToKill="1" />
+	</Quest>
+</Quests>

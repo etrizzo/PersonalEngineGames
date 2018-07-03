@@ -5,6 +5,7 @@
 #include "Game/Game.hpp"
 #include "Game/Player.hpp"
 #include "Game/Item.hpp"
+#include "Game/Quest.hpp"
 
 Adventure::Adventure(AdventureDefinition * adventureDef, int difficulty)
 {
@@ -20,8 +21,8 @@ Adventure::~Adventure()
 		delete(m);
 	}
 
-	for (VictoryCondition* victoryCondition : m_victoryConditions){
-		delete(victoryCondition);
+	for (Quest* q : m_quests){
+		delete(q);
 	}
 
 }
@@ -33,8 +34,8 @@ void Adventure::Clear()
 		delete(m);
 	}
 
-	for (VictoryCondition* victoryCondition : m_victoryConditions){
-		delete(victoryCondition);
+	for (Quest* q : m_quests){
+		delete(q);
 	}
 }
 
@@ -52,9 +53,9 @@ void Adventure::Begin()
 	m_startingMap = GetMap(m_definition->m_startMapName);
 
 	SetCurrentMap(m_startingMap);
-	m_victoryConditions = std::vector<VictoryCondition*>();
-	for(VictoryCondition* condition :m_definition->m_victoryConditions){
-		m_victoryConditions.push_back(condition->Clone(this));		//i hate this
+	m_quests = std::vector<Quest*>();
+	for(Quest* q :m_definition->m_quests){
+		m_quests.push_back(q->Clone(this));		//i hate this
 	}
 
 	if (g_theGame->m_player == nullptr){
@@ -126,13 +127,13 @@ Map * Adventure::GetMap(std::string mapName)
 void Adventure::CheckForVictory()
 {
 	if (!m_hasWon){
-		bool finishedAllConditions = true;
-		for(VictoryCondition* condition : m_victoryConditions){
-			if (!condition->CheckIfComplete()){
-				finishedAllConditions = false;
+		bool finishedAllQuests = true;
+		for(Quest* quest : m_quests){
+			if (!quest->CheckIfComplete()){
+				finishedAllQuests = false;
 			}
 		}
-		m_hasWon = finishedAllConditions;
+		m_hasWon = finishedAllQuests;
 		if (m_hasWon){
 			g_theGame->TransitionToState(new GameState_Victory((GameState_Encounter*) g_theGame->m_currentState));
 		}
@@ -142,17 +143,17 @@ void Adventure::CheckForVictory()
 
 void Adventure::DebugWinAdventure()
 {
-	for (int i = 0; i < (int) m_victoryConditions.size(); i++){
+	for (int i = 0; i < (int) m_quests.size(); i++){
 		DebugCompleteQuest(i);
 	}
 }
 
 void Adventure::DebugCompleteQuest(int index)
 {
-	if (index >= 0 && index < (int) m_victoryConditions.size()){
-		m_victoryConditions[index]->m_complete = true;
+	if (index >= 0 && index < (int) m_quests.size()){
+		m_quests[index]->CompleteQuest();
 	} else {
-		ConsolePrintf(RGBA::RED, ("No quest at index " + std::to_string(index) + ". There are " +  std::to_string(m_victoryConditions.size()) + " active quests").c_str());
+		ConsolePrintf(RGBA::RED, ("No quest at index " + std::to_string(index) + ". There are " +  std::to_string(m_quests.size()) + " active quests").c_str());
 	}
 }
 

@@ -61,24 +61,6 @@ App::App(HINSTANCE applicationInstanceHandle)
 
 void App::RunFrame()
 {
-	if (false){
-		RGBA loadColor = RGBA(100,50,100,255);
-		//AABB2 x = g_theGame->SetUICamera();
-		g_theRenderer->BeginFrame(Vector2(-1.f,-1.f), Vector2(1.f,1.f), loadColor);
-		//g_theInput->BeginFrame();
-		//g_theAudio->BeginFrame();
-		
-		//g_theRenderer->SetCamera(g_theRenderer->m_defaultCamera);
-		//x = g_theRenderer->m_defaultCamera->GetBounds();
-
-		//g_theAudio->EndFrame();
-		//g_theInput->EndFrame();
-		g_theRenderer->EndFrame(g_Window->m_displayContext);
-		//Sleep(3000);
-		firstFrame = false;
-		PostStartup();
-
-	} else {
 		GetMasterClock()->BeginFrame();
 		g_theGame->SetGameCamera();
 		g_theRenderer->BeginFrame(m_nearBottomLeft, m_farTopRight, m_backgroundColor);
@@ -89,7 +71,6 @@ void App::RunFrame()
 		g_theAudio->EndFrame();
 		g_theInput->EndFrame();
 		g_theRenderer->EndFrame(g_Window->m_displayContext);
-	}
 }
 
 void App::Update()

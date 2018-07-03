@@ -5,6 +5,7 @@ class AdventureDefinition;
 class Map;
 class VictoryCondition;
 class Player;
+class Quest;
 
 class Adventure{
 public:
@@ -44,7 +45,8 @@ public:
 	std::map<std::string, Map*> m_mapsByName;
 	std::vector<Map*>			m_mapsByIndex;		//for map testing mode
 	int m_currentMapIndex;
-	std::vector<VictoryCondition*> m_victoryConditions;
+	std::vector<Quest*> m_quests;
+	//std::vector<VictoryCondition*> m_victoryConditions;
 
 	bool m_adventureBegun = false;
 	bool m_hasWon = false;

@@ -79,7 +79,7 @@ void Game::PostStartup()
 	m_currentMap = new Map("Heightmap_2.png", AABB2(-150.f, -150.f, 150.f, 150.f), -5.f, 5.f, IntVector2(10,10), 20.f);
 	//m_currentMap = new Map("Heightmap.png", AABB2(-100.f, -100.f, 100.f, 100.f), -5.f, 2.f, IntVector2(20,20), 40.f);
 
-	//m_soundtrackPlayback = g_theAudio->PlaySound(m_soundTrackID, true, .5f);
+	m_soundtrackPlayback = g_theAudio->PlaySound(m_soundTrackID, true, .5f);
 	
 }
 

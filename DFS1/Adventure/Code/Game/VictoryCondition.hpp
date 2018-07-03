@@ -38,3 +38,5 @@ public:
 	virtual bool CheckIfComplete();
 	virtual std::string GetText();
 };
+
+

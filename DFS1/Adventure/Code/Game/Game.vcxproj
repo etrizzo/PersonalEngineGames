@@ -224,6 +224,9 @@
     <ClCompile Include="PortalDefinition.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="ProjectileDefinition.cpp" />
+    <ClCompile Include="Quest.cpp" />
+    <ClCompile Include="QuestDefinition.cpp" />
+    <ClCompile Include="QuestReward.cpp" />
     <ClCompile Include="Stats.cpp" />
     <ClCompile Include="Tags.cpp" />
     <ClCompile Include="Tile.cpp" />
@@ -270,6 +273,9 @@
     <ClInclude Include="PortalDefinition.hpp" />
     <ClInclude Include="Projectile.hpp" />
     <ClInclude Include="ProjectileDefinition.hpp" />
+    <ClInclude Include="Quest.hpp" />
+    <ClInclude Include="QuestDefinition.hpp" />
+    <ClInclude Include="QuestReward.hpp" />
     <ClInclude Include="Stats.hpp" />
     <ClInclude Include="Tags.hpp" />
     <ClInclude Include="Tile.hpp" />

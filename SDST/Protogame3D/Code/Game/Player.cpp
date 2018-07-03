@@ -268,8 +268,6 @@ void Player::SetWorldPosition()
 
 	m_shadowCameraTransform->SetLocalPosition(pos + m_shadowCameraOffset);
 
-	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(pos, pos + m_shadowCameraOffset, RGBA::RED, RGBA::GREEN);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, pos + m_shadowCameraOffset, 1.f, m_shadowCameraTransform->GetWorldMatrix());
 	//SetPosition(pos);
 }
 

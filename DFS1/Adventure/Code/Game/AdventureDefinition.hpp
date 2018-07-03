@@ -24,7 +24,7 @@ public:
 	std::string m_name;
 	std::string m_title;
 	std::vector<MapToGenerate*> m_mapsToGenerate;
-	std::vector<VictoryCondition*> m_victoryConditions;
+	std::vector<Quest*> m_victoryConditions;
 	std::string m_startMapName;
 	TileDefinition* m_startTileDef;
 
@@ -32,7 +32,7 @@ public:
 	static std::map< std::string, AdventureDefinition* >		s_definitions;
 	static AdventureDefinition* GetAdventureDefinition(std::string definitionName);
 private:
-	void ParseVictoryConditions(tinyxml2::XMLElement* victoryElement);
+	void ParseQuests(tinyxml2::XMLElement* victoryElement);
 };
 
 
