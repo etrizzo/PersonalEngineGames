@@ -4,6 +4,7 @@
 #include "Engine/Core/StringUtils.hpp"
 #include "Engine/Core/Time.hpp"
 #include "Engine/Core/Stopwatch.hpp"
+#include "Engine/Core/Profiler.hpp"
 
 #include "Engine/Math/AABB2.hpp"
 #include "Engine/Math/AABB3.hpp"

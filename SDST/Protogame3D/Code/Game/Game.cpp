@@ -64,6 +64,7 @@ Game::Game()
 
 void Game::PostStartup()
 {
+	PROFILE_LOG_SCOPE_FUNCTION();
 	m_soundTrackID = g_theAudio->CreateOrGetSound("Data/Audio/OrbitalColossus.mp3");
 
 	m_currentMap = nullptr;
@@ -85,6 +86,7 @@ void Game::PostStartup()
 
 void Game::Update()
 {
+	//PROFILE_LOG_SCOPE_FUNCTION();
 	float ds = GetDeltaSeconds();
 	m_currentState->Update(ds);
 	

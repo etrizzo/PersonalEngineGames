@@ -31,6 +31,7 @@ private:
 	void RegisterCommands();
 	void HandleInput();
 	void PostStartup();
+	
 
 	
 };
@@ -60,3 +61,8 @@ void CommandSetLightAttenuation(Command& cmd);
 
 void CommandSetGodMode(Command& cmd);
 void CommandToggleGodMode(Command& cmd);
+
+
+
+void AddProfilerFrameToConsole();
+void PrintTree(profileMeasurement_t* tree);

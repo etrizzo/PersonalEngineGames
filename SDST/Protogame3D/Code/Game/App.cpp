@@ -61,20 +61,23 @@ App::App(HINSTANCE applicationInstanceHandle)
 
 void App::RunFrame()
 {
-		GetMasterClock()->BeginFrame();
-		g_theGame->SetGameCamera();
-		g_theRenderer->BeginFrame(m_nearBottomLeft, m_farTopRight, m_backgroundColor);
-		g_theInput->BeginFrame();
-		g_theAudio->BeginFrame();
-		Update();
-		Render();
-		g_theAudio->EndFrame();
-		g_theInput->EndFrame();
-		g_theRenderer->EndFrame(g_Window->m_displayContext);
+	Profiler::GetInstance()->MarkFrame();
+	GetMasterClock()->BeginFrame();
+	g_theGame->SetGameCamera();
+	g_theRenderer->BeginFrame(m_nearBottomLeft, m_farTopRight, m_backgroundColor);
+	g_theInput->BeginFrame();
+	g_theAudio->BeginFrame();
+	Update();
+	Render();
+	g_theAudio->EndFrame();
+	g_theInput->EndFrame();
+	g_theRenderer->EndFrame(g_Window->m_displayContext);
+	
 }
 
 void App::Update()
 {
+	Profiler::GetInstance()->Push("App::Update");
 	m_deltaTime = static_cast<float>(GetCurrentTimeSeconds() - m_appTime);
 
 
@@ -98,6 +101,7 @@ void App::Update()
 	m_appTime = GetCurrentTimeSeconds();
 	HandleInput();
 	g_theRenderer->UpdateClock(ds, m_deltaTime);
+	Profiler::GetInstance()->Pop();
 }
 
 void App::Render()
@@ -167,6 +171,15 @@ void App::HandleInput()
 		//have game handle input
 		g_theGame->HandleInput();
 
+		if (g_theInput->WasKeyJustPressed(VK_F1)){
+			g_theInput->ToggleMouseLock();
+			g_theInput->ToggleCursor();
+		}
+
+	}
+
+	if (g_theInput->WasKeyJustPressed('M')){
+		AddProfilerFrameToConsole();
 	}
 }
 
@@ -387,4 +400,21 @@ void CommandToggleGodMode(Command & cmd)
 {
 	g_theGame->m_godMode = !g_theGame->m_godMode;
 	ConsolePrintf(("God mode is: " +  std::to_string(g_theGame->m_godMode)).c_str());
+}
+
+void AddProfilerFrameToConsole()
+{
+	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
+
+	if (tree != nullptr){
+		PrintTree(tree);
+	}
+}
+
+void PrintTree(profileMeasurement_t * tree)
+{
+	ConsolePrintf("%.64s : %.8fms", tree->m_id, tree->GetMilliseconds());
+	for (profileMeasurement_t* child : tree->m_children){
+		PrintTree(child);
+	}
 }

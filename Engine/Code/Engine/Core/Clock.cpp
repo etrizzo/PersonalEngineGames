@@ -124,6 +124,11 @@ float Clock::GetDeltaSeconds() const
 	return frame.seconds;
 }
 
+uint64_t Clock::GetCurrentHPC() const
+{
+	return total.hpc - m_start_hpc;
+}
+
 void time_unit_t::Reset()
 {
 	hpc = GetPerformanceCounter(); 

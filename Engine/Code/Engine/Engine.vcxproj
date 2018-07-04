@@ -275,6 +275,7 @@
     <ClCompile Include="Core\ErrorWarningAssert.cpp" />
     <ClCompile Include="Core\Heatmap.cpp" />
     <ClCompile Include="Core\Image.cpp" />
+    <ClCompile Include="Core\Profiler.cpp" />
     <ClCompile Include="Core\RGBA.cpp" />
     <ClCompile Include="Core\StopWatch.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
@@ -377,6 +378,7 @@
     <ClInclude Include="Core\ErrorWarningAssert.hpp" />
     <ClInclude Include="Core\Heatmap.hpp" />
     <ClInclude Include="Core\Image.hpp" />
+    <ClInclude Include="Core\Profiler.hpp" />
     <ClInclude Include="Core\RGBA.hpp" />
     <ClInclude Include="Core\StopWatch.hpp" />
     <ClInclude Include="Core\StringUtils.hpp" />

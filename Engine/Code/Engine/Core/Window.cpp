@@ -133,11 +133,11 @@ Vector2 Window::GetCenterInDesktopCoords() const
 
 	Vector2 center = GetCenter();
 	POINT c; 
-	c.x = center.x; 
-	c.y = center.y; 
+	c.x = (LONG) center.x; 
+	c.y = (LONG) center.y; 
 	::ClientToScreen( hwnd, &c ); 
 
-	Vector2 desktopCenter = Vector2(c.x, c.y);
+	Vector2 desktopCenter = Vector2((float) c.x, (float) c.y);
 	return desktopCenter;
 }
 
