@@ -182,6 +182,15 @@ void Profiler::Resume()
 	m_paused = false;
 }
 
+void Profiler::TogglePause()
+{
+	if(!m_paused){
+		Pause();
+	} else {
+		Resume();
+	}
+}
+
 profileMeasurement_t * Profiler::ProfileGetPreviousFrame(unsigned int skip_count)
 {
 	unsigned int skipInRange = skip_count % PROFILER_MAX_FRAME_COUNT;

@@ -96,6 +96,7 @@ void Game::Update()
 
 void Game::Render()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	m_currentState->Render();
 	//RenderGame();
 	//RenderUI();
@@ -103,6 +104,7 @@ void Game::Render()
 
 void Game::HandleInput()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	//m_debugRenderSystem->HandleInput();
 	m_currentState->HandleInput();
 }

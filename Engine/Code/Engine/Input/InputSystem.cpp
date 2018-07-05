@@ -79,6 +79,11 @@ Vector2 InputSystem::GetMouseDirection() const
 	return m_mouse.GetDirection();
 }
 
+Vector2 InputSystem::GetMouseNormalizedScreenPosition(AABB2 screenBounds)
+{
+	return m_mouse.GetNormalizedScreenPosition(screenBounds);
+}
+
 bool InputSystem::IsMouseButtonDown(eMouseButton button)
 {
 	return m_mouse.IsButtonDown(button);

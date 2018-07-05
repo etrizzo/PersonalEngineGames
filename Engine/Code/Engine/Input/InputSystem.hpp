@@ -21,6 +21,7 @@ public:
 	void EndFrame();
 
 	Vector2 GetMouseDirection() const;
+	Vector2 GetMouseNormalizedScreenPosition(AABB2 screenBounds);
 	void ToggleMouseLock();
 	void LockMouse();
 	void UnlockMouse();

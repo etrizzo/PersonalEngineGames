@@ -4,21 +4,27 @@
 #include "Engine/Core/Clock.hpp"
 #include "Engine/Input/InputSystem.hpp"
 
-ProfilerVisualizer::ProfilerVisualizer(Renderer * renderer, AABB2 uiBounds)
+ProfilerVisualizer::ProfilerVisualizer(Renderer * renderer, InputSystem* input, AABB2 uiBounds)
 {
 	m_currentReport = new ProfilerReport();
 	m_renderer = renderer;
+	m_input = input;
 	m_bounds = uiBounds;
 
 	m_reportArea = m_bounds.GetPercentageBox(.05f,.1f, .95f, .6f);
-	m_graphArea = m_bounds.GetPercentageBox(.42f,.7f,.9f,.9f);
-	m_infoArea = m_bounds.GetPercentageBox(.1f,.8f,.4f,.9f);
-	m_hotkeyArea = m_bounds.GetPercentageBox(.1f, .7f, .4f, .8f);
+	m_graphArea = m_bounds.GetPercentageBox(.47f,.7f,.95f,.9f);
+	m_infoArea = m_bounds.GetPercentageBox(.05f,.8f,.35f,.9f);
+	m_hotkeyArea = m_bounds.GetPercentageBox(.05f, .7f, .35f, .8f);
 }
 
 void ProfilerVisualizer::Update()
 {
-	profileMeasurement_t* frame = Profiler::GetInstance()->ProfileGetPreviousFrame();
+	profileMeasurement_t* frame;
+	if (m_currentFrameSelectionIndex >=0){
+		frame = Profiler::GetInstance()->ProfileGetPreviousFrame(m_currentFrameSelectionIndex);
+	} else {
+		frame = Profiler::GetInstance()->ProfileGetPreviousFrame(0);
+	}
 
 	if (frame != nullptr){
 		ProfilerReport* report = new ProfilerReport();
@@ -35,6 +41,7 @@ void ProfilerVisualizer::Update()
 
 void ProfilerVisualizer::HandleInput(InputSystem* input)
 {
+	m_mousePos = input->GetMouseNormalizedScreenPosition(m_bounds);
 	if (input->WasKeyJustPressed('V')){
 		m_isTree = !m_isTree;
 	}
@@ -42,12 +49,28 @@ void ProfilerVisualizer::HandleInput(InputSystem* input)
 		m_controllingInput = !m_controllingInput;
 		input->ToggleCursor();
 		input->ToggleMouseLock();
-		/*input->ShowCursor(m_controllingInput);
 		if (m_controllingInput){
-			input->UnlockMouse();
+			SetCursor(g_Window->m_cursor);
 		} else {
-			input->LockMouse();
-		}*/
+			SetCursor(NULL);
+		}
+	}
+
+	if (input->WasKeyJustPressed('P')){
+		Profiler::GetInstance()->TogglePause();
+		if (!Profiler::GetInstance()->IsPaused()){
+			m_currentFrameSelectionIndex = -1;
+		}
+	}
+
+	
+	if (m_graphArea.IsPointInside(m_mousePos)){
+		m_currentFrameHoverIndex = GetFrameIndexForMousePos();
+		if (input->WasMouseButtonJustPressed(MOUSE_BUTTON_LEFT)){
+			//m_graphColor = RGBA::GetRandomRainbowColor();
+			m_currentFrameSelectionIndex = (int) m_currentFrameHoverIndex;
+			Profiler::GetInstance()->Pause();
+		}
 	}
 }
 
@@ -107,6 +130,7 @@ void ProfilerVisualizer::RenderGraph()
 	//0 is the oldest frame, PROFILER_MAX_FRAME_COUNT is the newest frame
 	for (int i = 0; i < PROFILER_MAX_FRAME_COUNT; i++){
 		//for each frame
+		unsigned int frameOffset = PROFILER_MAX_FRAME_COUNT - i;
 		profileMeasurement_t* frame = instance->ProfileGetPreviousFrame(PROFILER_MAX_FRAME_COUNT - i);
 		float frameTime = frame->GetMilliseconds();
 		float percentageX = (float) i / (float) PROFILER_MAX_FRAME_COUNT;
@@ -118,8 +142,14 @@ void ProfilerVisualizer::RenderGraph()
 		botRight = Vector3(height.x + sliceWidth, m_graphArea.mins.y, z);
 		topLeft = Vector3(height.x, height.y, z);
 		topRight = Vector3(height.x + sliceWidth, height.y, z);
-
-		mb.AppendQuad(botLeft,botRight,topLeft,topRight, RGBA::YELLOW);
+		//append frame quad to graph (highlighting selected and hovered frames)
+		if (frameOffset == m_currentFrameHoverIndex){
+			mb.AppendQuad(botLeft,botRight,topLeft,topRight, RGBA::GREEN);
+		} else if ((int) frameOffset == m_currentFrameSelectionIndex) {
+			mb.AppendQuad(botLeft,botRight,topLeft,topRight, RGBA::CYAN);
+		} else{
+			mb.AppendQuad(botLeft,botRight,topLeft,topRight, m_graphColor);
+		}
 	}
 	mb.End();
 
@@ -135,7 +165,8 @@ void ProfilerVisualizer::RenderInfo()
 	
 	std::string fpsText = Stringf("FPS: %.2f", fps);
 	std::string frameTime = Stringf("Frame time: %.2f ms", ds * 1000.f);
-	std::string theThing = fpsText + "\n" + frameTime;
+	std::string mousePos = Stringf("Mouse pos: (%.3f, %.3f)", m_mousePos.x, m_mousePos.y); 
+	std::string theThing = fpsText + "\n" + frameTime + "\n" +  mousePos;
 	m_renderer->DrawTextInBox2D(theThing, m_infoArea, Vector2(0.0f, .5f), .05f, TEXT_DRAW_SHRINK_TO_FIT);
 }
 
@@ -150,6 +181,14 @@ Hotkeys:
 	m_renderer->DrawTextInBox2D(hotkeys, m_hotkeyArea, Vector2(0.0f, .5f), .05f, TEXT_DRAW_SHRINK_TO_FIT);
 }
 
+unsigned int ProfilerVisualizer::GetFrameIndexForMousePos()
+{
+	Vector2 pos = m_graphArea.GetPercentageOfPoint(m_mousePos);
+	
+	float frame = RangeMapFloat(m_mousePos.x, m_graphArea.mins.x, m_graphArea.maxs.x, (float) PROFILER_MAX_FRAME_COUNT,  0.f );
+	return (unsigned int) frame;
+}
+
 
 
 
@@ -162,13 +201,15 @@ std::string FormatProfilerReport(ProfilerReportEntry * entry, int parentCount)
 	//		parentCount,"", 32, entry->m_id.data(), 5, entry->m_callCount, 5, (float) entry->m_totalTime);
 	////std::string s = Stringf("%s", entry->m_id.data());
 
-	std::string fancy = Stringf( "%*s%-*s %-8u %-8s %-14fms %-8s %-14fms", 
+	std::string fancy = Stringf( "%*s%-*s %-8u %-8s %-12s %-8s %-12s", 
 		parentCount, "", 
-		48 - parentCount, entry->m_id.data(), 
+		64 - parentCount, entry->m_id.data(), 
 		entry->m_callCount,
 		entry->GetTotalPercentTime().c_str(),
-		(float) entry->GetTotalElapsedTime(), 
+		entry->GetTotalMillisecondsAsString().c_str(),
+		//(float) entry->GetTotalElapsedTime() * 1000.f, 
 		entry->GetSelfPercentTime().c_str(), 
-		(float) entry->GetSelfElapsedTime());
+		entry->GetSelfMillisecondsAsString().c_str());
+		//(float) entry->GetSelfElapsedTime()* 1000.f);
 	return fancy;
 }

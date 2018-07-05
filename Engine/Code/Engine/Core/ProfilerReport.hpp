@@ -21,6 +21,8 @@ public:
 
 	std::string GetTotalPercentTime() const;
 	std::string GetSelfPercentTime() const;
+	std::string GetTotalMillisecondsAsString() const;
+	std::string GetSelfMillisecondsAsString() const;
 	
 	
 public:

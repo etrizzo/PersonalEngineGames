@@ -41,6 +41,17 @@ Vector2 Mouse::GetCurrentPosition() const
 	return m_position;
 }
 
+Vector2 Mouse::GetNormalizedScreenPosition(AABB2 screenBounds) const
+{
+	float width = g_Window->GetWidth();
+	float height = g_Window->GetHeight();
+	Vector2 screenPos = GetCurrentPosition();
+	Vector2 pos;
+	pos.x = RangeMapFloat(screenPos.x, 0.f, width, screenBounds.mins.x, screenBounds.maxs.x);
+	pos.y = RangeMapFloat(screenPos.y, 0.f, height, screenBounds.maxs.y, screenBounds.mins.y);	//flip y coord
+	return pos;
+}
+
 Vector2 Mouse::GetDirection() const
 {
 	return m_position - m_lastFramePosition;

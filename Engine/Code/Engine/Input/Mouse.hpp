@@ -1,5 +1,6 @@
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Input/KeyButtonState.hpp"
+#include "Engine/Math/AABB2.hpp"
 
 enum eMouseButton{
 	MOUSE_BUTTON_LEFT,
@@ -27,6 +28,7 @@ public:
 	void LockToCenter();
 
 	Vector2 GetCurrentPosition() const;
+	Vector2 GetNormalizedScreenPosition(AABB2 screenBounds) const;	//0->1 on height, 0->aspect on width
 	Vector2 GetDirection() const;
 	Vector2 GetNormalizedDirection() const;
 

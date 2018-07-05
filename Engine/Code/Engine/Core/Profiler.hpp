@@ -84,6 +84,7 @@ public:
 	void DestroyMeasurementTreeRecursively(profileMeasurement_t* tree);
 	void Pause();
 	void Resume();
+	void TogglePause();
 
 	bool IsPaused() const { return m_paused; };
 

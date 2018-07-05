@@ -89,6 +89,18 @@ std::string ProfilerReportEntry::GetSelfPercentTime() const
 	return perc;
 }
 
+std::string ProfilerReportEntry::GetTotalMillisecondsAsString() const
+{
+	std::string s = Stringf("%.4fms", GetTotalElapsedTime() * 1000.0);
+	return s;
+}
+
+std::string ProfilerReportEntry::GetSelfMillisecondsAsString() const
+{
+	std::string s = Stringf("%.4fms", GetSelfElapsedTime() * 1000.0);
+	return s;
+}
+
 void ProfilerReport::GenerateReportTreeFromFrame(profileMeasurement_t * root)
 {
 		//probs wanna do a depth-first search because that's the order we want to display the nodes

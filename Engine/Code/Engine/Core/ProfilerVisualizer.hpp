@@ -12,7 +12,7 @@ class ProfilerReportEntry;
 class ProfilerVisualizer
 {
 public:
-	ProfilerVisualizer(Renderer* renderer, AABB2 uiBounds);
+	ProfilerVisualizer(Renderer* renderer, InputSystem* input, AABB2 uiBounds);
 
 	void Update();
 	void HandleInput(InputSystem* input);
@@ -41,11 +41,19 @@ public:
 	RGBA m_bgColor = RGBA(128,0,200,100);
 	RGBA m_outlineColor = RGBA::WHITE;
 
+	Vector2 m_mousePos;
+	RGBA m_graphColor = RGBA::YELLOW;
+	InputSystem* m_input;
+
+	unsigned int m_currentFrameHoverIndex = 0;
+	int m_currentFrameSelectionIndex = -1;
+
 protected:
 	void RenderReport();
 	void RenderGraph();
 	void RenderInfo();
 	void RenderHotkeys();
+	unsigned int GetFrameIndexForMousePos();
 };
 
 

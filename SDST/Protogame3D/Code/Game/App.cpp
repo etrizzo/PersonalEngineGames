@@ -55,7 +55,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_devConsole = new DevConsole(UIBounds);
 	g_devConsole->SetRenderer(g_theRenderer);
 
-	g_profilerVisualizer = new ProfilerVisualizer(g_theRenderer, UIBounds);
+	g_profilerVisualizer = new ProfilerVisualizer(g_theRenderer, g_theInput, UIBounds);
 
 	RegisterCommands();
 	CommandStartup();
@@ -66,23 +66,33 @@ App::App(HINSTANCE applicationInstanceHandle)
 void App::RunFrame()
 {
 	Profiler::GetInstance()->MarkFrame();
+	PROFILE_PUSH("APP::BEGINFRAME");
 	GetMasterClock()->BeginFrame();
 	g_theGame->SetGameCamera();
 	g_theRenderer->BeginFrame(m_nearBottomLeft, m_farTopRight, m_backgroundColor);
 	g_theInput->BeginFrame();
 	g_theAudio->BeginFrame();
+	PROFILE_POP();
 	Update();
 	Render();
+	PROFILE_PUSH("APP::ENDFRAME");
+		PROFILE_PUSH("Audio::EndFrame");
 	g_theAudio->EndFrame();
+		PROFILE_POP();
+		PROFILE_PUSH("Input::EndFrame");
 	g_theInput->EndFrame();
+		PROFILE_POP();
+		PROFILE_PUSH("Renderer::EndFrame");
 	g_theRenderer->EndFrame(g_Window->m_displayContext);
+		PROFILE_POP();
+	PROFILE_POP();
 	
 }
 
 void App::Update()
 {
 	//Profiler::GetInstance()->Push("App::Update");
-	PROFILE_PUSH("App");
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	m_deltaTime = static_cast<float>(GetCurrentTimeSeconds() - m_appTime);
 
 	float ds = m_deltaTime;
@@ -105,12 +115,12 @@ void App::Update()
 	HandleInput();
 	g_theRenderer->UpdateClock(ds, m_deltaTime);
 	//Profiler::GetInstance()->Pop();
-	PROFILE_POP();
+	//PROFILE_POP();
 }
 
 void App::Render()
 {
-
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	g_theGame->Render();
 
 	if (g_profilerVisualizer->IsOpen()){
@@ -163,6 +173,7 @@ void App::RegisterCommands()
 
 void App::HandleInput()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	if (g_theInput->WasKeyJustPressed(192)){		//the ` key
 		if (!DevConsoleIsOpen()){
 			g_devConsole->Open();
