@@ -3,6 +3,7 @@
 Blackboard g_gameConfigBlackboard = Blackboard();
 Window* g_Window = nullptr;
 DevConsole* g_devConsole = nullptr;
+ProfilerVisualizer* g_profilerVisualizer = nullptr;
 
 
 

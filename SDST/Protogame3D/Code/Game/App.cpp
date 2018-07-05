@@ -2,6 +2,7 @@
 #include "Engine/Renderer/Camera.hpp"
 #include "Engine/Core/Clock.hpp"
 #include "Game/DebugRenderSystem.hpp"
+
 using namespace std;
 
 App::~App()
@@ -53,6 +54,9 @@ App::App(HINSTANCE applicationInstanceHandle)
 	AABB2 UIBounds = g_theGame->m_uiCamera->GetBounds();
 	g_devConsole = new DevConsole(UIBounds);
 	g_devConsole->SetRenderer(g_theRenderer);
+
+	g_profilerVisualizer = new ProfilerVisualizer(g_theRenderer, UIBounds);
+
 	RegisterCommands();
 	CommandStartup();
 
@@ -77,11 +81,9 @@ void App::RunFrame()
 
 void App::Update()
 {
-	Profiler::GetInstance()->Push("App::Update");
+	//Profiler::GetInstance()->Push("App::Update");
+	PROFILE_PUSH("App");
 	m_deltaTime = static_cast<float>(GetCurrentTimeSeconds() - m_appTime);
-
-
-
 
 	float ds = m_deltaTime;
 	if (g_theInput->IsKeyDown('T')){
@@ -97,17 +99,23 @@ void App::Update()
 	if (DevConsoleIsOpen()){
 		g_devConsole->Update(ds);
 	}
+	g_profilerVisualizer->Update();
 
 	m_appTime = GetCurrentTimeSeconds();
 	HandleInput();
 	g_theRenderer->UpdateClock(ds, m_deltaTime);
-	Profiler::GetInstance()->Pop();
+	//Profiler::GetInstance()->Pop();
+	PROFILE_POP();
 }
 
 void App::Render()
 {
 
 	g_theGame->Render();
+
+	if (g_profilerVisualizer->IsOpen()){
+		g_profilerVisualizer->Render();
+	}
 
 	if (DevConsoleIsOpen()){
 		g_theGame->SetUICamera();
@@ -147,6 +155,10 @@ void App::RegisterCommands()
 	CommandRegister("toggle_god_mode", CommandToggleGodMode, "Toggles god mode");
 	CommandRegister("tgm", CommandToggleGodMode, "Toggles god mode");
 
+	CommandRegister("profiler", CommandToggleProfiler, "Toggles profiler view");
+	CommandRegister("profiler_report", CommandPrintProfilerReport, "Prints a frame of the profiler to the console", "profiler_report <tree|flat>");
+	CommandRegister("profiler_pause", CommandProfilePause, "Pauses profiling");
+	CommandRegister("profiler_resume", CommandProfileResume, "Resumes profiling");
 }
 
 void App::HandleInput()
@@ -161,6 +173,10 @@ void App::HandleInput()
 		g_theInput->ToggleCursor();
 	}
 
+	if (g_theInput->WasKeyJustPressed(VK_F2)){
+		g_profilerVisualizer->ToggleOpen();
+	}
+
 
 	if (!DevConsoleIsOpen()){
 		//universal keys
@@ -169,18 +185,26 @@ void App::HandleInput()
 		}
 
 		//have game handle input
-		g_theGame->HandleInput();
-
-		if (g_theInput->WasKeyJustPressed(VK_F1)){
-			g_theInput->ToggleMouseLock();
-			g_theInput->ToggleCursor();
+		if (!g_profilerVisualizer->IsControllingInput()){
+			g_theGame->HandleInput();
+		}
+		if (g_profilerVisualizer->IsOpen()){
+			g_profilerVisualizer->HandleInput(g_theInput);
 		}
 
+	/*	if (g_theInput->WasKeyJustPressed(VK_F1)){
+			g_theInput->ToggleMouseLock();
+			g_theInput->ToggleCursor();
+		}*/
+
 	}
 
-	if (g_theInput->WasKeyJustPressed('M')){
-		AddProfilerFrameToConsole();
-	}
+	//if (g_theInput->WasKeyJustPressed('M')){
+	//	AddProfilerFrameAsTreeToConsole();
+	//}
+	//if (g_theInput->WasKeyJustPressed('N')){
+	//	AddProfilerFrameAsFlatToConsole();
+	//}
 }
 
 void App::PostStartup()
@@ -402,19 +426,70 @@ void CommandToggleGodMode(Command & cmd)
 	ConsolePrintf(("God mode is: " +  std::to_string(g_theGame->m_godMode)).c_str());
 }
 
-void AddProfilerFrameToConsole()
+void CommandToggleProfiler(Command & cmd)
+{
+	UNUSED(cmd);
+	g_profilerVisualizer->ToggleOpen();
+}
+
+void CommandPrintProfilerReport(Command & cmd)
+{
+	std::string type = cmd.GetNextString();
+	if (type == "flat"){
+		AddProfilerFrameAsFlatToConsole();
+	} else {
+		AddProfilerFrameAsTreeToConsole();
+	}
+}
+
+void CommandProfilePause(Command & cmd)
+{
+	Profiler::GetInstance()->Pause();
+}
+
+void CommandProfileResume(Command & cmd)
+{
+	Profiler::GetInstance()->Resume();
+}
+
+void AddProfilerFrameAsTreeToConsole()
 {
 	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
 
 	if (tree != nullptr){
-		PrintTree(tree);
+		ProfilerReport* report = new ProfilerReport();
+		report->GenerateReportTreeFromFrame(tree);
+		if (tree != nullptr){
+			PrintTree(report->m_root);
+		}
+	} else {
+		ConsolePrintf(RGBA::RED, "No profiler frame found - profiling may be disabled in EngineBuildPreferences.hpp");
 	}
 }
 
-void PrintTree(profileMeasurement_t * tree)
+void AddProfilerFrameAsFlatToConsole()
 {
-	ConsolePrintf("%.64s : %.8fms", tree->m_id, tree->GetMilliseconds());
-	for (profileMeasurement_t* child : tree->m_children){
-		PrintTree(child);
+	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
+
+	if (tree != nullptr){
+		ProfilerReport* report = new ProfilerReport();
+		report->GenerateReportFlatFromFrame(tree);
+		if (tree != nullptr){
+			PrintTree(report->m_root);
+		}
+	} else {
+		ConsolePrintf(RGBA::RED, "No profiler frame found- profiling may be disabled in EngineBuildPreferences.hpp");
 	}
 }
+
+void PrintTree(ProfilerReportEntry * tree, int depth)
+{
+//	ConsolePrintf("%.64s : %.8fms", tree->m_id, tree->GetTotalElapsedTime());
+	std::string text = FormatProfilerReport(tree, depth);
+	ConsolePrint(text.c_str());
+	for (std::pair<std::string, ProfilerReportEntry* >child : tree->m_children){
+		PrintTree(child.second, depth + 1);
+	}
+}
+
+

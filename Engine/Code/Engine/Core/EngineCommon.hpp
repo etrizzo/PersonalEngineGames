@@ -4,7 +4,8 @@
 #include "Engine/Core/StringUtils.hpp"
 #include "Engine/Core/Time.hpp"
 #include "Engine/Core/Stopwatch.hpp"
-#include "Engine/Core/Profiler.hpp"
+#include "Engine/Core/ProfilerReport.hpp"
+#include "Engine/Core/ProfilerVisualizer.hpp"
 
 #include "Engine/Math/AABB2.hpp"
 #include "Engine/Math/AABB3.hpp"
@@ -72,6 +73,7 @@ extern Blackboard g_gameConfigBlackboard; // declared in EngineCommon.hpp, defin
 
 extern Window* g_Window;		//should maybe return this to singleton in window.cpp at some point
 extern DevConsole* g_devConsole;
+extern ProfilerVisualizer* g_profilerVisualizer;
 
 
 enum eManhattanDir{

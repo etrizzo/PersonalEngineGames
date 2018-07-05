@@ -129,4 +129,6 @@ void ConsolePrintf( RGBA const &color, char const *format, ... );
 // Same as previous, be defaults to a color visible easily on your console
 void ConsolePrintf( char const *format, ... ); 
 
+void ConsolePrint(char const* content );
+
 void DevConsoleHandler(unsigned int msg, size_t wparam, size_t lparam);

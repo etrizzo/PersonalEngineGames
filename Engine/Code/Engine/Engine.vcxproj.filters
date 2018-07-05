@@ -292,6 +292,12 @@
     <ClCompile Include="Core\Profiler.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\ProfilerReport.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ProfilerVisualizer.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -583,6 +589,12 @@
       <Filter>Audio</Filter>
     </ClInclude>
     <ClInclude Include="Core\Profiler.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ProfilerReport.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ProfilerVisualizer.hpp">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>

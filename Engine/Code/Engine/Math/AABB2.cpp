@@ -255,6 +255,18 @@ Vector2 AABB2::GetPercentageOfPoint(Vector2 point) const
 	return Vector2::ZERO;
 }
 
+Vector2 AABB2::GetPointAtNormalizedCoord(Vector2 normalizedPoint) const
+{
+	Vector2 dims = GetDimensions();
+	Vector2 offset = Vector2(normalizedPoint.x * dims.x, normalizedPoint.y * dims.y);
+	return mins + offset;
+}
+
+Vector2 AABB2::GetPointAtNormalizedCoord(float x, float y) const
+{
+	return GetPointAtNormalizedCoord(Vector2(x,y));
+}
+
 bool AABB2::IsPointInside(float x, float y) const
 {
 	if (x <= maxs.x && x >= mins.x){

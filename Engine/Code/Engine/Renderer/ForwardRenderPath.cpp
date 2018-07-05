@@ -82,6 +82,7 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 	SortDrawCalls(drawCalls, cam);
 	//sort alpha by distance to camera, etc.
 
+	PROFILE_PUSH("ForwardRenderPath::Draw");
 	for(DrawCall dc: drawCalls){
 		
 		//an optimization would be to only bind the thing if it's different from the previous bind.
@@ -90,6 +91,7 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 		m_renderer->BindLightUniforms(dc.m_lights);
 		m_renderer->DrawMesh(dc.m_mesh);
 	}
+	PROFILE_POP();
 
 	TODO("Add post-processing to forward render path");
 	////post-processing? it go here
@@ -102,6 +104,7 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 
 void ForwardRenderPath::ComputeMostContributingLights(Light* (&lightarray)[8], const Vector3 & position, std::vector<Light*>& lights)
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	if (lights.size() <= MAX_LIGHTS){
 		for(int i = 0; i < MAX_LIGHTS; i++){
 			if (i < (int) lights.size()){
@@ -142,6 +145,7 @@ void ForwardRenderPath::ComputeMostContributingLights(Light* (&lightarray)[8], c
 
 void ForwardRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls, Camera* cam)
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	Vector3 camPos = cam->GetPosition();
 	//sort by sort layer
 	for (int i = 1; i < (int) drawCalls.size(); i ++){
@@ -184,6 +188,7 @@ void ForwardRenderPath::BindFog()
 
 void ForwardRenderPath::SetShadows(RenderScene* scene)
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	for (Light* light : scene->m_lights){
 		if (light->UsesShadows()){
 			RenderShadowsForLight(light, scene);
@@ -221,7 +226,7 @@ void ForwardRenderPath::RenderSkybox(Camera * cam)
 void ForwardRenderPath::RenderShadowsForLight(Light * l, RenderScene * scene)
 {
 
-
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	//set shadow camera's transform to be the light's transform
 	//scene->m_shadowCamera->m_transform.SetWorldMatrix(l->m_transform.GetWorldMatrix());
 	

@@ -33,8 +33,10 @@ Entity::Entity(Vector3 position, std::string objFile, std::string materialFile)
 
 void Entity::Update()
 {
+	PROFILE_PUSH_FUNCTION();
 	float ds = g_theGame->GetDeltaSeconds();
 	m_ageInSeconds+=ds;
+	PROFILE_POP();
 
 }
 

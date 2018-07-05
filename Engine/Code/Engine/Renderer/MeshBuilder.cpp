@@ -550,6 +550,35 @@ void MeshBuilder::AppendVertices(std::vector<Vertex3D_PCU> verts, Transform t)
 	}
 }
 
+void MeshBuilder::AppendQuad(const Vector3 & botLeft, const Vector3 & botRight, const Vector3 & topLeft, const Vector3 & topRight, RGBA color, AABB2 uvs)
+{
+	Vector2 uvMins = uvs.mins;
+	Vector2 uvMaxs = uvs.maxs;
+	Vector2 bl_UV = uvMins;
+	Vector2 br_UV = Vector2(uvMaxs.x, uvMins.y);
+	Vector2 tl_UV = Vector2(uvMins.x, uvMaxs.y);
+	Vector2 tr_UV = uvMaxs;
+
+	TODO("Fix normal/tangent for quad");
+	SetNormal(-1.f * Vector3::UP);
+	SetTangent( Vector3::RIGHT);
+	SetColor(color);
+	SetUV(bl_UV);
+	unsigned int idx = PushVertex(botLeft);
+
+	SetUV(br_UV);
+	PushVertex(botRight);
+
+	SetUV(tl_UV);
+	PushVertex(topLeft);
+
+	SetUV(tr_UV);
+	PushVertex(topRight);
+
+	AddTriIndices(idx + 0, idx + 1, idx + 2);
+	AddTriIndices(idx + 2, idx + 1, idx + 3);
+}
+
 void MeshBuilder::AddTriIndices(unsigned int idx1, unsigned int idx2, unsigned int idx3)
 {
 	PushIndex(idx1);

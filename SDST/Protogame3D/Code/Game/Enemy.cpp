@@ -41,6 +41,7 @@ Enemy::~Enemy()
 
 void Enemy::Update()
 {
+	PROFILE_PUSH_FUNCTION();
 	if (!m_aboutToBeDeleted){
 		float ds = g_theGame->GetDeltaSeconds();
 		
@@ -58,6 +59,7 @@ void Enemy::Update()
 
 		//g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_collider.m_center, m_collider.m_radius, 10, 10, RGBA::RED, RGBA::RED, DEBUG_RENDER_IGNORE_DEPTH);
 	}
+	PROFILE_POP();
 }
 
 void Enemy::RunEntityPhysics()

@@ -1,4 +1,5 @@
 #include "Transform.hpp"
+#include "Engine/Core/Profiler.hpp"
 
 Matrix44 transform_t::GetMatrix() const
 {
@@ -77,6 +78,8 @@ Transform::~Transform()
 
 Matrix44 Transform::GetWorldMatrix() const
 {
+	//PROFILE_PUSH_FUNCTION();
+	//PROFILE_POP();
 	return m_worldMatrix;
 }
 

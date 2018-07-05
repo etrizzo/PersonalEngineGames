@@ -433,6 +433,15 @@ void ConsolePrintf(char const * format, ...)
 	}
 }
 
+void ConsolePrint(char const * content)
+{
+	Strings lines = Strings();
+	Split((std::string) content, '\n', lines);
+	for (unsigned int i = 0; i < lines.size(); i++){
+		g_devConsole->AddLineToOutput(lines[i]);
+	}
+}
+
 void DevConsoleHandler(unsigned int msg, size_t wparam, size_t lparam)
 {
 	UNUSED(lparam);

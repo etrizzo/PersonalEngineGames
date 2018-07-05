@@ -53,6 +53,8 @@ public:
 	//ARRAY OF VERTS
 	void AppendVertices(std::vector<Vertex3D_PCU> verts, Transform t);
 
+	void AppendQuad(const Vector3& botLeft, const Vector3& botRight, const Vector3& topLeft, const Vector3& topRight, RGBA color = RGBA::WHITE, AABB2 uvs = AABB2::ZERO_TO_ONE);
+
 	void AddTriIndices(unsigned int idx1, unsigned int idx2, unsigned int idx3);
 
 

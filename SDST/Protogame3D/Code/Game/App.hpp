@@ -2,6 +2,7 @@
 #include "Game/Game.hpp"
 #include "Game/GameCommon.hpp"
 
+
 class App{
 public:
 	~App();											
@@ -62,7 +63,15 @@ void CommandSetLightAttenuation(Command& cmd);
 void CommandSetGodMode(Command& cmd);
 void CommandToggleGodMode(Command& cmd);
 
+void CommandToggleProfiler(Command& cmd);
+void CommandPrintProfilerReport(Command& cmd);
+void CommandProfilePause(Command& cmd);
+void CommandProfileResume(Command& cmd);
 
 
-void AddProfilerFrameToConsole();
-void PrintTree(profileMeasurement_t* tree);
+
+void AddProfilerFrameAsTreeToConsole();
+void AddProfilerFrameAsFlatToConsole();
+void PrintTree(ProfilerReportEntry* tree, int depth = 0);
+
+std::string FormatProfilerReport(ProfilerReportEntry* entry, int parentCount = 0);

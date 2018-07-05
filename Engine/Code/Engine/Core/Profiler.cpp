@@ -25,12 +25,13 @@ ProfileLogScoped::~ProfileLogScoped()
 
 profileMeasurement_t::profileMeasurement_t(std::string id)
 {
-	for (int i = 0; i < id.size(); i++){
-		if (i >= 64){
-			break;
-		}
-		m_id[i] = id[i];
-	}
+	//for (int i = 0; i < id.size(); i++){
+	//	if (i >= 64){
+	//		break;
+	//	}
+	//	m_id[i] = id[i];
+	//}
+	m_id = id;
 	m_startHPC = GetPerformanceCounter();
 }
 
@@ -84,7 +85,12 @@ void profileMeasurement_t::Finish()
 
 float profileMeasurement_t::GetMilliseconds() const
 {
-	return PerformanceCountToSeconds(m_endHPC - m_startHPC) * 1000.f;
+	return (float) PerformanceCountToSeconds(m_endHPC - m_startHPC) * 1000.f;
+}
+
+double profileMeasurement_t::GetSecondsAsDouble() const
+{
+	return PerformanceCountToSeconds(m_endHPC - m_startHPC);
 }
 
 
@@ -103,62 +109,105 @@ Profiler::~Profiler()
 	delete m_stack;
 }
 
+
 void Profiler::MarkFrame()
 {
-	if (m_stack != nullptr){
-		// update previous info
-		if (m_prevStack != nullptr){
-			DestroyMeasurementTreeRecursively(m_prevStack);
+	if (m_isPausing){
+		//if you paused during the last frame, ACTUALLY pause now
+		m_paused = true;
+		m_isPausing = false;
+	}
+	if (!m_paused){
+		if (m_stack != nullptr){
+			// update previous info
+			
+				if (m_frames[m_currentFrameIndex] != nullptr){
+					profileMeasurement_t* tree = m_frames[m_currentFrameIndex];
+					DestroyMeasurementTreeRecursively(tree);
+				}
+				m_frames[m_currentFrameIndex] = m_stack;
+			
+			//m_prevStack = m_stack;
+			Pop();
+			ASSERT_OR_DIE(m_stack == nullptr, "MarkFrame() was used wrong! You weren't at the root of the measurement tree! SOMEONE FORGOT TO POP!!!");
 		}
-
-		m_prevStack = m_stack;
-		Pop();
-		ASSERT_OR_DIE(m_stack == nullptr, "MarkFrame() was used wrong! You weren't at the root of the measurement tree! SOMEONE FORGOT TO POP!!!");
-	} 
-
-	Push("frame");
+	
+		Push("frame");
+		m_currentFrameIndex = (m_currentFrameIndex + 1) % PROFILER_MAX_FRAME_COUNT;
+	}
 	//profileMeasurement_t* measure = CreateMeasurement("frame");
 	//m_stack = measure;
 }
 
 void Profiler::Push(const char * name)
 {
-	profileMeasurement_t* measure = CreateMeasurement(name);
-	if (m_stack == nullptr){
-		m_stack = measure;		//lazy instantiation
-	} else {
-		//stack exists, so update children/parent
-		//(roll this into measure->AddParent(m_stack))
-		m_stack->AddChild(measure);
-
-		m_stack = measure;
+	if (!m_paused){
+		profileMeasurement_t* measure = CreateMeasurement(name);
+		if (m_stack == nullptr){
+			m_stack = measure;		//lazy instantiation
+		} else {
+			//stack exists, so update children/parent
+			//(roll this into measure->AddParent(m_stack))
+			m_stack->AddChild(measure);
+	
+			m_stack = measure;
+		}
 	}
 }
 
 void Profiler::Pop()
 {
-	ASSERT_OR_DIE(m_stack != nullptr, "TOO MANY POPS AND NOT ENOUGH PUSH!! YOU FUCKED UUUPPPPP!!!!!!");
-	m_stack->Finish();
-	m_stack = m_stack->m_parent;
+	if (!m_paused){
+		ASSERT_OR_DIE(m_stack != nullptr, "TOO MANY POPS AND NOT ENOUGH PUSH!! YOU FUCKED UUUPPPPP!!!!!!");
+		m_stack->Finish();
+		m_stack = m_stack->m_parent;
+	}
 }
 
 void Profiler::DestroyMeasurementTreeRecursively(profileMeasurement_t* tree)
 {
-	delete tree;
+	if (!m_paused){
+		delete tree;
+	}
+}
+
+void Profiler::Pause()
+{
+	//set is pausing to trigger pause in markframe
+	m_isPausing = true;
+}
+
+void Profiler::Resume()
+{
+	m_paused = false;
 }
 
 profileMeasurement_t * Profiler::ProfileGetPreviousFrame(unsigned int skip_count)
 {
-	return m_prevStack;
+	unsigned int skipInRange = skip_count % PROFILER_MAX_FRAME_COUNT;
+	unsigned int frameIndex = (m_currentFrameIndex + PROFILER_MAX_FRAME_COUNT) - skip_count;		//add max frame count to wrapping around @ 0
+	unsigned int actualIndex = frameIndex % PROFILER_MAX_FRAME_COUNT;
+	return m_frames[actualIndex];
 }
 
 profileMeasurement_t * Profiler::CreateMeasurement(char const * id)
 {
 	profileMeasurement_t *measure = new profileMeasurement_t(id);
-	// fill id and start time
-	// ...
 	return measure; 
 }
+
+#else
+// empty functions for profiling not defined
+Profiler::Profiler(){};
+Profiler::~Profiler(){};
+void Profiler::MarkFrame() {};
+void Profiler::Push(const char * name) {};
+void Profiler::Pop() {};
+profileMeasurement_t * Profiler::CreateMeasurement(char const * id) { return nullptr; };
+void Profiler::DestroyMeasurementTreeRecursively(profileMeasurement_t* tree) {};
+profileMeasurement_t * Profiler::ProfileGetPreviousFrame(unsigned int skip_count) { return nullptr; };
+#endif
+
 Profiler * Profiler::GetInstance()
 {
 	if (Profiler::s_profilerInstance == nullptr){
@@ -166,12 +215,13 @@ Profiler * Profiler::GetInstance()
 	}
 	return s_profilerInstance;
 }
-#else
-// empty functions for profiling not defined
-void Profiler::MarkFrame() {};
-void Profiler::Push(const char * name) {};
-void Profiler::Pop() {};
-profileMeasurement_t * Profiler::CreateMeasurement(char const * id) { return nullptr; };
-void Profiler::DestroyMeasurementTreeRecursively(profileMeasurement_t* tree) {};
 
-#endif
+ProfilerScoped::ProfilerScoped(const char * tag)
+{
+	PROFILE_PUSH(tag);
+}
+
+ProfilerScoped::~ProfilerScoped()
+{
+	PROFILE_POP();
+}

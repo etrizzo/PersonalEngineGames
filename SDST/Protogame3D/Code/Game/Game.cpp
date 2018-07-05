@@ -86,9 +86,11 @@ void Game::PostStartup()
 
 void Game::Update()
 {
+	PROFILE_PUSH_FUNCTION();
 	//PROFILE_LOG_SCOPE_FUNCTION();
 	float ds = GetDeltaSeconds();
 	m_currentState->Update(ds);
+	PROFILE_POP();
 	
 }
 

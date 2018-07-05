@@ -38,10 +38,12 @@ Spawner::~Spawner()
 
 void Spawner::Update()
 {
+	PROFILE_PUSH_FUNCTION();
 	if (CanSpawnEnemy()){
 		SpawnNewEnemy();
 	}
 	ClearDestroyedEnemies();
+	PROFILE_POP();
 }
 
 void Spawner::Damage()

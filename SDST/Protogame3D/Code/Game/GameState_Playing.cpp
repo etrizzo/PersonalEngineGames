@@ -54,6 +54,7 @@ void GameState_Playing::EnterState()
 
 void GameState_Playing::Update(float ds)
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	m_timeInState+=ds;
 
 	float deltaSeconds = ds;
@@ -83,12 +84,14 @@ void GameState_Playing::Update(float ds)
 	DeleteEntities();
 	CheckForVictory();
 	CheckForDefeat();
+
 	//g_theGame->m_mainCamera->m_transform.SetLocalPosition(m_player->GetPosition() + Vector3(0.f, 3.f, -5.f));
 	
 }
 
 void GameState_Playing::RenderGame()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	g_theRenderer->ClearScreen( RGBA::BLACK ); 
 	g_theRenderer->ClearDepth( 1.0f ); 
 	g_theRenderer->EnableDepth( COMPARE_LESS, true ); 

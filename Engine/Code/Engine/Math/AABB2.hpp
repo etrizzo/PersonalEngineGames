@@ -42,6 +42,8 @@ public:
 
 	//gets percentage into the box the point is
 	Vector2 GetPercentageOfPoint(Vector2 point) const;
+	Vector2 GetPointAtNormalizedCoord(Vector2 normalizedPoint) const;
+	Vector2 GetPointAtNormalizedCoord(float x, float y) const;
 
 
 	//Accessors/queries
