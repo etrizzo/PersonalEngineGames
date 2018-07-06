@@ -37,7 +37,8 @@ public:
 
 	//keeps track of the hierarchy
 	ProfilerReportEntry* m_parent;
-	std::map<std::string, ProfilerReportEntry*> m_children;
+	std::vector<ProfilerReportEntry*> m_children;
+	//std::map<std::string, ProfilerReportEntry*> m_children;
 };
 
 
@@ -48,6 +49,13 @@ public:
 	void GenerateReportTreeFromFrame(profileMeasurement_t* root);
 	void GenerateReportFlatFromFrame(profileMeasurement_t* root);
 	double GetTotalFrameTime();
+
+	void SortBySelfTime();
+	void SortByTotalTime();
 };
 
 
+
+
+bool CompareProfileEntrysSelfTime (ProfilerReportEntry* i,ProfilerReportEntry* j);
+bool CompareProfileEntrysTotalTime (ProfilerReportEntry* i,ProfilerReportEntry* j);

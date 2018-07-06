@@ -40,7 +40,7 @@ const std::string Stringf( const int maxLength, const char* format, ... )
 	return returnValue;
 }
 
-const void Split(std::string stringToSplit, const char splitOn, Strings & splitVector)
+ void Split(std::string stringToSplit, const char splitOn, Strings & splitVector)
 {
 	splitVector = std::vector<std::string>();
 	unsigned int oldIndex = 0;
@@ -61,7 +61,7 @@ const void Split(std::string stringToSplit, const char splitOn, Strings & splitV
 }
 
 //strips any instances of stripChar off the ends of stringToStrip
-const void Strip(std::string & stringToStrip, const char stripChar)
+ void Strip(std::string & stringToStrip, const char stripChar)
 {
 	int endPos = (int) stringToStrip.find_last_not_of(stripChar);
 	int startPos = (int) stringToStrip.find_first_not_of(stripChar);
@@ -71,7 +71,7 @@ const void Strip(std::string & stringToStrip, const char stripChar)
 	}
 }
 
-const bool Contains(std::string baseWord, std::string subString)
+ bool Contains(std::string baseWord, std::string subString)
 {
 	//TODO("This is not perfect :(");
 	if (subString == ""){
@@ -103,7 +103,7 @@ const bool Contains(std::string baseWord, std::string subString)
 	return false;
 }
 
-const bool StartsWith(std::string baseWord, std::string startString)
+ bool StartsWith(std::string baseWord, std::string startString)
 {
 	//all words start with "" :)
 	if (startString == ""){

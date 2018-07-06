@@ -86,7 +86,8 @@ void GameState_Attract::Update(float ds)
 			g_theGame->TransitionToState(new GameState_Select());
 		}
 		if (selection == 1){
-			CommandQuit(Command("text"));
+			//CommandQuit(Command("text"));
+			g_Window->Quit();
 		}
 	}
 }
@@ -224,7 +225,7 @@ void GameState_Paused::RenderUI()
 
 void GameState_Paused::RenderTransitionEffect( float t)
 {
-
+	UNUSED(t);
 }
 
 void GameState_Paused::HandleInput()

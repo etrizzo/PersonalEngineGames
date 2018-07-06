@@ -10,11 +10,14 @@ ProfilerVisualizer::ProfilerVisualizer(Renderer * renderer, InputSystem* input, 
 	m_renderer = renderer;
 	m_input = input;
 	m_bounds = uiBounds;
+	
+	float minx = .01f;
+	float maxx = .99f;
 
-	m_reportArea = m_bounds.GetPercentageBox(.05f,.1f, .95f, .6f);
-	m_graphArea = m_bounds.GetPercentageBox(.47f,.7f,.95f,.9f);
-	m_infoArea = m_bounds.GetPercentageBox(.05f,.8f,.35f,.9f);
-	m_hotkeyArea = m_bounds.GetPercentageBox(.05f, .7f, .35f, .8f);
+	m_reportArea = m_bounds.GetPercentageBox(minx,.1f, maxx, .6f);
+	m_graphArea = m_bounds.GetPercentageBox(.47f,.7f,maxx,.9f);
+	m_infoArea = m_bounds.GetPercentageBox(minx,.8f,.35f,.9f);
+	m_hotkeyArea = m_bounds.GetPercentageBox(minx, .7f, .35f, .8f);
 }
 
 void ProfilerVisualizer::Update()
@@ -45,6 +48,11 @@ void ProfilerVisualizer::HandleInput(InputSystem* input)
 	if (input->WasKeyJustPressed('V')){
 		m_isTree = !m_isTree;
 	}
+
+	if (input->WasKeyJustPressed('L')){
+		m_selfSort = !m_selfSort;
+	}
+
 	if (input->WasKeyJustPressed('M')){
 		m_controllingInput = !m_controllingInput;
 		input->ToggleCursor();
@@ -58,9 +66,9 @@ void ProfilerVisualizer::HandleInput(InputSystem* input)
 
 	if (input->WasKeyJustPressed('P')){
 		Profiler::GetInstance()->TogglePause();
-		if (!Profiler::GetInstance()->IsPaused()){
-			m_currentFrameSelectionIndex = -1;
-		}
+		//if (!Profiler::GetInstance()->IsPaused()){
+		m_currentFrameSelectionIndex = -1;
+		//}
 	}
 
 	
@@ -71,6 +79,8 @@ void ProfilerVisualizer::HandleInput(InputSystem* input)
 			m_currentFrameSelectionIndex = (int) m_currentFrameHoverIndex;
 			Profiler::GetInstance()->Pause();
 		}
+	} else {
+		m_currentFrameHoverIndex = 0;
 	}
 }
 
@@ -100,15 +110,27 @@ void ProfilerVisualizer::ToggleOpen()
 std::string ProfilerVisualizer::GetNodeString(ProfilerReportEntry * root, int depth)
 {
 	std::string text = FormatProfilerReport(root, depth) + "\n";
-	for (std::pair<std::string, ProfilerReportEntry* >child : root->m_children){
-		text= text + GetNodeString(child.second, depth + 1);
+	for ( ProfilerReportEntry* child : root->m_children){
+		text= text + GetNodeString(child, depth + 1);
 	}
 	return text;
 }
 
 void ProfilerVisualizer::RenderReport()
 {
-	std::string reportText = GetNodeString(m_currentReport->m_root);
+	if (m_selfSort){
+		m_currentReport->SortBySelfTime();
+	} else {
+		m_currentReport->SortByTotalTime();
+	}
+	std::string header = Stringf( "%-*s %-8s %8s %12s %8s %12s\n", 
+		64, "ID", 
+		"Calls",
+		"Total %",
+		"Total ms", 
+		"Self %", 
+		"Self ms");
+	std::string reportText = header + GetNodeString(m_currentReport->m_root);
 
 	m_renderer->DrawTextInBox2D(reportText, m_reportArea, Vector2(0.f,.92f), .05f, TEXT_DRAW_SHRINK_TO_FIT, m_outlineColor);
 }
@@ -116,7 +138,7 @@ void ProfilerVisualizer::RenderReport()
 void ProfilerVisualizer::RenderGraph()
 {
 	Profiler* instance = Profiler::GetInstance();
-	float maxFrameTime = 100.f;
+	//float maxFrameTime = 100.f;
 	float sliceWidth = m_graphArea.GetWidth() / (float) PROFILER_MAX_FRAME_COUNT;
 	MeshBuilder mb;
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
@@ -126,7 +148,22 @@ void ProfilerVisualizer::RenderGraph()
 	Vector3 topLeft;
 	Vector3 topRight;
 	float z = 0.f;
-	
+
+	float maxMS = 0.f;
+	for (int i = 0; i < PROFILER_MAX_FRAME_COUNT; i++){
+		profileMeasurement_t* frame = instance->ProfileGetPreviousFrame(PROFILER_MAX_FRAME_COUNT - i);
+		if (maxMS < frame->GetMilliseconds()){
+			maxMS = frame->GetMilliseconds();
+		}
+	}
+
+	//add padding to the max ms so it's not always right at the top
+	maxMS +=5.f;
+
+	//draw ms marker at top and bottom of graph
+	m_renderer->DrawTextInBox2D(Stringf("%3.1fms", maxMS), m_graphArea, Vector2(-.08f, 1.f), .01f, TEXT_DRAW_OVERRUN);
+	m_renderer->DrawTextInBox2D(Stringf("%3.1fms", 0.f), m_graphArea, Vector2(-.08f, 0.f), .01f, TEXT_DRAW_OVERRUN);
+
 	//0 is the oldest frame, PROFILER_MAX_FRAME_COUNT is the newest frame
 	for (int i = 0; i < PROFILER_MAX_FRAME_COUNT; i++){
 		//for each frame
@@ -134,7 +171,7 @@ void ProfilerVisualizer::RenderGraph()
 		profileMeasurement_t* frame = instance->ProfileGetPreviousFrame(PROFILER_MAX_FRAME_COUNT - i);
 		float frameTime = frame->GetMilliseconds();
 		float percentageX = (float) i / (float) PROFILER_MAX_FRAME_COUNT;
-		float percentageY = frameTime / maxFrameTime;
+		float percentageY = frameTime / maxMS;
 		//add a quad to a mesh-builder
 		Vector2 height = m_graphArea.GetPointAtNormalizedCoord(percentageX, percentageY);
 
@@ -142,13 +179,19 @@ void ProfilerVisualizer::RenderGraph()
 		botRight = Vector3(height.x + sliceWidth, m_graphArea.mins.y, z);
 		topLeft = Vector3(height.x, height.y, z);
 		topRight = Vector3(height.x + sliceWidth, height.y, z);
+
+		//get the lerped frame color
+		float t = RangeMapFloat(frameTime, m_bestMS, m_worstMS, 0.f, 1.f);
+		t = ClampFloatZeroToOne(t);
+		RGBA colorAtFrame = Interpolate(m_graphBestColor, m_graphWorstColor, t);
+
 		//append frame quad to graph (highlighting selected and hovered frames)
 		if (frameOffset == m_currentFrameHoverIndex){
-			mb.AppendQuad(botLeft,botRight,topLeft,topRight, RGBA::GREEN);
+			mb.AppendQuad(botLeft,botRight,topLeft,topRight, RGBA::WHITE);
 		} else if ((int) frameOffset == m_currentFrameSelectionIndex) {
 			mb.AppendQuad(botLeft,botRight,topLeft,topRight, RGBA::CYAN);
 		} else{
-			mb.AppendQuad(botLeft,botRight,topLeft,topRight, m_graphColor);
+			mb.AppendQuad(botLeft,botRight,topLeft,topRight, colorAtFrame.GetColorWithAlpha(200));
 		}
 	}
 	mb.End();
@@ -206,10 +249,8 @@ std::string FormatProfilerReport(ProfilerReportEntry * entry, int parentCount)
 		64 - parentCount, entry->m_id.data(), 
 		entry->m_callCount,
 		entry->GetTotalPercentTime().c_str(),
-		entry->GetTotalMillisecondsAsString().c_str(),
-		//(float) entry->GetTotalElapsedTime() * 1000.f, 
+		entry->GetTotalMillisecondsAsString().c_str(), 
 		entry->GetSelfPercentTime().c_str(), 
 		entry->GetSelfMillisecondsAsString().c_str());
-		//(float) entry->GetSelfElapsedTime()* 1000.f);
 	return fancy;
 }

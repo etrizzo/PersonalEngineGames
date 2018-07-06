@@ -59,6 +59,7 @@ public:
 	void Finish();
 	float GetMilliseconds() const;
 	double GetSecondsAsDouble() const;
+	double GetChildrenTime() const;
 	
 };
 
@@ -92,8 +93,11 @@ public:
 	profileMeasurement_t* CreateMeasurement(char const* id);
 	bool m_paused = false;
 	bool m_isPausing = false;
+	bool m_isResuming = false;
 	
 
 	static Profiler* GetInstance();
 	static Profiler* s_profilerInstance;
+
 };
+

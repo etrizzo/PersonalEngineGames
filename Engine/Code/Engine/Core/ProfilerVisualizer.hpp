@@ -27,6 +27,7 @@ public:
 	bool m_isTree = true;
 	bool m_isOpen = false;
 	bool m_controllingInput = false;
+	bool m_selfSort = false;
 
 	ProfilerReport* m_currentReport;
 
@@ -42,7 +43,11 @@ public:
 	RGBA m_outlineColor = RGBA::WHITE;
 
 	Vector2 m_mousePos;
-	RGBA m_graphColor = RGBA::YELLOW;
+	RGBA m_graphBestColor = RGBA::GREEN;
+	RGBA m_graphWorstColor = RGBA::RED;
+	float m_bestMS = 10.f;
+	float m_worstMS = 50.f;
+	//RGBA m_graphColor = RGBA::YELLOW;
 	InputSystem* m_input;
 
 	unsigned int m_currentFrameHoverIndex = 0;

@@ -93,6 +93,15 @@ double profileMeasurement_t::GetSecondsAsDouble() const
 	return PerformanceCountToSeconds(m_endHPC - m_startHPC);
 }
 
+double profileMeasurement_t::GetChildrenTime() const
+{
+	double childTime = 0.f;
+	for (profileMeasurement_t* child : m_children){
+		childTime += child->GetSecondsAsDouble();
+	}
+	return childTime;
+}
+
 
 //==========================================
 // PROFILER
@@ -112,16 +121,18 @@ Profiler::~Profiler()
 
 void Profiler::MarkFrame()
 {
-	if (m_isPausing){
-		//if you paused during the last frame, ACTUALLY pause now
-		m_paused = true;
-		m_isPausing = false;
+
+	if (m_isResuming){
+		m_paused = false;
+		m_isResuming = false;
+		return;
 	}
 	if (!m_paused){
+		
 		if (m_stack != nullptr){
 			// update previous info
-			
 				if (m_frames[m_currentFrameIndex] != nullptr){
+					//if there's something in your current index, delete it to make space
 					profileMeasurement_t* tree = m_frames[m_currentFrameIndex];
 					DestroyMeasurementTreeRecursively(tree);
 				}
@@ -131,9 +142,16 @@ void Profiler::MarkFrame()
 			Pop();
 			ASSERT_OR_DIE(m_stack == nullptr, "MarkFrame() was used wrong! You weren't at the root of the measurement tree! SOMEONE FORGOT TO POP!!!");
 		}
-	
-		Push("frame");
-		m_currentFrameIndex = (m_currentFrameIndex + 1) % PROFILER_MAX_FRAME_COUNT;
+
+		if (m_isPausing){
+			//if you paused during the last frame, ACTUALLY pause now (after you've cleaned up the last frame)
+			m_paused = true;
+			m_isPausing = false;
+			return;
+		} else {
+			Push("frame");
+			m_currentFrameIndex = (m_currentFrameIndex + 1) % PROFILER_MAX_FRAME_COUNT;
+		}
 	}
 	//profileMeasurement_t* measure = CreateMeasurement("frame");
 	//m_stack = measure;
@@ -174,12 +192,17 @@ void Profiler::DestroyMeasurementTreeRecursively(profileMeasurement_t* tree)
 void Profiler::Pause()
 {
 	//set is pausing to trigger pause in markframe
-	m_isPausing = true;
+	if (!m_paused){
+		m_isPausing = true;
+	}
 }
 
 void Profiler::Resume()
 {
-	m_paused = false;
+	//m_paused = false;
+	if (m_paused){
+		m_isResuming = true;
+	}
 }
 
 void Profiler::TogglePause()

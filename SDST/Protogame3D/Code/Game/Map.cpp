@@ -306,9 +306,6 @@ bool Map::HitRaycastTarget(const Vector3 & point) const
 	bool inTerrain = !IsPointAboveTerrain(point);
 	bool inSpawner = IsPointInSpawner(point);
 	bool inEnemy = IsPointInEnemy(point);
-	if (inEnemy){
-		int x = 0;
-	}
 	return inTerrain || inSpawner || inEnemy;
 }
 

@@ -123,15 +123,19 @@ void App::Render()
 	PROFILE_PUSH_FUNCTION_SCOPE();
 	g_theGame->Render();
 
+	PROFILE_PUSH("RenderProfiler");
 	if (g_profilerVisualizer->IsOpen()){
 		g_profilerVisualizer->Render();
 	}
+	PROFILE_POP();
 
+	PROFILE_PUSH("RenderProfiler");
 	if (DevConsoleIsOpen()){
 		g_theGame->SetUICamera();
 		g_devConsole->Render();
 		g_theGame->SetGameCamera();
 	}
+	PROFILE_POP();
 
 
 }
@@ -498,8 +502,8 @@ void PrintTree(ProfilerReportEntry * tree, int depth)
 //	ConsolePrintf("%.64s : %.8fms", tree->m_id, tree->GetTotalElapsedTime());
 	std::string text = FormatProfilerReport(tree, depth);
 	ConsolePrint(text.c_str());
-	for (std::pair<std::string, ProfilerReportEntry* >child : tree->m_children){
-		PrintTree(child.second, depth + 1);
+	for ( ProfilerReportEntry* child : tree->m_children){
+		PrintTree(child, depth + 1);
 	}
 }
 

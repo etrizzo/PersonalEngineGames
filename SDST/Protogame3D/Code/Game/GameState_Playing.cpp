@@ -56,14 +56,8 @@ void GameState_Playing::Update(float ds)
 {
 	PROFILE_PUSH_FUNCTION_SCOPE();
 	m_timeInState+=ds;
-
-	float deltaSeconds = ds;
 	if (!g_theGame->m_isPaused){
 		//the game stuff happens here
-		//g_theGame->m_gameTime+=deltaSeconds;
-
-
-
 		float degrees = 15.f * g_theGame->m_gameClock->GetCurrentSeconds(); 
 		//
 		Vector2 xz_pos = PolarToCartesian( 8.f, degrees ); 
@@ -162,9 +156,6 @@ void GameState_Playing::HandleInput()
 	if (g_theInput->WasKeyJustPressed('L')){
 		AddNewPointLight( g_theGame->m_currentCamera->GetPosition() + g_theGame->m_currentCamera->GetForward(), RGBA::WHITE);
 	}
-	float ds = g_theGame->GetDeltaSeconds();
-	float factorScale = 10.f;
-
 	if (!g_theGame->m_debugRenderSystem->m_isDetached){
 		if (!m_gameLost){
 			m_player->HandleInput();
@@ -450,5 +441,5 @@ void GameState_Playing::RenderEnemyStatus() const
 	std::string enemyText = "Enemies: " + numEnemies;
 	std::string baseText = "Bases: " + numBases;
 	std::string drawText = enemyText + "\n" + baseText;
-	g_theRenderer->DrawTextInBox2D(drawText, enemyBox, Vector2(1.f, .5f), .075, TEXT_DRAW_SHRINK_TO_FIT);
+	g_theRenderer->DrawTextInBox2D(drawText, enemyBox, Vector2(1.f, .5f), .075f, TEXT_DRAW_SHRINK_TO_FIT);
 }

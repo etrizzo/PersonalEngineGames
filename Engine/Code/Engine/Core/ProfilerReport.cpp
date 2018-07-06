@@ -6,7 +6,7 @@ ProfilerReportEntry::ProfilerReportEntry(std::string id, ProfilerReportEntry * p
 {
 	m_id = id;
 	m_parent = parent;
-	m_children = std::map<std::string, ProfilerReportEntry*>();
+	m_children = std::vector<ProfilerReportEntry*>();
 
 	m_totalTime = 0.0;
 	m_selfTime = 0.0;
@@ -39,20 +39,21 @@ void ProfilerReportEntry::AccumulateData(profileMeasurement_t * node)
 {
 	m_callCount++;
 	m_totalTime += node->GetSecondsAsDouble();		//accumulation of nodes with that id
-	m_selfTime = node->GetSecondsAsDouble();
+	m_selfTime += (node->GetSecondsAsDouble() - node->GetChildrenTime());
 	//m_percentTime = ?; //figure it out in post-process of tree
 }
 
 ProfilerReportEntry * ProfilerReportEntry::CreateOrGetChild(std::string id)
 {
-	auto containsChild = m_children.find(id);
-	ProfilerReportEntry* child = nullptr;
-	if ( containsChild != m_children.end()){
-		child = containsChild->second;
-	} else {
-		child = new ProfilerReportEntry(id, this);
-		m_children.insert(std::pair<std::string, ProfilerReportEntry*> (id, child));
+	for (ProfilerReportEntry* existingChild : m_children){
+		if (existingChild->m_id == id){
+			return existingChild;
+		}
 	}
+
+	//if we reach this point, no child with that id, so make a new one
+	ProfilerReportEntry* child = new ProfilerReportEntry(id, this);
+	m_children.push_back(child);
 	return child;
 }
 
@@ -60,8 +61,8 @@ void ProfilerReportEntry::SetPercentagesForTree(double rootTime)
 {
 	m_percentTime = m_totalTime / rootTime;
 	m_selfPercentTime = m_selfTime / rootTime;
-	for(std::pair<std::string, ProfilerReportEntry*> child : m_children){
-		child.second->SetPercentagesForTree(rootTime);
+	for( ProfilerReportEntry* child : m_children){
+		child->SetPercentagesForTree(rootTime);
 	}
 }
 
@@ -77,27 +78,27 @@ double ProfilerReportEntry::GetSelfElapsedTime() const
 
 std::string ProfilerReportEntry::GetTotalPercentTime() const
 {
-	std::string perc = Stringf("%.2f", (float) m_percentTime * 100.f);
+	std::string perc = Stringf("%6.2f", (float) m_percentTime * 100.f);
 	perc += "%";
 	return perc;
 }
 
 std::string ProfilerReportEntry::GetSelfPercentTime() const
 {
-	std::string perc = Stringf("%.2f", (float) m_selfPercentTime * 100.f);
+	std::string perc = Stringf("%6.2f", (float) m_selfPercentTime * 100.f);
 	perc += "%";
 	return perc;
 }
 
 std::string ProfilerReportEntry::GetTotalMillisecondsAsString() const
 {
-	std::string s = Stringf("%.4fms", GetTotalElapsedTime() * 1000.0);
+	std::string s = Stringf("%10.2fms", GetTotalElapsedTime() * 1000.0);
 	return s;
 }
 
 std::string ProfilerReportEntry::GetSelfMillisecondsAsString() const
 {
-	std::string s = Stringf("%.4fms", GetSelfElapsedTime() * 1000.0);
+	std::string s = Stringf("%10.2fms", GetSelfElapsedTime() * 1000.0);
 	return s;
 }
 
@@ -118,4 +119,32 @@ void ProfilerReport::GenerateReportFlatFromFrame(profileMeasurement_t * root)
 double ProfilerReport::GetTotalFrameTime()
 {
 	return m_root->GetTotalElapsedTime();		//end - start lol
-};
+}
+void ProfilerReport::SortBySelfTime()
+{
+	std::sort(m_root->m_children.begin(), m_root->m_children.end(), CompareProfileEntrysSelfTime);
+}
+void ProfilerReport::SortByTotalTime()
+{
+	std::sort(m_root->m_children.begin(), m_root->m_children.end(), CompareProfileEntrysTotalTime);
+}
+;
+
+
+bool CompareProfileEntrysSelfTime(ProfilerReportEntry* i, ProfilerReportEntry* j)
+{
+	if (i->GetSelfElapsedTime() <= j->GetSelfElapsedTime()){
+		return false;
+	} else {
+		return true;
+	}
+}
+
+bool CompareProfileEntrysTotalTime(ProfilerReportEntry* i, ProfilerReportEntry* j)
+{
+	if (i->GetTotalElapsedTime() <= j->GetTotalElapsedTime()){
+		return false;
+	} else {
+		return true;
+	}
+}

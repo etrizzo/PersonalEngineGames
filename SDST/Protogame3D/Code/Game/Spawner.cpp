@@ -71,7 +71,7 @@ void Spawner::ClearDestroyedEnemies()
 
 bool Spawner::CanSpawnEnemy()
 {
-	if (m_spawnedEnemies.size() >= m_maxEnemies){
+	if ((int) m_spawnedEnemies.size() >= m_maxEnemies){
 		return false;
 	} else {
 		return m_spawnRate.CheckAndReset();

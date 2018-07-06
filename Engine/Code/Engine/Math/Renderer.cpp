@@ -443,6 +443,7 @@ void Renderer::DrawMeshImmediate( Vertex3D_PCU * verts, int numVerts, eDrawPrimi
 
 void Renderer::DrawMesh(SubMesh * mesh)
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	// Describe the buffer - first, figure out where the shader is expecting
 	// position to be.
 	BindRendererUniforms();
@@ -1002,8 +1003,12 @@ void Renderer::EndFrame(HDC displayContext)
 {
 	// copies the default camera's framebuffer to the "null" framebuffer, 
 	// also known as the back buffer.
+	PROFILE_PUSH("EndFrame::CopyFrameBuffer");
 	CopyFrameBuffer( nullptr, &m_defaultCamera->m_output );			//m_current camera?
+	PROFILE_POP();
+	PROFILE_PUSH("EndFrame::SwapBuffers");
 	SwapBuffers( displayContext ); // Note: call this once at the end of each frame
+	PROFILE_POP();
 }
 
 bool Renderer::CopyFrameBuffer(FrameBuffer * dst, FrameBuffer * src)
@@ -1650,7 +1655,7 @@ BitmapFont * Renderer::CreateOrGetBitmapFont(const char * bitmapFontName)
 
 void Renderer::DrawText2D(const std::string & asciiText, const Vector2 & drawMins, float cellHeight, const RGBA & tint, const BitmapFont * font, float aspectScale)
 {
-
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	BitmapFont* drawFont;
 	if (font == nullptr){
 		drawFont = CreateOrGetBitmapFont("DefaultFont");
@@ -1665,16 +1670,24 @@ void Renderer::DrawText2D(const std::string & asciiText, const Vector2 & drawMin
 	Vector2 increment = Vector2(cellHeight, 0);
 	Texture fontTexture = *drawFont->GetTexture();
 	BindTexture(fontTexture);
+	MeshBuilder mb;
+	mb.Begin(PRIMITIVE_TRIANGLES, true);
 	for (int charIndex = 0; charIndex < (int) asciiText.size(); charIndex++){
 		int glyph = asciiText[charIndex];
 		AABB2 texCoords = drawFont->GetUVsForGlyph(glyph);
 		Vector2 maxs = drawPos + Vector2(cellHeight * aspectScale, cellHeight);
 		AABB2 drawBox = AABB2(drawPos, maxs);
-		DrawAABB2(drawBox, tint, texCoords.mins, texCoords.maxs);
+		mb.AppendQuad(Vector3(drawBox.mins), Vector3(drawBox.maxs.x, drawBox.mins.y, 0.f), Vector3(drawBox.mins.x, drawBox.maxs.y, 0.f), Vector3(drawBox.maxs), tint, texCoords);
+		//DrawAABB2(drawBox, tint, texCoords.mins, texCoords.maxs);
 		//for text debugging:
 		//DrawAABB2Outline(drawBox, RGBA(0,0,0,128));
 		drawPos +=increment;
 	}
+	mb.End();
+	SubMesh* mesh = mb.CreateSubMesh();
+	DrawMesh(mesh);
+	delete mesh;
+	//delete mb;
 	ReleaseTexture();
 
 }
