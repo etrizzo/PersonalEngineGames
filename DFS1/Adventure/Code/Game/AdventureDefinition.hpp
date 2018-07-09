@@ -6,7 +6,7 @@ class ActorDefinition;
 class ItemDefinition;
 class MapDefinition;
 class TileDefinition;
-class VictoryCondition;
+class QuestDefinition;
 class Map;
 
 struct ActorToSpawn;
@@ -24,7 +24,7 @@ public:
 	std::string m_name;
 	std::string m_title;
 	std::vector<MapToGenerate*> m_mapsToGenerate;
-	std::vector<Quest*> m_victoryConditions;
+	std::vector<QuestDefinition*> m_quests;
 	std::string m_startMapName;
 	TileDefinition* m_startTileDef;
 

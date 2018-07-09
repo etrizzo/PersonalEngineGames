@@ -10,6 +10,7 @@
 #include "Game/Adventure.hpp"
 #include "Game/ItemDefinition.hpp"
 #include "Game/Item.hpp"
+#include "Game/QuestDefinition.hpp"
 
 
 std::map<std::string, AdventureDefinition*>	AdventureDefinition::s_definitions;
@@ -23,8 +24,8 @@ AdventureDefinition::AdventureDefinition(tinyxml2::XMLElement* defElement)
 	m_startMapName = ParseXmlAttribute(*startElement, "startMap", "");
 	m_startTileDef = ParseXmlAttribute(*startElement, "startOnTileType", (TileDefinition*) nullptr);
 
-	tinyxml2::XMLElement* victoryElement = defElement->FirstChildElement("VictoryConditions");
-	ParseQuests(victoryElement);
+	tinyxml2::XMLElement* questsElement = defElement->FirstChildElement("Quests");
+	ParseQuests(questsElement);
 
 	m_mapsToGenerate = std::vector<MapToGenerate*>();
 	for (tinyxml2::XMLElement* mapElement = defElement->FirstChildElement("Map"); mapElement != NULL; mapElement = mapElement->NextSiblingElement("Map")){
@@ -52,10 +53,11 @@ AdventureDefinition * AdventureDefinition::GetAdventureDefinition(std::string de
 
 void AdventureDefinition::ParseQuests(tinyxml2::XMLElement * victoryElement)
 {
-	m_victoryConditions = std::vector<VictoryCondition*>();
+	m_quests = std::vector<QuestDefinition*>();
 	for (tinyxml2::XMLElement* victoryConditionElement = victoryElement->FirstChildElement(); victoryConditionElement != NULL; victoryConditionElement = victoryConditionElement->NextSiblingElement()){
-		VictoryCondition* newCondition = VictoryCondition::CreateVictoryCondition(victoryConditionElement);
-		m_victoryConditions.push_back(newCondition);
+		std::string questName = ParseXmlAttribute(*victoryConditionElement, "name", "NO_NAME");
+		QuestDefinition* newCondition = QuestDefinition::GetQuestDefinition(questName);
+		m_quests.push_back(newCondition);
 	}
 }
 

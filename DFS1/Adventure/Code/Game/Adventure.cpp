@@ -54,8 +54,8 @@ void Adventure::Begin()
 
 	SetCurrentMap(m_startingMap);
 	m_quests = std::vector<Quest*>();
-	for(Quest* q :m_definition->m_quests){
-		m_quests.push_back(q->Clone(this));		//i hate this
+	for(QuestDefinition* q :m_definition->m_quests){
+		m_quests.push_back(new Quest(q, this));		//i hate this
 	}
 
 	if (g_theGame->m_player == nullptr){
@@ -214,7 +214,7 @@ void Adventure::GoToMap(std::string mapName)
 {
 	Map* newMap = GetMap(mapName);
 	if (newMap == nullptr){
-		ConsolePrintf(RGBA::RED, ("No map called: " + mapName + ". use map_names to see current adventure maps").c_str());
+		ConsolePrintf(RGBA::RED, ("No map called: " + mapName + ". use print_map_names to see current adventure maps").c_str());
 	} else {
 		Tile t = newMap->GetRandomBaseTile();
 		g_theGame->m_player->SetPosition(t.GetCenter(), newMap);

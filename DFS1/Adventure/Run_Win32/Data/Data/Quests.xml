@@ -1,14 +1,18 @@
 <Quests>
-	<Quest name="KillGoblins" mainQuest="true" giverType="Villager" sequential="true">
+	<Quest name="KillGoblins" mainQuest="true" giverType="Villager" sequential="true" text = "Goblin Hunting">
 		<Reward type="giveItem" item="Greatbow" />
-		<SpeakToActor actorToSpeakTo="giver"/>
-		<KillActor actorToKill="Goblin" numToKill="2~4" />
-		<CollectItem itemToCollect="Leather Hat" numToCollect="1" keepItem="false" />
-		<SpeakToActor actorToSpeakTo="giver" />
+		<Steps>
+			<SpeakToActor actorToSpeakTo="giver"/>
+			<KillActor actorToKill="Goblin" numToKill="2~4" />
+			<CollectItem itemToCollect="Leather Hat" numToCollect="1" keepItem="false" />
+			<SpeakToActor actorToSpeakTo="giver" />
+		</Steps>
 	</Quest>
 
-	<Quest name="KillBalrog" mainQuest="false" giverType="None" sequential="false">
+	<Quest name="KillBalrog" mainQuest="false" giverType="None" sequential="false" text = "Kill the Balrog">
 		<Reward type="giveStats" statStrength="5" />
-		<KillActor actorToKill="Balrog" numToKill="1" />
+		<Steps>
+			<KillActor actorToKill="Balrog" numToKill="1" />
+		</Steps>
 	</Quest>
 </Quests>

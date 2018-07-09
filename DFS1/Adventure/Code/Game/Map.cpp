@@ -151,8 +151,8 @@ void Map::UpdateEntities(float deltaSeconds)
 		}
 	}
 
-	if (m_player != nullptr){
-		m_player->Update(deltaSeconds);
+	if (g_theGame->m_player != nullptr){
+		g_theGame->m_player->Update(deltaSeconds);
 	}
 	
 
@@ -176,6 +176,10 @@ void Map::RunPhysics()
 		if (currentEntity != nullptr && !currentEntity->m_aboutToBeDeleted){
 			currentEntity->RunCorrectivePhysics();
 		}
+	}
+
+	if (g_theGame->m_player != nullptr){
+		g_theGame->m_player->RunCorrectivePhysics();
 	}
 
 }
@@ -213,7 +217,7 @@ void Map::CheckEntityInteractions()
 			if (DoDiscsOverlap(item->m_physicsDisc, g_theGame->m_player->m_physicsDisc)){
 				//Item* copyItem = new Item(*item);		//add a copy so that the one on the map can get deleted safely
 				g_theGame->m_player->AddItemToInventory(item);
-				m_allItems[itemIndex] = nullptr;
+				//m_allItems[itemIndex] = nullptr;
 				item->m_aboutToBeDeleted = true;
 			}
 
@@ -268,13 +272,21 @@ void Map::RemoveDoomedEntities()
 		}
 	}
 
-	for (unsigned int itemIndex = 0; itemIndex < m_allItems.size(); itemIndex++){
-		Entity* entity = m_allItems.at(itemIndex);
-		if (entity == nullptr){
-			m_allItems.erase(m_allItems.begin() + itemIndex);
-		}else if (entity->IsAboutToBeDeleted()){
-			m_allItems.erase(m_allItems.begin() + itemIndex);
-			delete(entity);
+	//for (unsigned int itemIndex = 0; itemIndex < m_allItems.size(); itemIndex++){
+	//	Entity* entity = m_allItems.at(itemIndex);
+	//	if (entity == nullptr){
+	//		m_allItems.erase(m_allItems.begin() + itemIndex);
+	//	}else if (entity->IsAboutToBeDeleted()){
+	//		m_allItems.erase(m_allItems.begin() + itemIndex);
+	//		delete(entity);
+	//	}
+	//}
+
+	for (unsigned int itemIndex = m_allItems.size()-1; itemIndex < m_allItems.size(); itemIndex--){
+		Item* entity = m_allItems.at(itemIndex);
+		if (entity->IsAboutToBeDeleted()){
+			RemoveAtFast(m_allItems, itemIndex);
+			//delete(entity);
 		}
 	}
 }
@@ -610,16 +622,18 @@ void Map::StartDialogue(DialogueSet * d)
 {
 	m_activeDialogueSet = d;
 	g_theGame->Pause();
-	ProgressDialogue();
+	ProgressDialogueAndCheckFinish();
 }
 
-void Map::ProgressDialogue()
+bool Map::ProgressDialogueAndCheckFinish()
 {
 	//progress dialogue - if the dialogue finishes, set active dialogue set to nullptr
 	if (m_activeDialogueSet->ProgressAndCheckFinish()){
 		m_activeDialogueSet = nullptr;
 		g_theGame->Unpause();
+		return true;
 	}
+	return false;
 }
 
 bool Map::IsDialogueOpen()
@@ -830,6 +844,24 @@ Decoration * Map::SpawnNewDecoration(DecorationDefinition * decoDef, Vector2 spa
 	m_allDecorations.push_back(newDecoration);
 	m_scene->AddRenderable(newDecoration->m_renderable);
 	return newDecoration;
+}
+
+Actor * Map::GetActorOfType(ActorDefinition * actorDef)
+{
+	//collect all actors of the type
+	std::vector<Actor*> actorsOfType = std::vector<Actor*>();
+	for (Actor* actor : m_allActors){
+		if (actor->m_definition == actorDef){
+			actorsOfType.push_back(actor);
+		}
+	}
+	Actor* returnActor = nullptr;
+	//if there are actors of that type, get a random actor from the saved list
+	if (actorsOfType.size() > 0){
+		int index = GetRandomIntLessThan(actorsOfType.size());
+		returnActor = actorsOfType[index];
+	}
+	return returnActor;
 }
 
 

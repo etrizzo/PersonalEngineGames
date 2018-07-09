@@ -14,6 +14,7 @@
 #include "Engine/Renderer/SpriteAnimSetDef.hpp"
 #include "Engine/Renderer/Camera.hpp"
 #include "Game/DebugRenderSystem.hpp"
+#include "Game/QuestDefinition.hpp"
 
 #include "Game/Map.hpp"
 #include "Game/Player.hpp"
@@ -54,6 +55,7 @@ Game::Game()
 	LoadMapDefinitions();
 	LoadClothingDefinitions();
 	LoadEntityDefinitions();
+	LoadQuestDefinitions();
 	LoadAdventureDefinitions();
 
 	m_screenWidth = 10;
@@ -486,6 +488,18 @@ void Game::LoadAdventureDefinitions()
 	}
 }
 
+void Game::LoadQuestDefinitions()
+{
+	tinyxml2::XMLDocument questDefDoc;
+	questDefDoc.LoadFile("Data/Data/Quests.xml");
+
+	tinyxml2::XMLElement* root = questDefDoc.FirstChildElement("Quests");
+	for (tinyxml2::XMLElement* questDefElement = root->FirstChildElement("Quest"); questDefElement != NULL; questDefElement = questDefElement->NextSiblingElement("Quest")){
+		QuestDefinition* newDefinition = new QuestDefinition(questDefElement);
+		QuestDefinition::s_definitions.insert(std::pair<std::string, QuestDefinition*>(newDefinition->m_name, newDefinition));
+	}
+}
+
 
 
 
@@ -538,22 +552,42 @@ bool WasExitJustPressed()
 
 bool WasUpJustPressed()
 {
-	return g_theInput->WasKeyJustPressed(VK_UP) || g_primaryController->WasButtonJustPressed(XBOX_D_UP);
+	return g_theInput->WasKeyJustPressed(VK_UP) || g_theInput->WasKeyJustPressed('W') || g_primaryController->WasButtonJustPressed(XBOX_D_UP);
 }
 
 bool WasDownJustPressed()
 {
-	return g_theInput->WasKeyJustPressed(VK_DOWN) || g_primaryController->WasButtonJustPressed(XBOX_D_DOWN);
+	return g_theInput->WasKeyJustPressed(VK_DOWN) || g_theInput->WasKeyJustPressed('S') || g_primaryController->WasButtonJustPressed(XBOX_D_DOWN);
 }
 
 bool WasRightJustPressed()
 {
-	return g_theInput->WasKeyJustPressed(VK_RIGHT) || g_primaryController->WasButtonJustPressed(XBOX_D_RIGHT);
+	return g_theInput->WasKeyJustPressed(VK_RIGHT) || g_theInput->WasKeyJustPressed('D') || g_primaryController->WasButtonJustPressed(XBOX_D_RIGHT);
 }
 
 bool WasLeftJustPressed()
 {
-	return g_theInput->WasKeyJustPressed(VK_LEFT) || g_primaryController->WasButtonJustPressed(XBOX_D_LEFT);
+	return g_theInput->WasKeyJustPressed(VK_LEFT) || g_theInput->WasKeyJustPressed('A') ||g_primaryController->WasButtonJustPressed(XBOX_D_LEFT);
+}
+
+bool IsUpKeyDown()
+{
+	return g_theInput->IsKeyDown(VK_LEFT) || g_theInput->IsKeyDown('W') || g_primaryController->IsButtonDown(XBOX_D_LEFT);
+}
+
+bool IsDownKeyDown()
+{
+	return g_theInput->IsKeyDown(VK_LEFT) || g_theInput->IsKeyDown('S') || g_primaryController->IsButtonDown(XBOX_D_LEFT);
+}
+
+bool IsRightKeyDown()
+{
+	return g_theInput->IsKeyDown(VK_LEFT) || g_theInput->IsKeyDown('D') || g_primaryController->IsButtonDown(XBOX_D_LEFT);
+}
+
+bool IsLeftKeyDown()
+{
+	return g_theInput->IsKeyDown(VK_LEFT) || g_theInput->IsKeyDown('A') || g_primaryController->IsButtonDown(XBOX_D_LEFT);
 }
 
 void CheckArrowKeys()

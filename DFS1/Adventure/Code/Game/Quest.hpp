@@ -8,11 +8,13 @@ class QuestReward;
 class Adventure;
 
 class Quest{
+public:
 	Quest(QuestDefinition* def, Adventure* currentAdventure);
-	Quest(tinyxml2::XMLElement* questElement);
 
 	bool CheckIfComplete();		//updates all victory conditions
 	void CompleteQuest();
+	std::string GetText();
+	void SpeakToGiver();
 
 	std::vector<VictoryCondition*> m_conditions; 
 	bool m_isComplete;

@@ -110,6 +110,7 @@ private:
 	void LoadItemDefinitions();
 	void LoadDecorationDefinitions();
 	void LoadAdventureDefinitions();
+	void LoadQuestDefinitions();
 
 	int m_screenWidth = 10;
 
@@ -129,6 +130,11 @@ bool WasUpJustPressed();
 bool WasDownJustPressed();
 bool WasRightJustPressed();
 bool WasLeftJustPressed();
+
+bool IsUpKeyDown();
+bool IsDownKeyDown();
+bool IsRightKeyDown();
+bool IsLeftKeyDown();
 void CheckArrowKeys();
 
 extern Game* g_theGame;

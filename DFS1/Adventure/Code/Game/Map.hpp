@@ -114,6 +114,8 @@ public:
 	Decoration* SpawnNewDecoration(std::string itemName, Vector2 spawnPosition);
 	Decoration* SpawnNewDecoration(DecorationDefinition* itemDef, Vector2 spawnPosition);
 
+	Actor* GetActorOfType(ActorDefinition* actorDef);
+
 	void AddEntityToMap(Entity* entity);
 	void RemoveEntityFromMap(Entity* entity);
 	void RemoveActorFromMap(Actor* actor);
@@ -129,8 +131,9 @@ public:
 	void GetNeighbors(IntVector2 coords, Tile (&neighbors)[8]);
 
 
+
 	void StartDialogue(DialogueSet* d);
-	void ProgressDialogue();
+	bool ProgressDialogueAndCheckFinish();
 	bool IsDialogueOpen();
 
 	DialogueSet* m_activeDialogueSet;

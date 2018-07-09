@@ -100,7 +100,7 @@
       <SpawnItem type="Leather Leggings" />
       <SpawnItem type="Leather Hat" />
 
-      <SpawnActor type="Villager" iterations="3~4" />
+      <SpawnActor type="Villager" iterations="1" />
       <!--
       <SpawnActor type="Villager" />
       <SpawnActor type="Villager" />

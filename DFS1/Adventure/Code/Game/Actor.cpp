@@ -8,6 +8,7 @@
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/SpriteAnimSet.hpp"
 #include "Game/ClothingSetDefinition.hpp"
+#include "Game/Quest.hpp"
 
 Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, float initialRotation, int difficulty)
 	:Entity((EntityDefinition*)definition, entityMap, initialPos, initialRotation)
@@ -223,7 +224,12 @@ void Actor::Speak()
 		if (!m_map->IsDialogueOpen()){
 			m_map->StartDialogue(m_dialogue);
 		} else {
-			m_map->ProgressDialogue();
+			bool finished = m_map->ProgressDialogueAndCheckFinish();
+			if (finished){
+				if (m_questGiven != nullptr){
+					m_questGiven->SpeakToGiver();
+				}
+			}
 		}
 	}
 }
@@ -334,16 +340,16 @@ void Actor::UpdateWithController(float deltaSeconds)
 		m_facing = Vector2::MakeDirectionAtDegrees(g_primaryController->GetLeftThumbstickAngle()).GetNormalized() * .5f;
 	} else {
 		Vector2 arrowDirections = Vector2(0.f,0.f);
-		if (g_theInput->IsKeyDown(VK_LEFT)){
+		if (IsLeftKeyDown()){
 			arrowDirections += Vector2(-.5f,0.f);
 		}
-		if (g_theInput->IsKeyDown(VK_RIGHT)){
+		if (IsRightKeyDown()){
 			arrowDirections += Vector2(.5f,0.f);
 		}
-		if (g_theInput->IsKeyDown(VK_DOWN)){
+		if (IsDownKeyDown()){
 			arrowDirections += Vector2(0.f, -.5f);
 		}
-		if (g_theInput->IsKeyDown(VK_UP)){
+		if (IsUpKeyDown()){
 			arrowDirections += Vector2(0.f, .5f);
 		}
 

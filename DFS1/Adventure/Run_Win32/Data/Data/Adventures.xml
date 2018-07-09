@@ -2,11 +2,16 @@
 
   <AdventureDefinition name="Balrog" title="Kill the Balrog">
     <StartConditions startMap="ItemZoo" startOnTileType="Grass"/>
+    <Quests>
+      <Quest name="KillGoblins" />
+      <Quest name="KillBalrog" />
+    </Quests>
+    <!--
     <VictoryConditions>
-     <!--<KillActor actorToKill="Goblin" numToKill="3"/>-->
+     <KillActor actorToKill="Goblin" numToKill="3"/>
       <KillActor actorToKill="Goblin" numToKill="1"/>
     </VictoryConditions>
-
+-->
     
 
     <Map name="Zoo" mapDefinition="Zoo">

@@ -6,6 +6,8 @@
 
 class ActorDefinition;
 class Item;
+class Quest;
+
 
 class Actor: public Entity{
 public:
@@ -41,6 +43,7 @@ public:
 	bool m_changedClothes;
 
 	DialogueSet* m_dialogue;
+	Quest* m_questGiven = nullptr;
 	//std::queue<Dialogue*> m_dialogue;
 	//Dialogue* m_activeDialogue;
 

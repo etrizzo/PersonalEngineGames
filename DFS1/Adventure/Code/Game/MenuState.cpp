@@ -7,7 +7,7 @@
 #include "Game/Menu.hpp"
 #include "Game/VictoryCondition.hpp"
 #include "Game/Adventure.hpp"
-
+#include "Game/Quest.hpp"
 
 MenuState::MenuState()
 {
@@ -49,18 +49,33 @@ void MenuState_Paused::RenderContent()
 	/*	AABB2 textBox = AABB2(boxToDrawIn.mins.x, boxToDrawIn.maxs.y - lineHeight, boxToDrawIn.maxs.x, boxToDrawIn.maxs.y);
 	AABB2 iconBox = AABB2(textBox.mins, Vector2(textBox.mins.x + fontHeight, textBox.mins.y + fontHeight));
 	*///textBox.AddPaddingToSides(fontHeight * -2.f, 0.f);
-	AABB2 lineBox = m_bounds.GetPercentageBox(.1f, .4f, .9f, .5f);
+	
+	int numLines = 0;
+	for (Quest* quest: m_pauseState->m_encounterGameState->m_currentAdventure->m_quests){
+		numLines++;
+		for (VictoryCondition* condition : quest->m_conditions){
+			numLines++;
+		}
+	}
+	float heightRatio = 1.f / (float) numLines;
+	AABB2 lineBox = m_bounds.GetPercentageBox(.1f, .5f, .9f, .5f + (heightRatio * .4f));		//get the height of the textbox (should be enough to cover half the screen with all lines)
 	AABB2 textBox;
 	AABB2 iconBox;
 	lineBox.SplitAABB2Vertical(.1f, iconBox, textBox );
+
+	//g_theRenderer->DrawAABB2Outline(textBox, RGBA(255,0,0));
+	
 	fontHeight = textBox.GetHeight() * .3f;
 	lineHeight = fontHeight * 3.f;
 	iconBox.TrimToSquare();
+	iconBox.AddPaddingToSides(-.05f,-.05f);
+	float indent = lineHeight;
 
 	Texture* buttonTexture = g_theGame->m_miscSpriteSheet->GetTexture();
-	for (VictoryCondition* objective: m_pauseState->m_encounterGameState->m_currentAdventure->m_victoryConditions){
-		RGBA tint = RGBA(255,255,255);
-		if (objective->CheckIfComplete()){
+	for (Quest* quest: m_pauseState->m_encounterGameState->m_currentAdventure->m_quests){
+		RGBA tint = RGBA::WHITE;
+		//draw quest title
+		if (quest->CheckIfComplete()){
 			tint = RGBA(200,200,200, 200);
 			AABB2 texCoords = g_theGame->m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0));
 			g_theRenderer->DrawTexturedAABB2(iconBox, *buttonTexture, texCoords.mins, texCoords.maxs , tint);
@@ -68,12 +83,32 @@ void MenuState_Paused::RenderContent()
 			AABB2 texCoords = g_theGame->m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(0,0));
 			g_theRenderer->DrawTexturedAABB2(iconBox, *buttonTexture, texCoords.mins, texCoords.maxs ,  tint);
 		}
-		std::string victoryText = objective->GetText();
+		std::string victoryText = quest->GetText();
 		g_theRenderer->DrawTextInBox2D(victoryText, textBox, Vector2(0.f,.5f), fontHeight, TEXT_DRAW_WORD_WRAP, tint);
 		//g_theRenderer->DrawAABB2Outline(iconBox, RGBA::RED);
 		//g_theRenderer->DrawAABB2Outline(textBox, RGBA::MAGENTA);
-		textBox.Translate(0.f, -lineHeight);
-		iconBox.Translate(0.f, -lineHeight);
+		textBox.Translate(indent, -lineHeight);
+		iconBox.Translate(indent, -lineHeight);
+
+		for (VictoryCondition* condition : quest->m_conditions){
+			tint = RGBA::WHITE;
+			if (condition->CheckIfComplete()){
+				tint = RGBA(200,200,200, 200);
+				AABB2 texCoords = g_theGame->m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0));
+				g_theRenderer->DrawTexturedAABB2(iconBox, *buttonTexture, texCoords.mins, texCoords.maxs , tint);
+			} else {
+				AABB2 texCoords = g_theGame->m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(0,0));
+				g_theRenderer->DrawTexturedAABB2(iconBox, *buttonTexture, texCoords.mins, texCoords.maxs ,  tint);
+			}
+			std::string victoryText = condition->GetText();
+			g_theRenderer->DrawTextInBox2D(victoryText, textBox, Vector2(0.f,.5f), fontHeight, TEXT_DRAW_WORD_WRAP, tint);
+			//g_theRenderer->DrawAABB2Outline(iconBox, RGBA::RED);
+			//g_theRenderer->DrawAABB2Outline(textBox, RGBA::MAGENTA);
+			textBox.Translate(0.f, -lineHeight);
+			iconBox.Translate(0.f, -lineHeight);
+		}
+		textBox.Translate(-indent, 0.f);
+		iconBox.Translate(-indent, 0.f);
 	}
 
 }
