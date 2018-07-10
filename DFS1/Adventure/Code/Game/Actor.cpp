@@ -18,7 +18,15 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 	m_faction = definition->m_startingFaction;
 	m_timeLastUpdatedDirection = GetRandomFloatInRange(-1.f,1.f);
 	m_lastAttacked = 0.f;
-	m_facing = Vector2::MakeDirectionAtDegrees(GetRandomFloatInRange(-180.f,180.f));
+	m_defaultBehavior = m_definition->m_defaultBehavior;
+	if (m_defaultBehavior == BEHAVIOR_NONE){
+		m_facing = Vector2(0.f, -1.f);
+	} else {
+		m_facing = Vector2::MakeDirectionAtDegrees(GetRandomFloatInRange(-180.f,180.f));
+	}
+
+
+
 	GetRandomStatsFromDefinition();
 	//m_animSets = std::vector<SpriteAnimSet*>();
 	//m_animSets.resize(NUM_RENDER_SLOTS);
@@ -78,17 +86,77 @@ void Actor::Update(float deltaSeconds)
 			FireArrow();
 		}
 	} else {
-		RunSimpleAI(deltaSeconds);
+		if (!m_isPlayer){
+			RunSimpleAI(deltaSeconds);
+		}
 	}
 
 }
 
 void Actor::Render()
 {
-	//Entity::Render();
-	Entity::RenderHealthBar();
-	Entity::RenderName();
+	Entity::Render();
+	//Entity::RenderHealthBar();
+	//Entity::RenderName();
 	//RenderDialogue();
+}
+
+void Actor::HandleInput()
+{
+	if (m_isPlayer && !m_isFiring){
+		if (!m_map->IsDialogueOpen()){
+			UpdateWithController(g_theGame->GetDeltaSeconds());
+		}
+
+		if (g_theInput->WasMouseButtonJustPressed(MOUSE_BUTTON_LEFT)){
+			SpeakToOtherActor();
+		}
+		m_physicsDisc.center=GetPosition();
+	}
+	
+}
+
+void Actor::RenderStatsInBox(AABB2 boxToDrawIn, RGBA tint)
+{
+	//g_theRenderer->DrawAABB2Outline(boxToDrawIn, RGBA(255,0,0));
+	float widthOfBox = boxToDrawIn.GetWidth();
+	float heightOfBox = boxToDrawIn.GetHeight();
+	float fontSize = heightOfBox * .05f;
+	Vector2 padding = Vector2(fontSize * .2f, fontSize * .2f);
+	AABB2 healthBox = AABB2(boxToDrawIn.maxs - Vector2(widthOfBox, fontSize), boxToDrawIn.maxs);
+	healthBox.Translate(0.f, heightOfBox * -.03f);
+	//g_theRenderer->DrawTextInBox2D("Player Stats", boxToDrawIn, Vector2(.5f, .97f), fontSize, TEXT_DRAW_SHRINK_TO_FIT, tint);
+	g_theRenderer->DrawTextInBox2D("HP:" , healthBox, Vector2(0.05f,.5f), fontSize, TEXT_DRAW_SHRINK_TO_FIT, tint);
+	healthBox.AddPaddingToSides(-fontSize * 4.f, 0.f);
+	healthBox.Translate(fontSize *2.f, - fontSize * .1f);
+	Entity::RenderHealthInBox(healthBox);
+
+	//AABB2 pictureBox = AABB2(boxToDrawIn.mins + padding, Vector2(boxToDrawIn.maxs.x - (widthOfBox*.5f), boxToDrawIn.maxs.y - fontSize) - padding);
+	AABB2 pictureBox = boxToDrawIn.GetPercentageBox(.05f, .15f, .45f, .72f);
+	pictureBox.TrimToAspectRatio(GetAspectRatio());
+	float height = pictureBox.GetHeight();
+	//pictureBox.AddPaddingToSides(height * -.1f,height * -.15f);
+	g_theRenderer->DrawAABB2Outline(pictureBox, RGBA(255,255,255,64));
+	//pictureBox.AddPaddingToSides(height *-.1f, height *-.1f);
+	AABB2 texCoords = m_animSet->GetUVsForAnim("IdleSouth", 0.f);
+	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
+		if (m_currentLook->GetTexture(i) != nullptr){
+			//const Texture* entityTexture = m_animSets[i]->GetTextureForAnim("IdleSouth");
+			g_theRenderer->DrawTexturedAABB2(pictureBox, *m_currentLook->GetTexture(i), texCoords.mins, texCoords.maxs, m_currentLook->GetTint(i));
+		}
+	}
+
+	AABB2 statsBox = pictureBox;
+	statsBox.Translate((widthOfBox * .5f), 0.f);
+	//statsBox.AddPaddingToSides(.1f,.1f);
+	//g_theRenderer->DrawAABB2Outline(statsBox, RGBA(255,255,0));
+	std::string statsString = "";
+	for ( int statIDNum = 0; statIDNum < NUM_STAT_IDS; statIDNum++){
+		STAT_ID statID = (STAT_ID)statIDNum;
+		statsString = statsString + Stats::GetNameForStatID(statID) + " : " + std::to_string(m_stats.GetStat(statID)) + "\n\n\n";
+	}
+	g_theRenderer->DrawTextInBox2D(statsString, statsBox, Vector2(0.f, 0.5f), fontSize * 1.f, TEXT_DRAW_SHRINK_TO_FIT, tint);
+
 }
 
 std::string Actor::GetAnimName()
@@ -211,11 +279,22 @@ void Actor::SetPosition(Vector2 newPos, Map * newMap)
 		m_map->AddActorToMap(this);
 	}
 	Entity::SetPosition(newPos);
+	if (m_isPlayer){
+		if (newMap != nullptr){
+			g_theGame->SetCurrentMap(newMap);
+		}
+	}
 }
 
 void Actor::EnterTile(Tile * tile)
 {
 	Entity::EnterTile(tile);
+}
+
+void Actor::SetFollowTarget(Actor * actorToFollow)
+{
+	m_followTarget = actorToFollow;
+	m_defaultBehavior = BEHAVIOR_FOLLOW;
 }
 
 void Actor::Speak()
@@ -234,15 +313,35 @@ void Actor::Speak()
 	}
 }
 
+void Actor::SpeakToOtherActor()
+{
+	Actor* closestActor = nullptr;
+	float closestDistance = m_speakRadius;
+	for (Actor* actor : m_map->m_allActors){
+		if (actor != this){
+			float dist = GetDistance(actor->GetPosition(), GetPosition());
+			if ( dist < closestDistance){
+				closestActor = actor;
+				closestDistance = dist;
+			}
+		}
+	}
+	if (closestActor != nullptr){
+		closestActor->Speak();
+	}
+}
+
 void Actor::TakeDamage(int dmg)
 {
-	int damageToTake = dmg - m_stats.GetStat(STAT_DEFENSE);
-	if (damageToTake < 0){
-		damageToTake = 0;
-	}
-	m_health -= damageToTake;
-	if (m_health <=0){
-		m_aboutToBeDeleted = true;
+	if (!m_godMode){
+		int damageToTake = dmg - m_stats.GetStat(STAT_DEFENSE);
+		if (damageToTake < 0){
+			damageToTake = 0;
+		}
+		m_health -= damageToTake;
+		if (m_health <=0){
+			m_aboutToBeDeleted = true;
+		}
 	}
 }
 
@@ -363,35 +462,52 @@ void Actor::UpdateWithController(float deltaSeconds)
 		}
 
 	}
+
+	if (g_theInput->WasMouseButtonJustPressed(MOUSE_BUTTON_LEFT)){
+		SpeakToOtherActor();
+	}
 }
 
 void Actor::RunSimpleAI(float deltaSeconds)
 {
-	if (g_theGame->m_player == nullptr){
+	UpdateBehavior();
+	switch (m_currentBehavior){
+	case (BEHAVIOR_WANDER):
 		Wander(deltaSeconds);
-	} else {
-		Vector2 playerPos = g_theGame->m_player->GetPosition();
-		//RaycastResult2D raycast = m_map->Raycast(m_position, playerPos - m_position, m_definition->m_range);
-		//Vector2 hitPos = raycast.m_impactPosition;
-		//if the player is visible, update target
-		if (g_theGame->m_player->m_dead){
-			Wander(deltaSeconds);
-		} else if (m_map->HasLineOfSight(GetPosition(), playerPos, m_definition->m_range)){
-			//pursue target
-			Vector2 distance = playerPos - GetPosition();
-			m_facing = distance.GetNormalized();
-			if (distance.GetLengthSquared() > 4){
-				m_moving = true;
-				Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
-			} else {
-				m_moving = false;
-			}
-			StartFiringArrow();
-		} else {
-			Wander(deltaSeconds);
-		}
-		//m_facing = Vector2::MakeDirectionAtDegrees(m_rotationDegrees).GetNormalized() * .3f;
+		break;
+	case (BEHAVIOR_FOLLOW):
+		FollowPlayer(deltaSeconds);
+		break;
+	case (BEHAVIOR_ATTACK):
+		AttackEnemyActor(deltaSeconds);
+		break;
 	}
+
+	//if (g_theGame->m_player == nullptr){
+	//	Wander(deltaSeconds);
+	//} else {
+	//	Vector2 playerPos = g_theGame->m_player->GetPosition();
+	//	//RaycastResult2D raycast = m_map->Raycast(m_position, playerPos - m_position, m_definition->m_range);
+	//	//Vector2 hitPos = raycast.m_impactPosition;
+	//	//if the player is visible, update target
+	//	if (g_theGame->m_player->m_dead){
+	//		Wander(deltaSeconds);
+	//	} else if (m_map->HasLineOfSight(GetPosition(), playerPos, m_definition->m_range)){
+	//		//pursue target
+	//		Vector2 distance = playerPos - GetPosition();
+	//		m_facing = distance.GetNormalized();
+	//		if (distance.GetLengthSquared() > 4){
+	//			m_moving = true;
+	//			Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+	//		} else {
+	//			m_moving = false;
+	//		}
+	//		StartFiringArrow();
+	//	} else {
+	//		Wander(deltaSeconds);
+	//	}
+	//	//m_facing = Vector2::MakeDirectionAtDegrees(m_rotationDegrees).GetNormalized() * .3f;
+	//}
 }
 void Actor::Wander(float deltaSeconds)
 {
@@ -409,6 +525,72 @@ void Actor::Wander(float deltaSeconds)
 		//m_facing = Vector2::MakeDirectionAtDegrees(GetRandomFloatInRange(-180.f,180.f));
 		m_facing = m_facing - (2 * m_facing);
 		m_timeLastUpdatedDirection = m_ageInSeconds;
+	}
+}
+
+void Actor::UpdateBehavior()
+{
+	if (m_definition->m_isAggressive){
+		UpdateAttackTarget();
+		if (m_attackTarget != nullptr){
+			m_currentBehavior = BEHAVIOR_ATTACK;
+		} else {
+			m_currentBehavior = m_defaultBehavior;
+		}
+	} else {
+		m_currentBehavior = m_defaultBehavior;
+	}
+}
+
+void Actor::FollowPlayer(float deltaSeconds)
+{
+
+	if (m_followTarget != nullptr){
+		Vector2 distance = m_followTarget->GetPosition() - GetPosition();
+		m_facing = distance.GetNormalized();
+		if (distance.GetLengthSquared() > 4){
+			m_moving = true;
+			Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+		} else {
+			m_moving = false;
+		}
+	}
+}
+
+void Actor::AttackEnemyActor(float deltaSeconds)
+{
+	if (m_attackTarget != nullptr){
+		Vector2 distance = m_attackTarget->GetPosition() - GetPosition();
+		m_facing = distance.GetNormalized();
+		if (distance.GetLengthSquared() > 4){
+			m_moving = true;
+			Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+		} else {
+			m_moving = false;
+		}
+		StartFiringArrow();
+	}
+}
+
+void Actor::UpdateAttackTarget()
+{
+	//if it has been long enough since your last update, loop through all actors on the map and find closest enemy
+	if (g_theGame->m_gameClock->GetCurrentSeconds() > m_lastFoundTarget + m_targetUpdateRate){
+		m_lastFoundTarget = g_theGame->m_gameClock->GetCurrentSeconds();
+		Actor* closestEnemy  = nullptr;
+		float minDistance = 100000;
+		for (Actor* actor : m_map->m_allActors){
+			if (actor->m_faction != m_faction){
+				if (m_map->HasLineOfSight(GetPosition(), actor->GetPosition(), m_definition->m_range)){
+					float distToActor = GetDistance(actor->GetPosition(), GetPosition());
+					if (distToActor < m_definition->m_range && distToActor < minDistance ){
+						closestEnemy = actor;
+						minDistance = distToActor;
+					}
+				}
+			}
+		}
+		m_attackTarget = closestEnemy;
 	}
 }
 

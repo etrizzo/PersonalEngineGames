@@ -135,6 +135,7 @@
       </RoomsAndPaths>
       <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
       <SpawnActor type="Villager" iterations="3~5" />
+      <SpawnActor type="Ally" />
     </GenerationSteps>
   </MapDefinition>
 
@@ -158,6 +159,7 @@
       </RoomsAndPaths>
       <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
       <SpawnActor type="Villager" iterations="3~5" />
+      <SpawnActor type="Ally" />
     </GenerationSteps>
   </MapDefinition>
 

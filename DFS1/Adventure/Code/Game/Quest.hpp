@@ -11,10 +11,12 @@ class Quest{
 public:
 	Quest(QuestDefinition* def, Adventure* currentAdventure);
 
-	bool CheckIfComplete();		//updates all victory conditions
+	bool UpdateAndCheckIfComplete();		//updates all victory conditions
+	bool IsComplete() const { return m_isComplete; };
 	void CompleteQuest();
 	std::string GetText();
 	void SpeakToGiver();
+	bool IsMainQuest() const;
 
 	std::vector<VictoryCondition*> m_conditions; 
 	bool m_isComplete;

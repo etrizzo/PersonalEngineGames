@@ -64,6 +64,16 @@ enum STAT_ID{
 	NUM_STAT_IDS
 };
 
+enum eAIBehavior{
+	BEHAVIOR_NONE,
+	BEHAVIOR_WANDER,
+	BEHAVIOR_ATTACK,
+	BEHAVIOR_FOLLOW,
+	NUM_BEHAVIORS
+};
+
+
+eAIBehavior GetBehaviorFromString(std::string behavior);
 
 class Renderer;
 class InputSystem;

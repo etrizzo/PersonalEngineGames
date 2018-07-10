@@ -208,6 +208,13 @@ void Map::CheckEntityInteractions()
 				}
 			}
 		}
+		
+		if (DoDiscsOverlap(portal->m_physicsDisc, g_theGame->m_player->m_physicsDisc)){
+			//if (portal->m_physicsDisc.IsPointInside(actor->m_position)){				//need to fix how portals reset to do center teleport. 
+			if (portal->m_isReadyToTeleport && portal->IsSameFaction( g_theGame->m_player)){
+				portal->Teleport( g_theGame->m_player);
+			}
+		}
 	}
 
 
@@ -752,15 +759,17 @@ AABB2 Map::GetCameraBounds() const
 	return g_theGame->m_camera->GetBounds();
 }
 
-Player * Map::SpawnNewPlayer(Vector2 spawnPosition)
+Actor * Map::SpawnNewPlayer(Vector2 spawnPosition)
 {
 
 	ActorDefinition* actorDef = ActorDefinition::GetActorDefinition("Player");
 	//spawnPosition = Vector2(5.f,5.f);
-	Player* newPlayer = new Player(actorDef, spawnPosition, this);
+	//Player* newPlayer = new Player(actorDef, spawnPosition, this);
+	Actor* newPlayer = new Actor(actorDef, this, spawnPosition);
+	newPlayer->m_isPlayer = true;
 	//m_allEntities.push_back((Entity*) newPlayer);
 	//m_allActors.push_back( (Actor*) newPlayer);
-	m_player = newPlayer;
+	//m_player = newPlayer;
 	m_scene->AddRenderable(newPlayer->m_renderable);
 	return newPlayer;
 }

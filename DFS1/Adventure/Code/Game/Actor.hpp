@@ -9,6 +9,7 @@ class Item;
 class Quest;
 
 
+
 class Actor: public Entity{
 public:
 	Actor(){};
@@ -17,6 +18,8 @@ public:
 
 	void Update(float deltaSeconds);
 	void Render();
+	void HandleInput();
+	void RenderStatsInBox(AABB2 statsBox, RGBA tint = RGBA::WHITE);
 	std::string GetAnimName();
 
 	void UpdateRenderable() override;
@@ -26,11 +29,18 @@ public:
 	void SetPosition(Vector2 newPos, Map* newMap = nullptr) override;
 	void EnterTile(Tile* tile) override;
 
+	void SetFollowTarget(Actor* actorToFollow);
+
 	void Speak();
+	void SpeakToOtherActor();
 
 	virtual void TakeDamage(int dmg);
 
 	void EquipOrUnequipItem(Item* itemToEquip);
+
+	bool m_isPlayer = false;
+	bool m_godMode = false;
+	float m_speakRadius = 1.f;
 
 	ActorDefinition* m_definition;
 	float m_timeLastUpdatedDirection;
@@ -41,6 +51,14 @@ public:
 	Stats m_stats;
 	Stats m_baseStats;
 	bool m_changedClothes;
+	eAIBehavior m_defaultBehavior = BEHAVIOR_WANDER;
+	eAIBehavior m_currentBehavior = BEHAVIOR_WANDER;
+
+	Actor* m_followTarget = nullptr;
+	Actor* m_attackTarget = nullptr;
+	float m_lastFoundTarget = 0.f;
+	float m_targetUpdateRate = 3.f;
+
 
 	DialogueSet* m_dialogue;
 	Quest* m_questGiven = nullptr;
@@ -61,6 +79,12 @@ protected:
 	void UpdateWithController(float deltaSeconds);
 	void RunSimpleAI(float deltaSeconds);
 	void Wander(float deltaSeconds);
+	void UpdateBehavior();
+	void FollowPlayer(float deltaSeconds);
+	void AttackEnemyActor(float deltaSeconds);	//attacks the closest enemy not of your faction
+
+	//finds closest enemy actor every 3 seconds
+	void UpdateAttackTarget();
 
 	void RenderDialogue();
 

@@ -1,6 +1,7 @@
 <Quests>
-	<Quest name="KillGoblins" mainQuest="true" giverType="Villager" sequential="true" text = "Goblin Hunting">
-		<Reward type="giveItem" item="Greatbow" />
+	<Quest name="KillGoblins" mainQuest="false" giverType="Ally" sequential="true" text = "Goblin Hunting">
+		<!--<Reward type="giveItem" item="Greatbow" /> -->
+		<Reward type="gainAlly" />
 		<Steps>
 			<SpeakToActor actorToSpeakTo="giver"/>
 			<KillActor actorToKill="Goblin" numToKill="2~4" />
@@ -9,7 +10,7 @@
 		</Steps>
 	</Quest>
 
-	<Quest name="KillBalrog" mainQuest="false" giverType="None" sequential="false" text = "Kill the Balrog">
+	<Quest name="KillBalrog" mainQuest="true" giverType="None" sequential="false" text = "Kill the Balrog">
 		<Reward type="giveStats" statStrength="5" />
 		<Steps>
 			<KillActor actorToKill="Balrog" numToKill="1" />

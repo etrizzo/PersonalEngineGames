@@ -7,6 +7,9 @@
 class Item;
 class ClothingSetDefinition;
 
+
+
+
 class ActorDefinition: public EntityDefinition{
 public:
 	ActorDefinition(tinyxml2::XMLElement* actorElement);
@@ -17,6 +20,10 @@ public:
 	Stats m_minStats;
 	Stats m_maxStats;
 	ClothingSetDefinition* m_clothingSetDef;
+
+	eAIBehavior m_defaultBehavior;
+
+	bool m_isAggressive = false;
 
 
 	static std::map< std::string, ActorDefinition* >		s_definitions;

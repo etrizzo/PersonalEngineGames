@@ -101,7 +101,7 @@ public:
 	RaycastResult2D Map::Raycast(const Vector2& startPos, const Vector2& direction, float maxDistance) ;
 	AABB2 GetCameraBounds() const;
 
-	Player* SpawnNewPlayer(Vector2 spawnPosition);
+	Actor* SpawnNewPlayer(Vector2 spawnPosition);
 	Actor* SpawnNewActor(std::string actorName, Vector2 spawnPosition, float spawnRotation = 0.f);
 	Actor* SpawnNewActor(ActorDefinition* actorDef, Vector2 spawnPosition, float spawnRotation = 0.f, int difficulty = 0);
 	Projectile* SpawnNewProjectile(std::string projectileName, Vector2 spawnPosition, float spawnRotation, std::string faction, int bonusStrength);
@@ -149,7 +149,7 @@ public:
 	eAreaType m_maskType = AREA_TYPE_RECTANGLE;
 	AreaMask* m_generationMask;	//feels weird
 	AreaMask* m_fullMap;
-	Player* m_player = nullptr;
+	//Player* m_player = nullptr;
 
 private:
 	void SetCamera();

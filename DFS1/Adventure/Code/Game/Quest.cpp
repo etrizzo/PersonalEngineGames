@@ -20,30 +20,36 @@ Quest::Quest(QuestDefinition * def, Adventure * currentAdventure)
 	}
 }
 
-bool Quest::CheckIfComplete()
+bool Quest::UpdateAndCheckIfComplete()
 {
-	bool allComplete = true;
-	for (VictoryCondition* condition : m_conditions){
-		if (!condition->m_complete){		//if the condition has not already been completed
-			if (!condition->CheckIfComplete()){		//updates and checks for completion
-				allComplete = false;
-			} else {
-				if (m_definition->m_isSequential){
-					TODO("Unlock next step in quest if the quest is sequential")
+	if (!m_isComplete){
+		bool allComplete = true;
+		for (VictoryCondition* condition : m_conditions){
+			if (!condition->m_complete){		//if the condition has not already been completed
+				if (!condition->CheckIfComplete()){		//updates and checks for completion
+					allComplete = false;
+				} else {
+					if (m_definition->m_isSequential){
+						TODO("Unlock next step in quest if the quest is sequential")
+					}
 				}
 			}
 		}
+		if (allComplete){
+			CompleteQuest();
+		}
+		return allComplete;
 	}
-	if (allComplete){
-		CompleteQuest();
-	}
-	return allComplete;
+	return m_isComplete;
 }
 
 void Quest::CompleteQuest()
 {
 	m_isComplete = true;
-	m_definition->m_questReward->GiveReward();
+	for (VictoryCondition* condition : m_conditions){
+		condition->m_complete = true;
+	}
+	m_definition->m_questReward->GiveReward(this);
 }
 
 std::string Quest::GetText()
@@ -60,4 +66,9 @@ void Quest::SpeakToGiver()
 			}
 		}
 	}
+}
+
+bool Quest::IsMainQuest() const
+{
+	return m_definition->m_isMainQuest;
 }

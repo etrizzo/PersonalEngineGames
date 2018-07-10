@@ -21,6 +21,7 @@ public:
 	virtual bool CheckIfComplete()  = 0;
 	virtual std::string GetText() = 0;
 	virtual bool SpeakToGiver() { return false; };		//possibility to update the condition on speaking to actor
+	bool IsComplete() const { return m_complete; };
 	Adventure* m_currentAdventure = nullptr;
 	Quest* m_quest;
 

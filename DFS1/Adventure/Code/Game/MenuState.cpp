@@ -70,13 +70,18 @@ void MenuState_Paused::RenderContent()
 	iconBox.TrimToSquare();
 	iconBox.AddPaddingToSides(-.05f,-.05f);
 	float indent = lineHeight;
+	RGBA defaultQuestColor = RGBA::WHITE;
+	RGBA mainQuestColor = RGBA::YELLOW;
 
 	Texture* buttonTexture = g_theGame->m_miscSpriteSheet->GetTexture();
 	for (Quest* quest: m_pauseState->m_encounterGameState->m_currentAdventure->m_quests){
 		RGBA tint = RGBA::WHITE;
+		if (quest->IsMainQuest()){
+			tint = mainQuestColor;
+		}
 		//draw quest title
-		if (quest->CheckIfComplete()){
-			tint = RGBA(200,200,200, 200);
+		if (quest->IsComplete()){
+			tint = tint.GetColorWithAlpha(164);
 			AABB2 texCoords = g_theGame->m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0));
 			g_theRenderer->DrawTexturedAABB2(iconBox, *buttonTexture, texCoords.mins, texCoords.maxs , tint);
 		} else {
@@ -91,9 +96,12 @@ void MenuState_Paused::RenderContent()
 		iconBox.Translate(indent, -lineHeight);
 
 		for (VictoryCondition* condition : quest->m_conditions){
-			tint = RGBA::WHITE;
-			if (condition->CheckIfComplete()){
-				tint = RGBA(200,200,200, 200);
+			RGBA tint = RGBA::WHITE;
+			if (quest->IsMainQuest()){
+				tint = mainQuestColor;
+			}
+			if (condition->IsComplete()){
+				tint = tint.GetColorWithAlpha(164);
 				AABB2 texCoords = g_theGame->m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0));
 				g_theRenderer->DrawTexturedAABB2(iconBox, *buttonTexture, texCoords.mins, texCoords.maxs , tint);
 			} else {

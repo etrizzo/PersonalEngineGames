@@ -4,6 +4,7 @@
 #include "Game/VictoryCondition.hpp"
 #include "Game/Game.hpp"
 #include "Game/Player.hpp"
+#include "Game/Actor.hpp"
 #include "Game/Item.hpp"
 #include "Game/Quest.hpp"
 
@@ -24,6 +25,8 @@ Adventure::~Adventure()
 	for (Quest* q : m_quests){
 		delete(q);
 	}
+
+	g_theGame->m_player->m_map = nullptr;
 
 }
 
@@ -129,8 +132,11 @@ void Adventure::CheckForVictory()
 	if (!m_hasWon){
 		bool finishedAllQuests = true;
 		for(Quest* quest : m_quests){
-			if (!quest->CheckIfComplete()){
-				finishedAllQuests = false;
+			//Check (and update) each quest
+			if (!quest->UpdateAndCheckIfComplete()){
+				if (quest->IsMainQuest()){		//if you have not completed a main quest, you are not done yet
+					finishedAllQuests = false;
+				}
 			}
 		}
 		m_hasWon = finishedAllQuests;
@@ -157,10 +163,10 @@ void Adventure::DebugCompleteQuest(int index)
 	}
 }
 
-Player * Adventure::SpawnPlayer()
+Actor * Adventure::SpawnPlayer()
 {
 	Tile spawnTile = m_startingMap->GetSpawnTileOfType(m_definition->m_startTileDef);
-	Player* newPlayer = m_currentMap->SpawnNewPlayer(spawnTile.GetCenter());
+	Actor* newPlayer = m_currentMap->SpawnNewPlayer(spawnTile.GetCenter());
 	return newPlayer;
 }
 

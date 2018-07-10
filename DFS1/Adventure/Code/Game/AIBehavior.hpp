@@ -21,7 +21,7 @@ protected:
 	Actor* m_actor = nullptr;
 };
 
-//WIP
+////WIP
 //class AIBehavior_Patrol : public AIBehavior{
 //public:
 //	AIBehavior_Patrol(const tinyxml2::XMLElement& behaviorElement);
@@ -32,6 +32,6 @@ protected:
 //	float CalcUtility();
 //
 //	Tile* m_spawnTile = nullptr;
-//	Tile* m_patrolToTile = nullptr
+//	Tile* m_patrolToTile = nullptr;
 //
 //};

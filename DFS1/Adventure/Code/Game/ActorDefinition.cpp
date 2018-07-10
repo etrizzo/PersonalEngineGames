@@ -31,6 +31,11 @@ ActorDefinition::ActorDefinition(tinyxml2::XMLElement * actorElement): EntityDef
 	m_layerTextures = std::vector<Texture*>();
 	m_layerTextures.resize(NUM_RENDER_SLOTS);
 	m_startingFaction = ParseXmlAttribute(*actorElement, "faction", "evil");
+	m_isAggressive = ParseXmlAttribute(*actorElement, "aggressive", false);
+
+	std::string behavior = ParseXmlAttribute(*actorElement, "defaultBehavior", "Wander");
+	m_defaultBehavior = GetBehaviorFromString(behavior);
+
 	ParseStats(actorElement->FirstChildElement("Stats"));			//maybe should be in entity? Will apply to actors, projectiles, and items, most likely
 	ParseLayersElement(actorElement->FirstChildElement("Layers"));
 	tinyxml2::XMLElement* clothingElement = actorElement->FirstChildElement("Clothing");

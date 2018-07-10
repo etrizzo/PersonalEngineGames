@@ -15,7 +15,7 @@
     <Clothing set="Player" />
   </ActorDefinition>
 
-  <ActorDefinition name="Goblin" faction="evil">
+  <ActorDefinition name="Goblin" faction="evil" aggressive="true">
     <Size physicsRadius=".25" drawRadius="1.0" aspect=".8" pivot="0.5,0.25"/>
     <Movement>
       <Walk speed="1.0"/>
@@ -27,7 +27,7 @@
   </ActorDefinition>
 
 
-  <ActorDefinition name="Balrog" faction="evil">
+  <ActorDefinition name="Balrog" faction="evil" aggressive="true">
     <Size physicsRadius=".25" drawRadius="1.0" aspect=".8" pivot="0.5,0.25"/>
     <Movement>
       <Walk speed="1.0"/>
@@ -40,7 +40,7 @@
   </ActorDefinition>
 
 
-  <ActorDefinition name="Villager" faction="good">
+  <ActorDefinition name="Villager" faction="good" aggressive="false">
     <Size physicsRadius=".25" drawRadius="1.0" aspect=".8" pivot="0.5,0.25"/>
     <Movement>
       <Walk speed="2.0"/>
@@ -52,6 +52,22 @@
     <Clothing set="Villager" />
     <Dialogues>
       <Dialogue content="Hello world!" />
+      <Dialogue content="How are you?" />
+    </Dialogues>
+  </ActorDefinition>
+
+   <ActorDefinition name="Ally" faction="good" aggressive="false" defaultBehavior="None">
+    <Size physicsRadius=".25" drawRadius="1.0" aspect=".8" pivot="0.5,0.25"/>
+    <Movement>
+      <Walk speed="2.0"/>
+      <Swim speed ="1.0"/>
+    </Movement>
+    <Stats baseMovement="1" baseStrength="1~2" baseDefense="0" />
+    <Health max="100" start="100"/>
+    <SpriteAnimSet name = "humanoid" />
+    <Clothing set="Villager" />
+    <Dialogues>
+      <Dialogue content="I'm an ally!" />
       <Dialogue content="How are you?" />
     </Dialogues>
   </ActorDefinition>

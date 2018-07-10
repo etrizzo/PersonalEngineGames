@@ -5,6 +5,7 @@ class AdventureDefinition;
 class Map;
 class VictoryCondition;
 class Player;
+class Actor;
 class Quest;
 
 class Adventure{
@@ -26,7 +27,7 @@ public:
 	void DebugWinAdventure();
 	void DebugCompleteQuest(int index);
 
-	Player* SpawnPlayer();
+	Actor* SpawnPlayer();
 
 	void SetCurrentMap(Map* newMap);
 	void MoveToMapIndex(int index);

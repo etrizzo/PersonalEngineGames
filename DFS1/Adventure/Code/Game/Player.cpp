@@ -173,7 +173,7 @@ void Player::Respawn()
 
 std::string Player::GetAnimName()
 {
-	XboxController* controller = g_theInput->GetController(0);
+	//XboxController* controller = g_theInput->GetController(0);
 	Vector2 dir = m_facing.GetNormalized();
 	std::string direction = "South";
 	if (DotProduct(dir, DIRECTION_NORTH) >= .75f){
