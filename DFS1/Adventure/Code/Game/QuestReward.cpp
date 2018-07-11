@@ -5,6 +5,7 @@
 #include "Game/Game.hpp"
 #include "Game/Stats.hpp"
 #include "Game/Quest.hpp"
+#include "Game/Party.hpp"
 
 QuestReward * QuestReward::CreateQuestReward(const tinyxml2::XMLElement * rewardElement )
 {
@@ -32,7 +33,7 @@ void QuestReward_Item::GiveReward(Quest* quest)
 {
 	UNUSED(quest);
 	Item* itemToAdd = new Item(m_itemToGive, nullptr, Vector2::ZERO);
-	g_theGame->m_player->AddItemToInventory(itemToAdd);
+	g_theGame->m_party->AddItemToInventory(itemToAdd);
 }
 
 QuestReward_Stats::QuestReward_Stats(const tinyxml2::XMLElement * questRewardElement)
@@ -50,8 +51,8 @@ QuestReward_Stats::QuestReward_Stats(const tinyxml2::XMLElement * questRewardEle
 void QuestReward_Stats::GiveReward(Quest* quest)
 {
 	UNUSED(quest);
-	g_theGame->m_player->m_stats.Add(*m_statsToGive);
-	g_theGame->m_player->m_baseStats.Add(*m_statsToGive);
+	g_theGame->m_party->GetPlayerCharacter()->m_stats.Add(*m_statsToGive);
+	g_theGame->m_party->GetPlayerCharacter()->m_baseStats.Add(*m_statsToGive);
 }
 
 QuestReward_Ally::QuestReward_Ally(const tinyxml2::XMLElement * questRewardElement)
@@ -62,6 +63,7 @@ QuestReward_Ally::QuestReward_Ally(const tinyxml2::XMLElement * questRewardEleme
 void QuestReward_Ally::GiveReward(Quest* quest)
 {
 	if (quest != nullptr){
-		quest->m_questGiver->SetFollowTarget(g_theGame->m_player);
+		g_theGame->m_party->AddActorToParty(quest->m_questGiver);
+		//quest->m_questGiver->SetFollowTarget(g_theGame->m_party->GetPlayerCharacter());
 	}
 }

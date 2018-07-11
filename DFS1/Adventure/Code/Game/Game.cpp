@@ -17,7 +17,7 @@
 #include "Game/QuestDefinition.hpp"
 
 #include "Game/Map.hpp"
-#include "Game/Player.hpp"
+#include "Game/Party.hpp"
 #include <map>
 
 //SpriteAnimSetDef* Game::s_humanoidAnimSetDef;
@@ -25,7 +25,7 @@
 Game::~Game()
 {
 	//delete m_currentAdventure;
-	delete m_player;
+	delete m_party;
 	delete g_tileSpriteSheet;
 	delete m_currentState;
 
@@ -90,12 +90,14 @@ Game::Game()
 	m_debugRenderSystem->Startup(m_camera);
 	m_debugRenderSystem->ToggleInfo();
 	m_debugRenderSystem->ToggleScreenGrid();
+
+	m_party =  new Party();
 }
 
 Vector2 Game::GetPlayerPosition() const
 {
-	if (m_player != nullptr){
-		return m_player->GetPosition();
+	if (m_party != nullptr){
+		return m_party->GetPlayerCharacter()->GetPosition();
 	}
 	return Vector2::ZERO;
 }
@@ -303,7 +305,7 @@ void Game::DebugSetDifficulty(int difficulty)
 
 void Game::DebugSetPlayerSpeed(int newSpeed)
 {
-	g_theGame->m_player->m_stats.SetStat(STAT_MOVEMENT, newSpeed);
+	g_theGame->m_party->GetPlayerCharacter()->m_stats.SetStat(STAT_MOVEMENT, newSpeed);
 }
 
 void Game::SetCurrentMap(Map * newMap)

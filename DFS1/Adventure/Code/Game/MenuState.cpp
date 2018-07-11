@@ -8,6 +8,7 @@
 #include "Game/VictoryCondition.hpp"
 #include "Game/Adventure.hpp"
 #include "Game/Quest.hpp"
+#include "Game/Party.hpp"
 
 MenuState::MenuState()
 {
@@ -146,8 +147,8 @@ MenuState_Inventory::MenuState_Inventory(GameState_Paused * pauseState, AABB2 bo
 	//AABB2 unequippedBox = AABB2(m_bounds.mins + Vector2((m_screenWidth* .5f) + .5f,.5f), m_bounds.maxs - Vector2(.5f,2.f));
 	AABB2 unequippedBox = m_bounds.GetPercentageBox(.55f, .1f, .95f, .8f);
 	m_menu = new Menu(unequippedBox);
-	for (unsigned int i = 0; i < g_theGame->m_player->m_inventory.size(); i++){
-		m_menu->AddOption(g_theGame->m_player->m_inventory[i]->GetName().c_str(), i);
+	for (unsigned int i = 0; i < g_theGame->m_party->m_inventory.size(); i++){
+		m_menu->AddOption(g_theGame->m_party->m_inventory[i]->GetName().c_str(), i);
 	}
 }
 
@@ -155,7 +156,7 @@ void MenuState_Inventory::Update(float ds)
 {
 	int selection = m_menu->GetFrameSelection();
 	if (selection != -1){
-		g_theGame->m_player->EquipOrUnequipItem(g_theGame->m_player->m_inventory[selection]);
+		g_theGame->m_party->EquipOrUnequipItem(g_theGame->m_party->m_inventory[selection]);
 	}
 }
 
@@ -180,8 +181,8 @@ void MenuState_Inventory::RenderContent()
 
 	AABB2 drawItemBox = AABB2(unequippedBox.mins.x, unequippedBox.maxs.y - textHeight.y, unequippedBox.maxs.x, unequippedBox.maxs.y);
 	drawItemBox.Translate(0.f, fontSize * -2.f);
-	for (unsigned int i = 0; i < g_theGame->m_player->m_inventory.size(); i++){
-		Item* item = g_theGame->m_player->m_inventory[i];
+	for (unsigned int i = 0; i < g_theGame->m_party->m_inventory.size(); i++){
+		Item* item = g_theGame->m_party->m_inventory[i];
 		if (i == m_menu->m_currentIndex){
 			item->RenderInMenu(drawItemBox, true);
 		} else {
@@ -204,7 +205,7 @@ void MenuState_Inventory::RenderContent()
 	float eqItemHeight = equippedItemBox.GetHeight();
 	AABB2 itemIconBox = AABB2(equippedItemBox.maxs.x, equippedItemBox.mins.y, equippedItemBox.maxs.x + eqItemHeight, equippedItemBox.maxs.y);
 	for ( int i = 0; i < NUM_EQUIP_SLOTS; i++){
-		Item* item = g_theGame->m_player->m_equippedItems[i];
+		Item* item = g_theGame->m_party->GetPlayerCharacter()->m_equippedItems[i];
 		std::string drawText = Actor::GetEquipSlotByID((EQUIPMENT_SLOT) i) + ": ";
 		std::string itemText = "NONE";
 		Texture* buttonTexture = g_theGame->m_miscSpriteSheet->GetTexture();
@@ -233,12 +234,12 @@ void MenuState_Inventory::RenderContent()
 	equippedBox.AddPaddingToSides(0.f, eqHeight * -.2f);
 	equippedBox.Translate(0.f, eqHeight * -.2f);
 	g_theRenderer->DrawAABB2Outline(equippedBox, RGBA::YELLOW);
-	g_theGame->m_player->RenderStatsInBox(equippedBox.GetPercentageBox(0.f,0.4f, 1.f, 1.f));
+	g_theGame->m_party->GetPlayerCharacter()->RenderStatsInBox(equippedBox.GetPercentageBox(0.f,0.4f, 1.f, 1.f));
 
 
 	////------ Draw selected item stats box -------//
 
-	Item* selectedItem = g_theGame->m_player->m_inventory[m_menu->m_currentIndex];
+	Item* selectedItem = g_theGame->m_party->m_inventory[m_menu->m_currentIndex];
 	//AABB2 statsBox = AABB2(m_bounds.mins + Vector2(.5f,  .5f), m_bounds.maxs - Vector2((m_screenWidth* .5f) + .5f,2.f + (m_screenWidth * .5f)));
 	AABB2 statsBox = equippedBox.GetPercentageBox(0.f,0.f, 1.f, .4f);
 	g_theRenderer->DrawAABB2(statsBox, RGBA(64,64,64,200));

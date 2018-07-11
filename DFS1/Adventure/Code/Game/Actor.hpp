@@ -27,6 +27,7 @@ public:
 	void RunWorldPhysics() override;
 	void RunEntityPhysics() override;
 	void SetPosition(Vector2 newPos, Map* newMap = nullptr) override;
+	void CheckTargetStatus();
 	void EnterTile(Tile* tile) override;
 
 	void SetFollowTarget(Actor* actorToFollow);

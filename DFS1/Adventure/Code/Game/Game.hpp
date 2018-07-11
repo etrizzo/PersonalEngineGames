@@ -6,6 +6,7 @@
 class Entity;
 class Map;
 class Actor;
+class Party;
 class Adventure;
 class DebugRenderSystem;
 
@@ -29,13 +30,12 @@ public:
 	Camera* m_camera	= nullptr;		//might change 
 	Camera* m_uiCamera	= nullptr;		//stays the same from encounter to encounter
 	//std::map<std::string, Map*> m_mapsByName;
-	Actor* m_player;
+	//Actor* m_player;
+	Party* m_party = nullptr;
 
 	GameState* m_currentState = nullptr;
 	GameState* m_transitionToState = nullptr;
 
-	//GAME_STATE m_currentState = STATE_ATTRACT;
-	//GAME_STATE m_transitionToState = NO_STATE;
 	float m_timeEnteredState;
 	bool m_isFinishedTransitioning;
 	float m_transitionLength;

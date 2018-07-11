@@ -286,6 +286,16 @@ void Actor::SetPosition(Vector2 newPos, Map * newMap)
 	}
 }
 
+void Actor::CheckTargetStatus()
+{
+	if (m_followTarget != nullptr && m_followTarget->m_aboutToBeDeleted){
+		m_followTarget = nullptr;
+	}
+	if (m_attackTarget != nullptr && m_attackTarget->m_aboutToBeDeleted){
+		m_attackTarget = nullptr;
+	}
+}
+
 void Actor::EnterTile(Tile * tile)
 {
 	Entity::EnterTile(tile);
@@ -474,12 +484,15 @@ void Actor::RunSimpleAI(float deltaSeconds)
 	switch (m_currentBehavior){
 	case (BEHAVIOR_WANDER):
 		Wander(deltaSeconds);
+		g_theGame->m_debugRenderSystem->MakeDebugRender3DText("Wander", 0.f, Vector3(GetPosition()), .1f);
 		break;
 	case (BEHAVIOR_FOLLOW):
 		FollowPlayer(deltaSeconds);
+		g_theGame->m_debugRenderSystem->MakeDebugRender3DText("Follow", 0.f, Vector3(GetPosition()), .1f);
 		break;
 	case (BEHAVIOR_ATTACK):
 		AttackEnemyActor(deltaSeconds);
+		g_theGame->m_debugRenderSystem->MakeDebugRender3DText("Attack", 0.f, Vector3(GetPosition()), .1f);
 		break;
 	}
 
@@ -569,6 +582,9 @@ void Actor::AttackEnemyActor(float deltaSeconds)
 			m_moving = false;
 		}
 		StartFiringArrow();
+		if (m_attackTarget->m_aboutToBeDeleted){
+			m_attackTarget = nullptr;		//if the enemy was killed this frame, delete it
+		}
 	}
 }
 

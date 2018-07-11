@@ -75,3 +75,10 @@ void AddProfilerFrameAsFlatToConsole();
 void PrintTree(ProfilerReportEntry* tree, int depth = 0);
 
 std::string FormatProfilerReport(ProfilerReportEntry* entry, int parentCount = 0);
+
+
+void ThreadTestWork( void* ) ;
+
+void CommandConsoleNonThreadedTest( Command& cmd ) ;
+
+void CommandConsoleThreadedTest( Command& cmd  ) ;

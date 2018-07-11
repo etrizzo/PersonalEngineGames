@@ -7,6 +7,7 @@
 #include "Game/Actor.hpp"
 #include "Game/Item.hpp"
 #include "Game/Quest.hpp"
+#include "Game/Party.hpp"
 
 Adventure::Adventure(AdventureDefinition * adventureDef, int difficulty)
 {
@@ -26,13 +27,13 @@ Adventure::~Adventure()
 		delete(q);
 	}
 
-	g_theGame->m_player->m_map = nullptr;
+	g_theGame->m_party->MovePartyToMap(nullptr);
 
 }
 
 void Adventure::Clear()
 {
-	g_theGame->m_player->m_map = nullptr;
+	g_theGame->m_party->MovePartyToMap(nullptr);
 	for (Map* m : m_mapsByIndex){
 		delete(m);
 	}
@@ -61,11 +62,12 @@ void Adventure::Begin()
 		m_quests.push_back(new Quest(q, this));		//i hate this
 	}
 
-	if (g_theGame->m_player == nullptr){
-		g_theGame->m_player = SpawnPlayer();
+	if (g_theGame->m_party->IsEmpty()){
+		g_theGame->m_party->AddActorAndSetAsPlayer(SpawnPlayer());
+		g_theGame->m_party->SetMap(m_currentMap);
 	} else {
 		Tile spawnTile = m_startingMap->GetRandomTileOfType(m_definition->m_startTileDef);
-		g_theGame->m_player->SetPosition(spawnTile.GetCenter(), m_currentMap);
+		g_theGame->m_party->MovePartyToMap( m_currentMap, spawnTile.GetCenter());
 	}
 	//if(g_theGame->m_transitionToState != STATE_MAPMODE){
 	//	g_theGame->m_player = SpawnPlayer();
@@ -78,6 +80,7 @@ void Adventure::Update(float deltaSeconds)
 {
 	
 	m_currentMap->Update(deltaSeconds);
+	g_theGame->m_party->Update(deltaSeconds);
 	CheckForVictory();
 	m_currentMap->RemoveDoomedEntities();
 }
@@ -104,10 +107,10 @@ void Adventure::RenderUI()
 		Vector2 boxSize = Vector2(screenWidth * .3f, screenWidth * .2f);
 		AABB2 statBox = AABB2(cameraBounds.mins, cameraBounds.mins + boxSize);
 		g_theRenderer->DrawAABB2(statBox, RGBA(200,200,100,200));
-		g_theGame->m_player->RenderStatsInBox(statBox, RGBA(0,0,0));
+		g_theGame->m_party->GetPlayerCharacter()->RenderStatsInBox(statBox, RGBA(0,0,0));
 
 		//currently equipped weapon - bottom right
-		Item* weapon = g_theGame->m_player->m_equippedItems[EQUIP_SLOT_WEAPON];
+		Item* weapon = g_theGame->m_party->GetPlayerCharacter()->m_equippedItems[EQUIP_SLOT_WEAPON];
 		if (weapon != nullptr){
 			AABB2 weaponBox = AABB2(cameraBounds.maxs.x - (boxSize.y * .5f), cameraBounds.mins.y, cameraBounds.maxs.x, cameraBounds.mins.y + (boxSize.y * .5f));
 			//weaponBox.AddPaddingToSides(-.05f, -.05f);
@@ -223,7 +226,7 @@ void Adventure::GoToMap(std::string mapName)
 		ConsolePrintf(RGBA::RED, ("No map called: " + mapName + ". use print_map_names to see current adventure maps").c_str());
 	} else {
 		Tile t = newMap->GetRandomBaseTile();
-		g_theGame->m_player->SetPosition(t.GetCenter(), newMap);
+		g_theGame->m_party->GetPlayerCharacter()->SetPosition(t.GetCenter(), newMap);
 	}
 }
 

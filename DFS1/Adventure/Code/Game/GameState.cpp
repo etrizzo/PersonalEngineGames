@@ -2,8 +2,9 @@
 #include "Game/Game.hpp"
 #include "Game/Adventure.hpp"
 #include "Game/AdventureDefinition.hpp"
-#include "Engine/Core/Clock.hpp"
 #include "Game/Player.hpp"
+#include "Game/Party.hpp"
+#include "Engine/Core/Clock.hpp"
 
 GameState::GameState(float transitionLength, SoundID soundtrack)
 {
@@ -174,8 +175,8 @@ void GameState_Encounter::RenderUI()
 
 void GameState_Encounter::HandleInput()
 {
-	if (g_theGame->m_player != nullptr){
-		g_theGame->m_player->HandleInput();
+	if (g_theGame->m_party != nullptr){
+		g_theGame->m_party->HandleInput();
 	}
 
 	if (g_theInput->WasKeyJustPressed(VK_F1)){
@@ -197,11 +198,7 @@ void GameState_Encounter::HandleInput()
 		g_theGame->ToggleState(g_theGame->m_fullMapMode);		//change later to open map screen
 	}
 
-	if (g_primaryController != nullptr){
-		if ((g_primaryController->WasButtonJustPressed(XBOX_A) || g_theInput->WasKeyJustPressed(VK_SPACE))){
-			g_theGame->m_player->StartFiringArrow();
-		}
-	}
+
 
 
 

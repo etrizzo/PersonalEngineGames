@@ -15,15 +15,17 @@
 #include "Game/DecorationDefinition.hpp"
 #include "Game/Adventure.hpp"
 #include "Game/DialogueSet.hpp"
+#include "Game/Party.hpp"
 
 
 
 Map::~Map()
 {
 	for (unsigned int i = 0; i < m_allEntities.size(); i++){
-		if (m_allEntities[i] != g_theGame->m_player){
-			delete m_allEntities[i];
-		}
+		delete m_allEntities[i];
+		//if (m_allEntities[i] != g_theGame->m_party->){
+		//	
+		//}
 	}
 	m_tiles.clear();
 }
@@ -151,9 +153,9 @@ void Map::UpdateEntities(float deltaSeconds)
 		}
 	}
 
-	if (g_theGame->m_player != nullptr){
-		g_theGame->m_player->Update(deltaSeconds);
-	}
+	//if (g_theGame->m_player != nullptr){
+	//	g_theGame->m_player->Update(deltaSeconds);
+	//}
 	
 
 }
@@ -178,8 +180,8 @@ void Map::RunPhysics()
 		}
 	}
 
-	if (g_theGame->m_player != nullptr){
-		g_theGame->m_player->RunCorrectivePhysics();
+	if (g_theGame->m_party != nullptr){
+		g_theGame->m_party->RunCorrectivePhysics();
 	}
 
 }
@@ -199,31 +201,31 @@ void Map::CheckEntityInteractions()
 
 	for (unsigned int portalIndex = 0; portalIndex < m_allPortals.size(); portalIndex++){
 		Portal* portal = m_allPortals[portalIndex];
-		for (unsigned int actorIndex = 0; actorIndex < m_allActors.size(); actorIndex++){
-			Actor* actor = m_allActors[actorIndex];
-			if (DoDiscsOverlap(portal->m_physicsDisc, actor->m_physicsDisc)){
-			//if (portal->m_physicsDisc.IsPointInside(actor->m_position)){				//need to fix how portals reset to do center teleport. 
-				if (portal->m_isReadyToTeleport && portal->IsSameFaction(actor)){
-					portal->Teleport(actor);
-				}
-			}
-		}
+		//for (unsigned int actorIndex = 0; actorIndex < m_allActors.size(); actorIndex++){
+		//	Actor* actor = m_allActors[actorIndex];
+		//	if (DoDiscsOverlap(portal->m_physicsDisc, actor->m_physicsDisc)){
+		//	//if (portal->m_physicsDisc.IsPointInside(actor->m_position)){				//need to fix how portals reset to do center teleport. 
+		//		if (portal->m_isReadyToTeleport && portal->IsSameFaction(actor)){
+		//			portal->Teleport(actor);
+		//		}
+		//	}
+		//}
 		
-		if (DoDiscsOverlap(portal->m_physicsDisc, g_theGame->m_player->m_physicsDisc)){
+		if (DoDiscsOverlap(portal->m_physicsDisc, g_theGame->m_party->GetPlayerCharacter()->m_physicsDisc)){
 			//if (portal->m_physicsDisc.IsPointInside(actor->m_position)){				//need to fix how portals reset to do center teleport. 
-			if (portal->m_isReadyToTeleport && portal->IsSameFaction( g_theGame->m_player)){
-				portal->Teleport( g_theGame->m_player);
+			if (portal->m_isReadyToTeleport && portal->IsSameFaction( g_theGame->m_party->GetPlayerCharacter())){
+				portal->Teleport( g_theGame->m_party);
 			}
 		}
 	}
 
 
-	if (g_theGame->m_player != nullptr){
+	if (g_theGame->m_party->GetPlayerCharacter() != nullptr){
 		for (unsigned int itemIndex = 0; itemIndex < m_allItems.size(); itemIndex++){
 			Item* item = m_allItems[itemIndex];
-			if (DoDiscsOverlap(item->m_physicsDisc, g_theGame->m_player->m_physicsDisc)){
+			if (DoDiscsOverlap(item->m_physicsDisc, g_theGame->m_party->GetPlayerCharacter()->m_physicsDisc)){
 				//Item* copyItem = new Item(*item);		//add a copy so that the one on the map can get deleted safely
-				g_theGame->m_player->AddItemToInventory(item);
+				g_theGame->m_party->AddItemToInventory(item);
 				//m_allItems[itemIndex] = nullptr;
 				item->m_aboutToBeDeleted = true;
 			}
@@ -245,6 +247,9 @@ void Map::CheckEntityInteractions()
 
 void Map::RemoveDoomedEntities()
 {
+	for (Actor* actor : m_allActors){
+		actor->CheckTargetStatus();		//voids targets if they're about to be deleted
+	}
 	for (unsigned int entityIndex = m_allEntities.size()-1; entityIndex < m_allEntities.size(); entityIndex--){
 		Entity* entity = m_allEntities.at(entityIndex);
 		if (entity == nullptr || entity->IsAboutToBeDeleted()){
@@ -763,13 +768,10 @@ Actor * Map::SpawnNewPlayer(Vector2 spawnPosition)
 {
 
 	ActorDefinition* actorDef = ActorDefinition::GetActorDefinition("Player");
-	//spawnPosition = Vector2(5.f,5.f);
-	//Player* newPlayer = new Player(actorDef, spawnPosition, this);
 	Actor* newPlayer = new Actor(actorDef, this, spawnPosition);
 	newPlayer->m_isPlayer = true;
-	//m_allEntities.push_back((Entity*) newPlayer);
-	//m_allActors.push_back( (Actor*) newPlayer);
-	//m_player = newPlayer;
+	m_allEntities.push_back(newPlayer);
+	m_allActors.push_back(newPlayer);
 	m_scene->AddRenderable(newPlayer->m_renderable);
 	return newPlayer;
 }
@@ -881,14 +883,14 @@ void Map::SetCamera()
 {
 	if (g_theGame->m_fullMapMode){
 		int ortho = max(m_dimensions.x, m_dimensions.y);
-		g_theGame->m_player->SetScale(m_dimensions.x * .05f);
+		g_theGame->m_party->GetPlayerCharacter()->SetScale(m_dimensions.x * .05f);
 		g_theGame->m_camera->SetProjectionOrtho((float) ortho + 1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
 		g_theGame->m_camera->LookAt( Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, -1.f), Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, .5f));
 	} else {
 		float viewWidth = WINDOW_ASPECT * ZOOM_FACTOR;
 		Vector2 halfDimensions = Vector2(viewWidth, ZOOM_FACTOR) * .5f;
-		Vector2 positionToCenter = g_theGame->m_player->GetPosition();
-		g_theGame->m_player->SetScale(1.f);
+		Vector2 positionToCenter = g_theGame->m_party->GetPlayerCharacter()->GetPosition();
+		g_theGame->m_party->GetPlayerCharacter()->SetScale(1.f);
 
 
 		float minX = ZOOM_FACTOR * WINDOW_ASPECT * .5f;

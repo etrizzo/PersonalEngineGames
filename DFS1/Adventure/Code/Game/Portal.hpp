@@ -2,6 +2,7 @@
 #include "Game/Entity.hpp"
 class PortalDefinition;
 class Actor;
+class Party;
 
 class Portal: public Entity{
 public:
@@ -16,6 +17,7 @@ public:
 	void RunCorrectivePhysics();
 
 	void Teleport(Actor* actor);
+	void Teleport(Party* party);
 
 	PortalDefinition* m_definition;
 	bool m_isReadyToTeleport = false;

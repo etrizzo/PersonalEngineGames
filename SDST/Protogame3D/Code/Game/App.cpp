@@ -173,6 +173,9 @@ void App::RegisterCommands()
 	CommandRegister("profiler_report", CommandPrintProfilerReport, "Prints a frame of the profiler to the console", "profiler_report <tree|flat>");
 	CommandRegister("profiler_pause", CommandProfilePause, "Pauses profiling");
 	CommandRegister("profiler_resume", CommandProfileResume, "Resumes profiling");
+
+	CommandRegister("threaded_test",CommandConsoleThreadedTest, "Runs threading test");
+	CommandRegister("nonthreaded_test", CommandConsoleNonThreadedTest, "Runs non-threaded test");
 }
 
 void App::HandleInput()
@@ -508,3 +511,30 @@ void PrintTree(ProfilerReportEntry * tree, int depth)
 }
 
 
+void ThreadTestWork(void *)
+{
+	// Open a file and output about 50MB of random numbers to it; 
+	FILE* file = nullptr;
+	fopen_s(&file, "garbage.dat", "w+");
+	if (file == nullptr) {
+		return; 
+	} 
+
+	for (unsigned int i = 0; i < 12000000; ++i) {
+		int randint = GetRandomIntLessThan(100000); 
+		fputs( std::to_string(randint).c_str(), file); 
+	}
+
+	fclose(file);
+	ConsolePrintf( "Finished ThreadTestWork" ); 
+}
+
+void CommandConsoleNonThreadedTest(Command & cmd)
+{
+	ThreadTestWork(nullptr); 
+}
+
+void CommandConsoleThreadedTest(Command & cmd)
+{
+	ThreadCreateAndDetach( ThreadTestWork, nullptr ); 
+}

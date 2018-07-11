@@ -281,6 +281,7 @@
     <ClCompile Include="Core\RGBA.cpp" />
     <ClCompile Include="Core\StopWatch.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
+    <ClCompile Include="Core\Thread.cpp" />
     <ClCompile Include="Core\Time.cpp" />
     <ClCompile Include="Core\Vertex.cpp" />
     <ClCompile Include="Core\VertexLayout.cpp" />
@@ -386,6 +387,7 @@
     <ClInclude Include="Core\RGBA.hpp" />
     <ClInclude Include="Core\StopWatch.hpp" />
     <ClInclude Include="Core\StringUtils.hpp" />
+    <ClInclude Include="Core\Thread.hpp" />
     <ClInclude Include="Core\Time.hpp" />
     <ClInclude Include="Core\Vertex.hpp" />
     <ClInclude Include="Core\VertexLayout.hpp" />

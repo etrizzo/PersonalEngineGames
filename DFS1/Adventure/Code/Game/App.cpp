@@ -3,6 +3,7 @@
 #include "Game/Adventure.hpp"
 #include "Engine/Renderer/Camera.hpp"
 #include "Game/Map.hpp"
+#include "Game/Party.hpp"
 using namespace std;
 
 App::~App()
@@ -170,9 +171,9 @@ void CommandShowStats(Command & cmd)
 void CommandToggleGodMode(Command & cmd)
 {
 	UNUSED(cmd);
-	if (g_theGame->m_player != nullptr){
-		g_theGame->m_player->m_godMode = !g_theGame->m_player->m_godMode;
-		ConsolePrintf(("God mode is: " + std::to_string(g_theGame->m_player->m_godMode)).c_str());
+	if (!g_theGame->m_party->IsEmpty()){
+		g_theGame->m_party->GetPlayerCharacter()->m_godMode = !g_theGame->m_party->GetPlayerCharacter()->m_godMode;
+		ConsolePrintf(("God mode is: " + std::to_string(g_theGame->m_party->GetPlayerCharacter()->m_godMode)).c_str());
 	} else {
 		ConsolePrintf(RGBA::RED, "No current adventure - start the game");
 	}

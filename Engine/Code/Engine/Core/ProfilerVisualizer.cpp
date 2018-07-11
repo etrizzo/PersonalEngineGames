@@ -254,3 +254,4 @@ std::string FormatProfilerReport(ProfilerReportEntry * entry, int parentCount)
 		entry->GetSelfMillisecondsAsString().c_str());
 	return fancy;
 }
+

@@ -88,6 +88,9 @@
 			<Body>
 			 <Base texture="HUMANOIDS/BODY/body_human_f_3.png" />
 			</Body>
+			<Weapons>
+				<Weapon texture="HUMANOIDS/WEAPON/recurvebow.png" />
+			</Weapons>
 		</Bodys>
 
 		<Torsos>

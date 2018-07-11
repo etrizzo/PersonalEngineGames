@@ -106,3 +106,4 @@ data/config/user.config
 **/Temporary/
 !**/ThirdParty/**/*.*
 
+SDST/Protogame3D/Run_Win32/garbage.dat

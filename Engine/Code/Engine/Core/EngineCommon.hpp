@@ -6,6 +6,7 @@
 #include "Engine/Core/Stopwatch.hpp"
 #include "Engine/Core/ProfilerReport.hpp"
 #include "Engine/Core/ProfilerVisualizer.hpp"
+#include "Engine/Core/Thread.hpp"
 
 #include "Engine/Math/AABB2.hpp"
 #include "Engine/Math/AABB3.hpp"

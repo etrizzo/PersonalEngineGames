@@ -1,7 +1,8 @@
-#include "Portal.hpp"
-#include "PortalDefinition.hpp"
-#include "Map.hpp"
-#include "Actor.hpp"
+#include "Game/Portal.hpp"
+#include "Game/PortalDefinition.hpp"
+#include "Game/Map.hpp"
+#include "Game/Actor.hpp"
+#include "Game/Party.hpp"
 
 Portal::Portal(PortalDefinition * definition, Map * entityMap, Map* destinationMap, Vector2 initialPos, Vector2 toPos, float initialRotation, bool spawnReciprocal, std::string faction)
 	:Entity((EntityDefinition*)definition, entityMap, initialPos, initialRotation)
@@ -56,4 +57,12 @@ void Portal::Teleport(Actor * actor)
 		reciprocal->m_isReadyToTeleport = false;
 	}
 	actor->SetPosition(m_toPosition, m_destinationMap);
+}
+
+void Portal::Teleport(Party * party)
+{
+	if (reciprocal != nullptr){
+		reciprocal->m_isReadyToTeleport = false;
+	}
+	party->MovePartyToMap(m_destinationMap, m_toPosition);
 }

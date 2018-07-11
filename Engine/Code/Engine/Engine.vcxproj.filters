@@ -298,6 +298,9 @@
     <ClCompile Include="Core\ProfilerVisualizer.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Thread.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -595,6 +598,9 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\ProfilerVisualizer.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Thread.hpp">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
