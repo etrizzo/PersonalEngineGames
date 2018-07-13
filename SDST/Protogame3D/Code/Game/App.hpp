@@ -80,5 +80,5 @@ std::string FormatProfilerReport(ProfilerReportEntry* entry, int parentCount = 0
 void ThreadTestWork( void* ) ;
 
 void CommandConsoleNonThreadedTest( Command& cmd ) ;
-
 void CommandConsoleThreadedTest( Command& cmd  ) ;
+void CommandLogThreadTest(Command& cmd);

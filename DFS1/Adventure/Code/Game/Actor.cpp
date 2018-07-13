@@ -403,7 +403,7 @@ void Actor::EquipOrUnequipItem(Item * itemToEquip)
 
 void Actor::StartFiringArrow()
 {
-	if (m_ageInSeconds - m_lastAttacked > 2.f){
+	if (m_isPlayer || m_ageInSeconds - m_lastAttacked > 2.f){
 		if (!m_isFiring){
 			m_isFiring = true;
 		}

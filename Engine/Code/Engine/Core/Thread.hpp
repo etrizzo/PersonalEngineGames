@@ -30,15 +30,15 @@ typedef std::thread Thread;
 static std::vector<Thread*> s_threads;
 
 // Creating
-thread_handle_t ThreadCreate( thread_cb cb, void *user_data = nullptr ); 
+Thread* ThreadCreate( thread_cb cb, void *user_data = nullptr ); 
 
 // Releasing - how we free an above resource
 // Join will wait until the thread is complete before return control to the calling thread
-void ThreadJoin( thread_handle_t th ); 
+void ThreadJoin( Thread* th ); 
 // Detach will return control immediately, and the thread will be freed automatically when complete;
-void ThreadDetach( thread_handle_t th ); 
+void ThreadDetach( Thread* th ); 
 
-Thread* GetThreadByID( thread_handle_t th );
+//Thread* GetThreadByID( Thread th );
 
 // OPTIONAL - Helpers
 // If you want to start work, but don't want to track it; 

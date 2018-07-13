@@ -301,6 +301,15 @@
     <ClCompile Include="Core\Thread.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\LogSystem.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ThreadSafeQueue.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\SpinLock.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -601,6 +610,15 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\Thread.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\LogSystem.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ThreadSafeQueue.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\SpinLock.hpp">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>

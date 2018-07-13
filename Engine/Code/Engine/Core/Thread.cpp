@@ -1,40 +1,45 @@
 #include "Thread.hpp"
 
 
-thread_handle_t ThreadCreate(thread_cb cb, void * user_data)
+Thread* ThreadCreate(thread_cb cb, void * user_data)
 {
 	Thread* t = new Thread(cb, user_data);
+	return t;
 //	thread_handle_t id = (thread_handle_t)  (t->get_id());
-	thread_handle_t handle = (thread_handle_t)  (t->native_handle());
+	/*thread_handle_t handle = (thread_handle_t)  (t->native_handle());
 	s_threads.push_back(t);
-	return handle;
+	return handle;*/
 }
 
-void ThreadJoin(thread_handle_t th)
+void ThreadJoin(Thread* th)
 {
-	Thread* thread = GetThreadByID(th);
-	if (thread != nullptr){
-		thread->join();
+	if (th != nullptr){
+		th->join();
 	}
+	//Thread* thread = GetThreadByID(th);
+	//if (thread != nullptr){
+	//	thread->join();
+	//}
 }
 
-void ThreadDetach(thread_handle_t th)
+void ThreadDetach(Thread* th)
 {
-	Thread* thread = GetThreadByID(th);
-	if (thread != nullptr){
-		thread->detach();
-	}
+	th->detach();
+	//Thread* thread = GetThreadByID(th);
+	//if (thread != nullptr){
+	//	thread->detach();
+	//}
 }
 
-Thread* GetThreadByID(thread_handle_t th)
-{
-	for(Thread* thread : s_threads){
-		if (thread->native_handle() == th){
-			return thread;
-		}
-	}
-	return nullptr;
-}
+//Thread* GetThreadByID(Thread th)
+//{
+//	for(Thread* thread : s_threads){
+//		if (thread->native_handle() == th){
+//			return thread;
+//		}
+//	}
+//	return nullptr;
+//}
 
 void ThreadCreateAndDetach(thread_cb cb, void * user_data)
 {

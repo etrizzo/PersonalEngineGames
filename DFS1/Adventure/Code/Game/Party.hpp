@@ -19,6 +19,8 @@ public:
 	void AddItemToInventory(Item* item);
 	void EquipOrUnequipItem(Item* itemToEquip);
 
+	void SwapPlayer(int direction = 1);
+
 	Actor* GetPlayerCharacter() const;
 	bool IsEmpty() const;
 

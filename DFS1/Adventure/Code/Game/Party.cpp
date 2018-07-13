@@ -32,6 +32,11 @@ void Party::HandleInput()
 			m_currentPlayer->StartFiringArrow();
 		}
 	}
+
+	if (g_theInput->WasKeyJustPressed('O')){
+		SwapPlayer(1);
+		//ConsolePrintf(std::string("Swapped to player: " + std::to_string(m_currentPlayerIndex)).c_str());
+	}
 }
 
 void Party::MovePartyToMap(Map * newMap, Vector2 playerPos)
@@ -82,6 +87,18 @@ void Party::AddItemToInventory(Item * item)
 void Party::EquipOrUnequipItem(Item * itemToEquip)
 {
 	m_currentPlayer->EquipOrUnequipItem(itemToEquip);
+}
+
+void Party::SwapPlayer(int direction)
+{
+	m_currentPlayerIndex = (m_currentPlayerIndex + direction) % m_partyMembers.size();
+	Actor* oldPlayer = m_currentPlayer;
+	m_currentPlayer = m_partyMembers[m_currentPlayerIndex];
+	m_currentPlayer->m_isPlayer = true;
+	oldPlayer->m_isPlayer = false;
+	for (Actor* actor : m_partyMembers){
+		actor->SetFollowTarget(m_currentPlayer);
+	}
 }
 
 Actor * Party::GetPlayerCharacter() const

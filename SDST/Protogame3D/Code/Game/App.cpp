@@ -8,6 +8,7 @@ using namespace std;
 App::~App()
 {
 	CommandShutdown();
+	LogSystemShutdown();
 	delete g_theGame;
 	delete g_theAudio;
 	delete g_theInput;
@@ -56,6 +57,8 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_devConsole->SetRenderer(g_theRenderer);
 
 	g_profilerVisualizer = new ProfilerVisualizer(g_theRenderer, g_theInput, UIBounds);
+
+	LogSystemStartup();
 
 	RegisterCommands();
 	CommandStartup();
@@ -176,6 +179,7 @@ void App::RegisterCommands()
 
 	CommandRegister("threaded_test",CommandConsoleThreadedTest, "Runs threading test");
 	CommandRegister("nonthreaded_test", CommandConsoleNonThreadedTest, "Runs non-threaded test");
+	CommandRegister("log_thread_test", CommandLogThreadTest, "Runs logging thread test", "log_thread_test <thread_count>");
 }
 
 void App::HandleInput()
@@ -537,4 +541,13 @@ void CommandConsoleNonThreadedTest(Command & cmd)
 void CommandConsoleThreadedTest(Command & cmd)
 {
 	ThreadCreateAndDetach( ThreadTestWork, nullptr ); 
+}
+
+void CommandLogThreadTest(Command & cmd)
+{
+	int threadCount = cmd.GetNextInt();
+	if (threadCount <= 0){
+		threadCount = 1;
+	}
+	LogTest((unsigned int) threadCount);
 }
