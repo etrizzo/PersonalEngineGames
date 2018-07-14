@@ -107,3 +107,8 @@ data/config/user.config
 !**/ThirdParty/**/*.*
 
 SDST/Protogame3D/Run_Win32/garbage.dat
+SDST/Protogame3D/Run_Win32/Logs/system_log_6_13_2018_20_9_59.txt
+SDST/Protogame3D/Run_Win32/Logs/system_log_6_13_2018_20_24_12.txt
+SDST/Protogame3D/Run_Win32/Logs/system_log_6_13_2018_20_17_47.txt
+SDST/Protogame3D/Run_Win32/Logs/system_log_6_13_2018_20_15_18.txt
+SDST/Protogame3D/Run_Win32/Logs/system_log_6_13_2018_20_12_53.txt

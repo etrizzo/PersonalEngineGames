@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------------------------------
 #include "Engine/Core/ErrorWarningAssert.hpp"
 #include "Engine/Core/StringUtils.hpp"
+#include "Engine/Core/LogSystem.hpp"
 #include <stdarg.h>
 #include <iostream>
 
@@ -55,6 +56,7 @@ void DebuggerPrintf( const char* messageFormat, ... )
 #if defined( PLATFORM_WINDOWS )
 	if( IsDebuggerAvailable() )
 	{
+		LogPrintf(messageLiteral);
 		OutputDebugStringA( messageLiteral );
 	}
 #endif

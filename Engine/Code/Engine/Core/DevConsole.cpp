@@ -5,7 +5,7 @@
 
 DevConsole::DevConsole(AABB2 screenBounds)
 {
-	m_outputLines = std::vector<OutputLine>();
+	//m_outputLines = std::vector<OutputLine>();
 	m_currentInput = std::string();
 
 	//is it safe to access g_gameConfig from windowAspect??
@@ -100,7 +100,7 @@ void DevConsole::RenderOutput()
 			if (linesDrawn >= floorf(m_maxLinesVisible)){
 				break;		//break if off the console screen
 			} 
-			OutputLine outputLine = m_outputLines[i-1];
+			OutputLine outputLine = m_outputLines.at(i-1);
 			m_renderer->DrawTextInBox2D(outputLine.text, m_outputLineBox, Vector2(0.f,0.5f), m_drawTextHeight, TEXT_DRAW_OVERRUN, outputLine.color);
 			m_outputLineBox.Translate(0.f, m_lineHeight);
 		}
@@ -133,7 +133,8 @@ bool DevConsole::IsOpen()
 
 void DevConsole::ClearConsole()
 {
-	m_outputLines = std::vector<OutputLine>();
+	//m_outputLines = ThreadSafeVector<OutputLine>();
+	m_outputLines.clear();
 }
 
 void DevConsole::ProcessInput(unsigned char key)
@@ -219,7 +220,7 @@ std::string DevConsole::GetOutput()
 {
 	std::string output = "";
 	for (unsigned int i = 0; i < m_outputLines.size(); i++){
-		output.append(m_outputLines[i].text + "\n");
+		output.append(m_outputLines.at(i).text + "\n");
 	}
 	return output;
 }

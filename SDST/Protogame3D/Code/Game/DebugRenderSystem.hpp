@@ -255,3 +255,5 @@ RenderTaskType StringToDebugRenderTask(std::string task);
 const char* GetTaskName(RenderTaskType type);
 const char* GetTaskID(RenderTaskType type);
 const char* GetTaskDescription(RenderTaskType type);
+
+

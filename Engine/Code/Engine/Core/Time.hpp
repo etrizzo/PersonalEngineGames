@@ -3,6 +3,7 @@
 //
 #pragma once
 #include <stdint.h>
+#include <string>
 
 
 struct time_data_t 
@@ -22,6 +23,8 @@ uint64_t GetPerformanceCounter();
 double PerformanceCountToSeconds( uint64_t hpc ); 
 
 uint64_t SecondsToPerformanceCount(double seconds);
+
+std::string GetCurrentTimestampAsString();
 
 
 class LocalTimeData 

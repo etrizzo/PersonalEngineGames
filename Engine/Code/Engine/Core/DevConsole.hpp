@@ -72,8 +72,8 @@ private:
 	void RenderAutoComplete();
 
 
-
-	std::vector<OutputLine>		m_outputLines;		//how should output be represented??
+	ThreadSafeVector<OutputLine>	m_outputLines;
+	//std::vector<OutputLine>		m_outputLines;		//how should output be represented??
 	std::string m_currentInput;		//updates currentinput
 
 	std::string m_currentAutoComplete;		//syntax of the current auto complete command

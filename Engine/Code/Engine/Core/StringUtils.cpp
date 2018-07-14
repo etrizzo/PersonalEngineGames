@@ -40,6 +40,16 @@ const std::string Stringf( const int maxLength, const char* format, ... )
 	return returnValue;
 }
 
+const std::string Stringv(const char * format, va_list args)
+{
+	char textLiteral[ STRINGF_STACK_LOCAL_TEMP_LENGTH ];
+	vsnprintf_s( textLiteral, STRINGF_STACK_LOCAL_TEMP_LENGTH, _TRUNCATE, format, args );
+	textLiteral[ STRINGF_STACK_LOCAL_TEMP_LENGTH - 1 ] = '\0'; // In case vsnprintf overran (doesn't auto-terminate)
+
+	return std::string( textLiteral );
+
+}
+
  void Split(std::string stringToSplit, const char splitOn, Strings & splitVector)
 {
 	splitVector = std::vector<std::string>();

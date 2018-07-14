@@ -180,6 +180,15 @@ void App::RegisterCommands()
 	CommandRegister("threaded_test",CommandConsoleThreadedTest, "Runs threading test");
 	CommandRegister("nonthreaded_test", CommandConsoleNonThreadedTest, "Runs non-threaded test");
 	CommandRegister("log_thread_test", CommandLogThreadTest, "Runs logging thread test", "log_thread_test <thread_count>");
+	CommandRegister("log_flush_test", CommandLogFlushTest, "Tests log flushing");
+	CommandRegister("log_warning", CommandLogTestWarning, "Prints a test warning log");
+	CommandRegister("log_error", CommandLogTestError, "Prints a test error log");
+	CommandRegister("log_print", CommandLogTest, "Prints a test log message");
+	CommandRegister("log_hide_tag", CommandLogHideFilter, "Hides tag from log", "log_hide_tag <tagname>");
+	CommandRegister("log_show_tag", CommandLogShowFilter, "Shows tag in log", "log_show_tag <tagname>");
+	CommandRegister("log_toggle_filters", CommandLogToggleWhitelist, "toggles hidden tags to be shown and vice versa");
+	CommandRegister("log_hide_all", CommandLogHideAll, "Hides all log tags");
+	CommandRegister("log_show_all", CommandLogShowAll, "Shows all log tags");
 }
 
 void App::HandleInput()
@@ -546,8 +555,64 @@ void CommandConsoleThreadedTest(Command & cmd)
 void CommandLogThreadTest(Command & cmd)
 {
 	int threadCount = cmd.GetNextInt();
+	std::string fileName = cmd.GetNextString();
 	if (threadCount <= 0){
 		threadCount = 1;
 	}
-	LogTest((unsigned int) threadCount);
+	if (fileName == ""){
+		fileName = "Data/big.txt";
+	}
+	LogTest((unsigned int) threadCount, fileName);
+}
+
+void CommandLogFlushTest(Command & cmd)
+{
+	LogTaggedPrintf("FLUSHTEST", "WE FLUSHING BOISS!!!!");
+	LogSystemFlush();
+	int x = 0;
+}
+
+void CommandLogTestWarning(Command & cmd)
+{
+	UNUSED(cmd);
+	LogWarningf("Warning test!!!\n");
+}
+
+void CommandLogTestError(Command & cmd)
+{
+	UNUSED(cmd);
+	LogErrorf("Error Test!!!!!!!!\n");
+}
+
+void CommandLogTest(Command & cmd)
+{
+	UNUSED(cmd);
+	LogPrintf("Default log!!!!!!!!!!!!!!!\n");
+}
+
+void CommandLogShowFilter(Command & cmd)
+{
+	std::string filter = cmd.GetNextString();
+	LogShowTag(filter);
+}
+
+void CommandLogHideFilter(Command & cmd)
+{
+	std::string filter = cmd.GetNextString();
+	LogHideTag(filter);
+}
+
+void CommandLogToggleWhitelist(Command & cmd)
+{
+	LogToggleWhitelist();
+}
+
+void CommandLogHideAll(Command & cmd)
+{
+	LogHideAllTags();
+}
+
+void CommandLogShowAll(Command & cmd)
+{
+	LogShowAllTags();
 }
