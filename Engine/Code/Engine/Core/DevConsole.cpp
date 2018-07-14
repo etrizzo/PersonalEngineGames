@@ -418,19 +418,21 @@ void ConsolePrintf(RGBA const & color, char const * format, ...)
 
 void ConsolePrintf(char const * format, ...)
 {
-	const int MESSAGE_MAX_LENGTH = 2048;
-	char messageLiteral[ MESSAGE_MAX_LENGTH ];
-	va_list variableArgumentList;
-	va_start( variableArgumentList, format );
-	vsnprintf_s( messageLiteral, MESSAGE_MAX_LENGTH, _TRUNCATE, format, variableArgumentList );
-	va_end( variableArgumentList );
-	messageLiteral[ MESSAGE_MAX_LENGTH - 1 ] = '\0'; // In case vsnprintf overran (doesn't auto-terminate)
+	if (g_devConsole != nullptr){
+		const int MESSAGE_MAX_LENGTH = 2048;
+		char messageLiteral[ MESSAGE_MAX_LENGTH ];
+		va_list variableArgumentList;
+		va_start( variableArgumentList, format );
+		vsnprintf_s( messageLiteral, MESSAGE_MAX_LENGTH, _TRUNCATE, format, variableArgumentList );
+		va_end( variableArgumentList );
+		messageLiteral[ MESSAGE_MAX_LENGTH - 1 ] = '\0'; // In case vsnprintf overran (doesn't auto-terminate)
 
-													 //message literal is now the right thing? so split into individual lines and print each line in reverse order with print in box
-	Strings lines = Strings();
-	Split((std::string) messageLiteral, '\n', lines);
-	for (unsigned int i = 0; i < lines.size(); i++){
-		g_devConsole->AddLineToOutput(lines[i]);
+														 //message literal is now the right thing? so split into individual lines and print each line in reverse order with print in box
+		Strings lines = Strings();
+		Split((std::string) messageLiteral, '\n', lines);
+		for (unsigned int i = 0; i < lines.size(); i++){
+			g_devConsole->AddLineToOutput(lines[i]);
+		}
 	}
 }
 

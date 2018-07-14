@@ -12,6 +12,7 @@ public:
 	void RunCorrectivePhysics();
 	void HandleInput();
 	
+	void VoidMaps();	//get rid of any leftover map pointers
 	void MovePartyToMap(Map* newMap, Vector2 playerPos = Vector2::ZERO);
 	void AddActorToParty(Actor* newActor);
 	void AddActorAndSetAsPlayer(Actor* newPlayer);

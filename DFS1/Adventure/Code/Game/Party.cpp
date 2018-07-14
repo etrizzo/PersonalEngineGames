@@ -39,10 +39,20 @@ void Party::HandleInput()
 	}
 }
 
+void Party::VoidMaps()
+{
+	m_currentMap = nullptr;
+	for (Actor* actor : m_partyMembers){
+		actor->m_map = nullptr;
+	}
+}
+
 void Party::MovePartyToMap(Map * newMap, Vector2 playerPos)
 {
-	for (Actor* actor : m_partyMembers){
-		m_currentMap->RemoveActorFromMap(actor);
+	if (m_currentMap != nullptr){
+		for (Actor* actor : m_partyMembers){
+			m_currentMap->RemoveActorFromMap(actor);
+		}
 	}
 	m_currentMap = newMap;
 	float offsetSize = .1f;

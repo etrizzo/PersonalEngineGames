@@ -19,6 +19,7 @@ Adventure::Adventure(AdventureDefinition * adventureDef, int difficulty)
 
 Adventure::~Adventure()
 {
+	g_theGame->m_party->MovePartyToMap(nullptr);
 	for (Map* m : m_mapsByIndex){
 		delete(m);
 	}
@@ -27,7 +28,7 @@ Adventure::~Adventure()
 		delete(q);
 	}
 
-	g_theGame->m_party->MovePartyToMap(nullptr);
+
 
 }
 
@@ -66,6 +67,7 @@ void Adventure::Begin()
 		g_theGame->m_party->AddActorAndSetAsPlayer(SpawnPlayer());
 		g_theGame->m_party->SetMap(m_currentMap);
 	} else {
+		g_theGame->m_party->VoidMaps();
 		Tile spawnTile = m_startingMap->GetRandomTileOfType(m_definition->m_startTileDef);
 		g_theGame->m_party->MovePartyToMap( m_currentMap, spawnTile.GetCenter());
 	}
