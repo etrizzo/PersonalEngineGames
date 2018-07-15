@@ -424,6 +424,7 @@ void Map::AddActorToMap(Actor * actor)
 	m_allActors.push_back(actor);
 	m_allEntities.push_back(actor);
 	m_scene->AddRenderable(actor->m_renderable);
+	m_scene->AddRenderable(actor->m_healthRenderable);
 }
 
 void Map::RemoveEntities()
@@ -773,6 +774,7 @@ Actor * Map::SpawnNewPlayer(Vector2 spawnPosition)
 	m_allEntities.push_back(newPlayer);
 	m_allActors.push_back(newPlayer);
 	m_scene->AddRenderable(newPlayer->m_renderable);
+	m_scene->AddRenderable(newPlayer->m_healthRenderable);
 	return newPlayer;
 }
 
@@ -788,6 +790,9 @@ Actor * Map::SpawnNewActor(ActorDefinition * actorDef, Vector2 spawnPosition, fl
 	m_allEntities.push_back(newActor);
 	m_allActors.push_back(newActor);
 	m_scene->AddRenderable(newActor->m_renderable);
+	if (!newActor->IsSameFaction(g_theGame->m_party->GetPlayerCharacter())){
+		m_scene->AddRenderable(newActor->m_healthRenderable);
+	}
 	return newActor;
 }
 

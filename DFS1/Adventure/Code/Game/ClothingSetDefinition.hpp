@@ -13,10 +13,6 @@ public:
 	//all textures loaded in 2D array by RenderSlot
 	//i.e. m_texturesByClothingType[0] is all body textures
 	std::vector< std::vector<ClothingLayer*> > m_layersByClothingType;
-	//std::vector< std::vector<Texture*> > m_texturesByClothingType;
-	//std::vector<std::vector<RGBA>> m_tintsByClothingType;
-	//std::vector<bool> m_torsoUsesLegs;		//parallel array to m_texturesByClothing[TORSO] to keep track of if it uses leg texture or nah
-
 
 	ClothingSet* GetRandomSet() const;
 
@@ -31,7 +27,7 @@ public:
 	static std::map< std::string, ClothingSetDefinition* >		s_definitions;
 	static ClothingSetDefinition* GetDefinition(std::string definitionName);
 
-	RGBA GetColorFromXML(std::string text);
+	SpawnColorCB GetColorCallbackFromXML(std::string text);
 
 private:
 	ClothingLayer* GetLayer(RENDER_SLOT slot, int index) const;

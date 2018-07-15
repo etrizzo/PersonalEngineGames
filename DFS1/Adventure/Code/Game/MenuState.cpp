@@ -55,7 +55,9 @@ void MenuState_Paused::RenderContent()
 	for (Quest* quest: m_pauseState->m_encounterGameState->m_currentAdventure->m_quests){
 		numLines++;
 		for (VictoryCondition* condition : quest->m_conditions){
-			numLines++;
+			if (condition->m_active || condition->m_complete){
+				numLines++;
+			}
 		}
 	}
 	float heightRatio = 1.f / (float) numLines;
@@ -97,24 +99,26 @@ void MenuState_Paused::RenderContent()
 		iconBox.Translate(indent, -lineHeight);
 
 		for (VictoryCondition* condition : quest->m_conditions){
-			RGBA tint = RGBA::WHITE;
-			if (quest->IsMainQuest()){
-				tint = mainQuestColor;
+			if (condition->m_active || condition->m_complete){
+				RGBA tint = RGBA::WHITE;
+				if (quest->IsMainQuest()){
+					tint = mainQuestColor;
+				}
+				if (condition->IsComplete()){
+					tint = tint.GetColorWithAlpha(164);
+					AABB2 texCoords = g_theGame->m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0));
+					g_theRenderer->DrawTexturedAABB2(iconBox, *buttonTexture, texCoords.mins, texCoords.maxs , tint);
+				} else {
+					AABB2 texCoords = g_theGame->m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(0,0));
+					g_theRenderer->DrawTexturedAABB2(iconBox, *buttonTexture, texCoords.mins, texCoords.maxs ,  tint);
+				}
+				std::string victoryText = condition->GetText();
+				g_theRenderer->DrawTextInBox2D(victoryText, textBox, Vector2(0.f,.5f), fontHeight, TEXT_DRAW_WORD_WRAP, tint);
+				//g_theRenderer->DrawAABB2Outline(iconBox, RGBA::RED);
+				//g_theRenderer->DrawAABB2Outline(textBox, RGBA::MAGENTA);
+				textBox.Translate(0.f, -lineHeight);
+				iconBox.Translate(0.f, -lineHeight);
 			}
-			if (condition->IsComplete()){
-				tint = tint.GetColorWithAlpha(164);
-				AABB2 texCoords = g_theGame->m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0));
-				g_theRenderer->DrawTexturedAABB2(iconBox, *buttonTexture, texCoords.mins, texCoords.maxs , tint);
-			} else {
-				AABB2 texCoords = g_theGame->m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(0,0));
-				g_theRenderer->DrawTexturedAABB2(iconBox, *buttonTexture, texCoords.mins, texCoords.maxs ,  tint);
-			}
-			std::string victoryText = condition->GetText();
-			g_theRenderer->DrawTextInBox2D(victoryText, textBox, Vector2(0.f,.5f), fontHeight, TEXT_DRAW_WORD_WRAP, tint);
-			//g_theRenderer->DrawAABB2Outline(iconBox, RGBA::RED);
-			//g_theRenderer->DrawAABB2Outline(textBox, RGBA::MAGENTA);
-			textBox.Translate(0.f, -lineHeight);
-			iconBox.Translate(0.f, -lineHeight);
 		}
 		textBox.Translate(-indent, 0.f);
 		iconBox.Translate(-indent, 0.f);

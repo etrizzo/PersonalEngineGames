@@ -9,6 +9,7 @@ public:
 	Party();
 
 	void Update(float ds);
+	void RenderPartyUI(AABB2 renderBox);
 	void RunCorrectivePhysics();
 	void HandleInput();
 	
@@ -18,6 +19,7 @@ public:
 	void AddActorAndSetAsPlayer(Actor* newPlayer);
 	void SetMap(Map* currentMap);
 	void AddItemToInventory(Item* item);
+	void RemoveItemFromInventory(Item* item);
 	void EquipOrUnequipItem(Item* itemToEquip);
 
 	void SwapPlayer(int direction = 1);
@@ -32,4 +34,7 @@ public:
 	//no actors in the party will be updated in the maps update
 	std::vector<Actor*> m_partyMembers;
 	std::vector<Item*> m_inventory;
+
+private:
+	void RenderPartyMemberUI(Actor* actor, AABB2 memberBox);
 };

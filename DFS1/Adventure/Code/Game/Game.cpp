@@ -80,7 +80,7 @@ Game::Game()
 	m_uiCamera->LookAt( Vector3( uicenter.x, uicenter.y, -1.f ), Vector3(uicenter.x, uicenter.y, .5f)); 
 
 
-	m_dialogueBox = m_uiCamera->GetBounds().GetPercentageBox(.3f,0.f,.7f,.1f);
+	m_dialogueBox = m_uiCamera->GetBounds().GetPercentageBox(.1f,0.f,.9f,.15f);
 
 	g_theRenderer->SetCamera( m_camera ); 
 

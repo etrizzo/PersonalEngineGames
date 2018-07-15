@@ -112,6 +112,7 @@ void Renderable2D::SetMesh(const AABB2& drawingBox, const AABB2& currentUVS, con
 void Renderable2D::SetSubMesh(const AABB2 & drawingBox, const AABB2 & currentUVs, const RGBA & color, const int & meshIndex)
 {
 	//delete m_mesh;
+	
 	m_mb->Clear();
 	m_mb->Begin(PRIMITIVE_TRIANGLES, true);
 	m_mb->AppendPlane2D(drawingBox, color, currentUVs);

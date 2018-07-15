@@ -9,6 +9,7 @@
 //		.
 // </VictoryConditions>
 
+class ItemDefinition;
 
 class VictoryCondition{
 public:
@@ -18,6 +19,7 @@ public:
 	
 	std::string m_name;
 	bool m_complete = false;
+	bool m_active = false;
 	virtual bool CheckIfComplete()  = 0;
 	virtual std::string GetText() = 0;
 	virtual bool SpeakToGiver() { return false; };		//possibility to update the condition on speaking to actor
@@ -47,6 +49,8 @@ public:
 	VictoryCondition_SpeakToActor(const tinyxml2::XMLElement* conditionsElement, Adventure* adv, Quest* quest = nullptr);
 
 	std::string m_actorTypeName;
+	ItemDefinition* m_requiredItem;
+	bool m_takesItem = false;
 
 	virtual VictoryCondition_SpeakToActor* Clone(Adventure* adventure, Quest* quest) const;
 	virtual bool CheckIfComplete();

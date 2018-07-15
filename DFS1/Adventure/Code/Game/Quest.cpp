@@ -13,10 +13,12 @@ Quest::Quest(QuestDefinition * def, Adventure * currentAdventure)
 		VictoryCondition* newCondition = condition->Clone(currentAdventure, this);
 		m_conditions.push_back(newCondition);
 	}
+	m_conditions[0]->m_active = true;
 
 	m_questGiver = m_adventure->m_startingMap->GetActorOfType(m_definition->m_giverDefinition);
 	if (m_questGiver != nullptr){
-		m_questGiver->m_questGiven = this;
+		m_questGiver->AssignAsQuestGiver(this);
+		//m_questGiver->m_questGiven = this;
 	}
 }
 
@@ -24,13 +26,22 @@ bool Quest::UpdateAndCheckIfComplete()
 {
 	if (!m_isComplete){
 		bool allComplete = true;
-		for (VictoryCondition* condition : m_conditions){
+		for (int i = 0; i < m_conditions.size(); i++){
+			VictoryCondition* condition = m_conditions[i];
 			if (!condition->m_complete){		//if the condition has not already been completed
 				if (!condition->CheckIfComplete()){		//updates and checks for completion
 					allComplete = false;
 				} else {
+ 					//m_currentIndex++;
+					if (m_questGiver != nullptr){
+						m_questGiver->AdvanceQuest();
+					}
 					if (m_definition->m_isSequential){
-						TODO("Unlock next step in quest if the quest is sequential")
+						if (i + 1 < m_conditions.size()){
+							condition->m_active = false;
+							m_conditions[i + 1]->m_active = true;
+						}
+						//TODO("Unlock next step in quest if the quest is sequential")
 					}
 				}
 			}
@@ -45,11 +56,13 @@ bool Quest::UpdateAndCheckIfComplete()
 
 void Quest::CompleteQuest()
 {
-	m_isComplete = true;
-	for (VictoryCondition* condition : m_conditions){
-		condition->m_complete = true;
+	if (!m_isComplete){
+		m_isComplete = true;
+		for (VictoryCondition* condition : m_conditions){
+			condition->m_complete = true;
+		}
+		m_definition->m_questReward->GiveReward(this);
 	}
-	m_definition->m_questReward->GiveReward(this);
 }
 
 std::string Quest::GetText()
@@ -59,9 +72,18 @@ std::string Quest::GetText()
 
 void Quest::SpeakToGiver()
 {
-	for (VictoryCondition* condition : m_conditions){
+	for (int i = 0; i < m_conditions.size(); i++){
+		VictoryCondition* condition = m_conditions[i];
 		if (!condition->m_complete){
 			if (condition->SpeakToGiver()){
+				//m_currentIndex++;
+				if (m_definition->m_isSequential){
+					if (i + 1 < m_conditions.size()){
+						condition->m_active = false;
+						m_conditions[i + 1]->m_active = true;
+					}
+					//TODO("Unlock next step in quest if the quest is sequential")
+				}
 				break;		//once you encounter speaktoactor condition, break out of the loop (only updates 1 condition)
 			}
 		}
@@ -71,4 +93,9 @@ void Quest::SpeakToGiver()
 bool Quest::IsMainQuest() const
 {
 	return m_definition->m_isMainQuest;
+}
+
+DialogueSet * Quest::GetCurrentDialogueSet()
+{
+	return m_definition->GetDialogueSet(m_currentIndex);
 }

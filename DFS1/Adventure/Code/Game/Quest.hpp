@@ -17,6 +17,9 @@ public:
 	std::string GetText();
 	void SpeakToGiver();
 	bool IsMainQuest() const;
+	DialogueSet* GetCurrentDialogueSet();
+
+	int m_currentIndex = 0;
 
 	std::vector<VictoryCondition*> m_conditions; 
 	bool m_isComplete;
@@ -24,5 +27,6 @@ public:
 	Actor* m_questGiver;
 	Adventure* m_adventure;
 	QuestDefinition* m_definition;
+
 	
 };

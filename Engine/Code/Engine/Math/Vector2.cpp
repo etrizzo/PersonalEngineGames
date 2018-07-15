@@ -6,6 +6,10 @@
 const Vector2 Vector2::ZERO = Vector2(0.f,0.f);
 const Vector2 Vector2::ONE = Vector2(1.f,1.f);
 const Vector2 Vector2::HALF = Vector2(.5f,.5f);
+const Vector2 Vector2::NORTH = Vector2(0.f,1.f);
+const Vector2 Vector2::SOUTH = Vector2(0.f,-1.f);
+const Vector2 Vector2::EAST = Vector2(1.f,0.f);
+const Vector2 Vector2::WEST = Vector2(-1.f,0.f);
 
 
 //-----------------------------------------------------------------------------------------------

@@ -107,17 +107,18 @@ void Adventure::RenderUI()
 	if (!g_theGame->m_fullMapMode){
 		//player stats - bottom left
 		Vector2 boxSize = Vector2(screenWidth * .3f, screenWidth * .2f);
-		AABB2 statBox = AABB2(cameraBounds.mins, cameraBounds.mins + boxSize);
-		g_theRenderer->DrawAABB2(statBox, RGBA(200,200,100,200));
-		g_theGame->m_party->GetPlayerCharacter()->RenderStatsInBox(statBox, RGBA(0,0,0));
+		AABB2 statBox = cameraBounds.GetPercentageBox(0.f, .9f, .4f, 1.f);
+		g_theGame->m_party->RenderPartyUI(statBox);
+		//g_theRenderer->DrawAABB2(statBox, RGBA(200,200,100,200));
+		//g_theGame->m_party->GetPlayerCharacter()->RenderStatsInBox(statBox, RGBA(0,0,0));
 
-		//currently equipped weapon - bottom right
-		Item* weapon = g_theGame->m_party->GetPlayerCharacter()->m_equippedItems[EQUIP_SLOT_WEAPON];
-		if (weapon != nullptr){
-			AABB2 weaponBox = AABB2(cameraBounds.maxs.x - (boxSize.y * .5f), cameraBounds.mins.y, cameraBounds.maxs.x, cameraBounds.mins.y + (boxSize.y * .5f));
-			//weaponBox.AddPaddingToSides(-.05f, -.05f);
-			weapon->RenderImageInBox(weaponBox);
-		}
+		////currently equipped weapon - bottom right
+		//Item* weapon = g_theGame->m_party->GetPlayerCharacter()->m_equippedItems[EQUIP_SLOT_WEAPON];
+		//if (weapon != nullptr){
+		//	AABB2 weaponBox = AABB2(cameraBounds.maxs.x - (boxSize.y * .5f), cameraBounds.mins.y, cameraBounds.maxs.x, cameraBounds.mins.y + (boxSize.y * .5f));
+		//	//weaponBox.AddPaddingToSides(-.05f, -.05f);
+		//	weapon->RenderImageInBox(weaponBox);
+		//}
 	}
 
 }

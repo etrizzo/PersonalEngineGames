@@ -29,6 +29,7 @@
     <Map name="The Village" mapDefinition="SmallVillage">
       <Item type="Leather Chestpiece" onTileType="Wood"/>
       <Item type="Leather Leggings" onTileType="Wood"/>
+      <Item type="Leather Hat" onTileType="Wood" />
       <Item type="Greatbow" onTileType="Wood"/>
       <Portal type="StairsDown" onTileType="Grass" toMap="The Cave"
                   toTileType="DarkDirt" reciprocalType="StairsUp"/>

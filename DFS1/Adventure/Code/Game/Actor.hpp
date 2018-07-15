@@ -19,10 +19,18 @@ public:
 	void Update(float deltaSeconds);
 	void Render();
 	void HandleInput();
+
+	void AssignAsQuestGiver(Quest* questToGive);
+	void AdvanceQuest();
+	void FinishQuest();		//resets actor to default after finishing their quest
+
 	void RenderStatsInBox(AABB2 statsBox, RGBA tint = RGBA::WHITE);
+	void RenderBoyInBox(AABB2 boyBox, RGBA tint=RGBA::WHITE);
+	void RenderEquippedWeaponInBox(AABB2 weaponBox, RGBA tint = RGBA::WHITE);
 	std::string GetAnimName();
 
 	void UpdateRenderable() override;
+	void UpdateHealthBar();
 	void RunCorrectivePhysics() override;
 	void RunWorldPhysics() override;
 	void RunEntityPhysics() override;
@@ -39,8 +47,14 @@ public:
 
 	void EquipOrUnequipItem(Item* itemToEquip);
 
+	Renderable2D* m_healthRenderable;
+	AABB2 m_healthBox;
+	AABB2 m_healthBarBG;
+	AABB2 m_currentHealthBar;
+
 	bool m_isPlayer = false;
 	bool m_godMode = false;
+	bool m_dead = false;
 	float m_speakRadius = 1.f;
 
 	ActorDefinition* m_definition;

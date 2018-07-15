@@ -20,8 +20,12 @@ ClothingSet::ClothingSet()
 
 void ClothingSet::InitLayer(RENDER_SLOT slot, ClothingLayer * layer)
 {
-	m_defaultLayers[slot] = layer;
-	m_currentLayers[slot] = layer;
+	ClothingLayer* initLayer = nullptr;
+	if (layer != nullptr){
+		initLayer = new ClothingLayer(layer);
+	}
+	m_defaultLayers[slot] = initLayer;
+	m_currentLayers[slot] = initLayer;
 }
 
 void ClothingSet::SetDefaultLayer(RENDER_SLOT slot)

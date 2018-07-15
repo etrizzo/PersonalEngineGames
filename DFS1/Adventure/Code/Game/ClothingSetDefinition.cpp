@@ -24,7 +24,6 @@ ClothingSetDefinition::ClothingSetDefinition(tinyxml2::XMLElement * setElement)
 ClothingSet * ClothingSetDefinition::GetRandomSet() const
 {
 	ClothingSet* set = new ClothingSet();
-	TODO("Combine tint and texture")
 	if ((int)  m_layersByClothingType[CHEST_SLOT].size() > 0){
 		//load chest clothing
 		int torsoIndex = GetRandomIntLessThan((int) m_layersByClothingType[CHEST_SLOT].size());
@@ -91,15 +90,15 @@ ClothingSetDefinition * ClothingSetDefinition::GetDefinition(std::string definit
 	return def;
 }
 
-RGBA ClothingSetDefinition::GetColorFromXML(std::string text)
+SpawnColorCB ClothingSetDefinition::GetColorCallbackFromXML(std::string text)
 {
 	if (text == "randomBright"){
-		return RGBA::GetRandomRainbowColor();
+		return RGBA::GetRandomRainbowColor;
 	}
 	if (text == "random"){
-		return RGBA::GetRandomColor();
+		return RGBA::GetRandomColor;
 	}
-	return RGBA::WHITE;
+	return nullptr;
 }
 
 ClothingLayer * ClothingSetDefinition::GetLayer(RENDER_SLOT slot, int index) const
@@ -137,11 +136,16 @@ void ClothingSetDefinition::ParseTorsos(tinyxml2::XMLElement * setElement)
 		for(tinyxml2::XMLElement* torsoElement = allTorsosElement->FirstChildElement("Torso"); torsoElement != nullptr; torsoElement = torsoElement->NextSiblingElement("Torso")){
 			Texture* torsoTexture = ParseXmlAttribute(*torsoElement, "texture", (Texture*) nullptr);
 			std::string colorType = ParseXmlAttribute(*torsoElement, "color", "NONE");
-			RGBA tint = GetColorFromXML(colorType);
+			//get callback function for tint of this layer
+			SpawnColorCB cb = GetColorCallbackFromXML(colorType);
+			RGBA tint = RGBA::WHITE;
+			if (cb != nullptr){
+				tint = cb();
+			}
 			bool usesLegs = ParseXmlAttribute(*torsoElement, "useLegs", true);
 			bool usesHair = ParseXmlAttribute(*torsoElement, "usesHair", true);
 
-			ClothingLayer* layer = new ClothingLayer(CHEST_SLOT, torsoTexture, tint, usesLegs, usesHair);
+			ClothingLayer* layer = new ClothingLayer(CHEST_SLOT, torsoTexture, tint, usesLegs, usesHair, cb);
 			m_layersByClothingType[CHEST_SLOT].push_back(layer);
 			//m_texturesByClothingType[CHEST_SLOT].push_back(torsoTexture);
 			////store whether that torso texture can use a leg texture too (i.e., dresses shouldn't have leg textures)
@@ -171,7 +175,12 @@ void ClothingSetDefinition::ParseLegs(tinyxml2::XMLElement * setElement)
 			//m_tintsByClothingType[LEGS_SLOT].push_back(tint);
 			Texture* torsoTexture = ParseXmlAttribute(*legElement, "texture", (Texture*) nullptr);
 			std::string colorType = ParseXmlAttribute(*legElement, "color", "NONE");
-			RGBA tint = GetColorFromXML(colorType);
+			//get callback function for tint of this layer
+			SpawnColorCB cb = GetColorCallbackFromXML(colorType);
+			RGBA tint = RGBA::WHITE;
+			if (cb != nullptr){
+				tint = cb();
+			}
 			bool usesLegs = ParseXmlAttribute(*legElement, "useLegs", true);
 			bool usesHair = ParseXmlAttribute(*legElement, "usesHair", true);
 
@@ -195,7 +204,12 @@ void ClothingSetDefinition::ParseHairs(tinyxml2::XMLElement * setElement)
 			//m_tintsByClothingType[HEAD_SLOT].push_back(tint);
 			Texture* torsoTexture = ParseXmlAttribute(*hairElement, "texture", (Texture*) nullptr);
 			std::string colorType = ParseXmlAttribute(*hairElement, "color", "NONE");
-			RGBA tint = GetColorFromXML(colorType);
+			//get callback function for tint of this layer
+			SpawnColorCB cb = GetColorCallbackFromXML(colorType);
+			RGBA tint = RGBA::WHITE;
+			if (cb != nullptr){
+				tint = cb();
+			}
 			bool usesLegs = ParseXmlAttribute(*hairElement, "useLegs", true);
 			bool usesHair = ParseXmlAttribute(*hairElement, "usesHair", true);
 
@@ -213,7 +227,12 @@ void ClothingSetDefinition::ParseHats(tinyxml2::XMLElement * setElement)
 		for(tinyxml2::XMLElement* hatElement = allHatElements->FirstChildElement("Hat"); hatElement != nullptr; hatElement = hatElement->NextSiblingElement("Hat")){
 			Texture* hatTexture = ParseXmlAttribute(*hatElement, "texture", (Texture*) nullptr);
 			std::string colorType = ParseXmlAttribute(*hatElement, "color", "NONE");
-			RGBA tint = GetColorFromXML(colorType);
+			//get callback function for tint of this layer
+			SpawnColorCB cb = GetColorCallbackFromXML(colorType);
+			RGBA tint = RGBA::WHITE;
+			if (cb != nullptr){
+				tint = cb();
+			}
 			bool usesLegs = ParseXmlAttribute(*hatElement, "useLegs", true);
 			bool usesHair = ParseXmlAttribute(*hatElement, "usesHair", true);
 
@@ -231,7 +250,12 @@ void ClothingSetDefinition::ParseWeapons(tinyxml2::XMLElement * setElement)
 		for(tinyxml2::XMLElement* weaponElement = allWeapons->FirstChildElement("Weapon"); weaponElement != nullptr; weaponElement = weaponElement->NextSiblingElement("Weapon")){
 			Texture* texture = ParseXmlAttribute(*weaponElement, "texture", (Texture*) nullptr);
 			std::string colorType = ParseXmlAttribute(*weaponElement, "color", "NONE");
-			RGBA tint = GetColorFromXML(colorType);
+			//get callback function for tint of this layer
+			SpawnColorCB cb = GetColorCallbackFromXML(colorType);
+			RGBA tint = RGBA::WHITE;
+			if (cb != nullptr){
+				tint = cb();
+			}
 			bool usesLegs = ParseXmlAttribute(*weaponElement, "useLegs", true);
 			bool usesHair = ParseXmlAttribute(*weaponElement, "usesHair", true);
 
@@ -266,7 +290,12 @@ void ClothingSetDefinition::ParseBody(tinyxml2::XMLElement * bodyElement)
 		earTexture = nullptr;
 	}
 	std::string colorType = ParseXmlAttribute(*baseElement, "color", "NONE");
-	RGBA tint = GetColorFromXML(colorType);
+	//get callback function for tint of this layer
+	SpawnColorCB cb = GetColorCallbackFromXML(colorType);
+	RGBA tint = RGBA::WHITE;
+	if (cb != nullptr){
+		tint = cb();
+	}
 	bool usesLegs = ParseXmlAttribute(*baseElement, "useLegs", true);
 	bool usesHair = ParseXmlAttribute(*baseElement, "usesHair", true);
 

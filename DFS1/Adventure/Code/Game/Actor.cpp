@@ -9,6 +9,9 @@
 #include "Engine/Renderer/SpriteAnimSet.hpp"
 #include "Game/ClothingSetDefinition.hpp"
 #include "Game/Quest.hpp"
+#include "Game/Party.hpp"
+
+#define SPEED_RATIO (.15f)
 
 Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, float initialRotation, int difficulty)
 	:Entity((EntityDefinition*)definition, entityMap, initialPos, initialRotation)
@@ -40,12 +43,18 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 			numTextures++;
 		}
 	}
-	UpdateRenderable();
+	
 	m_health+= (difficulty * 5);
 	Stats difficultyMod = Stats(IntRange(0, difficulty));
 	m_stats.Add(difficultyMod);
 
 	m_dialogue = new DialogueSet(m_definition->m_dialogueDefinition);
+
+	m_healthRenderable = new Renderable2D();
+	m_healthRenderable->SetMaterial(Material::GetMaterial("default"));
+	//m_healthRenderable->m_transform.SetParent(&m_renderable->m_transform);
+	UpdateHealthBar();
+	UpdateRenderable();
 }
 
 Actor::~Actor()
@@ -75,7 +84,7 @@ void Actor::Update(float deltaSeconds)
 		m_animSet->Update(deltaSeconds);
 	}
 	
-
+	UpdateHealthBar();
 	UpdateRenderable();
 	if (g_theGame->m_devMode){
 		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, m_physicsDisc, true , DEBUG_RENDER_IGNORE_DEPTH, RGBA::MAGENTA, RGBA::MAGENTA);
@@ -114,6 +123,23 @@ void Actor::HandleInput()
 		m_physicsDisc.center=GetPosition();
 	}
 	
+}
+
+void Actor::AssignAsQuestGiver(Quest * questToGive)
+{
+	m_questGiven = questToGive;
+	m_dialogue = questToGive->GetCurrentDialogueSet();
+}
+
+void Actor::AdvanceQuest()
+{
+	m_questGiven->m_currentIndex++;
+	m_dialogue = m_questGiven->GetCurrentDialogueSet();
+}
+
+void Actor::FinishQuest()
+{
+	m_dialogue = new DialogueSet(m_definition->m_dialogueDefinition);
 }
 
 void Actor::RenderStatsInBox(AABB2 boxToDrawIn, RGBA tint)
@@ -157,6 +183,32 @@ void Actor::RenderStatsInBox(AABB2 boxToDrawIn, RGBA tint)
 	}
 	g_theRenderer->DrawTextInBox2D(statsString, statsBox, Vector2(0.f, 0.5f), fontSize * 1.f, TEXT_DRAW_SHRINK_TO_FIT, tint);
 
+}
+
+void Actor::RenderBoyInBox(AABB2 boyBox, RGBA tint)
+{
+	//AABB2 pictureBox = boyBox.GetPercentageBox(.05f, .15f, .45f, .72f);
+	boyBox.TrimToAspectRatio(GetAspectRatio());
+	float height = boyBox.GetHeight();
+	//pictureBox.AddPaddingToSides(height * -.1f,height * -.15f);
+	//g_theRenderer->DrawAABB2Outline(boyBox, RGBA(255,255,255,64));
+	//pictureBox.AddPaddingToSides(height *-.1f, height *-.1f);
+	AABB2 texCoords = m_animSet->GetUVsForAnim("IdleSouth", 0.f);
+	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
+		if (m_currentLook->GetTexture(i) != nullptr){
+			//const Texture* entityTexture = m_animSets[i]->GetTextureForAnim("IdleSouth");
+			g_theRenderer->DrawTexturedAABB2(boyBox, *m_currentLook->GetTexture(i), texCoords.mins, texCoords.maxs, m_currentLook->GetTint(i));
+		}
+	}
+}
+
+void Actor::RenderEquippedWeaponInBox(AABB2 weaponBox, RGBA tint)
+{
+	Item* weapon = m_equippedItems[EQUIP_SLOT_WEAPON];
+	weaponBox.TrimToSquare();
+	if (weapon != nullptr){
+		weapon->RenderImageInBox(weaponBox);
+	}
 }
 
 std::string Actor::GetAnimName()
@@ -206,6 +258,32 @@ void Actor::UpdateRenderable()
 			}
 		}
 		m_changedClothes = false;
+	}
+
+	//m_healthRenderable->Clear();
+	m_healthRenderable->SetSubMesh(m_healthBox, AABB2::ZERO_TO_ONE, RGBA::BLACK, 0);
+	m_healthRenderable->SetSubMesh(m_healthBarBG, AABB2::ZERO_TO_ONE, RGBA::RED, 1);
+	m_healthRenderable->SetSubMesh(m_currentHealthBar, AABB2::ZERO_TO_ONE, RGBA::GREEN, 2);
+
+}
+
+void Actor::UpdateHealthBar()
+{
+	if (m_isPlayer || !IsSameFaction(g_theGame->m_party->GetPlayerCharacter())){
+		Vector2 offset = Vector2(0.f, m_localDrawingBox.GetHeight() * .6f );
+		Vector2 boxPos = offset + GetPosition();
+		Vector2 mins = Vector2(-.5f, 0.f) + boxPos;
+		Vector2 maxs = Vector2(.5f, .15f) + boxPos;
+		m_healthBox = AABB2(mins, maxs);
+		float percentFull = (float) m_health / (float) m_definition->m_maxHealth;
+		float healthHeight = m_healthBox.GetHeight();
+		//g_theRenderer->DrawAABB2(healthBox, RGBA(0,0,0));	//draw black outline
+		m_healthBarBG = m_healthBox;
+		m_healthBarBG.AddPaddingToSides(-.2f * healthHeight,-.2f * healthHeight);
+		//g_theRenderer->DrawAABB2(m_healthBarBG, RGBA(255,0,0));// draw red background;
+		float healthWidth = m_healthBarBG.GetWidth();
+		m_currentHealthBar = AABB2(m_healthBarBG.mins, Vector2(m_healthBarBG.mins.x + (percentFull * healthWidth), m_healthBarBG.maxs.y));
+		//g_theRenderer->DrawAABB2(boundsHealth, RGBA(0,255,0));
 	}
 }
 
@@ -350,7 +428,15 @@ void Actor::TakeDamage(int dmg)
 		}
 		m_health -= damageToTake;
 		if (m_health <=0){
-			m_aboutToBeDeleted = true;
+			if (!m_isPlayer){
+				m_aboutToBeDeleted = true;
+			} 
+			m_dead = true;
+			if (m_isPlayer){
+				m_map->m_scene->RemoveRenderable(m_renderable);
+				m_map->m_scene->RemoveRenderable(m_healthRenderable);
+			}
+			
 		}
 	}
 }
@@ -443,28 +529,28 @@ void Actor::UpdateWithController(float deltaSeconds)
 		m_moving = true;
 		float mag = g_primaryController->GetLeftThumbstickMagnitude();
 		Vector2 direction = m_facing;
-		Translate(direction * mag * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+		Translate(direction * mag * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * SPEED_RATIO))); 
 		//m_rotationDegrees = controller->GetLeftThumbstickAngle();
 		m_rotationDegrees = 0.f;
 		m_facing = Vector2::MakeDirectionAtDegrees(g_primaryController->GetLeftThumbstickAngle()).GetNormalized() * .5f;
 	} else {
 		Vector2 arrowDirections = Vector2(0.f,0.f);
 		if (IsLeftKeyDown()){
-			arrowDirections += Vector2(-.5f,0.f);
+			arrowDirections += Vector2::WEST;
 		}
 		if (IsRightKeyDown()){
-			arrowDirections += Vector2(.5f,0.f);
+			arrowDirections += Vector2::EAST;
 		}
 		if (IsDownKeyDown()){
-			arrowDirections += Vector2(0.f, -.5f);
+			arrowDirections += Vector2::SOUTH;
 		}
 		if (IsUpKeyDown()){
-			arrowDirections += Vector2(0.f, .5f);
+			arrowDirections += Vector2::NORTH;
 		}
 
-		if (arrowDirections != Vector2(0.f,0.f)){
+		if (arrowDirections != Vector2::ZERO){
 			m_moving = true;
-			Translate(arrowDirections * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+			Translate(arrowDirections * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * SPEED_RATIO))); 
 			m_rotationDegrees = 0.f;
 			m_facing = arrowDirections;
 		} else {
@@ -473,9 +559,9 @@ void Actor::UpdateWithController(float deltaSeconds)
 
 	}
 
-	if (g_theInput->WasMouseButtonJustPressed(MOUSE_BUTTON_LEFT)){
+	/*if (g_theInput->WasMouseButtonJustPressed(MOUSE_BUTTON_LEFT)){
 		SpeakToOtherActor();
-	}
+	}*/
 }
 
 void Actor::RunSimpleAI(float deltaSeconds)
@@ -526,7 +612,7 @@ void Actor::Wander(float deltaSeconds)
 {
 	float diff = m_ageInSeconds - m_timeLastUpdatedDirection;
 	if (diff < 5.f ){
-		Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+		Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * SPEED_RATIO))); 
 	}
 	if (diff > 5.f && diff < 10.5f){
 		if (m_moving){
@@ -561,9 +647,21 @@ void Actor::FollowPlayer(float deltaSeconds)
 	if (m_followTarget != nullptr){
 		Vector2 distance = m_followTarget->GetPosition() - GetPosition();
 		m_facing = distance.GetNormalized();
-		if (distance.GetLengthSquared() > 4){
-			m_moving = true;
-			Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+		float lengthSquared = distance.GetLengthSquared();
+
+		if (lengthSquared > 100.f){
+			Vector2 newPos = m_followTarget->GetPosition() - (m_followTarget->m_facing.GetNormalized() * .2f);
+			SetPosition(newPos);
+		}
+
+		if (lengthSquared > 3.f){
+			if (m_moving){
+				Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * SPEED_RATIO))); 
+			}
+			if (lengthSquared > 5.f){
+				m_moving = true;
+				//Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+			}
 		} else {
 			m_moving = false;
 		}
@@ -577,7 +675,7 @@ void Actor::AttackEnemyActor(float deltaSeconds)
 		m_facing = distance.GetNormalized();
 		if (distance.GetLengthSquared() > 4){
 			m_moving = true;
-			Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * .3f))); 
+			Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * SPEED_RATIO))); 
 		} else {
 			m_moving = false;
 		}

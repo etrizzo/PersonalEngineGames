@@ -2,6 +2,7 @@
 #include "Game/ActorDefinition.hpp"
 #include "Game/VictoryCondition.hpp"
 #include "Game/QuestReward.hpp"
+#include "Game/DialogueSet.hpp"
 
 std::map<std::string, QuestDefinition*> QuestDefinition::s_definitions;
 
@@ -9,6 +10,7 @@ QuestDefinition::QuestDefinition(tinyxml2::XMLElement * questElement)
 {
 	m_name = ParseXmlAttribute(*questElement, "name", "NO_NAME");
 	m_isMainQuest = ParseXmlAttribute(*questElement, "mainQuest", false);
+	m_isSequential = ParseXmlAttribute(*questElement, "sequential", false);
 	std::string giverType = ParseXmlAttribute(*questElement, "giverType", "None");
 	if (giverType == "None"){
 		m_giverDefinition = nullptr;
@@ -22,6 +24,17 @@ QuestDefinition::QuestDefinition(tinyxml2::XMLElement * questElement)
 
 	tinyxml2::XMLElement* rewardElement = questElement->FirstChildElement("Reward");
 	ParseReward(rewardElement);
+
+	tinyxml2::XMLElement* dialoguesElement = questElement->FirstChildElement("DialogueSets");
+	ParseDialogueSets(dialoguesElement);
+}
+
+DialogueSet * QuestDefinition::GetDialogueSet(int index)
+{
+	if (m_dialogues.size() > index){
+		return new DialogueSet(m_dialogues[index]);
+	}
+	return nullptr;
 }
 
 QuestDefinition * QuestDefinition::GetQuestDefinition(std::string name)
@@ -48,4 +61,15 @@ void QuestDefinition::ParseVictoryConditions(tinyxml2::XMLElement * stepsElement
 void QuestDefinition::ParseReward(tinyxml2::XMLElement * rewardElement)
 {
 	m_questReward = QuestReward::CreateQuestReward(rewardElement);
+}
+
+void QuestDefinition::ParseDialogueSets(tinyxml2::XMLElement * dialogueElement)
+{
+	m_dialogues = std::vector<DialogueSetDefinition*>();
+	if (dialogueElement != nullptr){
+		for (tinyxml2::XMLElement* setElement = dialogueElement->FirstChildElement(); setElement != NULL; setElement = setElement->NextSiblingElement()){
+			DialogueSetDefinition* newSet =  new DialogueSetDefinition(setElement);
+			m_dialogues.push_back(newSet);
+		}
+	}
 }

@@ -42,6 +42,10 @@ public:
 	const static Vector2 ZERO;
 	const static Vector2 ONE;
 	const static Vector2 HALF;
+	const static Vector2 NORTH;
+	const static Vector2 SOUTH;
+	const static Vector2 EAST;
+	const static Vector2 WEST;
 
 public: // NOTE: this is one of the few cases where we break both the "m_" naming rule AND the avoid-public-members rule
 	float x;

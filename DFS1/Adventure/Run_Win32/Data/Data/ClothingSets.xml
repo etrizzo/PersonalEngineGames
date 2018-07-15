@@ -43,7 +43,6 @@
 		<Bodys>
 			<Body>
 				<Base texture="HUMANOIDS/BODY/body_orc_f_1.png" />
-				<Ears texture="HUMANOIDS/HEAD/EARS/ears_human_f_1.png" />
 			</Body>
 		</Bodys>
 
@@ -152,11 +151,9 @@
 		<Hairs>
 			
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_unkempt_f.png" color="random"/>
-			<!--
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_human_1.png" />
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_longbangs_f.png" />
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_loose.png" />
-		-->
 		</Hairs>
 
 	</ClothingSet>

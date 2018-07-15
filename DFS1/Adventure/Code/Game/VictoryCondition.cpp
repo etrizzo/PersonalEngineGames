@@ -8,6 +8,7 @@
 #include "Game/Adventure.hpp"
 #include "Game/QuestDefinition.hpp"
 #include "Game/Quest.hpp"
+#include "Game/Party.hpp"
 
 VictoryCondition::VictoryCondition(const tinyxml2::XMLElement * conditionsElement, Quest* quest)
 {
@@ -65,7 +66,7 @@ bool VictoryCondition_KillActor::CheckIfComplete()
 				}
 			}
 		}
-		if (m_numberKilled >= m_numberToKill){
+		if (m_numberKilled >= m_numberToKill && m_active){
 			m_complete = true;
 		}
 	}
@@ -89,6 +90,13 @@ VictoryCondition_SpeakToActor::VictoryCondition_SpeakToActor(const tinyxml2::XML
 {
 	m_currentAdventure = adv;
 	m_actorTypeName = ParseXmlAttribute(*conditionsElement, "actorToSpeakTo", "");
+	std::string itemName = ParseXmlAttribute(*conditionsElement, "requiresItem", "NONE");
+	if (itemName != "NONE"){
+		m_requiredItem = ItemDefinition::GetItemDefinition(itemName);
+	} else {
+		m_requiredItem = nullptr;
+	}
+	m_takesItem = ParseXmlAttribute(*conditionsElement, "takesItem", false);
 }
 
 VictoryCondition_SpeakToActor * VictoryCondition_SpeakToActor::Clone(Adventure * adventure, Quest* quest) const
@@ -112,8 +120,27 @@ std::string VictoryCondition_SpeakToActor::GetText()
 
 bool VictoryCondition_SpeakToActor::SpeakToGiver()
 {
-	m_complete = true;
-	return true;
+	if (!m_complete){
+		bool hasItem = false;
+		if (m_requiredItem != nullptr){
+			for (Item* item : g_theGame->m_party->m_inventory){
+				if (item->m_definition == m_requiredItem){
+					hasItem = true;
+					g_theGame->m_party->RemoveItemFromInventory(item);
+					delete item;
+					break;
+				}
+			}
+		} else {
+			hasItem = true;
+		}
+		if (hasItem && m_active){
+			m_complete = true;
+		} else {
+			m_complete = false;
+		}
+	}
+	return m_complete;
 }
 
 VictoryCondition_CollectItem::VictoryCondition_CollectItem(const tinyxml2::XMLElement * conditionsElement, Adventure * adv, Quest* quest)
@@ -142,7 +169,7 @@ bool VictoryCondition_CollectItem::CheckIfComplete()
 				}
 			}
 		}
-		if (m_numberCollected >= m_numberToCollect){
+		if (m_numberCollected >= m_numberToCollect && m_active){
 			m_complete = true;
 		}
 	}

@@ -4,7 +4,8 @@
 class ClothingLayer{
 public:
 	ClothingLayer();
-	ClothingLayer(RENDER_SLOT slot, Texture* tex, RGBA tint = RGBA::WHITE, bool renderLegs = true, bool renderHair = true);
+	ClothingLayer(ClothingLayer* layer);
+	ClothingLayer(RENDER_SLOT slot, Texture* tex, RGBA tint = RGBA::WHITE, bool renderLegs = true, bool renderHair = true, SpawnColorCB colorCB = nullptr);
 
 	inline Texture* GetTexture() const {return m_texture; };
 	inline RGBA GetTint() const {return m_tint; };
@@ -14,8 +15,9 @@ public:
 	inline bool ShouldRenderHair() const { return m_shouldRenderHair; };
 
 	Texture* m_texture;
-	RGBA m_tint;
+	RGBA m_tint;		//instanced
 	RENDER_SLOT m_slot;
+	SpawnColorCB m_colorCB = nullptr;		//definition (lol)
 
 	//keep track of this for all clothing types, but only really used for torso and hat
 	//could maybe just combine this into some sort of dependency bool but names are good
