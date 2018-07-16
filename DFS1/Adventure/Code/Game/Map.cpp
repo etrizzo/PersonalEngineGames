@@ -247,6 +247,7 @@ void Map::CheckEntityInteractions()
 
 void Map::RemoveDoomedEntities()
 {
+	g_theGame->m_party->CheckForKilledPlayers();
 	for (Actor* actor : m_allActors){
 		actor->CheckTargetStatus();		//voids targets if they're about to be deleted
 	}
@@ -775,6 +776,7 @@ Actor * Map::SpawnNewPlayer(Vector2 spawnPosition)
 	m_allActors.push_back(newPlayer);
 	m_scene->AddRenderable(newPlayer->m_renderable);
 	m_scene->AddRenderable(newPlayer->m_healthRenderable);
+	newPlayer->EquipItemsInInventory();
 	return newPlayer;
 }
 

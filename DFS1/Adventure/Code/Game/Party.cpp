@@ -1,5 +1,6 @@
 #include "Party.hpp"
 #include "Game/Actor.hpp"
+#include "Game/Game.hpp"
 
 Party::Party()
 {
@@ -17,12 +18,35 @@ void Party::Update(float ds)
 	}*/
 }
 
+void Party::CheckForKilledPlayers()
+{
+	for (int i = m_partyMembers.size() - 1; i >= 0; i--){
+		Actor* member = m_partyMembers[i];
+		if (member->m_dead || member->m_aboutToBeDeleted){
+			if (member->m_isPlayer){
+				if (m_partyMembers.size() > 1){
+					SwapPlayer(1);
+				} else {
+					g_theGame->TransitionToState(new GameState_Defeat(g_theGame->m_currentState));
+				}
+			} 
+			RemoveAtFast(m_partyMembers, i);
+		}
+	}
+}
+
 void Party::RenderPartyUI(AABB2 renderBox)
 {
 	float height = renderBox.GetHeight();
-	for (Actor* actor : m_partyMembers){
+	for (int i = 0; i < m_partyMembers.size(); i++){
+		int index = (m_currentPlayerIndex + i) % m_partyMembers.size();
+		Actor* actor = m_partyMembers[index];
 		RenderPartyMemberUI(actor, renderBox);
 		renderBox.Translate(0.f, -height);
+		if (i == 0){
+			renderBox = renderBox.GetPercentageBox(0.f, .3f, .7f, 1.f);
+			height *= .7f;
+		}
 	}
 
 }
@@ -43,9 +67,11 @@ void Party::HandleInput()
 		}
 	}
 
-	if (g_theInput->WasKeyJustPressed('O')){
+	if (g_theInput->WasKeyJustPressed(VK_OEM_6) || g_theInput->WasKeyJustPressed(XBOX_D_RIGHT)){
 		SwapPlayer(1);
-		//ConsolePrintf(std::string("Swapped to player: " + std::to_string(m_currentPlayerIndex)).c_str());
+	}
+	if (g_theInput->WasKeyJustPressed(VK_OEM_4) || g_theInput->WasKeyJustPressed(XBOX_D_LEFT)){
+		SwapPlayer(-1);
 	}
 }
 
@@ -76,6 +102,7 @@ void Party::MovePartyToMap(Map * newMap, Vector2 playerPos)
 void Party::AddActorToParty(Actor * newActor)
 {
 	//newActor->m_map->RemoveActorFromMap(newActor);
+	newActor->EquipItemsInInventory();
 	m_partyMembers.push_back(newActor);
 	for (Item* item : newActor->m_inventory){
 		m_inventory.push_back(item);
@@ -83,6 +110,7 @@ void Party::AddActorToParty(Actor * newActor)
 	//newActor->m_map->m_scene->AddRenderable(newActor->m_renderable);
 	newActor->SetFollowTarget(m_currentPlayer);
 	newActor->m_questGiven = nullptr;
+	
 }
 
 void Party::AddActorAndSetAsPlayer(Actor * newPlayer)
@@ -122,7 +150,8 @@ void Party::EquipOrUnequipItem(Item * itemToEquip)
 
 void Party::SwapPlayer(int direction)
 {
-	m_currentPlayerIndex = (m_currentPlayerIndex + direction) % m_partyMembers.size();
+	int size = m_partyMembers.size();
+	m_currentPlayerIndex = (m_currentPlayerIndex + direction + size) % size;
 	Actor* oldPlayer = m_currentPlayer;
 	m_currentPlayer = m_partyMembers[m_currentPlayerIndex];
 	m_currentPlayer->m_isPlayer = true;

@@ -21,7 +21,8 @@
       <Walk speed="1.0"/>
       <Sight range="5.0"/>
     </Movement>
-    <Health max="30" start="30"/>
+    <Health max="50" start="50"/>
+    <Stats baseMovement="1" baseStrength="20" baseDefense="1" />
     <SpriteAnimSet name = "humanoid" />
     <Clothing set="Orc" />
   </ActorDefinition>
@@ -47,7 +48,7 @@
       <Swim speed ="1.0"/>
     </Movement>
     <Stats baseMovement="1" baseStrength="1~2" baseDefense="0" />
-    <Health max="100" start="100"/>
+    <Health max="50" start="50"/>
     <SpriteAnimSet name = "humanoid" />
     <Clothing set="Villager" />
     <Dialogues>
@@ -64,7 +65,7 @@
       <Sight range="5.0"/>
     </Movement>
     <Stats baseMovement="1" baseStrength="1~2" baseDefense="0" />
-    <Health max="100" start="100"/>
+    <Health max="80" start="80"/>
     <SpriteAnimSet name = "humanoid" />
     <Clothing set="Villager" />
     <Inventory>

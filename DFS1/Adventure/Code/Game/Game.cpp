@@ -211,7 +211,6 @@ void Game::ToggleDevMode()
 
 void Game::TransitionToState(GameState* newState)
 {
-
 	m_transitionToState = newState;
 	m_currentState->StartTransition();
 }

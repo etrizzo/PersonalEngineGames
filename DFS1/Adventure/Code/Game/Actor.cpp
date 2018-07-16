@@ -99,6 +99,9 @@ void Actor::Update(float deltaSeconds)
 			RunSimpleAI(deltaSeconds);
 		}
 	}
+	if (m_faction == "evil"){
+		EquipItemsInInventory();
+	}
 
 }
 
@@ -123,6 +126,13 @@ void Actor::HandleInput()
 		m_physicsDisc.center=GetPosition();
 	}
 	
+}
+
+void Actor::EquipItemsInInventory()
+{
+	for (Item* item : m_inventory){
+		EquipOrUnequipItem(item);	
+	}
 }
 
 void Actor::AssignAsQuestGiver(Quest * questToGive)
@@ -570,15 +580,15 @@ void Actor::RunSimpleAI(float deltaSeconds)
 	switch (m_currentBehavior){
 	case (BEHAVIOR_WANDER):
 		Wander(deltaSeconds);
-		g_theGame->m_debugRenderSystem->MakeDebugRender3DText("Wander", 0.f, Vector3(GetPosition()), .1f);
+		//g_theGame->m_debugRenderSystem->MakeDebugRender3DText("Wander", 0.f, Vector3(GetPosition()), .1f);
 		break;
 	case (BEHAVIOR_FOLLOW):
 		FollowPlayer(deltaSeconds);
-		g_theGame->m_debugRenderSystem->MakeDebugRender3DText("Follow", 0.f, Vector3(GetPosition()), .1f);
+		//g_theGame->m_debugRenderSystem->MakeDebugRender3DText("Follow", 0.f, Vector3(GetPosition()), .1f);
 		break;
 	case (BEHAVIOR_ATTACK):
 		AttackEnemyActor(deltaSeconds);
-		g_theGame->m_debugRenderSystem->MakeDebugRender3DText("Attack", 0.f, Vector3(GetPosition()), .1f);
+		//g_theGame->m_debugRenderSystem->MakeDebugRender3DText("Attack", 0.f, Vector3(GetPosition()), .1f);
 		break;
 	}
 

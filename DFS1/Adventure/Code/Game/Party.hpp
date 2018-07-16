@@ -9,6 +9,7 @@ public:
 	Party();
 
 	void Update(float ds);
+	void CheckForKilledPlayers();
 	void RenderPartyUI(AABB2 renderBox);
 	void RunCorrectivePhysics();
 	void HandleInput();

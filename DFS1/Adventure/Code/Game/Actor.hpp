@@ -20,6 +20,7 @@ public:
 	void Render();
 	void HandleInput();
 
+	void EquipItemsInInventory();
 	void AssignAsQuestGiver(Quest* questToGive);
 	void AdvanceQuest();
 	void FinishQuest();		//resets actor to default after finishing their quest

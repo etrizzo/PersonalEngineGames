@@ -95,6 +95,20 @@ public:
 	MenuState* m_menuState;
 };
 
+class GameState_Defeat: public GameState{
+public:
+	GameState_Defeat(GameState* encounter);
+	void Update(float ds) override;
+	void RenderGame() override;
+	void RenderUI() override;
+	//void RenderTransition() override;
+	void RenderTransitionEffect(float t) override;
+	void HandleInput() override;
+
+	GameState* m_encounterGameState;
+
+};
+
 
 class GameState_MapViewer : public GameState{
 public:

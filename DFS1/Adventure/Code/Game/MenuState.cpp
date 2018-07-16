@@ -131,9 +131,9 @@ void MenuState_Paused::HandleInput()
 	if (WasPauseJustPressed() || g_primaryController->WasButtonJustPressed(XBOX_B)){
 		g_theGame->TransitionToState(m_pauseState->m_encounterGameState);
 	}
-	if (g_theInput->WasKeyJustPressed(VK_ESCAPE)){
-		g_theGame->TransitionToState(new GameState_Attract());
-	}
+	//if (g_theInput->WasKeyJustPressed(VK_ESCAPE)){
+	//	g_theGame->TransitionToState(new GameState_Attract());
+	//}
 
 	if (g_theInput->WasKeyJustPressed('I') || g_primaryController->WasButtonJustPressed(XBOX_BACK)){
 		m_pauseState->SwitchToInventory();
@@ -262,6 +262,12 @@ void MenuState_Inventory::HandleInput()
 	}
 	if (g_theInput->WasKeyJustPressed(VK_ESCAPE)){
 		g_theGame->TransitionToState(m_pauseState->m_encounterGameState);
+	}
+	if (g_theInput->WasKeyJustPressed(VK_OEM_6) || g_theInput->WasKeyJustPressed(XBOX_D_RIGHT)){
+		g_theGame->m_party->SwapPlayer(1);
+	}
+	if (g_theInput->WasKeyJustPressed(VK_OEM_4) || g_theInput->WasKeyJustPressed(XBOX_D_LEFT)){
+		g_theGame->m_party->SwapPlayer(-1);
 	}
 	m_menu->HandleInput();
 }
