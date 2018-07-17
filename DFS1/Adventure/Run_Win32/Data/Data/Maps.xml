@@ -1,23 +1,64 @@
 <MapDefinitions>
-
-    <MapDefinition name="Zoo" defaultTile="Sand" width="80~90" soundtrack="Caketown 1.mp3">
+  <MapDefinition name="Zoo" defaultTile="Sand" width="80~90" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
-     <FillAndEdge edgeTile="Dirt" fillTile="Grass" subAreaCenter=".3~.8" subAreaSize=".2~.4" type="rectangle" />
       <!--
+     <FillAndEdge edgeTile="Dirt" fillTile="Grass" subAreaCenter=".3~.8" subAreaSize=".2~.4" type="rectangle" />
+       -->
       <SetSubArea subAreaCenter=".3~.7" subAreaSize=".2~.45" type="circle"/>
               <Mutate ifType="Sand" toType="Water" />
               <FillAndEdge edgeTile="Dirt" fillTile="Grass"/>
+              <!--<TagTiles tag="Circle"/>-->
               
               <SubMap map="SmallVillage" />
       <EndSubArea />
       
-      -->
-
+     <SpawnActor type="Goblin" noNoZone="Village" iterations="50"/>
     </GenerationSteps>
   </MapDefinition>
 
-  <MapDefinition name="Forest" defaultTile="Grass" width="80" soundtrack="Caketown 1.mp3">
+  <MapDefinition name="Forest" defaultTile="Grass" width="40" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
+      <TagTiles tag="Forest" />
+      <SpawnDecoration type="GreenTree" spawnType="mutate" onTile="Grass" chanceToSpawn=".4f" />
+      <SpawnDecoration type="GreenTree" spawnType="mutate" onTile="LightFlowers" chanceToSpawn=".2f" />
+    </GenerationSteps>
+  </MapDefinition>
+
+  <MapDefinition name="SpookyZone" defaultTile="Grass" width="40" soundtrack="Caketown 1.mp3">
+    <GenerationSteps>
+      <!--
+      <FillAndEdge fillTile="Dirt" edgeTile="Dirt"  subAreaSize=".35" subAreaCenter=".5" type="circle" feather=".3" />
+      <Mutate ifType="Water" toType ="Dirt" chanceToMutate="1" subAreaSize=".35" subAreaCenter=".5" type="circle" feather=".3"/>
+      <Mutate ifType="Dirt" toType="Lava" chanceToMutate=".01" centerDensity=".5" edgeDensity=".05" subAreaSize=".35" subAreaCenter=".5" type="circle" />
+      <CellularAutomata ifType="Dirt" changeToType="Lava" ifNeighborType="Lava" iterations="5" />
+      <CellularAutomata ifType="Dirt" changeToType="Lava" ifNeighborType="Lava" ifNeighborCount="3~8" iterations="2" />
+
+      <CellularAutomata ifType="Dirt" changeToType="DarkDirt" ifNeighborType="Lava" />
+      <CellularAutomata ifType="Dirt" changeToType="DarkDirt" ifNeighborType="DarkDirt" ifNeighborCount="3~8" iterations="4" />
+  -->
+      <Mutate ifType="Grass" toType="Dirt" chanceToMutate=".9" iterations="3" centerDensity="1" edgeDensity=".25" feather=".3"/>
+      <Mutate ifType="LightFlowers" toType="Dirt" chanceToMutate="1.0" iterations="3" centerDensity="1" edgeDensity=".25" feather=".3"/>
+      <Mutate ifType="Sand" toType="Dirt" chanceToMutate="1.0"/>
+      <Mutate ifType="Water" toType="Lava" chanceToMutate="1.0" centerDensity=".7" edgeDensity=".15" />
+
+      <CellularAutomata ifType="Water" changeToType="Dirt" ifNeighborType="Dirt" iterations="1" />
+      <CellularAutomata ifType="Water" changeToType="Lava" ifNeighborType="Lava" iterations="5" />
+      <CellularAutomata ifType="Dirt" changeToType="DarkDirt" ifNeighborType="Lava" />
+      <CellularAutomata ifType="Dirt" changeToType="DarkDirt" ifNeighborType="DarkDirt" ifNeighborCount="3~8" iterations="4" />
+
+      <CellularAutomata ifType="Lava" changeToType="DarkDirt" ifNeighborType="Water" feather=".01"/>
+      <!--
+      <CellularAutomata ifType="Dirt" changeToType="Water" ifNeighborType="Water" ifNeighborCount="3~8"/>
+      <CellularAutomata ifType="Dirt" changeToType="Sand" ifNeighborType="Water" ifNeighborCount="2~8" />
+    -->
+      <SpawnDecoration type="DeadTree" spawnType="mutate" onTile="Dirt" chanceToSpawn=".05f" centerDensity=".2f" edgeDensity=".01" feather=".3"/>
+      <SpawnActor type="Goblin" iterations="50" />
+    </GenerationSteps>
+  </MapDefinition>
+
+  <MapDefinition name="ForestMap" defaultTile="Grass" width="80" soundtrack="Caketown 1.mp3">
+    <GenerationSteps>
+      <TagTiles tag="Forest" />
       <SetSubArea subAreaSize=".3~.4" subAreaCenter=".2~.8" type="circle"/>
         <SpawnDecoration type="GreenTree" spawnType="mutate" onTile="Grass" chanceToSpawn=".3f" centerDensity=".8f" edgeDensity=".1" feather=".3"/>
         <FillAndEdge edgeTile="Dirt" />
@@ -25,68 +66,42 @@
     </GenerationSteps>
   </MapDefinition>
 
-  <MapDefinition name="LargeMap" defaultTile="Grass" width="200~300" soundtrack="Caketown 1.mp3">
+  <MapDefinition name="LargeMap" defaultTile="Grass" width="100~200" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
       <FillAndEdge edgeTile="StoneBrickWall" fillTile="Water" edgeThickness="1"/> 
       
 
-      <SetSubArea subAreaSize="-0.5~1.5" type="perlin" noiseScale="80" centerDensity="1" edgeDensity="1" feather="1"/>
+      <SetSubArea subAreaSize="-0.5~1.5" type="perlin" noiseScale="20" centerDensity="1" edgeDensity="1" feather="1"/>
         <FillAndEdge edgeTile="Dirt" fillTile="Sand" edgeThickness="1"/> 
         <FillAndEdge edgeTile="Sand" fillTile="Grass" edgeThickness="2" edgeDensity=".9" feather=".6"/> 
 
-        <SetSubArea subAreaSize="0.5~1.5" type="perlin" noiseScale="80" inheritSeed ="true" feather=".05" />
+        <SetSubArea subAreaSize="0.5~1.5" type="perlin" noiseScale="20" inheritSeed ="true" feather=".05" />
           <FillAndEdge edgeTile="LightFlowers" fillTile="LightFlowers" />
         <EndSubArea />
       <EndSubArea />
       
       <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.1" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
-              <RoomsAndPaths>
-                <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
-                <Paths floor="Dirt" straightChance=".05"/>
-              </RoomsAndPaths>
-              <SpawnActor type="Villager" iterations="3~4" onTile="LightFlowers" />
-              <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
-                <FillAndEdge edgeTile="Dirt" />
+          <SubMap map="SmallVillage"/>
       <EndSubArea />
-      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.08" type="circle" centerDensity="1" edgeDensity=".5" feather=".1"/>
-              <RoomsAndPaths>
-                <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
-                <Paths floor="Dirt" straightChance=".05"/>
-              </RoomsAndPaths>
-               <SpawnActor type="Villager" iterations="3~4" onTile="LightFlowers" />
-              <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
-                <FillAndEdge edgeTile="Dirt" />
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.1" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
+          <SubMap map="SmallVillage"/>
       <EndSubArea />
-      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.15" type="circle" centerDensity="1" edgeDensity=".5" feather=".1"/>
-              <RoomsAndPaths>
-                <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
-                <Paths floor="Dirt" straightChance=".05"/>
-              </RoomsAndPaths>
-               <SpawnActor type="Villager" iterations="4~6" onTile="LightFlowers" />
-              <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
-              <FillAndEdge edgeTile="Dirt" />
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.1" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
+          <SubMap map="SmallVillage"/>
       <EndSubArea />
     
       <SetSubArea subAreaCenter=".7~.9" subAreaSize=".25~.35" type="circle" centerDensity="1" edgeDensity=".01" feather=".3" />
-         <SpawnDecoration type="GreenTree" spawnType="mutate" onTile="Grass" chanceToSpawn=".4f" />
-         <SpawnDecoration type="GreenTree" spawnType="mutate" onTile="LightFlowers" chanceToSpawn=".2f" />
+         <SubMap map="Forest" />
       <EndSubArea />
-<!--
-      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".15~.2" />
-      <FillAndEdge edgeTile = "Dirt" />
-        <SubMap map="SmallVillage" />
+
+       <SetSubArea subAreaCenter="0.0~.2" subAreaSize=".25~.35" type="circle" />
+         <SubMap map="SpookyZone" />
       <EndSubArea />
-      
-      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".1~.1" />
-      <FillAndEdge edgeTile = "Dirt" />
-        <SubMap map="SmallVillage" />
-        
-      <EndSubArea />
-      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".15~.2" />
-      <FillAndEdge edgeTile = "Dirt" />
-        <SubMap map="SmallVillage" />
-      <EndSubArea />
-    -->
+
+      <CellularAutomata ifType="LightFlowers" changeToType="Dirt" ifNeighborType="Dirt" iterations="5"/>
+      <CellularAutomata ifType="LightFlowers" changeToType="Dirt" ifNeighborType="Dirt" chanceToMutate=".5" iterations="3"/>
+
+      <SpawnActor type="Goblin" noNoZone="Village" iterations="30"/>      <!-- zac did this -->
     </GenerationSteps>
   </MapDefinition>
 
@@ -101,12 +116,6 @@
       <SpawnItem type="Leather Hat" />
 
       <SpawnActor type="Villager" iterations="1" />
-      <!--
-      <SpawnActor type="Villager" />
-      <SpawnActor type="Villager" />
-      <SpawnActor type="Villager" />
-      <SpawnActor type="Villager" />
-    -->
     </GenerationSteps>
   </MapDefinition>
 
@@ -129,14 +138,20 @@
 
   <MapDefinition name="SmallVillage" defaultTile="Grass" width="20~30" height="20~30" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
+      <TagTiles tag="Village" iterations="3"/>
       <RoomsAndPaths>
         <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
-        <Paths floor="Dirt" straightChance=".05"/>
+        <Paths floor="DirtPath" straightChance=".05"/>
       </RoomsAndPaths>
       <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
       <SpawnActor type="Villager" iterations="3~5" />
-      <SpawnActor type="Goblin" />
+      <!--<SpawnActor type="Goblin" /> -->
       <SpawnActor type="Ally" />
+
+      <SpawnItem type="Leather Chestpiece" onTileType="Wood"/>
+      <SpawnItem type="Leather Leggings" onTileType="Wood"/>
+      <SpawnItem type="Leather Hat" onTileType="Wood"/>
+
     </GenerationSteps>
   </MapDefinition>
 

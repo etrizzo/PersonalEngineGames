@@ -70,7 +70,9 @@ public:
 	void CheckEntityInteractions();
 
 	void Render();
+	void PostRender();
 	void RenderUI();		//renders dialogue
+	void RenderTileTags();
 	void RenderTiles();
 	void RenderEntities();
 	bool RunBubbleSortPassOnEntities();
@@ -93,6 +95,8 @@ public:
 	Tile GetSpawnTileOfType(TileDefinition* tileType) const;
 	Tile GetRandomBaseTile() const;
 	Tile GetRandomTile() const;
+	Tile* GetRandomTileWithTag(std::string tag);
+	Tile* GetRandomTileWithoutTag(std::string tag);
 	IntVector2 GetRandomTileCoords() const;
 	bool IsCoordinateOnMap(IntVector2 coordinate);
 	void MarkTileForSpawn(IntVector2 pos);

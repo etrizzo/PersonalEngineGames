@@ -18,6 +18,9 @@ public:
 	TileExtraInfo* m_extraInfo = nullptr;
 	//int m_type;
 
+	void AddTag(std::string tag);
+	bool HasTag(std::string tag);
+
 	bool HasBeenSpawnedOn() const;
 	void MarkAsSpawned();
 	void DamageTile(TileDefinition* typeIfDestroyed, int damage = 1);
@@ -27,6 +30,8 @@ public:
 	Vector2 GetApproximateCenter() const;
 	TileDefinition* GetTileDefinition();
 
+	void RenderTag();
+
 	void SetType(TileDefinition* newType);
 
 };
@@ -35,6 +40,8 @@ public:
 class TileExtraInfo{
 public:
 	TileExtraInfo(){};
+	void AddTag(std::string tag);
+	void RemoveTag(std::string tag);
 	int m_variant = 0;
 	bool m_spawnedOn = false;
 	float m_lightLevel = 1.f;		//[0-1]?

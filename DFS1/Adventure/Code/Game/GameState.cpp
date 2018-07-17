@@ -164,6 +164,7 @@ void GameState_Encounter::RenderGame()
 
 	m_currentAdventure->Render();
 	g_theGame->m_renderPath->RenderSceneForCamera(g_theGame->m_camera, m_currentAdventure->GetScene());
+	m_currentAdventure->PostRender();
 }
 
 void GameState_Encounter::RenderUI()

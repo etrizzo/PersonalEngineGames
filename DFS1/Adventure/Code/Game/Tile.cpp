@@ -1,6 +1,7 @@
 #include "Tile.hpp"
 #include "Game/Game.hpp"
-#include  "Game/Map.hpp"
+#include "Game/Map.hpp"
+#include "Game/DebugRenderSystem.hpp"
 
 
 Tile::~Tile()
@@ -33,6 +34,16 @@ Tile::Tile(IntVector2 & coords, TileDefinition* tileDef)
 // 0 1 2
 // 3 x 4
 // 5 6 7
+
+void Tile::AddTag(std::string tag)
+{
+	m_extraInfo->AddTag(tag);
+}
+
+bool Tile::HasTag(std::string tag)
+{
+	return m_extraInfo->m_tags.HasTag(tag);
+}
 
 bool Tile::HasBeenSpawnedOn() const
 {
@@ -82,8 +93,28 @@ TileDefinition* Tile::GetTileDefinition()
 	return m_tileDef;
 }
 
+void Tile::RenderTag()
+{
+	if (m_extraInfo->m_tags.GetNumTags() > 0){
+		std::string tags = m_extraInfo->m_tags.GetTagsAsString();
+
+		g_theGame->m_debugRenderSystem->MakeDebugRender3DText(tags, 0.f, Vector3(GetCenter()), .1f);
+		g_theRenderer->DrawTextInBox2D(tags, GetBounds(), Vector2::HALF, .01f, TEXT_DRAW_WORD_WRAP);
+	}
+}
+
 void Tile::SetType(TileDefinition* newType)
 {
 	m_tileDef = newType;
 	m_extraInfo->m_variant = GetRandomIntLessThan(newType->m_spriteCoords.size());
+}
+
+void TileExtraInfo::AddTag(std::string tag)
+{
+	m_tags.SetTag(tag);
+}
+
+void TileExtraInfo::RemoveTag(std::string tag)
+{
+	m_tags.RemoveTag(tag);
 }

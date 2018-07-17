@@ -197,17 +197,30 @@ void Actor::RenderStatsInBox(AABB2 boxToDrawIn, RGBA tint)
 
 void Actor::RenderBoyInBox(AABB2 boyBox, RGBA tint)
 {
-	//AABB2 pictureBox = boyBox.GetPercentageBox(.05f, .15f, .45f, .72f);
 	boyBox.TrimToAspectRatio(GetAspectRatio());
 	float height = boyBox.GetHeight();
-	//pictureBox.AddPaddingToSides(height * -.1f,height * -.15f);
-	//g_theRenderer->DrawAABB2Outline(boyBox, RGBA(255,255,255,64));
-	//pictureBox.AddPaddingToSides(height *-.1f, height *-.1f);
 	AABB2 texCoords = m_animSet->GetUVsForAnim("IdleSouth", 0.f);
 	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
 		if (m_currentLook->GetTexture(i) != nullptr){
 			//const Texture* entityTexture = m_animSets[i]->GetTextureForAnim("IdleSouth");
 			g_theRenderer->DrawTexturedAABB2(boyBox, *m_currentLook->GetTexture(i), texCoords.mins, texCoords.maxs, m_currentLook->GetTint(i));
+		}
+	}
+}
+
+void Actor::RenderFaceInBox(AABB2 faceBox, RGBA tint)
+{
+	g_theRenderer->DrawAABB2Outline(faceBox, RGBA::WHITE);
+	//faceBox.AddPaddingToSides(-.05f,-.05f);
+	//faceBox.TrimToAspectRatio(GetAspectRatio());
+	float height = faceBox.GetHeight();
+	AABB2 texCoords = m_animSet->GetUVsForAnim("IdleSouth", 0.f);
+	AABB2 faceTexCoords = texCoords.GetPercentageBox(.3f, .4f, .7f, .9f);
+	//faceTexCoords.ExpandToAspectRatio(faceBox.GetAspect());
+	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
+		if (m_currentLook->GetTexture(i) != nullptr){
+			//const Texture* entityTexture = m_animSets[i]->GetTextureForAnim("IdleSouth");
+			g_theRenderer->DrawTexturedAABB2(faceBox, *m_currentLook->GetTexture(i), faceTexCoords.mins, faceTexCoords.maxs, m_currentLook->GetTint(i));
 		}
 	}
 }

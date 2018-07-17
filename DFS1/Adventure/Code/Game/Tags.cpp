@@ -11,6 +11,20 @@ Tags::~Tags()
 	
 }
 
+int Tags::GetNumTags() const
+{
+	return m_tags.size();
+}
+
+std::string Tags::GetTagsAsString() const
+{
+	std::string tags = "";
+	for (std::string tag : m_tags){
+		tags+= tag + ", ";
+	}
+	return tags;
+}
+
 void Tags::SetOrRemoveTags(const std::string & commaSeparatedTagNames)
 {
 	Strings unparsedTags = Strings();

@@ -27,6 +27,7 @@ public:
 
 	void RenderStatsInBox(AABB2 statsBox, RGBA tint = RGBA::WHITE);
 	void RenderBoyInBox(AABB2 boyBox, RGBA tint=RGBA::WHITE);
+	void RenderFaceInBox(AABB2 faceBox, RGBA tint= RGBA::WHITE);
 	void RenderEquippedWeaponInBox(AABB2 weaponBox, RGBA tint = RGBA::WHITE);
 	std::string GetAnimName();
 

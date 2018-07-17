@@ -121,6 +121,9 @@ MapGenStep * MapGenStep::CreateMapGenStep(const tinyxml2::XMLElement & genStepXm
 	if (genName == "Mutate"){
 		newMapGenStep = (MapGenStep*) new MapGenStep_Mutate(genStepXmlElement);
 	}
+	if (genName == "TagTiles"){
+		newMapGenStep = (MapGenStep*) new MapGenStep_TagTiles(genStepXmlElement);
+	}
 	if (genName == "PerlinNoise"){
 		newMapGenStep = (MapGenStep*) new MapGenStep_PerlinNoise(genStepXmlElement);
 	}
@@ -258,6 +261,41 @@ void MapGenStep_Mutate::Run(Map & map)
 		}
 	}
 }
+
+
+MapGenStep_TagTiles::MapGenStep_TagTiles(const tinyxml2::XMLElement & generationStepElement)
+	: MapGenStep(generationStepElement)
+{
+	m_tag = ParseXmlAttribute(generationStepElement, "tag", "no_tag");
+	m_chanceToTag	= ParseXmlAttribute(generationStepElement, "chanceToMutate", m_chanceToTag);
+}
+
+void MapGenStep_TagTiles::Run(Map & map)
+{
+	int mapWidth = map.GetWidth();
+	int mapHeight = map.GetHeight();
+	for (int tileX = 0; tileX < mapWidth; tileX++){
+		for (int tileY = 0; tileY < mapHeight; tileY++){
+			if (m_mask->CanDrawOnPoint(tileX, tileY)){
+				Tile* tile = map.TileAt(tileX, tileY);
+				if (m_ifType!= nullptr){
+					std::string tileName = tile->m_tileDef->m_name;
+					std::string ifTypeName = m_ifType->m_name;
+					if (!tileName.compare(ifTypeName)){
+						if (CheckRandomChance(m_chanceToTag)){
+							tile->AddTag(m_tag);
+						}
+					}
+				} else {
+					if (CheckRandomChance(m_chanceToTag)){
+						tile->AddTag(m_tag);
+					}
+				}
+			}
+		}
+	}
+}
+
 
 MapGenStep_Conway::MapGenStep_Conway(const tinyxml2::XMLElement & generationStepElement)
 	: MapGenStep( generationStepElement )
@@ -691,6 +729,19 @@ MapGenStep_SpawnActor::MapGenStep_SpawnActor(const tinyxml2::XMLElement & genera
 {
 	m_actorName			= ParseXmlAttribute(generationStepElement, "type", m_actorName);
 	m_spawnOnTileDef	= ParseXmlAttribute(generationStepElement, "onTile", m_spawnOnTileDef);
+
+	std::string spawnOnTag	= ParseXmlAttribute(generationStepElement, "spawnTag", m_spawnTag);
+	std::string noSpawnTag	= ParseXmlAttribute(generationStepElement, "noNoZone", m_spawnTag);
+
+	if (spawnOnTag != ""){
+		m_spawnTag = spawnOnTag;
+		m_spawnTagIsWhiteList = true;
+		m_limitedByTags = true;
+	} else if (noSpawnTag != ""){
+		m_spawnTag = noSpawnTag;
+		m_spawnTagIsWhiteList = false;
+		m_limitedByTags = true;
+	}
 }
 
 void MapGenStep_SpawnActor::Run(Map & map)
@@ -698,7 +749,16 @@ void MapGenStep_SpawnActor::Run(Map & map)
 	if (m_spawnOnTileDef == nullptr){
 		m_spawnOnTileDef = map.m_mapDef->m_defaultTile;
 	}
-	Tile* spawnTile = GetSpawnTileOfType(m_spawnOnTileDef, map);
+	Tile* spawnTile = nullptr;
+	if (m_limitedByTags){
+		if (m_spawnTagIsWhiteList){
+			spawnTile = map.GetRandomTileWithTag(m_spawnTag);
+		} else {
+			spawnTile = map.GetRandomTileWithoutTag(m_spawnTag);
+		}
+	} else {
+		spawnTile = GetSpawnTileOfType(m_spawnOnTileDef, map);
+	}
 	if (spawnTile != nullptr){
 		map.SpawnNewActor(m_actorName, spawnTile->GetCenter());
 		for (int i = 0; i < map.m_difficulty; i++){		//random chance to add a multiple of the actor
@@ -775,6 +835,7 @@ MapGenStep_SpawnDecoration::MapGenStep_SpawnDecoration(const tinyxml2::XMLElemen
 	m_spawnOnTileDef	= ParseXmlAttribute(generationStepElement, "onTile", m_spawnOnTileDef);
 	m_chanceToSpawn		= ParseXmlAttribute(generationStepElement, "chanceToSpawn", m_chanceToSpawn);
 	m_spawnType			= ParseXmlAttribute(generationStepElement, "spawnType", m_spawnType);
+	m_spawnTag			= ParseXmlAttribute(generationStepElement, "onTag", "");
 }
 
 void MapGenStep_SpawnDecoration::Run(Map & map)
@@ -785,7 +846,12 @@ void MapGenStep_SpawnDecoration::Run(Map & map)
 	if (m_spawnType == "mutate"){
 		RunAsMutate(map);
 	} else {
-		Tile spawnTile = map.GetSpawnTileOfType(m_spawnOnTileDef);
+		Tile spawnTile;
+		if (m_spawnTag != ""){
+			spawnTile = *map.GetRandomTileWithTag(m_spawnTag);
+		} else {
+			spawnTile = map.GetSpawnTileOfType(m_spawnOnTileDef);
+		}
 		map.SpawnNewDecoration(m_decoName, spawnTile.GetCenter());
 	}
 }
@@ -802,9 +868,18 @@ void MapGenStep_SpawnDecoration::RunAsMutate(Map & map)
 					std::string tileName = tile->m_tileDef->m_name;
 					std::string ifTypeName = m_spawnOnTileDef->m_name;
 					if (tileName == ifTypeName){
-						if (CheckRandomChance(m_chanceToSpawn)){
-							tile->MarkAsSpawned();
-							map.SpawnNewDecoration(m_decoName, tile->GetCenter());
+						if (m_spawnTag != ""){
+							if (tile->HasTag(m_spawnTag)){
+								if (CheckRandomChance(m_chanceToSpawn)){
+									tile->MarkAsSpawned();
+									map.SpawnNewDecoration(m_decoName, tile->GetCenter());
+								}
+							}
+						} else {
+							if (CheckRandomChance(m_chanceToSpawn)){
+								tile->MarkAsSpawned();
+								map.SpawnNewDecoration(m_decoName, tile->GetCenter());
+							}
 						}
 					}
 				}
@@ -812,3 +887,4 @@ void MapGenStep_SpawnDecoration::RunAsMutate(Map & map)
 		}
 	}
 }
+

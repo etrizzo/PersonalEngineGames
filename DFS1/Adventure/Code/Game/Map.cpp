@@ -56,14 +56,47 @@ Map::Map(std::string name, MapDefinition* mapDef, int difficulty)
 void Map::Render()
 {
 	SetCamera();
+	
 	//RenderTiles();
 	//RenderEntities();
 }
 
+void Map::PostRender()
+{
+	if (g_theGame->m_devMode){
+		RenderTileTags();
+	}
+}
+
 void Map::RenderUI()
 {
+	
 	if (m_activeDialogueSet != nullptr){
 		m_activeDialogueSet->Render(g_theGame->m_dialogueBox);
+	}
+}
+
+void Map::RenderTileTags()
+{
+	
+	Vector2 playerPos = g_theGame->m_party->GetPlayerCharacter()->GetPosition();
+	Vector2 spacing = Vector2(1.f,1.f);
+	Tile* minTile = TileAtFloat(playerPos - (spacing * 10.f));
+	Tile* maxTile = TileAtFloat(playerPos + (spacing * 10.f));
+
+	IntVector2 minTileCoords = IntVector2(0,0);
+	IntVector2 maxTileCoords = m_dimensions;
+	if (minTile != nullptr){
+		minTileCoords= minTile->m_coordinates;
+	}
+	if (maxTile != nullptr){
+		maxTileCoords = maxTile->m_coordinates;
+	}
+	for ( int x = minTileCoords.x; x < maxTileCoords.x; x++){
+		for (int y = minTileCoords.y; y < maxTileCoords.y; y++){
+			Tile* tileToRender = TileAt(x,y);
+			tileToRender->RenderTag();
+		}
 	}
 }
 
@@ -732,6 +765,38 @@ Tile Map::GetRandomTile() const
 	IntVector2 coords = GetRandomTileCoords();
 	int index = GetIndexFromCoordinates(coords.x, coords.y, m_dimensions.x, m_dimensions.y);
 	return m_tiles[index];
+}
+
+Tile * Map::GetRandomTileWithTag(std::string tag)
+{
+	std::vector<Tile*> tilesWithTag = std::vector<Tile*>();
+	for (int i = 0; i < m_numTiles; i++){
+		if (m_tiles[i].HasTag(tag)){
+			tilesWithTag.push_back(&m_tiles[i]);
+		}
+	}
+	if (tilesWithTag.size() > 0){
+		int index = GetRandomIntLessThan(tilesWithTag.size());
+		return tilesWithTag[index];
+	} else {
+		return nullptr;
+	}
+}
+
+Tile * Map::GetRandomTileWithoutTag(std::string tag)
+{
+	std::vector<Tile*> tilesWithTag = std::vector<Tile*>();
+	for (int i = 0; i < m_numTiles; i++){
+		if (!m_tiles[i].HasTag(tag)){
+			tilesWithTag.push_back(&m_tiles[i]);
+		}
+	}
+	if (tilesWithTag.size() > 0){
+		int index = GetRandomIntLessThan(tilesWithTag.size());
+		return tilesWithTag[index];
+	} else {
+		return nullptr;
+	}
 }
 
 IntVector2 Map::GetRandomTileCoords() const

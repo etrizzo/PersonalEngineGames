@@ -9,6 +9,17 @@
 		  allowsWalking="false"
 		  allowsFlying="true"
 		  allowsSwimming="false"
-	/>
+	 />
+  </DecorationDefinition>
+  <DecorationDefinition name="DeadTree">
+    <Size physicsRadius=".15" drawRadius="1.9" aspect=".6" pivot="0.5,0.05"/>
+    <SpriteAnimSet spriteSheet="DECORATIONS/dead_tree.png" spriteLayout="1,1">
+      <SpriteAnim name="Idle" spriteIndexes="0"/>
+    </SpriteAnimSet>
+    <Collision
+      allowsWalking="false"
+      allowsFlying="true"
+      allowsSwimming="false"
+   />
   </DecorationDefinition>
 </DecorationDefinitions>

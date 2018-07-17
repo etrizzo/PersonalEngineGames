@@ -19,6 +19,7 @@ public:
 
 	void Update(float deltaSeconds);
 	void Render();
+	void PostRender();
 	void RenderUI();
 
 	Map* GetMap(std::string mapName);

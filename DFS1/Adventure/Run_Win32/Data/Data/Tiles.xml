@@ -112,6 +112,16 @@
 		  allowsSwimming="false"
    />
 
+    <TileDefinition
+      name="DirtPath"
+      spriteCoords="4,31|5,31"
+      chromaKey ="204,148,0"
+      allowsSight="true"
+      allowsWalking="true"
+      allowsFlying="true"
+      allowsSwimming="false"
+   />
+
   <TileDefinition
     name="DarkDirt"
     spriteCoords="27,31|28,31|28,31|28,31|28,31|29,31|29,31|29,31|29,31|29,31"

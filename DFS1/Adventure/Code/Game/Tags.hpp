@@ -7,9 +7,10 @@ public:
 	Tags(const std::string& commaSeparatedTagNames);
 	~Tags();
 
+	int GetNumTags() const;
+	std::string GetTagsAsString() const;
 	void SetOrRemoveTags( const std::string& commaSeparatedTagNames ); // "blessed,!poisoned"
 	bool HasTags( const std::string& commaSeparatedTagNames ); // "good,!cursed"
-protected:
 	void SetTag( const std::string& tagName );
 	void RemoveTag( const std::string& tagName );
 	bool HasTag( const std::string& tagName );

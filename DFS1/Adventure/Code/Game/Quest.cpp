@@ -17,6 +17,11 @@ Quest::Quest(QuestDefinition * def, Adventure * currentAdventure)
 
 	m_questGiver = m_adventure->m_startingMap->GetActorOfType(m_definition->m_giverDefinition);
 	if (m_questGiver != nullptr){
+		int tries = 0;
+		while (m_questGiver->m_questGiven != nullptr && tries < 100){
+			m_questGiver = m_adventure->m_startingMap->GetActorOfType(m_definition->m_giverDefinition);
+			tries++;
+		}
 		m_questGiver->AssignAsQuestGiver(this);
 		//m_questGiver->m_questGiven = this;
 	}

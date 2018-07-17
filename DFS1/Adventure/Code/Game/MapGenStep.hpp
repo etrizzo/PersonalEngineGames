@@ -53,7 +53,12 @@ public:
 	MapGenStep_SpawnActor(const tinyxml2::XMLElement& generationStepElement);
 	void Run(Map& map);
 
-	std::string m_actorName				= std::string();
+	//adopt this whack-ass way of spawning
+	bool m_limitedByTags				= false;
+	bool m_spawnTagIsWhiteList			= true;
+	std::string m_spawnTag				= "";
+	//std::string m_cantSpawnOnTag		= "";
+	std::string m_actorName				= "";
 	TileDefinition* m_spawnOnTileDef	= nullptr;
 };
 
@@ -76,6 +81,7 @@ public:
 	std::string m_spawnType				= "random";			//decorations are different than other entities, may want to use different gensteps to spawn them
 	std::string m_decoName				= std::string();
 	TileDefinition* m_spawnOnTileDef	= nullptr;
+	std::string m_spawnTag				= "";
 };
 
 
@@ -96,6 +102,16 @@ public:
 	TileDefinition* m_ifType = nullptr;
 	TileDefinition* m_toType = nullptr;
 	float m_chanceToMutate = 1.f;
+};
+
+class MapGenStep_TagTiles:  public MapGenStep{
+public:
+	MapGenStep_TagTiles(const tinyxml2::XMLElement& generationStepElement);
+	void Run(Map& map);
+
+	TileDefinition* m_ifType = nullptr;
+	std::string m_tag;
+	float m_chanceToTag = 1.f;
 };
 
 class MapGenStep_PerlinNoise:  public MapGenStep{

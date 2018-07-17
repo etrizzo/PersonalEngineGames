@@ -93,6 +93,11 @@ void Adventure::Render()
 	//RenderUI();
 }
 
+void Adventure::PostRender()
+{
+	m_currentMap->PostRender();
+}
+
 void Adventure::RenderUI()
 {
 	//adventure title - top left
