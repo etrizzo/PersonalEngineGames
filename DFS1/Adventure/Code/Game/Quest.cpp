@@ -16,22 +16,12 @@ Quest::Quest(QuestDefinition * def, Adventure * currentAdventure)
 	m_conditions[0]->m_active = true;
 
 	if (m_definition->m_giverDefinition != nullptr){
-		Tile* actorPos = m_adventure->m_startingMap->GetRandomTileWithTag("Village");
+		Tile* actorPos = m_definition->GetSpawnTile(m_adventure->m_startingMap);
 		actorPos->MarkAsSpawned();
 		Vector2 pos = actorPos->GetApproximateCenter();
 		m_questGiver = m_adventure->m_startingMap->SpawnNewActor(m_definition->m_giverDefinition, pos, 0.f, m_adventure->m_difficulty);
 		m_questGiver->AssignAsQuestGiver(this);
 	}
-	//m_questGiver = m_adventure->m_startingMap->GetActorOfType(m_definition->m_giverDefinition);
-	//if (m_questGiver != nullptr){
-	//	int tries = 0;
-	//	while (m_questGiver->m_questGiven != nullptr && tries < 100){
-	//		m_questGiver = m_adventure->m_startingMap->GetActorOfType(m_definition->m_giverDefinition);
-	//		tries++;
-	//	}
-	//	m_questGiver->AssignAsQuestGiver(this);
-	//	//m_questGiver->m_questGiven = this;
-	//}
 }
 
 bool Quest::UpdateAndCheckIfComplete()
@@ -74,6 +64,9 @@ void Quest::CompleteQuest()
 			condition->m_complete = true;
 		}
 		m_definition->m_questReward->GiveReward(this);
+		if (m_questGiver != nullptr){
+			m_questGiver->FinishQuest();
+		}
 	}
 }
 

@@ -80,11 +80,18 @@ void Adventure::Begin()
 
 void Adventure::Update(float deltaSeconds)
 {
-	
+	PROFILE_PUSH("Adventure::MapUpdate");
 	m_currentMap->Update(deltaSeconds);
+	PROFILE_POP();
+	PROFILE_PUSH("Adventure::PartyUpdate");
 	g_theGame->m_party->Update(deltaSeconds);
+	PROFILE_POP();
+	PROFILE_PUSH("Adventure::VictoryCheck");
 	CheckForVictory();
+	PROFILE_POP();
+	PROFILE_PUSH("Adventure::Cleanup");
 	m_currentMap->RemoveDoomedEntities();
+	PROFILE_POP();
 }
 
 void Adventure::Render()
@@ -114,16 +121,6 @@ void Adventure::RenderUI()
 		Vector2 boxSize = Vector2(screenWidth * .3f, screenWidth * .2f);
 		AABB2 statBox = cameraBounds.GetPercentageBox(0.f, .9f, .4f, 1.f);
 		g_theGame->m_party->RenderPartyUI(statBox);
-		//g_theRenderer->DrawAABB2(statBox, RGBA(200,200,100,200));
-		//g_theGame->m_party->GetPlayerCharacter()->RenderStatsInBox(statBox, RGBA(0,0,0));
-
-		////currently equipped weapon - bottom right
-		//Item* weapon = g_theGame->m_party->GetPlayerCharacter()->m_equippedItems[EQUIP_SLOT_WEAPON];
-		//if (weapon != nullptr){
-		//	AABB2 weaponBox = AABB2(cameraBounds.maxs.x - (boxSize.y * .5f), cameraBounds.mins.y, cameraBounds.maxs.x, cameraBounds.mins.y + (boxSize.y * .5f));
-		//	//weaponBox.AddPaddingToSides(-.05f, -.05f);
-		//	weapon->RenderImageInBox(weaponBox);
-		//}
 	}
 
 }

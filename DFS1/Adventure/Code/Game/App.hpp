@@ -42,3 +42,16 @@ void CommandPrintMapNames(Command& cmd);
 void CommandWinAdventure(Command& cmd);
 void CommandCompleteQuest(Command& cmd);
 void CommandSetSpeed(Command& cmd);
+
+void CommandSpawnActor(Command& cmd);
+void CommandSpawnItem(Command& cmd);
+
+void CommandToggleProfiler(Command& cmd);
+void CommandPrintProfilerReport(Command& cmd);
+void CommandProfilePause(Command& cmd);
+void CommandProfileResume(Command& cmd);
+
+
+void AddProfilerFrameAsTreeToConsole();
+void AddProfilerFrameAsFlatToConsole();
+void PrintTree(ProfilerReportEntry* tree, int depth = 0);

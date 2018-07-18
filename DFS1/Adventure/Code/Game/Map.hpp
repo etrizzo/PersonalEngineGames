@@ -98,6 +98,7 @@ public:
 	Tile GetRandomTile() const;
 	Tile* GetRandomTileWithTag(std::string tag);
 	Tile* GetRandomTileWithoutTag(std::string tag);
+	Tile* GetTaggedTileOfType(TileDefinition* def, std::string tag);
 	IntVector2 GetRandomTileCoords() const;
 	bool IsCoordinateOnMap(IntVector2 coordinate);
 	void MarkTileForSpawn(IntVector2 pos);

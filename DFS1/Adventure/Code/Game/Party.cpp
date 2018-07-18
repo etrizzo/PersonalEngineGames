@@ -1,6 +1,7 @@
 #include "Party.hpp"
 #include "Game/Actor.hpp"
 #include "Game/Game.hpp"
+#include "Game/Item.hpp"
 
 Party::Party()
 {
@@ -137,6 +138,13 @@ void Party::RemoveItemFromInventory(Item * item)
 {
 	for (int i = m_inventory.size() - 1; i >= 0; i--){
 		if (m_inventory[i] == item){
+			if (item->m_currentlyEquipped){
+				for (Actor* actor : m_partyMembers){
+					if (actor->IsItemEquipped(item)){
+						actor->EquipOrUnequipItem(item);
+					}
+				}
+			}
 			RemoveAtFast(m_inventory, i);
 			break;
 		}

@@ -1,22 +1,13 @@
 <AdventureDefinitions>
 
   <AdventureDefinition name="Balrog" title="Kill the Balrog">
-    <StartConditions startMap="The Village" startOnTileType="Grass"/>
+    <StartConditions startMap="Large Map" startOnTileType="Grass"/>
     <Quests>
-      
       <Quest name="KillGoblins" />
-      <!--
-      <Quest name="KillGoblins" />
-      <Quest name="KillGoblins" />
-      -->
+      <Quest name="CollectCrystals" />
       <Quest name="KillBalrog" />
     </Quests>
-    <!--
-    <VictoryConditions>
-     <KillActor actorToKill="Goblin" numToKill="3"/>
-      <KillActor actorToKill="Goblin" numToKill="1"/>
-    </VictoryConditions>
--->
+
     
 
     <Map name="Zoo" mapDefinition="Zoo">
@@ -27,12 +18,9 @@
 =
     <Map name="Large Map" mapDefinition="LargeMap">
         <Item type="Greatbow" onTileType="Wood"/>
-        <Portal type="StairsDown" onTileType="Grass" toMap="The Cave"
-                  toTileType="DarkDirt" reciprocalType="StairsUp"/>
-        <Portal type="StairsDown" onTileType="Grass" toMap="The Cave"
-                  toTileType="DarkDirt" reciprocalType="StairsUp"/>
-        <Portal type="StairsDown" onTileType="Wood" toMap="The Cellar"
-                  toTileType="StoneBrick" reciprocalType="StairsUp"/>
+        <Portal type="StairsDown" onTileType="Grass" toMap="The Cave" toTileType="DarkDirt" reciprocalType="StairsUp"/>
+        <Portal type="StairsDown" onTileType="Grass" toMap="The Cave" toTileType="DarkDirt" reciprocalType="StairsUp"/>
+        <Portal type="StairsDown" onTileType="Wood" toMap="The Cellar" toTileType="StoneBrick" reciprocalType="StairsUp"/>
     </Map>
 
     <Map name="TreeZoo" mapDefinition="Forest">
@@ -45,8 +33,10 @@
       <Item type="Greatbow" onTileType="Wood"/>
       <Portal type="StairsDown" onTileType="Grass" toMap="The Cave"
                   toTileType="DarkDirt" reciprocalType="StairsUp"/>
+      <!--
       <Portal type="StairsDown" onTileType="Wood" toMap="The Cellar"
                   toTileType="StoneBrick" reciprocalType="StairsUp"/>
+      -->
               
     </Map>
     

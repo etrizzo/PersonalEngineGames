@@ -57,6 +57,12 @@
       <SpriteAnim name="Idle" spriteIndexes="4"/>
     </SpriteAnimSet>
   </ItemDefinition>
+
+  <ItemDefinition name="Crystal">
+    <SpriteAnimSet spriteSheet="MiscItems_4x4.png" spriteLayout="4,4">
+      <SpriteAnim name="Idle" spriteIndexes="5" />
+    </SpriteAnimSet>
+  </ItemDefinition>
   
   
 </ItemDefinitions>

@@ -4,7 +4,7 @@
 		<Reward type="gainAlly" />
 		<Steps>
 			<SpeakToActor actorToSpeakTo="giver"/>
-			<KillActor actorToKill="Goblin" numToKill="1" />
+			<KillActor actorToKill="Goblin" numToKill="2~3" />
 			<SpeakToActor actorToSpeakTo="giver"/>
 			<CollectItem itemToCollect="Leather Hat" numToCollect="1" keepItem="false" />
 			<SpeakToActor actorToSpeakTo="giver" requiresItem="Leather Hat" takesItem="true" />
@@ -24,6 +24,25 @@
       			<Dialogue content="This is a great hat!!!!!" />
       			<Dialogue content="Let's go on an adventure!!!!" />
     		</Dialogues>
+    	</DialogueSets>
+	</Quest>
+
+	<Quest name="CollectCrystals" mainQuest="false" giverType="Villager" giverSpawnTag="Village" giverSpawnTile="Grass" sequential="true" text = "Crystal Collecting">
+		<Reward type="giveItem" item="Greatbow" /> 
+		<Steps>
+			<SpeakToActor actorToSpeakTo="giver"/>
+			<CollectItem itemToCollect="Crystal" numToCollect="3" />
+			<SpeakToActor actorToSpeakTo="giver" requiresItem="Crystal" takesItem="true" />
+		</Steps>
+		<DialogueSets>
+			<Dialogues>
+      			<Dialogue content="I can make you a cool bow!" />
+      			<Dialogue content="Can you bring me some crystals?" />
+    		</Dialogues>
+    		<Dialogues>
+      			<Dialogue content="That's just enough crystals!" />
+      			<Dialogue content="Here's your cool bow :)" />
+    		</Dialogues>]
     	</DialogueSets>
 	</Quest>
 

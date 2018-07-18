@@ -49,6 +49,7 @@ public:
 	virtual void TakeDamage(int dmg);
 
 	void EquipOrUnequipItem(Item* itemToEquip);
+	bool IsItemEquipped(Item* item) const;
 
 	Renderable2D* m_healthRenderable;
 	AABB2 m_healthBox;
@@ -61,7 +62,7 @@ public:
 	float m_speakRadius = 1.f;
 
 	ActorDefinition* m_definition;
-	float m_timeLastUpdatedDirection;
+	float m_timeLastUpdatedDirection = -15.f;
 	bool m_moving;
 	//std::vector<Texture*> m_layerTextures;
 	ClothingSet* m_currentLook;

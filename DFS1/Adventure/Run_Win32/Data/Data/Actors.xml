@@ -22,7 +22,7 @@
       <Sight range="5.0"/>
     </Movement>
     <Health max="50" start="50"/>
-    <Stats baseMovement="1" baseStrength="20" baseDefense="1" />
+    <Stats baseMovement="1" baseStrength="3" baseDefense="1" />
     <SpriteAnimSet name = "humanoid" />
     <Clothing set="Orc" />
   </ActorDefinition>
@@ -35,7 +35,7 @@
       <Sight range="10.0"/>
     </Movement>
     <Health max="80" start="80"/>
-    <Stats baseMovement="1" baseStrength="3~4" baseDefense="2~3" />
+    <Stats baseMovement="1" baseStrength="15" baseDefense="2~3" />
    <SpriteAnimSet name = "humanoid" />
    <Clothing set="Balrog" />
   </ActorDefinition>
@@ -70,6 +70,7 @@
     <Clothing set="Villager" />
     <Inventory>
        <Item name="Leather Hat" chanceToSpawn="1.0"/>
+       <Item name="Bow" chanceToSpawn="1.0"/>
     </Inventory>
     <Dialogues>
       <Dialogue content="I'm an ally!" />

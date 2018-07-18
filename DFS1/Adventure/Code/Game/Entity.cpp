@@ -77,6 +77,7 @@ Entity::Entity(EntityDefinition * entityDef, Map * entityMap, Vector2 initialPos
 
 void Entity::Update(float deltaSeconds)
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	//m_rotationDegrees+= (m_spinDegreesPerSecond*deltaSeconds);
 	m_physicsDisc.center=GetPosition();
 	m_ageInSeconds+=deltaSeconds;

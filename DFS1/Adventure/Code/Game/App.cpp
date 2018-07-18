@@ -54,6 +54,8 @@ App::App(HINSTANCE applicationInstanceHandle)
 	AABB2 bounds = g_theGame->m_camera->GetBounds();
 	g_devConsole = new DevConsole(g_theGame->GetUIBounds());
 	g_devConsole->SetRenderer(g_theRenderer);
+
+	g_profilerVisualizer = new ProfilerVisualizer(g_theRenderer, g_theInput, g_theGame->GetUIBounds());
 	RegisterCommands();
 	CommandStartup();
 	g_theRenderer->SetCamera(g_theGame->m_camera);
@@ -62,6 +64,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 
 void App::RunFrame()
 {
+	Profiler::GetInstance()->MarkFrame();
 	ClockSystemBeginFrame();
 	g_theRenderer->BeginFrame(m_bottomLeft, m_topRight, m_backgroundColor);
 	g_theInput->BeginFrame();
@@ -75,6 +78,7 @@ void App::RunFrame()
 
 void App::Update()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	m_deltaTime = static_cast<float>(GetCurrentTimeSeconds() - m_appTime);
 
 	//CheckKeys();
@@ -95,6 +99,7 @@ void App::Update()
 	if (DevConsoleIsOpen()){
 		g_devConsole->Update(ds);
 	}
+	g_profilerVisualizer->Update();
 	m_appTime = GetCurrentTimeSeconds();
 	HandleInput();
 	g_theRenderer->UpdateClock(ds, m_deltaTime);
@@ -102,8 +107,16 @@ void App::Update()
 
 void App::Render()
 {
-
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	g_theGame->Render();
+
+	PROFILE_PUSH("RenderProfiler");
+	if (g_profilerVisualizer->IsOpen()){
+		g_theGame->SetUICamera();
+		g_profilerVisualizer->Render();
+	}
+	PROFILE_POP();
+
 	if (DevConsoleIsOpen()){
 		g_theGame->SetUICamera();
 		g_devConsole->Render();
@@ -125,6 +138,16 @@ void App::RegisterCommands()
 	CommandRegister("win_adventure", CommandWinAdventure, "Automatically wins current adventure");
 	CommandRegister("complete_quest", CommandCompleteQuest, "Automatically completes the quest at specified index", "complete_quest <index>");
 	CommandRegister("set_speed", CommandSetSpeed, "Sets player walking speed", "set_speed <int>");
+	CommandRegister("spawn_actor", CommandSpawnActor, "Spawns an actor of the specified type near the player", "spawn_actor \"Actor Name\"");
+	CommandRegister("spawn_item", CommandSpawnItem, "Spawns an item of the specified type near the player", "spawn_item \"Item Name\"");
+
+
+
+	CommandRegister("profiler", CommandToggleProfiler, "Toggles profiler view");
+	CommandRegister("profiler_report", CommandPrintProfilerReport, "Prints a frame of the profiler to the console", "profiler_report <tree|flat>");
+	CommandRegister("profiler_pause", CommandProfilePause, "Pauses profiling");
+	CommandRegister("profiler_resume", CommandProfileResume, "Resumes profiling");
+
 }
 void App::HandleInput()
 {
@@ -135,7 +158,9 @@ void App::HandleInput()
 			g_devConsole->Close();
 		}
 	}
-
+	if (g_theInput->WasKeyJustPressed(VK_F2)){
+		g_profilerVisualizer->ToggleOpen();
+	}
 	if (!DevConsoleIsOpen()){
 		//universal keys
 		//if (g_theInput->WasKeyJustPressed(VK_ESCAPE)){
@@ -143,7 +168,12 @@ void App::HandleInput()
 		//}
 
 		//have game handle input
-		g_theGame->HandleInput();
+		if (!g_profilerVisualizer->IsControllingInput()){
+			g_theGame->HandleInput();
+		}
+		if (g_profilerVisualizer->IsOpen()){
+			g_profilerVisualizer->HandleInput(g_theInput);
+		}
 
 	}
 }
@@ -218,5 +248,86 @@ void CommandSetSpeed(Command & cmd)
 {
 	int speed = cmd.GetNextInt();
 	g_theGame->DebugSetPlayerSpeed(speed);
+}
+
+void CommandSpawnActor(Command & cmd)
+{
+	std::string actorName = cmd.GetNextString();
+	g_theGame->DebugSpawnActor(actorName);
+}
+
+void CommandSpawnItem(Command & cmd)
+{
+	std::string actorName = cmd.GetNextString();
+	g_theGame->DebugSpawnItem(actorName);
+}
+
+
+
+void CommandToggleProfiler(Command & cmd)
+{
+	UNUSED(cmd);
+	g_profilerVisualizer->ToggleOpen();
+}
+
+void CommandPrintProfilerReport(Command & cmd)
+{
+	std::string type = cmd.GetNextString();
+	if (type == "flat"){
+		AddProfilerFrameAsFlatToConsole();
+	} else {
+		AddProfilerFrameAsTreeToConsole();
+	}
+}
+
+void CommandProfilePause(Command & cmd)
+{
+	Profiler::GetInstance()->Pause();
+}
+
+void CommandProfileResume(Command & cmd)
+{
+	Profiler::GetInstance()->Resume();
+}
+
+void AddProfilerFrameAsTreeToConsole()
+{
+	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
+
+	if (tree != nullptr){
+		ProfilerReport* report = new ProfilerReport();
+		report->GenerateReportTreeFromFrame(tree);
+		if (tree != nullptr){
+			PrintTree(report->m_root);
+		}
+	} else {
+		ConsolePrintf(RGBA::RED, "No profiler frame found - profiling may be disabled in EngineBuildPreferences.hpp");
+	}
+}
+
+void AddProfilerFrameAsFlatToConsole()
+{
+	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
+
+	if (tree != nullptr){
+		ProfilerReport* report = new ProfilerReport();
+		report->GenerateReportFlatFromFrame(tree);
+		if (tree != nullptr){
+			PrintTree(report->m_root);
+		}
+	} else {
+		ConsolePrintf(RGBA::RED, "No profiler frame found- profiling may be disabled in EngineBuildPreferences.hpp");
+	}
+}
+
+
+void PrintTree(ProfilerReportEntry * tree, int depth)
+{
+	//	ConsolePrintf("%.64s : %.8fms", tree->m_id, tree->GetTotalElapsedTime());
+	std::string text = FormatProfilerReport(tree, depth);
+	ConsolePrint(text.c_str());
+	for ( ProfilerReportEntry* child : tree->m_children){
+		PrintTree(child, depth + 1);
+	}
 }
 

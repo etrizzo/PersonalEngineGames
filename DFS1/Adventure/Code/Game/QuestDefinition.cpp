@@ -4,6 +4,7 @@
 #include "Game/QuestReward.hpp"
 #include "Game/DialogueSet.hpp"
 #include "Game/TileDefinition.hpp"
+#include "Game/Map.hpp"
 
 std::map<std::string, QuestDefinition*> QuestDefinition::s_definitions;
 
@@ -38,6 +39,23 @@ DialogueSet * QuestDefinition::GetDialogueSet(int index)
 		return new DialogueSet(m_dialogues[index]);
 	}
 	return nullptr;
+}
+
+Tile * QuestDefinition::GetSpawnTile(Map * map) const
+{
+	if (m_giverSpawnTileDefinition != nullptr){
+		if (m_giverSpawnTileTag == "None"){
+			return &map->GetSpawnTileOfType(m_giverSpawnTileDefinition);
+		} else {
+			return map->GetTaggedTileOfType(m_giverSpawnTileDefinition, m_giverSpawnTileTag);
+		}
+	} else {
+		if (m_giverSpawnTileTag != "None"){
+			return map->GetRandomTileWithTag(m_giverSpawnTileTag);
+		} else {
+			return &map->GetRandomBaseTile();
+		}
+	}
 }
 
 QuestDefinition * QuestDefinition::GetQuestDefinition(std::string name)

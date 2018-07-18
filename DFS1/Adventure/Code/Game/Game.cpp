@@ -311,6 +311,29 @@ void Game::DebugSetPlayerSpeed(int newSpeed)
 	g_theGame->m_party->GetPlayerCharacter()->m_stats.SetStat(STAT_MOVEMENT, newSpeed);
 }
 
+void Game::DebugSpawnActor(std::string actorName)
+{
+	if (m_currentState->m_currentAdventure != nullptr){
+		Vector2 pos = g_theGame->m_party->GetPlayerCharacter()->GetPosition();
+		pos = pos + Vector2::ONE * GetRandomFloatInRange(-5.f, 5.f);
+		m_currentState->m_currentAdventure->m_currentMap->SpawnNewActor(actorName, pos);
+	} else {
+		ConsolePrintf(RGBA::RED, "No current adventure - start the game");
+	}
+	
+}
+
+void Game::DebugSpawnItem(std::string itemName)
+{
+	if (m_currentState->m_currentAdventure != nullptr){
+		Vector2 pos = g_theGame->m_party->GetPlayerCharacter()->GetPosition();
+		pos = pos + Vector2::ONE * GetRandomFloatInRange(-5.f, 5.f);
+		m_currentState->m_currentAdventure->m_currentMap->SpawnNewItem(itemName, pos);
+	} else {
+		ConsolePrintf(RGBA::RED, "No current adventure - start the game");
+	}
+}
+
 void Game::SetCurrentMap(Map * newMap)
 {
 	m_currentState->m_currentAdventure->SetCurrentMap(newMap);

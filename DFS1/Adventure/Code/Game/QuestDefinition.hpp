@@ -6,12 +6,15 @@ class ActorDefinition;
 class DialogueSetDefinition;
 class DialogueSet;
 class TileDefinition;
+class Map;
+class Tile;
 
 class QuestDefinition{
 public:
 	QuestDefinition(tinyxml2::XMLElement* questElement);
 
 	DialogueSet* GetDialogueSet(int index = 0);
+	Tile* GetSpawnTile(Map* map) const;
 
 	std::string m_name;
 	std::vector<VictoryCondition*> m_conditions; 

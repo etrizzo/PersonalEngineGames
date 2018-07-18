@@ -187,12 +187,15 @@ void Map::SortAllEntities()
 void Map::Update(float deltaSeconds)
 {
 	
-
+	PROFILE_PUSH("Map::UpdateEntities");
 	UpdateEntities(deltaSeconds);
-
+	PROFILE_POP();
+	PROFILE_PUSH("Map::RunPhysics");
 	RunPhysics();
-
+	PROFILE_POP();
+	PROFILE_PUSH("Map::CheckInteractions");
 	CheckEntityInteractions();
+	PROFILE_POP();
 	ResetPortals();
 
 }
@@ -819,6 +822,33 @@ Tile * Map::GetRandomTileWithoutTag(std::string tag)
 	}
 }
 
+Tile * Map::GetTaggedTileOfType(TileDefinition * def, std::string tag)
+{
+	std::vector<Tile*> tilesWithTag = std::vector<Tile*>();
+	for (int i = 0; i < m_numTiles; i++){
+		if (m_tiles[i].HasTag(tag)){
+			tilesWithTag.push_back(&m_tiles[i]);
+		}
+	}
+	if (tilesWithTag.size() > 0){
+		//get tiles of type from tag list
+		std::vector<Tile*> possibleTiles = std::vector<Tile*>();
+		for (Tile* tile : tilesWithTag){
+			if (tile->m_tileDef == def){
+				possibleTiles.push_back(tile);
+			}
+		}
+		if (possibleTiles.size() > 0){
+			int index = GetRandomIntLessThan(possibleTiles.size());
+			return possibleTiles[index];
+		} else {
+			return nullptr;
+		}
+	} else {
+		return nullptr;
+	}
+}
+
 IntVector2 Map::GetRandomTileCoords() const
 {
 	int randomTileX = GetRandomIntInRange(1,m_dimensions.x-2);
@@ -943,7 +973,7 @@ Decoration * Map::SpawnNewDecoration(std::string decoName, Vector2 spawnPosition
 Decoration * Map::SpawnNewDecoration(DecorationDefinition * decoDef, Vector2 spawnPosition)
 {
 	Decoration* newDecoration = new Decoration(decoDef, this, spawnPosition);
-	m_allEntities.push_back( newDecoration);
+	//m_allEntities.push_back( newDecoration);
 	m_allDecorations.push_back(newDecoration);
 	m_scene->AddRenderable(newDecoration->m_renderable);
 	return newDecoration;
@@ -980,13 +1010,14 @@ void Map::SetCamera()
 		g_theGame->m_camera->LookAt( Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, -1.f), Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, .5f));
 		g_theRenderer->DrawAABB2(g_theGame->m_camera->GetBounds(), RGBA::BLACK);
 	} else {
-		float viewWidth = WINDOW_ASPECT * ZOOM_FACTOR;
+		float aspect = g_gameConfigBlackboard.GetValue("windowAspect", 1.f);
+		float viewWidth = aspect * ZOOM_FACTOR;
 		Vector2 halfDimensions = Vector2(viewWidth, ZOOM_FACTOR) * .5f;
 		Vector2 positionToCenter = g_theGame->m_party->GetPlayerCharacter()->GetPosition();
 		g_theGame->m_party->GetPlayerCharacter()->SetScale(1.f);
 
 
-		float minX = ZOOM_FACTOR * WINDOW_ASPECT * .5f;
+		float minX = ZOOM_FACTOR * aspect * .5f;
 		float maxX = m_dimensions.x - minX;
 		float minY = ZOOM_FACTOR * .5f;
 		float maxY = m_dimensions.y - minY;

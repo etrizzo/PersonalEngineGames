@@ -40,7 +40,8 @@
       <CellularAutomata ifType="Lava" changeToType="DarkDirt" ifNeighborType="Water" feather=".01"/>
 
       <SpawnDecoration type="DeadTree" spawnType="mutate" onTile="Dirt" chanceToSpawn=".05f" centerDensity=".2f" edgeDensity=".01" feather=".3"/>
-      <SpawnActor type="Goblin" iterations="50" onTile="Dirt" />
+      <SpawnActor type="Goblin" iterations="20~30" onTile="Dirt" />
+      <SpawnItem type="Crystal" iterations="4~6" onTile="Dirt" />
     </GenerationSteps>
   </MapDefinition>
 
@@ -68,13 +69,13 @@
         <EndSubArea />
       <EndSubArea />
       
-      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.1" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.25" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
           <SubMap map="SmallVillage"/>
       <EndSubArea />
-      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.15" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".1~.2" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
           <SubMap map="SmallVillage" chanceToRun=".8"/>
       <EndSubArea />
-      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.15" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".1~.25" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
           <SubMap map="SmallVillage" chanceToRun=".4"/>
       <EndSubArea />
     
@@ -90,6 +91,8 @@
 
       <CellularAutomata ifType="LightFlowers" changeToType="Dirt" ifNeighborType="Dirt" iterations="5"/>
       <CellularAutomata ifType="LightFlowers" changeToType="Dirt" ifNeighborType="Dirt" chanceToMutate=".5" iterations="3"/>
+      <CellularAutomata ifType="LightFlowers" changeToType="Water" ifNeighborType="Water" ifNeighborCount="4~8" chanceToMutate=".8" />
+      <CellularAutomata ifType="LightFlowers" changeToType="Sand" ifNeighborType="Water" ifNeighborCount="4~8" chanceToMutate=".8" />
 
       <SpawnActor type="Goblin" noNoZone="Village" iterations="30"/>      <!-- zac did this -->
     </GenerationSteps>
@@ -183,6 +186,7 @@
       <Conway iterations="2~3" liveTile="DarkDirt" deadTile="Stone" birthLimit="4" deathLimit="3" />
       <SpawnActor type="Goblin" iterations="8~10"/>
       <SpawnItem type ="Platemail Helmet" iterations="1~2"/>
+      <SpawnItem type="Crystal" iterations="4~6" onTile="DarkDirt" />
     </GenerationSteps>
   </MapDefinition>
 

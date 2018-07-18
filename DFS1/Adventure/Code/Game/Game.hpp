@@ -89,6 +89,8 @@ public:
 	void DebugCompleteQuest(int index = 0);
 	void DebugSetDifficulty(int difficulty);
 	void DebugSetPlayerSpeed(int newSpeed);
+	void DebugSpawnActor(std::string actorName);
+	void DebugSpawnItem(std::string itemName);
 	void SetCurrentMap(Map* newMap);
 	void GoToMap(std::string mapName);
 

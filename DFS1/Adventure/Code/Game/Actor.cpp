@@ -19,7 +19,7 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 	//m_renderable->SetMaterial(Material::GetMaterial("cutout"));
 	m_definition = definition;
 	m_faction = definition->m_startingFaction;
-	m_timeLastUpdatedDirection = GetRandomFloatInRange(-1.f,1.f);
+	m_timeLastUpdatedDirection = GetRandomFloatInRange(-12.f,-6.f);
 	m_lastAttacked = 0.f;
 	m_defaultBehavior = m_definition->m_defaultBehavior;
 	if (m_defaultBehavior == BEHAVIOR_NONE){
@@ -55,6 +55,9 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 	//m_healthRenderable->m_transform.SetParent(&m_renderable->m_transform);
 	UpdateHealthBar();
 	UpdateRenderable();
+	if (m_faction == "evil"){
+		EquipItemsInInventory();
+	}
 }
 
 Actor::~Actor()
@@ -65,6 +68,7 @@ Actor::~Actor()
 
 void Actor::Update(float deltaSeconds)
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	m_physicsDisc.center=GetPosition();
 	m_ageInSeconds+=deltaSeconds;
 
@@ -99,9 +103,7 @@ void Actor::Update(float deltaSeconds)
 			RunSimpleAI(deltaSeconds);
 		}
 	}
-	if (m_faction == "evil"){
-		EquipItemsInInventory();
-	}
+	
 
 }
 
@@ -150,6 +152,7 @@ void Actor::AdvanceQuest()
 void Actor::FinishQuest()
 {
 	m_dialogue = new DialogueSet(m_definition->m_dialogueDefinition);
+	m_questGiven = nullptr;
 }
 
 
@@ -502,6 +505,11 @@ void Actor::EquipOrUnequipItem(Item * itemToEquip)
 	}
 }
 
+bool Actor::IsItemEquipped(Item * item) const
+{
+	return m_equippedItems[item->m_definition->m_equipSlot] == item;
+}
+
 //void Actor::RunEntityPhysics()
 //{
 //	for (int actorIndex = 0; actorIndex < (int) m_map->m_allActors.size(); actorIndex++){
@@ -590,6 +598,7 @@ void Actor::UpdateWithController(float deltaSeconds)
 
 void Actor::RunSimpleAI(float deltaSeconds)
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	UpdateBehavior();
 	switch (m_currentBehavior){
 	case (BEHAVIOR_WANDER):
