@@ -42,7 +42,7 @@ public:
 	//PLANE
 	void AppendPlane(Vector3 nbl, Vector3 nbr, Vector3 ftl, Vector3 ftr, const RGBA& color, Vector2 uvMins, Vector2 uvMaxs );
 	void AppendPlane(const Vector3& center, const Vector3& up, const Vector3& right, const Vector2 & size, const RGBA & color, Vector2 uvMins, Vector2 uvMaxs);
-	void AppendPlane2D(const AABB2& plane, const RGBA& color, const AABB2& uvs);
+	void AppendPlane2D(const AABB2& plane, const RGBA& color, const AABB2& uvs, float z = 0.f);
 
 	// CUBE
 	void AppendCube(Vector3 position, Vector3 size, RGBA color,  AABB2 UV_TOP = AABB2::ZERO_TO_ONE, AABB2 UV_SIDE = AABB2::ZERO_TO_ONE, AABB2 UV_BOTTOM = AABB2::ZERO_TO_ONE);

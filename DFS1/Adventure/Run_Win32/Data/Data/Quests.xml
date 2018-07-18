@@ -1,5 +1,5 @@
 <Quests>
-	<Quest name="KillGoblins" mainQuest="false" giverType="Ally" sequential="true" text = "Goblin Hunting">
+	<Quest name="KillGoblins" mainQuest="false" giverType="Ally" giverSpawnTag="Village" giverSpawnTile="Grass" sequential="true" text = "Goblin Hunting">
 		<!--<Reward type="giveItem" item="Greatbow" /> -->
 		<Reward type="gainAlly" />
 		<Steps>

@@ -102,8 +102,13 @@ Tile* MapGenStep::GetSpawnTileOfType(TileDefinition * def, Map & map)
 		tile = map.TileAt(pos);
 		tries++;
 	}
+	
 	if (tile != nullptr){
-		map.MarkTileForSpawn(pos);
+		if ((tile->m_tileDef != def) || tile->HasBeenSpawnedOn()) {
+			return nullptr;
+		} else {
+			map.MarkTileForSpawn(pos);
+		}
 	}
 	return tile;
 }
@@ -753,8 +758,10 @@ void MapGenStep_SpawnActor::Run(Map & map)
 	if (m_limitedByTags){
 		if (m_spawnTagIsWhiteList){
 			spawnTile = map.GetRandomTileWithTag(m_spawnTag);
+			spawnTile->MarkAsSpawned();
 		} else {
 			spawnTile = map.GetRandomTileWithoutTag(m_spawnTag);
+			spawnTile->MarkAsSpawned();
 		}
 	} else {
 		spawnTile = GetSpawnTileOfType(m_spawnOnTileDef, map);

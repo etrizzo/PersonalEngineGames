@@ -5,6 +5,7 @@ class QuestReward;
 class ActorDefinition;
 class DialogueSetDefinition;
 class DialogueSet;
+class TileDefinition;
 
 class QuestDefinition{
 public:
@@ -19,6 +20,8 @@ public:
 	bool m_isSequential;
 	QuestReward* m_questReward;
 	ActorDefinition* m_giverDefinition;
+	TileDefinition* m_giverSpawnTileDefinition;
+	std::string m_giverSpawnTileTag;
 	std::vector<DialogueSetDefinition*> m_dialogues;
 
 	static std::map<std::string, QuestDefinition*> s_definitions;

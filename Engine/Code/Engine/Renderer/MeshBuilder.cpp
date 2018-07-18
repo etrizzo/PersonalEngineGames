@@ -235,14 +235,14 @@ void MeshBuilder::AppendPlane(const Vector3& center, const Vector3& up, const Ve
 
 }
 
-void MeshBuilder::AppendPlane2D(const AABB2 & plane, const RGBA & color, const AABB2 & uvs)
+void MeshBuilder::AppendPlane2D(const AABB2 & plane, const RGBA & color, const AABB2 & uvs, float z)
 {
 	SetColor(color);
 
-	Vector3 bottomLeft	= Vector3(plane.mins, 0.f);
-	Vector3 bottomRight	= Vector3(plane.maxs.x, plane.mins.y, 0.f);
-	Vector3 topRight	= Vector3(plane.maxs, 0.f);
-	Vector3 topLeft		= Vector3(plane.mins.x, plane.maxs.y, 0.f);
+	Vector3 bottomLeft	= Vector3(plane.mins, z);
+	Vector3 bottomRight	= Vector3(plane.maxs.x, plane.mins.y, z);
+	Vector3 topRight	= Vector3(plane.maxs, z);
+	Vector3 topLeft		= Vector3(plane.mins.x, plane.maxs.y, z);
 
 	Vector2 uvMins = uvs.mins;
 	Vector2 uvMaxs = uvs.maxs;

@@ -104,7 +104,7 @@ void Adventure::RenderUI()
 	AABB2 cameraBounds = g_theGame->GetUIBounds();
 	float screenWidth = cameraBounds.GetWidth();
 	float screenHeight = cameraBounds.GetHeight();
-	g_theRenderer->DrawTextInBox2D(m_definition->m_title, cameraBounds, Vector2(0.02f,0.98f), screenHeight * .02f, TEXT_DRAW_SHRINK_TO_FIT);
+	//g_theRenderer->DrawTextInBox2D(m_definition->m_title, cameraBounds, Vector2(0.02f,0.98f), screenHeight * .02f, TEXT_DRAW_SHRINK_TO_FIT);
 	g_theRenderer->DrawTextInBox2D(std::to_string(m_difficulty), cameraBounds, Vector2(0.98f,0.98f), screenHeight * .02f, TEXT_DRAW_SHRINK_TO_FIT);
 
 	m_currentMap->RenderUI();

@@ -152,6 +152,7 @@ void Actor::FinishQuest()
 	m_dialogue = new DialogueSet(m_definition->m_dialogueDefinition);
 }
 
+
 void Actor::RenderStatsInBox(AABB2 boxToDrawIn, RGBA tint)
 {
 	//g_theRenderer->DrawAABB2Outline(boxToDrawIn, RGBA(255,0,0));

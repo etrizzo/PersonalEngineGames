@@ -3,6 +3,7 @@
 #include "Game/VictoryCondition.hpp"
 #include "Game/QuestReward.hpp"
 #include "Game/DialogueSet.hpp"
+#include "Game/TileDefinition.hpp"
 
 std::map<std::string, QuestDefinition*> QuestDefinition::s_definitions;
 
@@ -16,6 +17,8 @@ QuestDefinition::QuestDefinition(tinyxml2::XMLElement * questElement)
 		m_giverDefinition = nullptr;
 	} else {
 		m_giverDefinition = ActorDefinition::GetActorDefinition(giverType);
+		m_giverSpawnTileTag = ParseXmlAttribute(*questElement, "giverSpawnTag", "None");
+		m_giverSpawnTileDefinition = ParseXmlAttribute(*questElement, "giverSpawnTile", (TileDefinition*) nullptr);
 	}
 	m_text = ParseXmlAttribute(*questElement, "text", m_name);
 

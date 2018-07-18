@@ -71,6 +71,7 @@ public:
 
 	void Render();
 	void PostRender();
+	void RenderQuestIcons();
 	void RenderUI();		//renders dialogue
 	void RenderTileTags();
 	void RenderTiles();

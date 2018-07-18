@@ -42,6 +42,10 @@ Game::Game()
 	g_tileSpriteSheet = new SpriteSheet(*tileTexture, 32,32);
 	Texture* miscTexture = g_theRenderer->CreateOrGetTexture("MiscItems_4x4.png");
 	m_miscSpriteSheet = new SpriteSheet(*miscTexture, 4,4);
+	Texture* bubbleTexture = g_theRenderer->CreateOrGetTexture("speechbubbles_5x6.png");
+	m_speechBubbleSpriteSheet = new SpriteSheet(*bubbleTexture, 6,5);
+
+	g_theRenderer->LoadSpritesFromSpriteAtlas(m_speechBubbleSpriteSheet,32);
 
 	m_isPaused = false;
 	m_devMode = false;

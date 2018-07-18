@@ -41,6 +41,19 @@ int SpriteSheet::GetNumSprites() const
 	return m_spriteSheetTexture;
 }
 
+ Sprite * SpriteSheet::GetSprite(int x, int y, Renderer* r)
+ {
+	 TODO("Fix sprite storage to be static so renderer doesn't have to get passed around")
+	int index = GetIndexFromCoordinates(x, y, m_spriteLayout.x, m_spriteLayout.y);
+	return GetSprite(index, r);
+ }
+
+ Sprite * SpriteSheet::GetSprite(int i, Renderer* r)
+ {
+	 std::string path = GetPath() + "_" + std::to_string(i);
+	 return r->GetSprite(path);
+ }
+
 IntVector2 SpriteSheet::GetDimensions() const
 {
 	return m_spriteLayout;

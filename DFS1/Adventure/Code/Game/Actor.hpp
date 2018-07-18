@@ -25,6 +25,7 @@ public:
 	void AdvanceQuest();
 	void FinishQuest();		//resets actor to default after finishing their quest
 
+
 	void RenderStatsInBox(AABB2 statsBox, RGBA tint = RGBA::WHITE);
 	void RenderBoyInBox(AABB2 boyBox, RGBA tint=RGBA::WHITE);
 	void RenderFaceInBox(AABB2 faceBox, RGBA tint= RGBA::WHITE);

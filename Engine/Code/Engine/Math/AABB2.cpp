@@ -452,6 +452,11 @@ Plane::Plane(Vector3 nearBottomLeft, Vector3 nearBottomRight, Vector3 farTopRigh
 	m_nearBottomRight	= nearBottomRight;
 	m_farTopRight		= farTopRight;
 	m_farTopLeft		= farTopLeft;
+
+	m_center = (m_nearBottomLeft + m_farTopRight) * .5f;
+	m_up = (m_farTopLeft - m_nearBottomLeft).GetNormalized();
+	m_right = (m_nearBottomRight - m_nearBottomLeft).GetNormalized();
+	m_size = Vector2((m_nearBottomRight - m_nearBottomLeft).GetLength(), (m_farTopLeft - m_nearBottomLeft).GetLength());
 }
 
 Vector3 Plane::GetCenter() const

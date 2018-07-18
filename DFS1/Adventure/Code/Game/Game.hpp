@@ -42,6 +42,7 @@ public:
 
 	unsigned int m_indexOfSelectedMenuItem = 0;
 	SpriteSheet* m_miscSpriteSheet = nullptr;
+	SpriteSheet* m_speechBubbleSpriteSheet = nullptr;
 
 	SoundID m_attractMusicID;
 	SoundPlaybackID m_attractPlayback;

@@ -63,8 +63,28 @@ void Map::Render()
 
 void Map::PostRender()
 {
+	RenderQuestIcons();
 	if (g_theGame->m_devMode){
 		RenderTileTags();
+	}
+}
+
+void Map::RenderQuestIcons()
+{
+	AABB2 texCoords = g_theGame->m_speechBubbleSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(3,4));
+	Sprite* bubble = g_theGame->m_speechBubbleSpriteSheet->GetSprite(3, 4, g_theRenderer);
+	for (Actor* actor : m_allActors){
+		if (actor->m_questGiven != nullptr){
+			float size = actor->m_localDrawingBox.GetHeight() * .025f;
+			Vector2 drawPos = actor->GetPosition() + Vector2(0.f, actor->m_localDrawingBox.GetHeight() * .9f);
+			//AABB2 box = AABB2(actor->GetPosition() + Vector2::ONE * size, actor->GetPosition() + Vector2::ONE * size);
+			//box.TrimToSquare();
+			//box.Translate(0.f, actor->m_localDrawingBox.GetHeight() * .05f);
+			//g_theGame->m_debugRenderSystem->MakeDebugRenderQuad()
+			
+			g_theRenderer->DrawSprite(Vector3(drawPos, -.1f), bubble, Vector2::EAST * size, Vector2::NORTH * size);
+			//g_theRenderer->DrawTexturedAABB2(box, *g_theGame->m_speechBubbleSpriteSheet->GetTexture(), texCoords.mins, texCoords.maxs , RGBA::WHITE);
+		}
 	}
 }
 
@@ -857,7 +877,7 @@ Actor * Map::SpawnNewActor(ActorDefinition * actorDef, Vector2 spawnPosition, fl
 	m_allEntities.push_back(newActor);
 	m_allActors.push_back(newActor);
 	m_scene->AddRenderable(newActor->m_renderable);
-	if (!newActor->IsSameFaction(g_theGame->m_party->GetPlayerCharacter())){
+	if (newActor->m_faction != "good"){
 		m_scene->AddRenderable(newActor->m_healthRenderable);
 	}
 	return newActor;
@@ -958,6 +978,7 @@ void Map::SetCamera()
 		g_theGame->m_party->GetPlayerCharacter()->SetScale(m_dimensions.x * .05f);
 		g_theGame->m_camera->SetProjectionOrtho((float) ortho + 1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
 		g_theGame->m_camera->LookAt( Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, -1.f), Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, .5f));
+		g_theRenderer->DrawAABB2(g_theGame->m_camera->GetBounds(), RGBA::BLACK);
 	} else {
 		float viewWidth = WINDOW_ASPECT * ZOOM_FACTOR;
 		Vector2 halfDimensions = Vector2(viewWidth, ZOOM_FACTOR) * .5f;
@@ -1069,7 +1090,7 @@ void Map::CreateTileRenderable()
 			AABB2 bounds = tileToRender->GetBounds();
 			RGBA color = tileToRender->m_tileDef->m_spriteTint;
 			AABB2 texCoords = tileToRender->m_tileDef->GetTexCoords(tileToRender->m_extraInfo->m_variant);
-			mb.AppendPlane2D(bounds, color, texCoords);
+			mb.AppendPlane2D(bounds, color, texCoords, .01f);
 			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.mins.x, bounds.mins.y), color, Vector2(texCoords.mins.x, texCoords.maxs.y)));
 			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.maxs.x, bounds.mins.y), color, Vector2(texCoords.maxs.x, texCoords.maxs.y)));
 			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.maxs.x, bounds.maxs.y), color, Vector2(texCoords.maxs.x, texCoords.mins.y)));

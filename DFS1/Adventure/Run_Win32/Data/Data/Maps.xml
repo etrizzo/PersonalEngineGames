@@ -26,16 +26,7 @@
 
   <MapDefinition name="SpookyZone" defaultTile="Grass" width="40" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
-      <!--
-      <FillAndEdge fillTile="Dirt" edgeTile="Dirt"  subAreaSize=".35" subAreaCenter=".5" type="circle" feather=".3" />
-      <Mutate ifType="Water" toType ="Dirt" chanceToMutate="1" subAreaSize=".35" subAreaCenter=".5" type="circle" feather=".3"/>
-      <Mutate ifType="Dirt" toType="Lava" chanceToMutate=".01" centerDensity=".5" edgeDensity=".05" subAreaSize=".35" subAreaCenter=".5" type="circle" />
-      <CellularAutomata ifType="Dirt" changeToType="Lava" ifNeighborType="Lava" iterations="5" />
-      <CellularAutomata ifType="Dirt" changeToType="Lava" ifNeighborType="Lava" ifNeighborCount="3~8" iterations="2" />
 
-      <CellularAutomata ifType="Dirt" changeToType="DarkDirt" ifNeighborType="Lava" />
-      <CellularAutomata ifType="Dirt" changeToType="DarkDirt" ifNeighborType="DarkDirt" ifNeighborCount="3~8" iterations="4" />
-  -->
       <Mutate ifType="Grass" toType="Dirt" chanceToMutate=".9" iterations="3" centerDensity="1" edgeDensity=".25" feather=".3"/>
       <Mutate ifType="LightFlowers" toType="Dirt" chanceToMutate="1.0" iterations="3" centerDensity="1" edgeDensity=".25" feather=".3"/>
       <Mutate ifType="Sand" toType="Dirt" chanceToMutate="1.0"/>
@@ -47,12 +38,9 @@
       <CellularAutomata ifType="Dirt" changeToType="DarkDirt" ifNeighborType="DarkDirt" ifNeighborCount="3~8" iterations="4" />
 
       <CellularAutomata ifType="Lava" changeToType="DarkDirt" ifNeighborType="Water" feather=".01"/>
-      <!--
-      <CellularAutomata ifType="Dirt" changeToType="Water" ifNeighborType="Water" ifNeighborCount="3~8"/>
-      <CellularAutomata ifType="Dirt" changeToType="Sand" ifNeighborType="Water" ifNeighborCount="2~8" />
-    -->
+
       <SpawnDecoration type="DeadTree" spawnType="mutate" onTile="Dirt" chanceToSpawn=".05f" centerDensity=".2f" edgeDensity=".01" feather=".3"/>
-      <SpawnActor type="Goblin" iterations="50" />
+      <SpawnActor type="Goblin" iterations="50" onTile="Dirt" />
     </GenerationSteps>
   </MapDefinition>
 
@@ -71,8 +59,8 @@
       <FillAndEdge edgeTile="StoneBrickWall" fillTile="Water" edgeThickness="1"/> 
       
 
-      <SetSubArea subAreaSize="-0.5~1.5" type="perlin" noiseScale="20" centerDensity="1" edgeDensity="1" feather="1"/>
-        <FillAndEdge edgeTile="Dirt" fillTile="Sand" edgeThickness="1"/> 
+      <SetSubArea subAreaSize="-0.2~1.5" type="perlin" noiseScale="20" centerDensity="1" edgeDensity="1" feather="1"/>
+        <FillAndEdge edgeTile="DirtPath" fillTile="Sand" edgeThickness="1"/> 
         <FillAndEdge edgeTile="Sand" fillTile="Grass" edgeThickness="2" edgeDensity=".9" feather=".6"/> 
 
         <SetSubArea subAreaSize="0.5~1.5" type="perlin" noiseScale="20" inheritSeed ="true" feather=".05" />
@@ -83,19 +71,21 @@
       <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.1" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
           <SubMap map="SmallVillage"/>
       <EndSubArea />
-      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.1" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
-          <SubMap map="SmallVillage"/>
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.15" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
+          <SubMap map="SmallVillage" chanceToRun=".8"/>
       <EndSubArea />
-      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.1" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
-          <SubMap map="SmallVillage"/>
+      <SetSubArea subAreaCenter=".1~.9" subAreaSize=".05~.15" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
+          <SubMap map="SmallVillage" chanceToRun=".4"/>
       <EndSubArea />
     
-      <SetSubArea subAreaCenter=".7~.9" subAreaSize=".25~.35" type="circle" centerDensity="1" edgeDensity=".01" feather=".3" />
-         <SubMap map="Forest" />
+
+
+       <SetSubArea subAreaCenter="0.0~1.0" subAreaSize=".1~.45" type="circle" />
+         <SubMap map="SpookyZone" chanceToRun=".8"/>
       <EndSubArea />
 
-       <SetSubArea subAreaCenter="0.0~.2" subAreaSize=".25~.35" type="circle" />
-         <SubMap map="SpookyZone" />
+        <SetSubArea subAreaCenter=".1~.9" subAreaSize=".25~.35" type="circle" centerDensity="1" edgeDensity=".01" feather=".3" />
+         <SubMap map="Forest" chanceToRun=".8"/>
       <EndSubArea />
 
       <CellularAutomata ifType="LightFlowers" changeToType="Dirt" ifNeighborType="Dirt" iterations="5"/>
@@ -143,11 +133,12 @@
         <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
         <Paths floor="DirtPath" straightChance=".05"/>
       </RoomsAndPaths>
-      <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
-      <SpawnActor type="Villager" iterations="3~5" />
-      <!--<SpawnActor type="Goblin" /> -->
-      <SpawnActor type="Ally" />
-
+      <CellularAutomata ifType="DirtPath" ifNeighborType="Water" changeToType="WeatheredWood"/>
+      <SpawnActor type="Villager" iterations="3~5" onTile="Grass"/>
+      <!--
+      <SpawnActor type="Goblin" />
+      <SpawnActor type="Ally" onTile="Grass"/>
+       -->
       <SpawnItem type="Leather Chestpiece" onTileType="Wood"/>
       <SpawnItem type="Leather Leggings" onTileType="Wood"/>
       <SpawnItem type="Leather Hat" onTileType="Wood"/>
