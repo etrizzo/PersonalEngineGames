@@ -221,7 +221,7 @@ void Game::TransitionToState(GameState* newState)
 
 void Game::TriggerTransition()
 {
-	g_theAudio->StopSound(m_currentState->m_soundtrackPlayback);
+	
 	
 	//m_transitionToState->m_soundtrackPlayback = m_currentState->m_soundtrackPlayback;
 	m_currentState = m_transitionToState;

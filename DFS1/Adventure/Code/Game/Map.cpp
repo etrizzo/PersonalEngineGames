@@ -321,6 +321,9 @@ void Map::RemoveDoomedEntities()
 		Actor* entity = m_allActors.at(entityIndex);
 		if (entity->IsAboutToBeDeleted()){
  			RemoveAtFast(m_allActors, entityIndex);
+			if (entity!= nullptr){
+				g_theGame->m_currentState->m_currentAdventure->GetScene()->RemoveRenderable(entity->m_healthRenderable);
+			}
 			delete(entity);
 		}
 	}

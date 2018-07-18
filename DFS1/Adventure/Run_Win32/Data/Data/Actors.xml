@@ -52,8 +52,8 @@
     <SpriteAnimSet name = "humanoid" />
     <Clothing set="Villager" />
     <Dialogues>
-      <Dialogue content="Hello world!" />
-      <Dialogue content="How are you?" />
+      <Dialogue content="Hello!" />
+      <Dialogue content="It's nice to meet you!" />
     </Dialogues>
   </ActorDefinition>
 
@@ -73,8 +73,7 @@
        <Item name="Bow" chanceToSpawn="1.0"/>
     </Inventory>
     <Dialogues>
-      <Dialogue content="I'm an ally!" />
-      <Dialogue content="How are you?" />
+      <Dialogue content="Let's stick together!" />
     </Dialogues>
   </ActorDefinition>
 

@@ -33,6 +33,7 @@ void GameState::RenderTransition()
 		if (m_timeInState - m_startTransitionTime > m_transitionLength){
 			//move to the new state 
 			m_isTransitioning = false;
+			g_theAudio->StopSound(m_soundtrackPlayback);
 			g_theGame->TriggerTransition();
 		}
 		if (m_soundtrackID != NULL){
@@ -153,6 +154,21 @@ void GameState_Encounter::Transition()
 	}
 }
 
+void GameState_Encounter::RenderTransition()
+{
+	if (m_isTransitioning){
+		float percThroughTransition = (m_timeInState - m_startTransitionTime) / m_transitionLength;
+
+		if (m_timeInState - m_startTransitionTime > m_transitionLength){
+			//move to the new state 
+			m_isTransitioning = false;
+			g_theGame->TriggerTransition();
+		} else {
+			RenderTransitionEffect(percThroughTransition);
+		}
+	}
+}
+
 
 void GameState_Encounter::RenderGame()
 {
@@ -256,9 +272,9 @@ void GameState_Paused::RenderTransition()
 			RenderTransitionEffect(percThroughTransition);
 		}
 		
-		if (m_soundtrackID != NULL){
+		/*if (m_soundtrackID != NULL){
 			g_theAudio->SetSoundPlaybackVolume(m_soundtrackPlayback, 1.f - percThroughTransition);
-		}
+		}*/
 	}
 
 	////if transitioning into state, fade in
@@ -320,6 +336,7 @@ void GameState_Paused::SwitchToMap()
 
 GameState_Victory::GameState_Victory(GameState_Encounter * encounter)
 {
+	g_theAudio->StopSound(encounter->m_soundtrackPlayback);
 	m_encounterGameState = encounter;
 	if (g_theGame != nullptr){
 		m_soundtrackID = g_theGame->m_victoryMusicID;
@@ -360,6 +377,25 @@ void GameState_Victory::RenderUI()
 		g_theRenderer->DrawTextInBox2D("Press Start", UIBounds, Vector2(.5f,.3f), UIBounds.GetHeight() * .03f);
 
 		//g_theRenderer->DrawTextInBox2D("Paused", UIBounds, Vector2(.5f,.5f), .1f);
+	}
+}
+
+void GameState_Victory::RenderTransition()
+{
+	if (m_isTransitioning){
+		float percThroughTransition = (m_timeInState - m_startTransitionTime) / m_transitionLength;
+
+		if (m_timeInState - m_startTransitionTime > m_transitionLength){
+			//move to the new state 
+			m_isTransitioning = false;
+			g_theGame->TriggerTransition();
+		} else {
+			RenderTransitionEffect(percThroughTransition);
+		}
+
+		/*if (m_soundtrackID != NULL){
+		g_theAudio->SetSoundPlaybackVolume(m_soundtrackPlayback, 1.f - percThroughTransition);
+		}*/
 	}
 }
 

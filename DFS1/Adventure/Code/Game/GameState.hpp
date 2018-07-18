@@ -55,6 +55,7 @@ public:
 
 	void Update(float ds);
 	void Transition() override;
+	void RenderTransition() override;
 	void RenderGame();
 	void RenderUI();
 	void HandleInput();
@@ -87,7 +88,7 @@ public:
 	void Update(float ds) override;
 	void RenderGame() override;
 	void RenderUI() override;
-	//void RenderTransition() override;
+	void RenderTransition() override;
 	void RenderTransitionEffect(float t) override;
 	void HandleInput() override;
 
