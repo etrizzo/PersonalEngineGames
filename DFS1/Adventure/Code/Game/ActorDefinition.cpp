@@ -64,9 +64,7 @@ ActorDefinition * ActorDefinition::GetActorDefinition(std::string definitionName
 	ActorDefinition* actorDef = nullptr;
 	if (containsDef != s_definitions.end()){
 		actorDef = containsDef->second;
-	} else {
-		ERROR_AND_DIE("No actor named: " + definitionName);
-	}
+	} 
 	return actorDef;
 }
 

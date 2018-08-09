@@ -24,9 +24,19 @@ Quest::Quest(QuestDefinition * def, Adventure * currentAdventure)
 	}
 }
 
+Quest::~Quest()
+{
+	for (unsigned int i = 0; i < m_conditions.size(); i++){
+		delete m_conditions[i];
+		//if (m_allEntities[i] != g_theGame->m_party->){
+		//	
+		//}
+	}
+}
+
 bool Quest::UpdateAndCheckIfComplete()
 {
-	if (!m_isComplete){
+	if (!m_isComplete){			//if you haven't already completed this quest, check the steps
 		bool allComplete = true;
 		for (int i = 0; i < m_conditions.size(); i++){
 			VictoryCondition* condition = m_conditions[i];
@@ -34,23 +44,25 @@ bool Quest::UpdateAndCheckIfComplete()
 				if (!condition->CheckIfComplete()){		//updates and checks for completion
 					allComplete = false;
 				} else {
- 					//m_currentIndex++;
 					if (m_questGiver != nullptr){
+						//update the quest giver, if the quest was given by an actor.
 						m_questGiver->AdvanceQuest();
 					}
 					if (m_definition->m_isSequential){
+						//if the quest should be completed in order, unlock the next step in the quest (if there is one)
 						if (i + 1 < m_conditions.size()){
 							condition->m_active = false;
 							m_conditions[i + 1]->m_active = true;
 						}
-						//TODO("Unlock next step in quest if the quest is sequential")
 					}
 				}
 			}
 		}
+
 		if (allComplete){
 			CompleteQuest();
 		}
+
 		return allComplete;
 	}
 	return m_isComplete;

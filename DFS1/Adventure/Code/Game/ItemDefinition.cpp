@@ -54,9 +54,7 @@ ItemDefinition * ItemDefinition::GetItemDefinition(std::string definitionName)
 	ItemDefinition* itemDef = nullptr;
 	if (containsDef != s_definitions.end()){
 		itemDef = containsDef->second;
-	} else {
-		ERROR_AND_DIE("No item named: " + definitionName);
-	}
+	} 
 	return itemDef;
 }
 

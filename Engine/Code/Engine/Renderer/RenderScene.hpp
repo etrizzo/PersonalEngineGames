@@ -13,6 +13,7 @@
 class RenderScene{
 public:
 	 RenderScene(Renderer* r);
+	 ~RenderScene();
 	void AddRenderable(Renderable *r);
 	void AddLight(Light * l);
 	void AddCamera(Camera* c);	//optional?

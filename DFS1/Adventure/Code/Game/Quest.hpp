@@ -10,6 +10,7 @@ class Adventure;
 class Quest{
 public:
 	Quest(QuestDefinition* def, Adventure* currentAdventure);
+	~Quest();
 
 	bool UpdateAndCheckIfComplete();		//updates all victory conditions
 	bool IsComplete() const { return m_isComplete; };

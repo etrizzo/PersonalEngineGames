@@ -107,6 +107,15 @@ void Tile::SetType(TileDefinition* newType)
 {
 	m_tileDef = newType;
 	m_extraInfo->m_variant = GetRandomIntLessThan(newType->m_spriteCoords.size());
+
+	if (newType->m_isTerrain){
+		m_extraInfo->m_terrainDef = newType;
+	}
+}
+
+void Tile::AddOverlaySpriteFromTileSheet(AABB2 spriteCoords)
+{
+	m_extraInfo->m_overlaySpriteCoords.push_back(spriteCoords);
 }
 
 void TileExtraInfo::AddTag(std::string tag)

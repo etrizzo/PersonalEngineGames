@@ -71,7 +71,7 @@ void MenuState_Paused::RenderContent()
 	fontHeight = textBox.GetHeight() * .3f;
 	lineHeight = fontHeight * 3.f;
 	iconBox.TrimToSquare();
-	iconBox.AddPaddingToSides(-.05f,-.05f);
+	iconBox.AddPaddingToSides(-fontHeight * .5f,-fontHeight * .5f);
 	float indent = lineHeight;
 	RGBA defaultQuestColor = RGBA::WHITE;
 	RGBA mainQuestColor = RGBA::YELLOW;

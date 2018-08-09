@@ -1,10 +1,6 @@
 #pragma once
 #include "Game/GameCommon.hpp"
 
-
-
-
-
 class TileDefinition{
 public:
 	TileDefinition() {};
@@ -21,6 +17,8 @@ public:
 	bool m_allowsFlying;
 	bool m_allowsSwimming;
 	bool m_isDestructible;
+	bool m_isTerrain;
+	int m_terrainLevel;
 	int m_maxHealth;
 	int m_startingSpriteIndex;
 

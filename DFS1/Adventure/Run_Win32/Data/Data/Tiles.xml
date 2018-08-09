@@ -7,6 +7,9 @@
 		  allowsWalking="true"
 		  allowsFlying="true"
 		  allowsSwimming="false"
+      isTerrain="true"
+      terrainLevel="2"
+      edgeDefinition="Grass"
 	  />
   
   <TileDefinition
@@ -17,6 +20,9 @@
 		  allowsWalking="true"
 		  allowsFlying="true"
 		  allowsSwimming="false"
+      isTerrain="true"
+      terrainLevel="2"
+      edgeDefinition="Grass"
 	  />
   
   <TileDefinition
@@ -27,6 +33,9 @@
 		  allowsWalking="true"
 		  allowsFlying="true"
 		  allowsSwimming="false"
+      isTerrain="true"
+      terrainLevel="2"
+      edgeDefinition="Grass"
 	  />
 
   <TileDefinition
@@ -37,6 +46,9 @@
     allowsWalking="true"
     allowsFlying="true"
     allowsSwimming="false"
+    isTerrain="true"
+    terrainLevel="1"
+    edgeDefinition="Sand"
 	  />
   
   <TileDefinition
@@ -48,6 +60,8 @@
 		  allowsWalking="false"
 		  allowsFlying="false"
 		  allowsSwimming="false"
+      isTerrain="true"
+      terrainLevel="-1"
 	  />
 
   <TileDefinition
@@ -58,6 +72,9 @@
 		  allowsWalking="false"
 		  allowsFlying="true"
 		  allowsSwimming="true"
+      isTerrain="true"
+      terrainLevel="0"
+      edgeDefinition="Water"
 	  />
 
   <TileDefinition
@@ -68,6 +85,9 @@
 		  allowsWalking="false"
 		  allowsFlying="true"
 		  allowsSwimming="false"
+      isTerrain="true"
+      terrainLevel="0"
+      edgeDefinition="Lava"
 	  />
   
   <TileDefinition 
@@ -78,6 +98,8 @@
 		  allowsWalking="true"
 		  allowsFlying="true"
 		  allowsSwimming="false"
+      isTerrain="false"
+      terrainLevel="-1"
   />
   
   <TileDefinition
@@ -88,6 +110,8 @@
 		  allowsWalking="true"
 		  allowsFlying="true"
 		  allowsSwimming="false"
+      isTerrain="false"
+      terrainLevel="-1"
   />
   
   <TileDefinition
@@ -98,6 +122,8 @@
 		  allowsWalking="true"
 		  allowsFlying="true"
 		  allowsSwimming="false"
+      isTerrain="false"
+      terrainLevel="-1"
    />
 
 
@@ -109,6 +135,9 @@
 		  allowsWalking="true"
 		  allowsFlying="true"
 		  allowsSwimming="false"
+      isTerrain="true"
+      terrainLevel="0"
+      edgeDefinition="Dirt"
    />
 
     <TileDefinition
@@ -119,6 +148,8 @@
       allowsWalking="true"
       allowsFlying="true"
       allowsSwimming="false"
+      isTerrain="false"
+      terrainLevel="-1"
    />
 
   <TileDefinition
@@ -129,6 +160,9 @@
     allowsWalking="true"
     allowsFlying="true"
     allowsSwimming="false"
+    isTerrain="true"
+    terrainLevel="0"
+    edgeDefinition="DarkDirt"
    />
 
   <TileDefinition
@@ -139,6 +173,8 @@
 		  allowsWalking="true"
 		  allowsFlying="true"
 		  allowsSwimming="false"
+      isTerrain="false"
+      terrainLevel="-1"
    />
 
   <TileDefinition
@@ -149,6 +185,8 @@
 		  allowsWalking="true"
 		  allowsFlying="true"
 		  allowsSwimming="false"
+      isTerrain="false"
+      terrainLevel="-1"
    />
 
   <TileDefinition
@@ -159,6 +197,8 @@
 		  allowsWalking="true"
 		  allowsFlying="true"
 		  allowsSwimming="false"
+      isTerrain="false"
+      terrainLevel="-1"
    />
 
   <TileDefinition
@@ -169,6 +209,8 @@
      allowsWalking="false"
      allowsFlying="false"
      allowsSwimming="false"
+     isTerrain="false"
+     terrainLevel="-1"
   />
 
 </TileDefinitions>

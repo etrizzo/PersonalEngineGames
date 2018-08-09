@@ -14,8 +14,8 @@ public:
 	Tile (IntVector2& coords, TileDefinition* tileDef = nullptr);
 
 	IntVector2 m_coordinates;
-	TileDefinition* m_tileDef = nullptr;
 	TileExtraInfo* m_extraInfo = nullptr;
+	TileDefinition* m_tileDef = nullptr;
 	//int m_type;
 
 	void AddTag(std::string tag);
@@ -33,6 +33,11 @@ public:
 	void RenderTag();
 
 	void SetType(TileDefinition* newType);
+	void AddOverlaySpriteFromTileSheet(AABB2 spriteCoords);
+
+private:
+	
+
 
 };
 
@@ -47,4 +52,7 @@ public:
 	float m_lightLevel = 1.f;		//[0-1]?
 	Tags m_tags = Tags();
 
+	TileDefinition* m_terrainDef = nullptr;
+	TileDefinition* m_cosmeticBaseDef = nullptr;
+	std::vector<AABB2> m_overlaySpriteCoords = std::vector<AABB2>();
 };

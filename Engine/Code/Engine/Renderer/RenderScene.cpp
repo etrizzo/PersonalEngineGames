@@ -13,6 +13,13 @@ RenderScene::RenderScene(Renderer* r)
 	//m_shadowCamera->Finalize();
 }
 
+RenderScene::~RenderScene()
+{
+	delete m_shadowCamera;
+	delete m_shadowColorTarget;
+	delete m_shadowDepthTarget;
+}
+
 void RenderScene::AddRenderable(Renderable * r)
 {
 	m_renderables.push_back(r);

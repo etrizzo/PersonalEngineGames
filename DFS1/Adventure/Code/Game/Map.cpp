@@ -28,6 +28,12 @@ Map::~Map()
 		//}
 	}
 	m_tiles.clear();
+	delete m_scene;
+	if (m_fullMap != m_generationMask){
+		delete m_generationMask;
+	}
+	delete m_fullMap;
+	delete m_tileRenderable;
 }
 
 Map::Map(std::string name, MapDefinition* mapDef, int difficulty)
@@ -901,6 +907,11 @@ Actor * Map::SpawnNewPlayer(Vector2 spawnPosition)
 Actor * Map::SpawnNewActor(std::string actorName, Vector2 spawnPosition, float spawnRotation)
 {
 	ActorDefinition* actorDef = ActorDefinition::GetActorDefinition(actorName);
+	if (actorDef == nullptr){
+		std::string s = "No actor called: " + actorName + ". Not spawned.";
+		ConsolePrintf(RGBA::RED, s.c_str() );
+		return nullptr;
+	}
 	return SpawnNewActor(actorDef, spawnPosition, spawnRotation, m_difficulty);
 }
 
@@ -955,6 +966,11 @@ Portal * Map::SpawnNewPortal(PortalDefinition * portalDef, Vector2 spawnPosition
 Item * Map::SpawnNewItem(std::string itemName, Vector2 spawnPosition)
 {
 	ItemDefinition* itemDef = ItemDefinition::GetItemDefinition(itemName);
+	if (itemDef == nullptr){
+		std::string s = "No item called: " + itemName + ". Not spawned.";
+		ConsolePrintf(RGBA::RED, s.c_str() );
+		return nullptr;
+	}
 	return SpawnNewItem(itemDef, spawnPosition);
 }
 
@@ -1125,6 +1141,10 @@ void Map::CreateTileRenderable()
 			RGBA color = tileToRender->m_tileDef->m_spriteTint;
 			AABB2 texCoords = tileToRender->m_tileDef->GetTexCoords(tileToRender->m_extraInfo->m_variant);
 			mb.AppendPlane2D(bounds, color, texCoords, .01f);
+			for (int i = 0; i < tileToRender->m_extraInfo->m_overlaySpriteCoords.size(); i++){
+				AABB2 overlayCoords = tileToRender->m_extraInfo->m_overlaySpriteCoords[i];
+				mb.AppendPlane2D(bounds, color, overlayCoords, .01f);
+			}
 			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.mins.x, bounds.mins.y), color, Vector2(texCoords.mins.x, texCoords.maxs.y)));
 			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.maxs.x, bounds.mins.y), color, Vector2(texCoords.maxs.x, texCoords.maxs.y)));
 			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.maxs.x, bounds.maxs.y), color, Vector2(texCoords.maxs.x, texCoords.mins.y)));

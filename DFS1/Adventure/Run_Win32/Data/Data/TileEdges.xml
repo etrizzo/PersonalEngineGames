@@ -1,0 +1,35 @@
+<EdgeDefinitions>
+
+	<EdgeDefinition
+		name="Dirt"
+		topLeftSpriteCoord="3,26">
+	</EdgeDefinition>
+
+	<EdgeDefinition
+		name="Grass"
+		topLeftSpriteCoord="6,26">
+	</EdgeDefinition>
+
+	<EdgeDefinition
+		name="Lava"
+		topLeftSpriteCoord="12,26">
+	</EdgeDefinition>
+
+	<EdgeDefinition
+		name="Sand"
+		topLeftSpriteCoord="21,26">
+	</EdgeDefinition>
+
+	<EdgeDefinition
+		name="Water"
+		topLeftSpriteCoord="24,26">
+	</EdgeDefinition>
+
+	<EdgeDefinition
+		name="DarkDirt"
+		topLeftSpriteCoord="27,26">
+	</EdgeDefinition>
+
+
+
+</EdgeDefinitions>

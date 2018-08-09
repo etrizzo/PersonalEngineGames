@@ -14,9 +14,7 @@ Party::Party()
 
 void Party::Update(float ds)
 {
-	/*for (Actor* actor : m_partyMembers){
-		actor->Update(ds);
-	}*/
+
 }
 
 void Party::CheckForKilledPlayers()
@@ -39,11 +37,15 @@ void Party::CheckForKilledPlayers()
 void Party::RenderPartyUI(AABB2 renderBox)
 {
 	float height = renderBox.GetHeight();
+	// render each actor, starting with the current player
 	for (int i = 0; i < m_partyMembers.size(); i++){
-		int index = (m_currentPlayerIndex + i) % m_partyMembers.size();
+		int index = (m_currentPlayerIndex + i) % m_partyMembers.size();			//wrap index	
 		Actor* actor = m_partyMembers[index];
 		RenderPartyMemberUI(actor, renderBox);
-		renderBox.Translate(0.f, -height);
+
+		// Update the box you're rendering in.
+		// Move it down, and shrink it after the first actor you render (the player)
+		renderBox.Translate(0.f, -height);				
 		if (i == 0){
 			renderBox = renderBox.GetPercentageBox(0.f, .3f, .7f, 1.f);
 			height *= .7f;
@@ -54,9 +56,7 @@ void Party::RenderPartyUI(AABB2 renderBox)
 
 void Party::RunCorrectivePhysics()
 {
-	/*for (Actor* actor : m_partyMembers){
-		actor->RunCorrectivePhysics();
-	}*/
+
 }
 
 void Party::HandleInput()
@@ -102,13 +102,11 @@ void Party::MovePartyToMap(Map * newMap, Vector2 playerPos)
 
 void Party::AddActorToParty(Actor * newActor)
 {
-	//newActor->m_map->RemoveActorFromMap(newActor);
 	newActor->EquipItemsInInventory();
 	m_partyMembers.push_back(newActor);
 	for (Item* item : newActor->m_inventory){
 		m_inventory.push_back(item);
 	}
-	//newActor->m_map->m_scene->AddRenderable(newActor->m_renderable);
 	newActor->SetFollowTarget(m_currentPlayer);
 	newActor->m_questGiven = nullptr;
 	
@@ -158,16 +156,21 @@ void Party::EquipOrUnequipItem(Item * itemToEquip)
 
 void Party::SwapPlayer(int direction)
 {
+	//update the current player
 	int size = m_partyMembers.size();
-	m_currentPlayerIndex = (m_currentPlayerIndex + direction + size) % size;
+	m_currentPlayerIndex = (m_currentPlayerIndex + direction + size) % size;		//increment player index
 	Actor* oldPlayer = m_currentPlayer;
-	m_currentPlayer = m_partyMembers[m_currentPlayerIndex];
+	m_currentPlayer = m_partyMembers[m_currentPlayerIndex];							//set the new player
 	m_currentPlayer->m_isPlayer = true;
 	oldPlayer->m_isPlayer = false;
-	if (m_currentMap != nullptr){
+
+	//update the health bar to be over the current player
+	if (m_currentMap != nullptr){		
 		m_currentMap->m_scene->RemoveRenderable(oldPlayer->m_healthRenderable);
 		m_currentMap->m_scene->AddRenderable(m_currentPlayer->m_healthRenderable);
 	}
+
+	//update all party members to be following the new player
 	for (Actor* actor : m_partyMembers){
 		actor->SetFollowTarget(m_currentPlayer);
 	}
@@ -176,6 +179,7 @@ void Party::SwapPlayer(int direction)
 Actor * Party::GetPlayerCharacter() const
 {
 	return m_currentPlayer;
+
 }
 
 bool Party::IsEmpty() const

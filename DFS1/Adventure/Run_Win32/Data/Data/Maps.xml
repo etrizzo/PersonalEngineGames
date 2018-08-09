@@ -81,11 +81,11 @@
     
 
 
-       <SetSubArea subAreaCenter="0.0~1.0" subAreaSize=".1~.45" type="circle" />
+       <SetSubArea subAreaCenter="0.0~1.0" subAreaSize=".1~.45" type="circle" feather=".5" />
          <SubMap map="SpookyZone" chanceToRun=".8"/>
       <EndSubArea />
 
-        <SetSubArea subAreaCenter=".1~.9" subAreaSize=".25~.35" type="circle" centerDensity="1" edgeDensity=".01" feather=".3" />
+        <SetSubArea subAreaCenter=".1~.9" subAreaSize=".25~.35" type="circle" centerDensity="1" edgeDensity=".01" feather=".01" />
          <SubMap map="Forest" chanceToRun=".8"/>
       <EndSubArea />
 
@@ -151,11 +151,13 @@
 
   <MapDefinition name="Village" defaultTile="Grass" width="50~60" height="50~60" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
+      <TagTiles tag="Village" iterations="3"/>
       <Mutate ifType="Grass" toType="Water" chanceToMutate=".001" />
       <CellularAutomata iterations="3~4" ifNeighborType="Water" changeToType="Water" chanceToMutate=".5"/>
       <Mutate ifType="Grass" toType="Water" chanceToMutate=".001" />
       <CellularAutomata iterations="2~4" ifNeighborType="Water" changeToType="Water" chanceToMutate=".5"/>
-      <CellularAutomata iterations="1" ifType="Grass" ifNeighborType="Water" changeToType="Water" ifNeighborCount="5~8"/>
+      <CellularAutomata iterations="3" ifType="Grass" ifNeighborType="Water" changeToType="Water" ifNeighborCount="5~8"/>
+      <CellularAutomata iterations="3" ifType="Water" ifNeighborType="Grass" changeToType="Grass" ifNeighborCount="5~8"/>
       <CellularAutomata ifType="Grass" ifNeighborType="Water" changeToType="Sand"/>
       <PerlinNoise ifType="Grass" changeToType="Flowers" ifNoise="-1~-.6" gridSize="12"/>
       <PerlinNoise ifType="Grass" changeToType="LightFlowers" ifNoise="-.6~-.2" gridSize="12"/>
