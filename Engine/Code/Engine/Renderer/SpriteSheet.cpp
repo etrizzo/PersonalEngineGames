@@ -12,7 +12,7 @@ AABB2 SpriteSheet::GetTexCoordsForSpriteCoords(const IntVector2 & spriteCoords) 
 	IntVector2 flipCoords = IntVector2(spriteCoords.x, m_spriteLayout.y - 1 - spriteCoords.y);
 	Vector2 spriteCoordsFloat = flipCoords.GetVector2();
 	Vector2 spriteLayoutFloat = m_spriteLayout.GetVector2();
-	Vector2 verySmallAmountIn = Vector2(.001f,.001f);
+	Vector2 verySmallAmountIn = Vector2(.0005f,.0005f);
 	Vector2 mins = Vector2(spriteCoordsFloat.x/spriteLayoutFloat.x, spriteCoordsFloat.y/ spriteLayoutFloat.y) + verySmallAmountIn;
 	Vector2 maxs = Vector2((spriteCoordsFloat.x + 1.f)/spriteLayoutFloat.x, (spriteCoordsFloat.y+1.f)/ spriteLayoutFloat.y) - verySmallAmountIn;
 

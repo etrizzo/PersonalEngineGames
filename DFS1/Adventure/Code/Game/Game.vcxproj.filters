@@ -139,6 +139,12 @@
     <ClCompile Include="Party.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="TileEdgeDefinition.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="TileNeighborSet.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -264,6 +270,12 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="Party.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="TileEdgeDefinition.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="TileNeighborSet.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

@@ -696,6 +696,11 @@ void Map::GetNeighbors(IntVector2 coords, Tile (&neighbors)[8])
 	}
 }
 
+TileNeighborSet* Map::GetNeighborSet(Tile * tile)
+{
+	return new TileNeighborSet(tile, this);
+}
+
 
 void Map::StartDialogue(DialogueSet * d)
 {
@@ -1095,6 +1100,9 @@ void Map::InitializeTiles()
 	for (int i = 0; i < numTiles; i++){
 		IntVector2 coords = GetCoordinatesFromIndex(i, m_dimensions.x);
 		m_tiles[i] = Tile(coords, m_mapDef->m_defaultTile);
+		//if (CheckRandomChance(.1f)){
+		//	m_tiles[i].AddOverlaySpriteFromTileSheet(g_tileSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,28)));
+		//}
 	}
 	m_numTiles = numTiles;
 
@@ -1163,6 +1171,24 @@ void Map::RunMapGeneration()
 {
 	for (MapGenStep* genStep : m_mapDef->m_generationSteps){
 		genStep->RunIterations(*this);
+	}
+
+	EdgeTiles();
+}
+
+void Map::EdgeTiles()
+{
+	for (int i = 0; i < m_numTiles; i++){
+		Tile* tile = &m_tiles[i];
+		if (tile->m_tileDef->m_isTerrain){
+			TileNeighborSet* neighborSet = new TileNeighborSet(tile, this);
+			
+			TileDefinition* edgeTileDefinition = neighborSet->FindEdgeTileDefinition();
+			if (edgeTileDefinition != nullptr){
+				AABB2 overlayUVs = neighborSet->GetTileEdge(edgeTileDefinition);
+				tile->AddOverlaySpriteFromTileSheet(overlayUVs);
+			}
+		}
 	}
 }
 

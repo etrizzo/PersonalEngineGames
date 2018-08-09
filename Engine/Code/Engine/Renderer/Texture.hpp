@@ -42,7 +42,7 @@ public:
 	static Texture* CreateCompatible(Texture* src);
 
 	static std::map<std::string, Texture*> s_loadedTextures;
-	static Texture* CreateOrGetTexture(const std::string& texPath, const std::string& directory = IMAGE_DIRECTORY);
+	static Texture* CreateOrGetTexture(const std::string& texPath, const std::string& directory = IMAGE_DIRECTORY, bool setMips = false);
 	static void RegisterTextureFromImage(const std::string& name, Image* img);
 
 private:

@@ -1,5 +1,6 @@
 #pragma once
 #include "Game/GameCommon.hpp"
+#include "Game/TileEdgeDefinition.hpp"
 
 class TileDefinition{
 public:
@@ -21,6 +22,7 @@ public:
 	int m_terrainLevel;
 	int m_maxHealth;
 	int m_startingSpriteIndex;
+	TileEdgeDefinition* m_edgeDefinition;
 
 	AABB2 GetTexCoords(int index = 0);
 	AABB2 GetTexCoordsAtHealth(int health);

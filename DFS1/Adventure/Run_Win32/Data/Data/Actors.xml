@@ -4,7 +4,7 @@
     <Size physicsRadius=".25" drawRadius="1.0" aspect=".8" pivot="0.5,0.25"/>
     <Movement>
       <Walk speed="2.0"/>
-      <Swim speed ="1.0"/>
+      <!--<Swim speed ="1.0"/> -->
     </Movement>
     <Stats baseMovement="1" baseStrength="1~2" baseDefense="0" />
     <Health max="100" start="100"/>

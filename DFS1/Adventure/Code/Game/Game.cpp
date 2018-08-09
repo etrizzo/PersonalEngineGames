@@ -38,7 +38,7 @@ Game::Game()
 	m_renderPath = new SpriteRenderPath();
 	m_renderPath->m_renderer = g_theRenderer;
 
-	Texture* tileTexture = g_theRenderer->CreateOrGetTexture("Terrain_32x32.png");
+	Texture* tileTexture = g_theRenderer->CreateOrGetTexture("Terrain_32x32.png", IMAGE_DIRECTORY, false);
 	g_tileSpriteSheet = new SpriteSheet(*tileTexture, 32,32);
 	Texture* miscTexture = g_theRenderer->CreateOrGetTexture("MiscItems_4x4.png");
 	m_miscSpriteSheet = new SpriteSheet(*miscTexture, 4,4);
@@ -385,17 +385,23 @@ void Game::LoadSounds()
 
 void Game::LoadTileDefinitions()
 {
+	//read edge definitions
+	tinyxml2::XMLDocument tileEdgeDoc;
+	tileEdgeDoc.LoadFile("Data/Data/TileEdges.xml");
+	tinyxml2::XMLElement* edgeroot = tileEdgeDoc.FirstChildElement("EdgeDefinitions");
+	for (tinyxml2::XMLElement* edgeDefElement = edgeroot->FirstChildElement("EdgeDefinition"); edgeDefElement != NULL; edgeDefElement = edgeDefElement->NextSiblingElement("EdgeDefinition")){
+		TileEdgeDefinition* newDefinition = new TileEdgeDefinition(edgeDefElement);
+		//TileDefinition::s_definitions.insert(std::pair<std::string, TileDefinition*>(newDefinition->m_name, newDefinition));
+	}
+
+	//read tile definitions
 	tinyxml2::XMLDocument tileDefDoc;
 	tileDefDoc.LoadFile("Data/Data/Tiles.xml");
-
-
 	tinyxml2::XMLElement* root = tileDefDoc.FirstChildElement("TileDefinitions");
 	for (tinyxml2::XMLElement* tileDefElement = root->FirstChildElement("TileDefinition"); tileDefElement != NULL; tileDefElement = tileDefElement->NextSiblingElement("TileDefinition")){
 		TileDefinition* newDefinition = new TileDefinition(tileDefElement);
 		TileDefinition::s_definitions.insert(std::pair<std::string, TileDefinition*>(newDefinition->m_name, newDefinition));
 	}
-
-
 }
 
 void Game::LoadMapDefinitions()

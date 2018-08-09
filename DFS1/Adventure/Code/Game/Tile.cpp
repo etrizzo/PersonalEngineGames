@@ -15,6 +15,9 @@ Tile::Tile(int x, int y, TileDefinition* tileDef)
 	m_tileDef = tileDef;
 	m_extraInfo = new TileExtraInfo();
 	m_extraInfo->m_variant = GetRandomIntLessThan(tileDef->m_spriteCoords.size());
+	if (m_tileDef->m_isTerrain){
+		m_extraInfo->m_terrainDef = m_tileDef;
+	}
 }
 
 Tile::Tile(IntVector2 & coords, TileDefinition* tileDef)
@@ -26,6 +29,9 @@ Tile::Tile(IntVector2 & coords, TileDefinition* tileDef)
 		m_extraInfo->m_variant = 0;
 	} else {
 		m_extraInfo->m_variant = GetRandomIntLessThan(tileDef->m_spriteCoords.size());
+		if (m_tileDef->m_isTerrain){
+			m_extraInfo->m_terrainDef = m_tileDef;
+		}
 	}
 }
 
@@ -43,6 +49,20 @@ void Tile::AddTag(std::string tag)
 bool Tile::HasTag(std::string tag)
 {
 	return m_extraInfo->m_tags.HasTag(tag);
+}
+
+bool Tile::HasTerrainDefinition(TileDefinition * def) const
+{
+	return m_extraInfo->m_terrainDef == def;
+}
+
+int Tile::GetTerrainLevel() const
+{
+	if (m_extraInfo->m_terrainDef != nullptr){
+		return m_extraInfo->m_terrainDef->m_terrainLevel;
+	} else {
+		return -1;
+	}
 }
 
 bool Tile::HasBeenSpawnedOn() const
@@ -96,7 +116,11 @@ TileDefinition* Tile::GetTileDefinition()
 void Tile::RenderTag()
 {
 	if (m_extraInfo->m_tags.GetNumTags() > 0){
-		std::string tags = m_extraInfo->m_tags.GetTagsAsString();
+		//std::string tags = m_extraInfo->m_tags.GetTagsAsString();
+		std::string tags = "";
+		if (m_extraInfo->m_terrainDef != nullptr){
+			tags = m_extraInfo->m_terrainDef->m_name;
+		}
 
 		g_theGame->m_debugRenderSystem->MakeDebugRender3DText(tags, 0.f, Vector3(GetCenter()), .1f);
 		g_theRenderer->DrawTextInBox2D(tags, GetBounds(), Vector2::HALF, .01f, TEXT_DRAW_WORD_WRAP);

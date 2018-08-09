@@ -167,9 +167,9 @@
       <CellularAutomata iterations="1~2" ifType="LightFlowers" toType="Grass" ifNeighbor="Grass" chanceToMutate=".2"/>
       <RoomsAndPaths>
         <Rooms count="4~8" width="7~9" height="6~8" numOverlaps="0~3" floor="Wood" wall="StoneBrickWall"/>
-        <Paths floor="Dirt" straightChance=".05"/>
+        <Paths floor="DirtPath" straightChance=".05"/>
       </RoomsAndPaths>
-      <CellularAutomata ifType="Dirt" ifNeighborType="Water" changeToType="WeatheredWood"/>
+      <CellularAutomata ifType="DirtPath" ifNeighborType="Water" changeToType="WeatheredWood"/>
       <SpawnActor type="Villager" iterations="3~5" />
       <SpawnActor type="Ally" />
     </GenerationSteps>
@@ -192,5 +192,24 @@
     </GenerationSteps>
   </MapDefinition>
 
+
+<MapDefinition name="SmoothTerrain" defaultTile="Grass" width="100">
+  <GenerationSteps>
+      <CellularAutomata iterations="3" ifType="Grass" ifNeighborType="Water" changeToType="Water" ifNeighborCount="5~8"/>
+      <CellularAutomata iterations="3" ifType="Sand" ifNeighborType="Water" changeToType="Water" ifNeighborCount="5~8"/>
+      <CellularAutomata iterations="3" ifType="Dirt" ifNeighborType="Water" changeToType="Water" ifNeighborCount="5~8"/>
+
+      <CellularAutomata iterations="3" ifType="Grass" ifNeighborType="Lava" changeToType="Lava" ifNeighborCount="5~8"/>
+      <CellularAutomata iterations="3" ifType="Sand" ifNeighborType="Lava" changeToType="Lava" ifNeighborCount="5~8"/>
+      <CellularAutomata iterations="3" ifType="Dirt" ifNeighborType="Lava" changeToType="Lava" ifNeighborCount="5~8"/>
+
+
+      <CellularAutomata iterations="3" ifType="Water" ifNeighborType="Grass" changeToType="Grass" ifNeighborCount="5~8"/>
+      <CellularAutomata iterations="3" ifType="Sand" ifNeighborType="Grass" changeToType="Grass" ifNeighborCount="5~8"/>
+      <CellularAutomata iterations="3" ifType="Dirt" ifNeighborType="Grass" changeToType="Grass" ifNeighborCount="5~8"/>
+      <CellularAutomata iterations="3" ifType="DarkDirt" ifNeighborType="Grass" changeToType="Grass" ifNeighborCount="5~8"/>
+
+    </GenerationSteps>
+</MapDefinition>
 
 </MapDefinitions>

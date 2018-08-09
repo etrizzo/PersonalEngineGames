@@ -232,6 +232,8 @@
     <ClCompile Include="Tags.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TileDefinition.cpp" />
+    <ClCompile Include="TileEdgeDefinition.cpp" />
+    <ClCompile Include="TileNeighborSet.cpp" />
     <ClCompile Include="VictoryCondition.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -282,6 +284,8 @@
     <ClInclude Include="Tags.hpp" />
     <ClInclude Include="Tile.hpp" />
     <ClInclude Include="TileDefinition.hpp" />
+    <ClInclude Include="TileEdgeDefinition.hpp" />
+    <ClInclude Include="TileNeighborSet.hpp" />
     <ClInclude Include="VictoryCondition.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

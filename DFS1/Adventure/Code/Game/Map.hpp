@@ -2,6 +2,7 @@
 #include "Game/Tile.hpp"
 #include "Game/Entity.hpp"
 #include "Game/MapDefinition.hpp"
+#include "Game/TileNeighborSet.hpp"
 
 class Actor;
 class Player;
@@ -135,6 +136,7 @@ public:
 	void GetManhattanNeighbors(IntVector2 coords, Tile (&neighbors)[4]);
 	void GetNeighbors(Tile* tile, Tile (&neighbors)[8]);
 	void GetNeighbors(IntVector2 coords, Tile (&neighbors)[8]);
+	TileNeighborSet* GetNeighborSet(Tile* tile);
 
 
 
@@ -163,6 +165,7 @@ private:
 	void InitializeTiles();
 	void CreateTileRenderable();
 	void RunMapGeneration();
+	void EdgeTiles();
 
 	void ResetPortals();
 	

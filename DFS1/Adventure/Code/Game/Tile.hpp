@@ -21,6 +21,9 @@ public:
 	void AddTag(std::string tag);
 	bool HasTag(std::string tag);
 
+	bool HasTerrainDefinition(TileDefinition* def) const;
+	int GetTerrainLevel() const;
+
 	bool HasBeenSpawnedOn() const;
 	void MarkAsSpawned();
 	void DamageTile(TileDefinition* typeIfDestroyed, int damage = 1);

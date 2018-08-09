@@ -216,7 +216,7 @@ Texture * Texture::CreateCompatible(Texture * src)
 	return newTex;
 }
 
-Texture * Texture::CreateOrGetTexture(const std::string & texPath, const std::string & directory)
+Texture * Texture::CreateOrGetTexture(const std::string & texPath, const std::string & directory, bool setMips)
 {
 	auto containsTex = s_loadedTextures.find((std::string)texPath); 
 	Texture* loadedTex = nullptr;
@@ -224,7 +224,7 @@ Texture * Texture::CreateOrGetTexture(const std::string & texPath, const std::st
 		loadedTex = containsTex->second;
 	} else {
 		std::string texturePath = directory + texPath;
-		loadedTex = new Texture(texturePath.c_str());
+		loadedTex = new Texture(texturePath.c_str(), setMips);
 		ASSERT_OR_DIE(loadedTex->GetHandle() != NULL, "Invalid texture path");
 		s_loadedTextures.insert(std::pair<std::string, Texture*> (texPath, loadedTex));
 	}

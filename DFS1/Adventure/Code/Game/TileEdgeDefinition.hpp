@@ -30,7 +30,11 @@ public:
 	TileEdgeDefinition() {};
 	TileEdgeDefinition(tinyxml2::XMLElement* tileDefElement);
 
+	std::string m_name;
 	std::vector<IntVector2> m_spriteCoords;
 
 	AABB2 GetTexCoordsForEdge(eEdgeType edgeType);
+
+	static std::map <std::string, TileEdgeDefinition*>	s_definitions;
+	static TileEdgeDefinition* GetEdgeDefinition(std::string name);
 };

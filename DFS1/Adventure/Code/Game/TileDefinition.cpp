@@ -17,7 +17,14 @@ TileDefinition::TileDefinition(tinyxml2::XMLElement* tileDefElement)
 	m_allowsSwimming		= ParseXmlAttribute(*tileDefElement, "allowsSwimming", false);
 	m_isDestructible		= ParseXmlAttribute(*tileDefElement, "isDestructible", false);
 	m_maxHealth				= ParseXmlAttribute(*tileDefElement, "maxHealth", 1);
+	m_isTerrain				= ParseXmlAttribute(*tileDefElement, "isTerrain", false);
+	m_terrainLevel			= ParseXmlAttribute(*tileDefElement, "terrainLevel", 0);
 	m_startingSpriteIndex	= GetIndexFromCoordinates(m_spriteCoords[0].x, m_spriteCoords[0].y, g_tileSpriteSheet->GetDimensions().x, g_tileSpriteSheet->GetDimensions().y);
+
+	std::string edgeDef		= ParseXmlAttribute(*tileDefElement, "edgeDefinition", "NONE");
+	if (edgeDef != "NONE"){
+		m_edgeDefinition = TileEdgeDefinition::GetEdgeDefinition(edgeDef);
+	}
 }
 
 AABB2 TileDefinition::GetTexCoords(int index)

@@ -1617,7 +1617,7 @@ Sprite * Renderer::GetSprite(const std::string & name)
 
 Texture * Renderer::CreateOrGetTexture(const std::string & path, const std::string & directory, bool setMips)
 {
-	return Texture::CreateOrGetTexture(path, directory);		//gotsta go back and remove this from everywhere
+	return Texture::CreateOrGetTexture(path, directory, setMips);		//gotsta go back and remove this from everywhere
 	//int indexOfTexture = -1;
 	//int numTexturesLoaded = (int) m_loadedTexturePaths.size();
 	//for (int i = 0; i <numTexturesLoaded; i++){
