@@ -1147,7 +1147,12 @@ void Map::CreateTileRenderable()
 			Tile* tileToRender = TileAt(x,y);
 			AABB2 bounds = tileToRender->GetBounds();
 			RGBA color = tileToRender->m_tileDef->m_spriteTint;
-			AABB2 texCoords = tileToRender->m_tileDef->GetTexCoords(tileToRender->m_extraInfo->m_variant);
+			AABB2 texCoords;
+			if (tileToRender->m_extraInfo->m_cosmeticBaseDef != nullptr){
+				texCoords = tileToRender->m_extraInfo->m_cosmeticBaseDef->GetTexCoords();
+			} else {
+				texCoords = tileToRender->m_tileDef->GetTexCoords(tileToRender->m_extraInfo->m_variant);
+			}
 			mb.AppendPlane2D(bounds, color, texCoords, .01f);
 			for (int i = 0; i < tileToRender->m_extraInfo->m_overlaySpriteCoords.size(); i++){
 				AABB2 overlayCoords = tileToRender->m_extraInfo->m_overlaySpriteCoords[i];

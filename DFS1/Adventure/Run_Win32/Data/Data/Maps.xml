@@ -95,6 +95,7 @@
       <CellularAutomata ifType="LightFlowers" changeToType="Sand" ifNeighborType="Water" ifNeighborCount="4~8" chanceToMutate=".8" />
 
       <SpawnActor type="Goblin" noNoZone="Village" iterations="30"/>      <!-- zac did this -->
+      <SubMap map="SmoothTerrain" />
     </GenerationSteps>
   </MapDefinition>
 
@@ -159,8 +160,10 @@
       <CellularAutomata iterations="3" ifType="Grass" ifNeighborType="Water" changeToType="Water" ifNeighborCount="5~8"/>
       <CellularAutomata iterations="3" ifType="Water" ifNeighborType="Grass" changeToType="Grass" ifNeighborCount="5~8"/>
       <CellularAutomata ifType="Grass" ifNeighborType="Water" changeToType="Sand"/>
+      <!--
       <PerlinNoise ifType="Grass" changeToType="Flowers" ifNoise="-1~-.6" gridSize="12"/>
       <PerlinNoise ifType="Grass" changeToType="LightFlowers" ifNoise="-.6~-.2" gridSize="12"/>
+    -->
       <Mutate ifType="Grass" toType="LightFlowers" chanceToMutate=".001" />
       <Mutate ifType="LightFlowers" toType="Grass" chanceToMutate=".06" />
       <CellularAutomata ifType="Flowers" toType="LightFlowers" ifNeighbor="LightFlowers" chanceToMutate=".2"/>

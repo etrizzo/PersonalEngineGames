@@ -155,6 +155,14 @@ AABB2 TileNeighborSet::GetTileEdge(TileDefinition * edgeTileDef)
 		return def->GetTexCoordsForEdge(EDGE_PURE_BOTTOM);
 	}
 
+	//single tile - swap to base definition
+	TileEdgeDefinition* centerEdgeDef = m_center->m_tileDef->m_edgeDefinition;
+	if (centerEdgeDef != nullptr){
+		m_center->m_extraInfo->m_cosmeticBaseDef = m_edgeToLookFor;
+		return centerEdgeDef->GetTexCoordsForEdge(EDGE_SINGLE_SMALL);
+	}
+
+	//last resort :(
 	return def->GetTexCoordsForEdge(EDGE_SINGLE_SMALL);
 }
 

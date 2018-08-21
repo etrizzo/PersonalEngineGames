@@ -20,7 +20,9 @@
 		  allowsWalking="true"
 		  allowsFlying="true"
 		  allowsSwimming="false"
-      isTerrain="false"
+      isTerrain="true"
+      terrainLevel="2"
+      terrainDefinition="Grass"
       edgeDefinition="Grass"
 	  />
   
@@ -32,7 +34,9 @@
 		  allowsWalking="true"
 		  allowsFlying="true"
 		  allowsSwimming="false"
-      isTerrain="false"
+      isTerrain="true"
+      terrainLevel="2"
+      terrainDefinition="Grass"
       edgeDefinition="Grass"
 	  />
 
