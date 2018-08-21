@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Core/WindowsCommon.hpp"
 #include "Engine/Core/RGBA.hpp"
 #include "Engine/Core/ErrorWarningAssert.hpp"
 #include "Engine/Core/StringUtils.hpp"

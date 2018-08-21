@@ -4,8 +4,7 @@
 
 //-----------------------------------------------------------------------------------------------
 #include "Engine/Core/Time.hpp"
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include "Engine/Core/WindowsCommon.hpp"
 #include <time.h>
 #include "StringUtils.hpp"
 

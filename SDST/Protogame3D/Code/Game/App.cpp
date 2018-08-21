@@ -9,6 +9,7 @@ App::~App()
 {
 	CommandShutdown();
 	LogSystemShutdown();
+	Net::Shutdown();
 	delete g_theGame;
 	delete g_theAudio;
 	delete g_theInput;
@@ -59,6 +60,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_profilerVisualizer = new ProfilerVisualizer(g_theRenderer, g_theInput, UIBounds);
 
 	LogSystemStartup();
+	Net::Startup();
 
 	RegisterCommands();
 	CommandStartup();
@@ -189,6 +191,8 @@ void App::RegisterCommands()
 	CommandRegister("log_toggle_filters", CommandLogToggleWhitelist, "toggles hidden tags to be shown and vice versa");
 	CommandRegister("log_hide_all", CommandLogHideAll, "Hides all log tags");
 	CommandRegister("log_show_all", CommandLogShowAll, "Shows all log tags");
+
+	CommandRegister("get_address", CommandGetAddress, "Gets machine address");
 }
 
 void App::HandleInput()
@@ -615,4 +619,16 @@ void CommandLogHideAll(Command & cmd)
 void CommandLogShowAll(Command & cmd)
 {
 	LogShowAllTags();
+}
+
+void CommandGetAddress(Command & cmd)
+{
+	sockaddr_storage addr;
+	int addr_len;
+	bool gotit = GetAddressForHost((sockaddr*) &addr, &addr_len, "10.8.139.114", "12345");
+	sockaddr_in* in = (sockaddr_in*) &addr;
+	int x = 0;
+	//LogIP((sockaddr_in*) addr);
+	//GetAddressForHost(addr, addr_len, "https://www.google.com/");
+	//GetAddressExample();
 }

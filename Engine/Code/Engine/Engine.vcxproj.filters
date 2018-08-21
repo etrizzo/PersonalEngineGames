@@ -32,6 +32,9 @@
     <Filter Include="ThirdParty\TinyXML">
       <UniqueIdentifier>{6fe16cfd-60ba-4bda-a83f-a4c7748a21fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Networking">
+      <UniqueIdentifier>{bed93a00-7f8c-4cac-b8b6-b10772547ef5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Math\Vector2.cpp">
@@ -309,6 +312,9 @@
     </ClCompile>
     <ClCompile Include="Core\SpinLock.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Net.cpp">
+      <Filter>General</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -619,6 +625,12 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\SpinLock.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Net.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\WindowsCommon.hpp">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>

@@ -325,6 +325,7 @@
     <ClCompile Include="Math\Transform2D.cpp" />
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
+    <ClCompile Include="Networking\Net.cpp" />
     <ClCompile Include="Renderer\BitmapFont.cpp" />
     <ClCompile Include="Renderer\Camera.cpp" />
     <ClCompile Include="Renderer\DrawCall.cpp" />
@@ -398,6 +399,7 @@
     <ClInclude Include="Core\Vertex.hpp" />
     <ClInclude Include="Core\VertexLayout.hpp" />
     <ClInclude Include="Core\Window.hpp" />
+    <ClInclude Include="Core\WindowsCommon.hpp" />
     <ClInclude Include="Core\XmlUtilities.hpp" />
     <ClInclude Include="Input\AnalogJoystick.hpp" />
     <ClInclude Include="Input\Command.hpp" />
@@ -426,6 +428,7 @@
     <ClInclude Include="Math\Transform2D.hpp" />
     <ClInclude Include="Math\Vector2.hpp" />
     <ClInclude Include="Math\Vector3.hpp" />
+    <ClInclude Include="Networking\Net.hpp" />
     <ClInclude Include="Renderer\BitmapFont.hpp" />
     <ClInclude Include="Renderer\Camera.hpp" />
     <ClInclude Include="Renderer\DrawCall.hpp" />

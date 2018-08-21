@@ -1,7 +1,7 @@
 #pragma once
 #include "Game/Game.hpp"
 #include "Game/GameCommon.hpp"
-
+#include "Engine/Networking/Net.hpp"
 
 class App{
 public:
@@ -91,3 +91,6 @@ void CommandLogHideFilter(Command& cmd);
 void CommandLogToggleWhitelist(Command& cmd);
 void CommandLogHideAll(Command& cmd);
 void CommandLogShowAll(Command& cmd);
+
+
+void CommandGetAddress(Command& cmd);
