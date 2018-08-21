@@ -197,9 +197,9 @@ RGBA RGBA::GetRandomRainbowColor()
 
 RGBA RGBA::GetRandomColor()
 {
-	int r = GetRandomIntLessThan(256);
-	int g = GetRandomIntLessThan(256);
-	int b = GetRandomIntLessThan(256);
+	unsigned char r = (unsigned char) GetRandomIntLessThan(256);
+	unsigned char g = (unsigned char) GetRandomIntLessThan(256);
+	unsigned char b = (unsigned char) GetRandomIntLessThan(256);
 	return RGBA(r,g,b);
 }
 

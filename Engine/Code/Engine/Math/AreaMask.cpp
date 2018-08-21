@@ -169,12 +169,12 @@ AreaMask* AreaMask_Rectangle::GetSubArea(FloatRange centerRange, FloatRange size
 	
 	IntVector2 mins = center - halfDims;
 	if (!IsPointInside(mins.x, mins.y)){
-		int distance = GetDistanceFromEdge(mins.x, mins.y);
+		int distance = (int) GetDistanceFromEdge(mins.x, mins.y);
 		halfDims-= IntVector2(distance, distance);
 	}
 	IntVector2 maxs = center + halfDims;
 	if (!IsPointInside(maxs.x, maxs.y)){
-		int distance = GetDistanceFromEdge(mins.x, mins.y);
+		int distance = (int) GetDistanceFromEdge(mins.x, mins.y);
 		halfDims-= IntVector2(distance, distance);
 	}
 	return (AreaMask*) (new AreaMask_Rectangle(center, halfDims));
@@ -191,8 +191,8 @@ AreaMask_Circle::AreaMask_Circle(IntVector2 center, int radius,  float centerDen
 
 IntVector2 AreaMask_Circle::GetRandomPointInArea() const
 {
-	int x = GetRandomIntInRange(-m_radius * .5f, m_radius * .5f);
-	int y = GetRandomIntInRange(-m_radius * .5f, m_radius * .5f);
+	int x = GetRandomIntInRange((int) (-m_radius * .5f), (int) (m_radius * .5f));
+	int y = GetRandomIntInRange((int) (-m_radius * .5f), (int) (m_radius * .5f));
 	return m_center + IntVector2(x,y);
 }
 
@@ -210,7 +210,7 @@ float AreaMask_Circle::GetDistanceFromEdge(int x, int y) const
 	IntVector2 fromCenter = point - m_center;
 	//float radius = m_halfDims.GetVector2().GetLength();
 	float dist = fromCenter.GetVector2().GetLength();
-	return abs((int)(dist - m_radius));
+	return (float) abs((int)(dist - m_radius));
 }
 
 float AreaMask_Circle::GetDistanceFromCenter(int x, int y) const
@@ -222,7 +222,7 @@ float AreaMask_Circle::GetDistanceFromCenter(int x, int y) const
 
 float AreaMask_Circle::GetMaxDistanceFromCenter() const
 {
-	return m_radius;
+	return (float) m_radius;
 }
 
 IntVector2 AreaMask_Circle::GetMins() const
@@ -249,12 +249,12 @@ AreaMask * AreaMask_Circle::GetSubArea(FloatRange centerRange, FloatRange sizeRa
 
 	IntVector2 mins = center - IntVector2(newRadius,newRadius);
 	if (!IsPointInside(mins.x, mins.y)){
-		int distance = GetDistanceFromEdge(mins.x, mins.y);
+		int distance = (int) GetDistanceFromEdge(mins.x, mins.y);
 		newRadius-=distance;
 	}
 	IntVector2 maxs = center + IntVector2(newRadius,newRadius);
 	if (!IsPointInside(maxs.x, maxs.y)){
-		int distance = GetDistanceFromEdge(mins.x, mins.y);
+		int distance = (int) GetDistanceFromEdge(mins.x, mins.y);
 		newRadius-=distance;
 	}
 	return (AreaMask*) (new AreaMask_Circle(center, newRadius));
@@ -281,8 +281,8 @@ IntVector2 AreaMask_Perlin::GetRandomPointInArea() const
 	int y = m_yRange.GetRandomInRange();
 	int tries = 0;
 	while (!IsPointInside(x,y) && tries < 3000){
-		int x = m_xRange.GetRandomInRange();
-		int y = m_yRange.GetRandomInRange();
+		x = m_xRange.GetRandomInRange();
+		y = m_yRange.GetRandomInRange();
 		tries++;
 	}
 
@@ -302,11 +302,11 @@ bool AreaMask_Perlin::IsPointInside(int x, int y) const
 //for perlin, this is an estimation
 float AreaMask_Perlin::GetDistanceFromEdge(int x, int y) const
 {
-	int mapWidth = m_xRange.max - m_xRange.min;
-	int mapHeight = m_yRange.max - m_yRange.min;
-	int maxSide = Max(mapWidth, mapHeight);
+	//int mapWidth = m_xRange.max - m_xRange.min;
+	//int mapHeight = m_yRange.max - m_yRange.min;
+	//int maxSide = Max(mapWidth, mapHeight);
 	//float tilesPerCycle = m_noiseScale;
-	float tileVariation = (float) 1.f / (m_noiseScale);	//should be the max difference in value between tiles
+	//float tileVariation = (float) 1.f / (m_noiseScale);	//should be the max difference in value between tiles
 
 	//get how far outside of the edge of the "acceptable range" you are
 	float noiseVal = GetNoiseAtPoint(x,y);
@@ -318,11 +318,11 @@ float AreaMask_Perlin::GetDistanceFromEdge(int x, int y) const
 float AreaMask_Perlin::GetDistanceFromCenter(int x, int y) const
 {
 
-	int mapWidth = m_xRange.max - m_xRange.min;
-	int mapHeight = m_yRange.max - m_yRange.min;
-	int maxSide = Max(mapWidth, mapHeight);
+	//int mapWidth = m_xRange.max - m_xRange.min;
+	//int mapHeight = m_yRange.max - m_yRange.min;
+	//int maxSide = Max(mapWidth, mapHeight);
 	//float tilesPerCycle = m_noiseScale;
-	float tileVariation = (float) 1.f / (m_noiseScale);	//should be the max difference in value between tiles
+	//float tileVariation = (float) 1.f / (m_noiseScale);	//should be the max difference in value between tiles
 
 														//get how far outside of the edge of the "acceptable range" you are
 	float noiseVal = GetNoiseAtPoint(x,y);

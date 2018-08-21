@@ -20,7 +20,7 @@ class VertexLayout
 public:
 	VertexLayout(){};
 	VertexLayout(unsigned int stride, const VertexAttribute attributes[], int numAttributes);
-	unsigned int GetAttributeCount() const { return m_attributes.size(); };
+	unsigned int GetAttributeCount() const { return (unsigned int) m_attributes.size(); };
 	VertexAttribute const& GetAttribute( unsigned int const idx ) const { return m_attributes[idx]; }; 
 
 public:

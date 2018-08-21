@@ -145,8 +145,8 @@ Vector2 Window::ClientToScreenCoord(Vector2 clientPos)
 {
 	HWND hwnd = (HWND) GetInstance()->GetHandle();
 	POINT desktopPos;
-	desktopPos.x = clientPos.x;
-	desktopPos.y = clientPos.y;
+	desktopPos.x = (LONG) clientPos.x;
+	desktopPos.y = (LONG) clientPos.y;
 	::ClientToScreen( hwnd, &desktopPos);
 
 	return Vector2((float) desktopPos.x, (float) desktopPos.y);

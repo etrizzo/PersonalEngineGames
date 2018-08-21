@@ -30,7 +30,7 @@ void ProfilerVisualizer::Update()
 	}
 
 	if (frame != nullptr){
-		ProfilerReport* report = new ProfilerReport();
+		//ProfilerReport* report = new ProfilerReport();
 		if (m_isTree){
 			m_currentReport->GenerateReportTreeFromFrame(frame);
 		} else {

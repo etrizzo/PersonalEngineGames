@@ -41,7 +41,7 @@ ParticleEmitter::~ParticleEmitter()
 
 void ParticleEmitter::Update(float ds)
 {
-	unsigned int particleCount = m_particles.size();
+	unsigned int particleCount = (unsigned int)m_particles.size();
 	float t = GetMasterClock()->GetCurrentSeconds();
 	if (m_spawnOverTime && m_spawnInterval.Decrement()){
 		SpawnParticle();
@@ -63,7 +63,7 @@ void ParticleEmitter::Update(float ds)
 
 void ParticleEmitter::CameraPreRender(Camera * cam)
 {
-	unsigned int particleCount = m_particles.size();
+	unsigned int particleCount = (unsigned int) m_particles.size();
 
 	//m_builder->SetUpForVertex<Vertex3D_PCU>();
 	Vector3 right = cam->GetRight();

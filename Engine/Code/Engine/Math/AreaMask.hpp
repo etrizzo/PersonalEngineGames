@@ -99,7 +99,7 @@ public:
 	IntRange m_xRange;
 	IntRange m_yRange;
 	float m_noiseScale;
-	float m_numOctaves;
+	unsigned int m_numOctaves;
 	float m_octavePersistence;
 	float m_octaveScale;
 

@@ -93,7 +93,7 @@ void DevConsole::RenderOutput()
 	m_outputLineBox = AABB2(m_outputBox.mins, Vector2(m_outputBox.maxs.x, m_outputBox.mins.y + m_lineHeight));
 	
 	//draw each line (for now)
-	if (m_outputLines.size() > 1){
+	if ((int) m_outputLines.size() > 1){
 		int linesDrawn = 0;
 		for(unsigned int i = (unsigned int) m_outputLines.size(); i > 0; i--){
 			linesDrawn++;
@@ -149,7 +149,7 @@ void DevConsole::ProcessInput(unsigned char key)
 	case (VK_TAB):
 		if (m_autoCompletes.size() > 0){
 			m_currentInput = m_autoCompletes[m_autoCompleteIndex]->m_name;
-			m_cursorPosition = m_currentInput.size();
+			m_cursorPosition = (int) m_currentInput.size();
 		}
 		break;
 	case (VK_ESCAPE):		//clear current input
@@ -250,7 +250,7 @@ void DevConsole::MoveThroughCommandHistory(int direction)
 		m_historyPosition = (int) m_commandHistory.size() - 1;
 	}
 	m_currentInput = m_commandHistory[m_historyPosition];
-	m_cursorPosition = m_currentInput.size();
+	m_cursorPosition = (int) m_currentInput.size();
 }
 
 void DevConsole::MoveThroughAutoCompletes(int direction)
@@ -285,7 +285,7 @@ void DevConsole::FindAutoCompleteStrings()
 			}
 		}
 
-		m_autoCompleteIndex = ClampInt(m_autoCompleteIndex, 0, m_autoCompletes.size()-1);
+		m_autoCompleteIndex = ClampInt(m_autoCompleteIndex, 0, (int) m_autoCompletes.size()-1);
 		
 	} 
 

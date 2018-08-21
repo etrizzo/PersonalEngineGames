@@ -17,7 +17,7 @@ ProfileLogScoped::ProfileLogScoped(const char * tag)
 ProfileLogScoped::~ProfileLogScoped()
 {
 	uint64_t diff = GetPerformanceCounter() - m_startHPC;
-	float s = PerformanceCountToSeconds(diff);
+	float s = (float) PerformanceCountToSeconds(diff);
 	ConsolePrintf("%s took: %.4f ms", m_tag, s * 1000.f);
 }
 
@@ -37,7 +37,7 @@ profileMeasurement_t::profileMeasurement_t(std::string id)
 
 profileMeasurement_t::~profileMeasurement_t()
 {
-	for (int i = m_children.size()-1; i >=0; i--){
+	for (int i = (int) m_children.size()-1; i >=0; i--){
 		delete m_children[i];
 	}
 
@@ -68,7 +68,7 @@ void profileMeasurement_t::AddParent(profileMeasurement_t * parent)
 
 void profileMeasurement_t::RemoveChild(profileMeasurement_t * child)
 {
-	for (int i = m_children.size()-1; i >=0; i--){
+	for (int i = (int) m_children.size()-1; i >=0; i--){
 		if (m_children[i] == child){
 			if (m_children.size() > 1){
 				m_children[i] = m_children[m_children.size() - 1];
@@ -216,7 +216,7 @@ void Profiler::TogglePause()
 
 profileMeasurement_t * Profiler::ProfileGetPreviousFrame(unsigned int skip_count)
 {
-	unsigned int skipInRange = skip_count % PROFILER_MAX_FRAME_COUNT;
+	//unsigned int skipInRange = skip_count % PROFILER_MAX_FRAME_COUNT;
 	unsigned int frameIndex = (m_currentFrameIndex + PROFILER_MAX_FRAME_COUNT) - skip_count;		//add max frame count to wrapping around @ 0
 	unsigned int actualIndex = frameIndex % PROFILER_MAX_FRAME_COUNT;
 	return m_frames[actualIndex];

@@ -71,7 +71,7 @@ public:
 	{
 		m_lock.enter();
 
-		for (int i = m_data.size() - 1; i >=0 ; i++ ){
+		for (int i = (int) m_data.size() - 1; i >=0 ; i++ ){
 			if (m_data[i] == v){
 				if (m_data.size() > 1){
 					m_data[i] = m_data[m_data.size() - 1];
@@ -104,7 +104,7 @@ public:
 
 	unsigned int size()
 	{
-		return m_data.size();
+		return (unsigned int) m_data.size();
 	}
 
 	void clear()
@@ -118,7 +118,7 @@ public:
 	{
 		m_lock.enter();
 
-		for (int i = m_data.size() - 1; i >=0 ; i-- ){
+		for (int i = (int) m_data.size() - 1; i >=0 ; i-- ){
 			if (m_data[i] == v){
 				m_lock.leave();
 				return true;

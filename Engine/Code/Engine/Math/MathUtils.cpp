@@ -255,7 +255,7 @@ int Max(const int & x, const int & y)
 	}
 }
 
-int Max(const float & x, const float & y)
+float Max(const float & x, const float & y)
 {
 	if (x > y){
 		return x;

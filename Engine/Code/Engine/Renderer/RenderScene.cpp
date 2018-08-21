@@ -54,7 +54,7 @@ void RenderScene::RemoveCamera(Camera * c)
 
 void RenderScene::RemoveRenderable(Renderable * r)
 {
-	for (int i = m_renderables.size()-1; i >= 0; i--){
+	for (int i = (int) m_renderables.size()-1; i >= 0; i--){
 		if (m_renderables[i] == r){
 			RemoveAtFast(m_renderables, i);
 			break;
@@ -64,7 +64,7 @@ void RenderScene::RemoveRenderable(Renderable * r)
 
 void RenderScene::RemoveLight(Light * l)
 {
-	for (int i = m_lights.size()-1; i >= 0; i--){
+	for (int i = (int) m_lights.size()-1; i >= 0; i--){
 		if (m_lights[i] == l){
 			RemoveAtFast(m_lights, i);
 		}

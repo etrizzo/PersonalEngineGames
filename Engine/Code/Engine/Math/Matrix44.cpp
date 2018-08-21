@@ -900,14 +900,14 @@ Matrix44 TurnToward(const Matrix44 & current, const Matrix44 & target, float max
 
 	float cosAngle_f = DotProduct(current.GetForward(), target.GetForward());		//	Using forward is good enough for this assignment - if we wanted to be very thorough we would do some weird shit
 
-	if (cosAngle_f < .95f){
-		int y = 1;
-	}
+	//if (cosAngle_f < .95f){
+	//	int y = 1;
+	//}
 
 	cosAngle_f = ClampFloat(cosAngle_f, -1.f, 1.f);
 	float angleRadians = acosf(cosAngle_f);
 
-	float cosMaxAngle = cosf(maxTurnRadians);
+	//float cosMaxAngle = cosf(maxTurnRadians);
 	float t;
 	
 	if (maxTurnRadians < angleRadians){

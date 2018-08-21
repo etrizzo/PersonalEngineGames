@@ -178,7 +178,7 @@ void LogSystem::FlushMessages()
 			// do something with the data
 			//WriteLogToFile( data ); 
 			m_hooks.lock();
-			for (int i = 0; i < m_hooks.size(); i++) {
+			for (int i = 0; i < (int) m_hooks.size(); i++) {
 				loghook_t* hook = m_hooks.at(i);
 				hook->callback( *data, hook->user_argument ); 
 			}
@@ -267,6 +267,8 @@ loghook_t::loghook_t(log_cb cb, void * args)
 
 void WriteLogToFile(log_t * data,  void* user_args )
 {
+	UNUSED(user_args);
+	TODO("what do with user args?");
 	std::string logText = data->tag + ":: " + data->text + "\n";
 	//fputs( logText.c_str(), m_file); 
 	LogSystem::GetInstance()->m_file->write(logText.c_str(), logText.size());
@@ -276,12 +278,14 @@ void WriteLogToFile(log_t * data,  void* user_args )
 
 void WriteLogToConsole(log_t * data, void * user_args)
 {
+	UNUSED(user_args);
 	std::string logText = data->tag + ":: " + data->text + "\n";
 	ConsolePrintf(logText.c_str());
 }
 
 void WriteLogToOutput(log_t * data, void * user_args)
 {
+	UNUSED(user_args);
 	std::string logText = data->tag + ":: " + data->text + "\n";
 	OutputDebugStringA( logText.c_str() );
 }

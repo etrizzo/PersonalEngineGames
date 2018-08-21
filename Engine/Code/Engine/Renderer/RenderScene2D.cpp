@@ -39,7 +39,7 @@ void RenderScene2D::RemoveCamera(Camera * c)
 
 void RenderScene2D::RemoveRenderable(Renderable2D * r)
 {
-	for (int i = m_renderables.size()-1; i >= 0; i--){
+	for (int i = (int) m_renderables.size()-1; i >= 0; i--){
 		if (m_renderables[i] == r){
 			RemoveAtFast(m_renderables, i);
 			break;

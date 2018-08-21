@@ -98,14 +98,14 @@ unsigned int MeshBuilder::PushVertex(Vector3 position)
 	m_stamp.m_position = position;
 	m_vertices.push_back(m_stamp);
 
-	return m_vertices.size() - 1;
+	return (unsigned int) m_vertices.size() - 1;
 }
 
 unsigned int MeshBuilder::PushIndex(unsigned int index)
 {
 	m_indices.push_back(index);
 
-	return m_indices.size() - 1;
+	return (unsigned int) m_indices.size() - 1;
 }
 
 void MeshBuilder::Begin(eDrawPrimitiveType type, bool useIndices)
@@ -113,9 +113,9 @@ void MeshBuilder::Begin(eDrawPrimitiveType type, bool useIndices)
 	m_drawInstruction.m_useIndices = useIndices;
 	m_drawInstruction.m_primitive = type;
 	if (useIndices){
-		m_drawInstruction.m_start_index = m_indices.size();
+		m_drawInstruction.m_start_index = (unsigned int) m_indices.size();
 	} else {
-		m_drawInstruction.m_start_index = m_vertices.size();
+		m_drawInstruction.m_start_index = (unsigned int) m_vertices.size();
 	}
 }
 
@@ -123,9 +123,9 @@ void MeshBuilder::End()
 {
 	unsigned int endIndex;
 	if (m_drawInstruction.m_useIndices){
-		endIndex = m_indices.size();
+		endIndex = (unsigned int) m_indices.size();
 	} else {
-		endIndex = m_vertices.size();
+		endIndex = (unsigned int) m_vertices.size();
 	}
 	m_drawInstruction.m_elem_count = endIndex;
 }
@@ -527,7 +527,7 @@ void MeshBuilder::AppendVertices(std::vector<Vertex3D_PCU> verts, Transform t)
 	/*if (numInArray == -1){
 		numInArray = numVertices;
 	}*/
-	int numInArray = verts.size();
+	int numInArray = (int) verts.size();
 	const int numToDraw = numInArray;
 	Matrix44 model = t.GetLocalMatrix();
 	if ((verts.size() >0)){

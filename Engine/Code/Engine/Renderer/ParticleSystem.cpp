@@ -14,7 +14,7 @@ void ParticleSystem::Update(float ds)
 		emitter->Update(ds);
 	}
 
-	for (int i = m_emitters.size() -1; i >=0; i--){
+	for (int i = (int) m_emitters.size() -1; i >=0; i--){
 		
 		if (m_emitters[i]->IsDead()){
 			ParticleEmitter* e = m_emitters[i];
