@@ -3,6 +3,9 @@
 
 const std::string LOG_DIRECTORY = "Logs/";
 const std::string DEFAULT_LOG_FILE = "console_log.txt";
+const std::string CONSOLE_HISTORY_FILE = "console_history.txt";
+const unsigned int MAX_HISTORY_SIZE = 64;
+
 
 class CommandDefinition;
 
@@ -70,6 +73,8 @@ private:
 
 	void FindAutoCompleteStrings();
 	void RenderAutoComplete();
+	void WriteHistoryToFile();
+	void ReadConsoleHistoryFromFile();
 
 
 	ThreadSafeVector<OutputLine>	m_outputLines;

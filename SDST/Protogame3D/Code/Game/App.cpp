@@ -2,6 +2,7 @@
 #include "Engine/Renderer/Camera.hpp"
 #include "Engine/Core/Clock.hpp"
 #include "Game/DebugRenderSystem.hpp"
+#include "Engine/Core/BytePacker.hpp"
 
 using namespace std;
 
@@ -64,6 +65,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 
 	RegisterCommands();
 	CommandStartup();
+	Startup();
 
 }
 
@@ -260,6 +262,15 @@ bool App::IsQuitting()
 	return g_Window->m_isQuitting;
 }
 
+void App::Startup()
+{
+	BytePacker packer = BytePacker();
+	packer.WriteSize(8675309);
+	size_t out;
+	packer.ReadSize(&out);
+
+}
+
 void CommandDebugRenderStartup(Command & cmd)
 {
 	UNUSED(cmd);
@@ -376,6 +387,8 @@ void CommandRecompileShaders(Command & cmd)
 	ConsolePrintf(RGBA::CYAN, "All shaders recompiled");
 }
 
+
+
 void CommandMakeNewLight(Command & cmd)
 {
 	Vector3 pos = cmd.GetNextVec3();
@@ -457,6 +470,7 @@ void CommandSetGodMode(Command & cmd)
 
 void CommandToggleGodMode(Command & cmd)
 {
+	UNUSED(cmd);
 	g_theGame->m_godMode = !g_theGame->m_godMode;
 	ConsolePrintf(("God mode is: " +  std::to_string(g_theGame->m_godMode)).c_str());
 }
@@ -469,6 +483,7 @@ void CommandToggleProfiler(Command & cmd)
 
 void CommandPrintProfilerReport(Command & cmd)
 {
+	UNUSED(cmd);
 	std::string type = cmd.GetNextString();
 	if (type == "flat"){
 		AddProfilerFrameAsFlatToConsole();
@@ -479,11 +494,13 @@ void CommandPrintProfilerReport(Command & cmd)
 
 void CommandProfilePause(Command & cmd)
 {
+	UNUSED(cmd);
 	Profiler::GetInstance()->Pause();
 }
 
 void CommandProfileResume(Command & cmd)
 {
+	UNUSED(cmd);
 	Profiler::GetInstance()->Resume();
 }
 
@@ -548,11 +565,13 @@ void ThreadTestWork(void *)
 
 void CommandConsoleNonThreadedTest(Command & cmd)
 {
+	UNUSED(cmd);
 	ThreadTestWork(nullptr); 
 }
 
 void CommandConsoleThreadedTest(Command & cmd)
 {
+	UNUSED(cmd);
 	ThreadCreateAndDetach( ThreadTestWork, nullptr ); 
 }
 
@@ -571,9 +590,9 @@ void CommandLogThreadTest(Command & cmd)
 
 void CommandLogFlushTest(Command & cmd)
 {
+	UNUSED(cmd);
 	LogTaggedPrintf("FLUSHTEST", "WE FLUSHING BOISS!!!!");
 	LogSystemFlush();
-	int x = 0;
 }
 
 void CommandLogTestWarning(Command & cmd)
@@ -608,27 +627,32 @@ void CommandLogHideFilter(Command & cmd)
 
 void CommandLogToggleWhitelist(Command & cmd)
 {
+	UNUSED(cmd);
 	LogToggleWhitelist();
 }
 
 void CommandLogHideAll(Command & cmd)
 {
+	UNUSED(cmd);
 	LogHideAllTags();
 }
 
 void CommandLogShowAll(Command & cmd)
 {
+	UNUSED(cmd);
 	LogShowAllTags();
 }
 
 void CommandGetAddress(Command & cmd)
 {
+	UNUSED(cmd);
 	sockaddr_storage addr;
 	int addr_len;
-	bool gotit = GetAddressForHost((sockaddr*) &addr, &addr_len, "10.8.139.114", "12345");
+	bool gotit = GetAddressForHost((sockaddr*) &addr, &addr_len, "10.8.151.155", "12345");
 	sockaddr_in* in = (sockaddr_in*) &addr;
 	int x = 0;
 	//LogIP((sockaddr_in*) addr);
 	//GetAddressForHost(addr, addr_len, "https://www.google.com/");
 	//GetAddressExample();
 }
+

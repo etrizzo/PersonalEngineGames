@@ -85,5 +85,10 @@ void CommandStrip(Command& cmd);
 void CommandSaveLog(Command& cmd);
 void CommandRecompileShaders(Command& cmd);
 
+
+void CommandPrintLocalAddress(Command& cmd);
+void CommandSendMessage(Command& cmd);
+void CommandHostServer(Command& cmd);
+
 CommandDefinition* GetCommandDefinition(std::string name);
 

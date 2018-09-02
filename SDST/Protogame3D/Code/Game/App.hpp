@@ -27,6 +27,8 @@ public:
 
 	bool IsQuitting();
 
+	void Startup();
+
 private:
 	//place to register game-specific commands
 	void RegisterCommands();
@@ -94,3 +96,4 @@ void CommandLogShowAll(Command& cmd);
 
 
 void CommandGetAddress(Command& cmd);
+//void CommandSendMessage(Command& cmd);

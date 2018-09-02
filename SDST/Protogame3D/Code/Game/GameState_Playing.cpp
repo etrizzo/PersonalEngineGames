@@ -260,7 +260,7 @@ void GameState_Playing::SetLightAttenuation(int lightIndex, Vector3 att)
 
 unsigned int GameState_Playing::GetNumActiveLights() const
 {
-	return m_scene->m_lights.size();
+	return (unsigned int) m_scene->m_lights.size();
 }
 
 

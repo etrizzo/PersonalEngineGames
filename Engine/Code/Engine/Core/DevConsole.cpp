@@ -2,7 +2,6 @@
 #include "Engine/Math/Renderer.hpp"
 
 
-
 DevConsole::DevConsole(AABB2 screenBounds)
 {
 	//m_outputLines = std::vector<OutputLine>();
@@ -35,13 +34,14 @@ DevConsole::DevConsole(AABB2 screenBounds)
 
 	m_currentInput = "";
 	m_commandHistory = Strings();
-	m_commandHistory.push_back("");
 
 	RegisterCommands();
+	ReadConsoleHistoryFromFile();
 }
 
 DevConsole::~DevConsole()
 {
+	WriteHistoryToFile();
 }
 
 void DevConsole::SetRenderer(Renderer * renderer)
@@ -233,18 +233,25 @@ std::vector<std::string> DevConsole::GetCommandHistory()
 
 void DevConsole::AddCommandToHistory(std::string commandText)
 {
-	auto findPos = std::find(m_commandHistory.begin(), m_commandHistory.end(),commandText);
-	if (findPos != m_commandHistory.end()){
-		m_commandHistory.erase(findPos);
+	if (m_commandHistory.size() == 0){
+		m_commandHistory.push_back(commandText);
+	} else {
+		auto findPos = std::find(m_commandHistory.begin(), m_commandHistory.end(),commandText);
+		if (findPos != m_commandHistory.end()){
+			m_commandHistory.erase(findPos);
+		}
+		m_commandHistory.insert(m_commandHistory.begin() + 1, commandText);
 	}
-	m_commandHistory.insert(m_commandHistory.begin() + 1, commandText);
 }
 
 void DevConsole::MoveThroughCommandHistory(int direction)
 {
 	m_historyPosition+=direction;
 	if (m_historyPosition < 0){
-		m_historyPosition = 0;
+		m_historyPosition = -1;
+		m_currentInput = "";
+		m_cursorPosition = 0;
+		return;
 	}
 	if (m_historyPosition > (int) m_commandHistory.size() - 1){
 		m_historyPosition = (int) m_commandHistory.size() - 1;
@@ -334,6 +341,33 @@ void DevConsole::RenderAutoComplete()
 	m_renderer->DrawTextInBox2D("> " + m_currentAutoComplete, m_inputLineBox, Vector2(0.f,0.5f), m_drawTextHeight, TEXT_DRAW_OVERRUN, m_defaultTextColor.GetColorWithAlpha(128));
 }
 
+void DevConsole::WriteHistoryToFile()
+{
+	
+	std::fstream* historyFile = new std::fstream();
+	std::string fileLog = LOG_DIRECTORY + CONSOLE_HISTORY_FILE;
+	historyFile->open(fileLog,  std::fstream::out | std::fstream::trunc );
+	int numlines = Min((int) m_commandHistory.size(), MAX_HISTORY_SIZE);
+	
+	for (int i = 0; i < numlines; i++){
+		std::string line = m_commandHistory[i] + '\n';
+		historyFile->write(line.c_str(), line.size());
+	}
+
+}
+
+void DevConsole::ReadConsoleHistoryFromFile()
+{
+	m_commandHistory = Strings();
+	std::fstream historyFile = std::fstream();
+	std::string fileLog = LOG_DIRECTORY + CONSOLE_HISTORY_FILE;
+	historyFile.open(fileLog,  std::fstream::in);
+	std::string line;
+	while (std::getline(historyFile, line)){
+		m_commandHistory.push_back(line);
+	}
+}
+
 void DevConsole::RegisterCommands()
 {
 	CommandRegister("quit", CommandQuit, "exits application");
@@ -342,6 +376,11 @@ void DevConsole::RegisterCommands()
 	CommandRegister("clear", CommandClear, "clears output of dev console");
 	CommandRegister("echo_with_color", CommandEchoWithColor, "prints <str> with color (<r>, <g>, <b>)", "echo_with_color (<r>, <g>, <b>, <optional a>) \"<string>\"");
 	CommandRegister("save_log", CommandSaveLog, "Saves log to Logs/<filename.txt>", "save_log <filename.txt>");
+	
+	//networking
+	CommandRegister("net_send_message", CommandSendMessage, "Sends a message to forseth", "net_send_message \"ip:port\" \"msg\"");
+	CommandRegister("net_print_local_ip", CommandPrintLocalAddress, "prints local ip");
+	CommandRegister("net_host_server", CommandHostServer, "starts hosting a server i guess");
 }
 
 

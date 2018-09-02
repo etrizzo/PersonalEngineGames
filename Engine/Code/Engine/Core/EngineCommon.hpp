@@ -78,6 +78,8 @@ extern DevConsole* g_devConsole;
 extern ProfilerVisualizer* g_profilerVisualizer;
 
 
+
+
 enum eManhattanDir{
 	MANHATTAN_NORTH,
 	MANHATTAN_WEST,
@@ -208,6 +210,9 @@ struct light_buffer_t
 	light_t m_lights[MAX_LIGHTS]; 
 };
 
+typedef unsigned char byte_t;
+
+const unsigned long KB = 1024;
 
 const float SQRT_2_OVER_2 = (float)(sqrt(2))/2.f;
 

@@ -1,6 +1,7 @@
 #include "Engine/Input/Command.hpp"
 #include "Engine/Core/DevConsole.hpp"
 #include "Engine/Math/Renderer.hpp"
+#include "Engine/Networking/Net.hpp"
 #include <corecrt_io.h>
 
 unsigned int Command::g_commandCount = 0;
@@ -246,4 +247,33 @@ CommandDefinition::CommandDefinition(std::string name, command_cb callback, std:
 	m_callback = callback;
 	m_syntax = syntax;
 	m_helpText = helpText;
+}
+
+
+
+void CommandPrintLocalAddress(Command & cmd)
+{
+	UNUSED(cmd);
+	NetAddress addr = NetAddress::GetLocal();
+	LogTaggedPrintf( "net", "My Address: %s", addr.ToString().c_str() );
+}
+
+void CommandSendMessage(Command& cmd)
+{
+	//sockaddr_storage addr;
+	//int addr_len;
+	//bool gotit = GetAddressForHost((sockaddr*) &addr, &addr_len, "10.8.139.114", "12345");
+	//sockaddr_in* in = (sockaddr_in*) &addr;
+	std::string addrstr = cmd.GetNextString();	//"10.8.151.155:12345"
+	std::string msg = cmd.GetNextString();
+
+	ConnectExample(addrstr, msg);
+}
+
+void CommandHostServer(Command & cmd)
+{
+	UNUSED(cmd);
+	ThreadCreateAndDetach((thread_cb) HostExample, "12345");
+	//ThreadCreateAndDetach((thread_cb) HostExampleWinSock, "12345");
+	//HostExampleWinSock("12345");
 }

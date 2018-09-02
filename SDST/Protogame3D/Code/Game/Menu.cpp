@@ -89,7 +89,7 @@ int Menu::GetFrameSelection()
 
 void Menu::MoveSelection(int direction)
 {
-	int numOptions = m_options.size();
+	int numOptions = (int) m_options.size();
 	int newPos = m_currentIndex + direction;
 	if (newPos < 0){
 		newPos = numOptions - 1;

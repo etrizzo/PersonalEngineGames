@@ -269,8 +269,10 @@
     <ClCompile Include="Audio\AudioGroup.cpp" />
     <ClCompile Include="Audio\AudioSystem.cpp" />
     <ClCompile Include="Core\Blackboard.cpp" />
+    <ClCompile Include="Core\BytePacker.cpp" />
     <ClCompile Include="Core\Clock.cpp" />
     <ClCompile Include="Core\DevConsole.cpp" />
+    <ClCompile Include="Core\Endianness.cpp" />
     <ClCompile Include="Core\EngineCommon.cpp" />
     <ClCompile Include="Core\ErrorWarningAssert.cpp" />
     <ClCompile Include="Core\Heatmap.cpp" />
@@ -326,6 +328,8 @@
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Networking\Net.cpp" />
+    <ClCompile Include="Networking\NetAddress.cpp" />
+    <ClCompile Include="Networking\TCPSocket.cpp" />
     <ClCompile Include="Renderer\BitmapFont.cpp" />
     <ClCompile Include="Renderer\Camera.cpp" />
     <ClCompile Include="Renderer\DrawCall.cpp" />
@@ -379,8 +383,10 @@
     <ClInclude Include="Audio\AudioGroup.hpp" />
     <ClInclude Include="Audio\AudioSystem.hpp" />
     <ClInclude Include="Core\Blackboard.hpp" />
+    <ClInclude Include="Core\BytePacker.hpp" />
     <ClInclude Include="Core\Clock.hpp" />
     <ClInclude Include="Core\DevConsole.hpp" />
+    <ClInclude Include="Core\Endianness.hpp" />
     <ClInclude Include="Core\EngineCommon.hpp" />
     <ClInclude Include="Core\ErrorWarningAssert.hpp" />
     <ClInclude Include="Core\Heatmap.hpp" />
@@ -429,6 +435,8 @@
     <ClInclude Include="Math\Vector2.hpp" />
     <ClInclude Include="Math\Vector3.hpp" />
     <ClInclude Include="Networking\Net.hpp" />
+    <ClInclude Include="Networking\NetAddress.hpp" />
+    <ClInclude Include="Networking\TCPSocket.hpp" />
     <ClInclude Include="Renderer\BitmapFont.hpp" />
     <ClInclude Include="Renderer\Camera.hpp" />
     <ClInclude Include="Renderer\DrawCall.hpp" />

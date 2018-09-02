@@ -504,7 +504,7 @@ void DebugRenderSystem::RenderInfo()
 
 void DebugRenderSystem::DestroyTasks()
 {
-	for (int i = m_tasks3D.size()-1; i >= 0; i--){
+	for (int i = (int) m_tasks3D.size()-1; i >= 0; i--){
 		if (m_tasks3D[i]->IsDead()){
 			m_tasks3D[i] = m_tasks3D[m_tasks3D.size() - 1];
 			m_tasks3D.pop_back();
@@ -512,7 +512,7 @@ void DebugRenderSystem::DestroyTasks()
 		}
 	}
 
-	for (int i = m_tasks2D.size()-1; i >= 0; i--){
+	for (int i = (int) m_tasks2D.size()-1; i >= 0; i--){
 		if (m_tasks2D[i]->IsDead()){
 			m_tasks2D[i] = m_tasks2D[m_tasks2D.size() - 1];
 			m_tasks2D.pop_back();

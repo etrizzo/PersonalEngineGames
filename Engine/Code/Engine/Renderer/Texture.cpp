@@ -240,10 +240,10 @@ void Texture::RegisterTextureFromImage(const std::string & name, Image * img)
 unsigned int Texture::CalculateMipCount(int size)
 {
 	unsigned int mipCount = 1;
-	unsigned int power = pow(2, mipCount);
+	int power = (int) pow(2, mipCount);
 	while (power < size){
 		mipCount++;
-		power = pow(2, mipCount);
+		power = (int) pow(2, mipCount);
 	}
 	return mipCount;
 }

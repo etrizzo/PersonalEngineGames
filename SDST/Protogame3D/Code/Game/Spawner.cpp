@@ -62,7 +62,7 @@ bool Spawner::IsPointInside(const Vector3 & point) const
 
 void Spawner::ClearDestroyedEnemies()
 {
-	for(int i = m_spawnedEnemies.size()-1; i >= 0; i--){
+	for(int i = (int) m_spawnedEnemies.size()-1; i >= 0; i--){
 		if (m_spawnedEnemies[i]->m_aboutToBeDeleted){
 			RemoveAtFast(m_spawnedEnemies, i);
 		}
