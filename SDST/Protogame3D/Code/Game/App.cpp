@@ -265,9 +265,10 @@ bool App::IsQuitting()
 void App::Startup()
 {
 	BytePacker packer = BytePacker();
-	packer.WriteSize(8675309);
-	size_t out;
-	packer.ReadSize(&out);
+	packer.WriteString("yeezy");
+	char out[50];
+	packer.ReadString(out, 50);
+	std::string strang = out;
 
 }
 

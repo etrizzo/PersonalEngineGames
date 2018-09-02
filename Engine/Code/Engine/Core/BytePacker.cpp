@@ -132,7 +132,7 @@ size_t BytePacker::ReadSize(size_t * out_size)
 	// de-compress a size and fill it into out_size
 	bool keepReading = true;
 	size_t bytesRead = 0;
-	size_t sizeCounted = 0;
+	//size_t sizeCounted = 0;
 	while (keepReading){
 		//	Conversion:
 		//	0.5 (read a byte from b0offer)
@@ -145,13 +145,12 @@ size_t BytePacker::ReadSize(size_t * out_size)
 		//	3. left-shift byte by (7 * bytesRead)
 		leastSignificantBits <<= (7 * bytesRead);
 		//	4. add result to out_size
-		sizeCounted += leastSignificantBits;
+		*out_size += leastSignificantBits;
 		//	5. increment bytesRead;
 		bytesRead++;
 		//	6. Repeat
 	}
 	// return number of bytes read
-	out_size = &sizeCounted;
 	return bytesRead;
 }
 
@@ -179,6 +178,9 @@ size_t BytePacker::ReadString(char * out_str, size_t max_byte_size)
 	ReadSize(&sizeToRead);
 	sizeToRead = Min((int) sizeToRead, (int) max_byte_size);
 	ReadBytes((void*) out_str, sizeToRead);
+	if (sizeToRead < max_byte_size){
+		out_str[sizeToRead] = '\0';
+	}
 	// calls readbytes(size0;
 	return sizeToRead;
 }
