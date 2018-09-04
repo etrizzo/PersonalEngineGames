@@ -292,6 +292,7 @@
     <ClCompile Include="Core\VertexLayout.cpp" />
     <ClCompile Include="Core\Window.cpp" />
     <ClCompile Include="Core\XmlUtilities.cpp" />
+    <ClCompile Include="DataTypes\DirectedGraph.cpp" />
     <ClCompile Include="Input\AnalogJoystick.cpp" />
     <ClCompile Include="Input\Command.cpp" />
     <ClCompile Include="Input\InputSystem.cpp" />
@@ -408,6 +409,7 @@
     <ClInclude Include="Core\Window.hpp" />
     <ClInclude Include="Core\WindowsCommon.hpp" />
     <ClInclude Include="Core\XmlUtilities.hpp" />
+    <ClInclude Include="DataTypes\DirectedGraph.hpp" />
     <ClInclude Include="Input\AnalogJoystick.hpp" />
     <ClInclude Include="Input\Command.hpp" />
     <ClInclude Include="Input\InputSystem.hpp" />

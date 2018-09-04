@@ -1,0 +1,7 @@
+help -a
+quit
+net_send_message "192.168.0.11:12345" "Hey bicchaaaaa what up"
+net_send_message "192.168.0.11:12345" "Hey bicch"
+tgm
+set_light_color 0
+help

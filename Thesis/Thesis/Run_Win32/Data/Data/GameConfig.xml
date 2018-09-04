@@ -1,0 +1,9 @@
+<GameConfig
+	
+  appName="Protogame3D"
+	windowAspect="1.5"
+  width="10"
+	isFullscreen="false"
+  startLevel="WizardTower3"
+	
+/>

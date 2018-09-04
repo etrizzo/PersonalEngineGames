@@ -35,6 +35,9 @@
     <Filter Include="Networking">
       <UniqueIdentifier>{bed93a00-7f8c-4cac-b8b6-b10772547ef5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DataTypes">
+      <UniqueIdentifier>{e345b298-3aca-4337-ac64-380d7b7f035e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Math\Vector2.cpp">
@@ -330,6 +333,9 @@
     </ClCompile>
     <ClCompile Include="Networking\RemoteCommandService.cpp">
       <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="DataTypes\DirectedGraph.cpp">
+      <Filter>DataTypes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -662,6 +668,9 @@
     </ClInclude>
     <ClInclude Include="Networking\RemoteCommandService.hpp">
       <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTypes\DirectedGraph.hpp">
+      <Filter>DataTypes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
