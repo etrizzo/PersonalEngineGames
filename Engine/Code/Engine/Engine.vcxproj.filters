@@ -220,9 +220,6 @@
     <ClCompile Include="Core\VertexLayout.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\ObjLoader.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer\Shader.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
@@ -249,9 +246,6 @@
     </ClCompile>
     <ClCompile Include="Renderer\MaterialProperty.cpp">
       <Filter>Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\RenderScene.cpp">
-      <Filter>General</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\ForwardRenderPath.cpp">
       <Filter>Renderer</Filter>
@@ -283,9 +277,6 @@
     <ClCompile Include="Math\AreaMask.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="MATH\INTAREA2.CPP">
-      <Filter>General</Filter>
-    </ClCompile>
     <ClCompile Include="Input\Mouse.cpp">
       <Filter>Input</Filter>
     </ClCompile>
@@ -313,9 +304,6 @@
     <ClCompile Include="Core\SpinLock.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Networking\Net.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
     <ClCompile Include="Networking\NetAddress.cpp">
       <Filter>Networking</Filter>
     </ClCompile>
@@ -326,7 +314,22 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="Core\BytePacker.cpp">
-      <Filter>General</Filter>
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="MATH\INTAREA2.CPP">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\RenderScene.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\ObjLoader.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\Net.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\RemoteCommandService.cpp">
+      <Filter>Networking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -656,6 +659,9 @@
     </ClInclude>
     <ClInclude Include="Core\BytePacker.hpp">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\RemoteCommandService.hpp">
+      <Filter>Networking</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

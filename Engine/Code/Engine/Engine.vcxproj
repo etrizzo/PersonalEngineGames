@@ -329,6 +329,7 @@
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Networking\Net.cpp" />
     <ClCompile Include="Networking\NetAddress.cpp" />
+    <ClCompile Include="Networking\RemoteCommandService.cpp" />
     <ClCompile Include="Networking\TCPSocket.cpp" />
     <ClCompile Include="Renderer\BitmapFont.cpp" />
     <ClCompile Include="Renderer\Camera.cpp" />
@@ -436,6 +437,7 @@
     <ClInclude Include="Math\Vector3.hpp" />
     <ClInclude Include="Networking\Net.hpp" />
     <ClInclude Include="Networking\NetAddress.hpp" />
+    <ClInclude Include="Networking\RemoteCommandService.hpp" />
     <ClInclude Include="Networking\TCPSocket.hpp" />
     <ClInclude Include="Renderer\BitmapFont.hpp" />
     <ClInclude Include="Renderer\Camera.hpp" />

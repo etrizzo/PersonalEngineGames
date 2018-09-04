@@ -157,7 +157,7 @@ void GetAddressExample()
 
 //------------------------------------------------------------------------
 // Connect/Send/Recv Example
-void ConnectExample( std::string addr_str, std::string msg)
+void ConnectExampleWinSock( std::string addr_str, std::string msg)
 {
 
 	// first, create the socket - this allows us to setup options; 
@@ -206,6 +206,27 @@ void ConnectExample( std::string addr_str, std::string msg)
 
 	// cleanup
 	::closesocket(sock); 
+}
+
+void ConnectExample(std::string addr_str, std::string msg)
+{
+	NetAddress addr = NetAddress(addr_str);
+
+	TCPSocket socket; // defaults to blocking 
+	if (socket.Connect( addr )) {
+		ConsolePrintf(RGBA::YELLOW, "Connected." ); 
+		socket.Send( msg.c_str(), msg.size() + 1 ); 
+
+		char payload[256]; 
+		size_t recvd = socket.Receive( payload, 256 ); 
+		payload[recvd] = NULL;
+		ConsolePrintf(RGBA::YELLOW, "Recieved: %s", payload ); 
+
+		socket.Close(); 
+	} else {
+		ConsolePrintf(RGBA::RED, "Could not connect." );
+	}
+
 }
 
 

@@ -19,7 +19,7 @@ void LogIP( sockaddr_in* in);
 bool GetAddressForHost( sockaddr * out, int * out_addrlen, char const* hostname, char const* service = "12345");
 void GetAddressExample();
 
-
+void ConnectExampleWinSock( std::string addr_str, std::string msg);
 void ConnectExample( std::string addr_str, std::string msg);
 bool HostExampleWinSock( void* port );
 bool HostExample(void* port);
