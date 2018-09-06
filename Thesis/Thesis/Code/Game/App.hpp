@@ -2,6 +2,7 @@
 #include "Game/Game.hpp"
 #include "Game/GameCommon.hpp"
 #include "Engine/Networking/Net.hpp"
+#include "Engine/DataTypes/DirectedGraph.hpp"
 
 class App{
 public:
@@ -16,6 +17,8 @@ public:
 	double m_appTime;
 	float m_deltaTime;
 	bool firstFrame = true;
+
+	
 
 
 public:
@@ -53,15 +56,6 @@ void CommandDebugReattachCamera(Command& cmd);
 
 void CommandRecompileShaders(Command& cmd);
 
-void CommandMakeNewLight(Command& cmd);
-void CommandSetLightColor(Command& cmd);
-void CommandSetLightPosition(Command& cmd);
-void CommandSetAmbientLight(Command& cmd);
-
-void CommandRemoveLight(Command& cmd);
-void CommandRemoveAllLights(Command& cmd);
-void CommandSetLightAttenuation(Command& cmd);
-
 void CommandSetGodMode(Command& cmd);
 void CommandToggleGodMode(Command& cmd);
 
@@ -97,3 +91,6 @@ void CommandLogShowAll(Command& cmd);
 
 void CommandGetAddress(Command& cmd);
 //void CommandSendMessage(Command& cmd);
+
+
+void CommandPrintGraph(Command& cmd);

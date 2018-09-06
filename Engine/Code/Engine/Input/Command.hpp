@@ -90,5 +90,7 @@ void CommandPrintLocalAddress(Command& cmd);
 void CommandSendMessage(Command& cmd);
 void CommandHostServer(Command& cmd);
 
+void CommandSendRemoteMessage(Command& cmd);
+
 CommandDefinition* GetCommandDefinition(std::string name);
 

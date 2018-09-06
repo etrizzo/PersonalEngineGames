@@ -1,9 +1,11 @@
 #include "Engine/Core/DevConsole.hpp"
 #include "Engine/Math/Renderer.hpp"
+#include "Engine/Networking/RemoteCommandService.hpp"
 
 
 DevConsole::DevConsole(AABB2 screenBounds)
 {
+	m_screenBounds = screenBounds;
 	//m_outputLines = std::vector<OutputLine>();
 	m_currentInput = std::string();
 
@@ -37,6 +39,10 @@ DevConsole::DevConsole(AABB2 screenBounds)
 
 	RegisterCommands();
 	ReadConsoleHistoryFromFile();
+
+
+	//Startup RCS
+	ThreadCreateAndDetach( (thread_cb) RemoteCommandServiceUpdate);
 }
 
 DevConsole::~DevConsole()
@@ -56,6 +62,7 @@ void DevConsole::Update(float deltaSeconds)
 		m_lastFlash = m_age;
 	}
 	FindAutoCompleteStrings();
+	
 }
 
 void DevConsole::Render()
@@ -66,6 +73,7 @@ void DevConsole::Render()
 	RenderInput();
 	RenderOutput();
 	RenderAutoComplete();
+	RemoteCommandService::GetInstance()->Render(m_renderer, m_screenBounds);
 }
 
 void DevConsole::RenderInput()
@@ -381,6 +389,9 @@ void DevConsole::RegisterCommands()
 	CommandRegister("net_send_message", CommandSendMessage, "Sends a message to forseth", "net_send_message \"ip:port\" \"msg\"");
 	CommandRegister("net_print_local_ip", CommandPrintLocalAddress, "prints local ip");
 	CommandRegister("net_host_server", CommandHostServer, "starts hosting a server i guess");
+
+	//RCS
+	CommandRegister("rc", CommandSendRemoteMessage, "Sends message to specified client through remote command service", "rc <clientindex> \"message\"");
 }
 
 

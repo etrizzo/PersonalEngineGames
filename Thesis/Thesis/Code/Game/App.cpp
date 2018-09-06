@@ -3,6 +3,7 @@
 #include "Engine/Core/Clock.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Core/BytePacker.hpp"
+#include "Engine/DataTypes/DirectedGraph.hpp"
 
 using namespace std;
 
@@ -163,15 +164,6 @@ void App::RegisterCommands()
 	CommandRegister("debug_show_tasks", CommandDebugPrintTasks, "Prints all debug render types");
 	CommandRegister("debug_task", CommandDebugDrawTask, "Draws debug render task", "debug_task <render_task_type>");
 
-
-	CommandRegister("new_light", CommandMakeNewLight, "Adds new light of specified in front of the camera, with color rgba", "new_light <point|dir|spot> <r,g,b,a>");
-	CommandRegister("delete_light", CommandRemoveLight, "Removes light at index i", "delete_light <i>");
-	CommandRegister("delete_lights_all", CommandRemoveAllLights, "Removes all lights in the scene");
-	CommandRegister("set_light_color", CommandSetLightColor, "Sets light color to rgba", "set_light_color <r,g,b,a>");
-	CommandRegister("set_light_pos", CommandSetLightPosition, "Sets light position to xyz", "set_light_pos <x,y,z>");
-	CommandRegister("set_light_attenuation", CommandSetLightAttenuation, "Sets attenuation for light i to a0,a1,a2", "set_light_attenuation <i> <a0,a1,a2>");
-	CommandRegister("set_ambient_light", CommandSetAmbientLight, "Sets ambient light on renderer.", "set_ambient_light <r,g,b,a>");
-
 	CommandRegister("set_god_mode", CommandSetGodMode, "Sets god mode", "set_god_mode <bool>");
 	CommandRegister("toggle_god_mode", CommandToggleGodMode, "Toggles god mode");
 	CommandRegister("tgm", CommandToggleGodMode, "Toggles god mode");
@@ -195,6 +187,8 @@ void App::RegisterCommands()
 	CommandRegister("log_show_all", CommandLogShowAll, "Shows all log tags");
 
 	CommandRegister("get_address", CommandGetAddress, "Gets machine address");
+
+	CommandRegister("print_graph", CommandPrintGraph, "Prints current graph as text");
 }
 
 void App::HandleInput()
@@ -264,11 +258,7 @@ bool App::IsQuitting()
 
 void App::Startup()
 {
-	BytePacker packer = BytePacker();
-	packer.WriteString("yeezy");
-	char out[50];
-	packer.ReadString(out, 50);
-	std::string strang = out;
+	
 
 }
 
@@ -390,72 +380,7 @@ void CommandRecompileShaders(Command & cmd)
 
 
 
-void CommandMakeNewLight(Command & cmd)
-{
-	Vector3 pos = cmd.GetNextVec3();
-	std::string type = cmd.GetNextString();
-	RGBA color = cmd.GetNextColor();
-	if (color == RGBA::BLACK){		//default color for GetNextColor();
-		color = RGBA::WHITE;
-	}
-	g_theGame->AddNewLight(type, color);
-}
 
-void CommandSetLightColor(Command & cmd)
-{
-	RGBA color = cmd.GetNextColor();
-	if (color == RGBA::BLACK){		//default color for GetNextColor();
-		color = RGBA::WHITE;
-	}
-	g_theGame->SetLightColor(color);
-}
-
-void CommandSetLightPosition(Command & cmd)
-{
-	Vector3 pos = cmd.GetNextVec3();
-	g_theGame->SetLightPosition(pos);
-}
-
-void CommandSetAmbientLight(Command & cmd)
-{
-	RGBA color = cmd.GetNextColor();
-	if (color == RGBA::BLACK){
-		ConsolePrintf(RGBA::RED, "No color specified. Specify color as r,g,b,a\n   ex: set_ambient_light 255,0,0,255");
-	} else {
-		g_theRenderer->SetAmbientLight(color);
-	}
-}
-
-void CommandRemoveLight(Command & cmd)
-{
-	int idx = cmd.GetNextInt();	//returns 0 if none found so that works for now
-	//g_theGame->RemoveLight(idx);
-	if (idx < (int) g_theGame->GetNumActiveLights()){
-		g_theGame->RemoveLight(idx);
-	} else {
-		ConsolePrintf(RGBA::RED, "Cannot remove light %i because there are only %i lights in the scene :(", idx, (int) (g_theGame->GetNumActiveLights()) );
-	}
-}
-
-void CommandRemoveAllLights(Command & cmd)
-{
-	UNUSED(cmd);
-	for (int i = 0; i < (int) g_theGame->GetScene()->m_lights.size(); i++){
-		g_theGame->RemoveLight();
-	}
-	g_theGame->GetScene()->m_lights.clear();
-}
-
-void CommandSetLightAttenuation(Command & cmd)
-{
-	int idx = cmd.GetNextInt();
-	Vector3 att = cmd.GetNextVec3();
-
-	if (idx < MAX_LIGHTS && idx < (int) g_theGame->GetNumActiveLights()){
-		g_theGame->SetLightAttenuation(idx, att);
-		ConsolePrintf("Set light %i attenuation to: %f,%f,%f", idx, att.x, att.y, att.z);
-	}
-}
 
 void CommandSetGodMode(Command & cmd)
 {
@@ -655,5 +580,12 @@ void CommandGetAddress(Command & cmd)
 	//LogIP((sockaddr_in*) addr);
 	//GetAddressForHost(addr, addr_len, "https://www.google.com/");
 	//GetAddressExample();
+}
+
+void CommandPrintGraph(Command & cmd)
+{
+	UNUSED(cmd);
+	std::string graphString = g_theGame->m_graph.ToString();
+	ConsolePrintf(graphString.c_str());
 }
 

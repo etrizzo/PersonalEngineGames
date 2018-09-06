@@ -1,7 +1,5 @@
 #include "Entity.hpp"
 #include "Game/Game.hpp"
-#include "Game/Tile.hpp"
-#include "Game/Map.hpp"
 #include "Engine/Renderer/ObjLoader.hpp"
 
 Entity::~Entity()

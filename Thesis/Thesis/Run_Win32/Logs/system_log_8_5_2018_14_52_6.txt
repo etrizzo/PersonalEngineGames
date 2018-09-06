@@ -1,0 +1,10 @@
+Log:: 
+==============================================================================
+
+Log:: RUN-TIME FATAL ERROR on line 330 of game.cpp, in Game::GraphTests()
+
+Log:: d:\guildhall\github\thesis\thesis\code\game\game.cpp(330): b->c should not exist in graph
+
+Log:: ==============================================================================
+
+

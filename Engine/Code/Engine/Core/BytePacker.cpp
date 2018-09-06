@@ -39,10 +39,20 @@ void BytePacker::SetEndianness(eEndianness newEndianness)
 
 bool BytePacker::SetReadableByteCount(size_t byte_count)
 {
-	if (AreBitsSet(m_options, BYTEPACKER_CAN_GROW) ){
+	m_writeHead = byte_count;
+	/*if (AreBitsSet(m_options, BYTEPACKER_CAN_GROW) ){
 		return false;
 	} else {
 		m_maxSize = byte_count;
+	}*/
+	return true;
+}
+
+void BytePacker::AdvanceWriteHead(size_t bytesToAdvance)
+{
+	m_writeHead += bytesToAdvance;
+	if (m_writeHead > m_maxSize){
+		m_writeHead = m_maxSize;
 	}
 }
 
@@ -163,11 +173,11 @@ bool BytePacker::WriteString(char const * str)
 	WriteSize(sizeOfString);
 	// toEndianness(str, GetEndianness())
 	// calls writebytes(str)
-	bool wrote = true;
-	for (size_t i = 0; i < sizeOfString; i++){
-		// write each byte individually for reasons???????? Endianness???????
-		wrote = WriteBytes(1, (void*) &str[i]);
-	}
+	bool wrote = WriteBytes(sizeOfString, str, false);
+	//for (size_t i = 0; i < sizeOfString; i++){
+	//	// write each byte individually for reasons???????? Endianness???????
+	//	wrote = WriteBytes(1, (void*) &str[i]);
+	//}
 	return wrote;
 }
 
@@ -183,6 +193,16 @@ size_t BytePacker::ReadString(char * out_str, size_t max_byte_size)
 	}
 	// calls readbytes(size0;
 	return sizeToRead;
+}
+
+void* BytePacker::GetWriteHeadLocation() const
+{
+	return ((byte_t*)m_buffer) + m_writeHead;
+}
+
+void * BytePacker::GetBuffer() const
+{
+	return ((byte_t*)m_buffer);
 }
 
 void BytePacker::ResetWrite()

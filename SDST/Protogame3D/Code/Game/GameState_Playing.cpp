@@ -28,7 +28,7 @@ GameState_Playing::GameState_Playing()
 	m_scene->SetShadowCameraTransform(m_sun->m_transform);
 
 	m_scene->AddCamera(g_theGame->m_currentCamera);
-	g_theGame->m_mainCamera->AddSkybox("skybox.png");
+	//g_theGame->m_mainCamera->AddSkybox("skybox.png");
 }
 
 void GameState_Playing::EnterState()

@@ -1,6 +1,5 @@
 #include "Game/Player.hpp"
 #include "Game/Game.hpp"
-#include "Game/Map.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 
@@ -75,15 +74,6 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	m_health = 50;
 	m_maxHealth = m_health;
 
-	m_shadowCameraTransform = new Transform();
-	Vector3 lightEuler = g_theGame->m_playState->m_sun->m_transform.GetEulerAngles();
-	Vector3 sunDirection = g_theGame->m_playState->m_sun->m_transform.GetForward();
-	m_shadowCameraOffset = sunDirection * -25.f;
-	m_shadowCameraTransform->SetRotationEuler(lightEuler);
-	m_shadowCameraTransform->SetLocalPosition(position + m_shadowCameraOffset);
-
-
-
 	SetPosition(position);
 	SetScale(Vector3(size,size,size));
 }
@@ -106,35 +96,13 @@ void Player::Update()
 
 	float ds = g_theGame->GetDeltaSeconds();
 	m_ageInSeconds+=ds;
-	//m_thrusterSystem->m_emitters[0]->m_transform(m_leftThruster->GetWorldPosition());
-	//m_thrusterSystem->m_emitters[1]->m_renderable->SetPosition(m_rightThruster->GetWorldPosition());
-	//Translate(GetForward() * ds * m_speed * .5f);
-	SetWorldPosition();
-	//if (m_rateOfFire.CheckAndReset()){
-	//	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(1.f, GetPosition());
-	//}
-	UpdateTarget();
-	
-	m_cameraTarget->SetLocalPosition(GetPosition() + GetUp() * .25f);
-	MoveTurretTowardTarget();
-	//g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_collider.m_center, m_collider.m_radius, m_collider.m_slices, m_collider.m_wedges, RGBA::RED, RGBA::RED, DEBUG_RENDER_IGNORE_DEPTH);
-	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_barrelPosition->GetWorldPosition(), .5f, m_barrelPosition->GetWorldMatrix());
-	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, GetPosition(), 1.5f, m_renderable->m_transform.GetWorldMatrix());
-	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->GetPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix());
 }
 
 void Player::HandleInput()
 {
 	float ds = g_theGame->GetDeltaSeconds();
 
-	if (g_theInput->IsKeyDown(VK_SPACE) || g_theInput->IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
-		if (m_rateOfFire.CheckAndReset()){
-			g_theAudio->PlayOneOffSoundFromGroup("laser1");
-			//g_theAudio->PlaySound(g_theAudio->CreateOrGetSound("TestSound.mp3"));
-			m_playState->AddNewBullet(*m_barrelPosition);
-		}
-	}
-
+	
 	Vector3 camRotation = Vector3::ZERO;
 
 	if (g_theInput->IsKeyDown(VK_UP)){
@@ -198,7 +166,6 @@ void Player::HandleInput()
 
 	m_positionXZ+=movement;
 
-	m_positionXZ = ClampVector2(m_positionXZ, g_theGame->m_currentMap->m_extents.mins, g_theGame->m_currentMap->m_extents.maxs);
 	
 
 
@@ -245,72 +212,4 @@ float Player::GetPercentageOfHealth() const
 
 
 static Vector2 gPos = Vector2(0.0f, 0.0f); 
-
-void Player::SetWorldPosition()
-{
-
-	Vector3 pos = Vector3(m_positionXZ.x, GetHeightAtCurrentPos() + .3f, m_positionXZ.y);
-
-	Vector3 normal = g_theGame->m_currentMap->GetNormalAtPosition(m_positionXZ);
-	
-
-	//maintaining Forward:
-	Vector3 forward = GetForward(); 
-	Vector3 newUp = normal.GetNormalized();
-	Vector3 newRight = Cross(newUp, GetForward()).GetNormalized();
-	Vector3 newForward = Cross(newRight, newUp).GetNormalized();
-
-	Matrix44 mat = Matrix44(newRight, newUp, newForward, pos);
-
-	m_renderable->m_transform.SetLocalMatrix(mat);
-	m_collider.SetPosition(pos);
-
-
-	m_shadowCameraTransform->SetLocalPosition(pos + m_shadowCameraOffset);
-
-	//SetPosition(pos);
-}
-
-void Player::MoveTurretTowardTarget()
-{
-	//m_turretRenderable->m_transform.SetRotationEuler(Vector3::ZERO);
-	Transform* base = m_turretRenderable->m_transform.GetParent();
-	Vector3 localPos = base->WorldToLocal(m_target);
-	//m_turretRenderable->m_transform.LocalLookAt(localPos);
-
-	Matrix44 targetTransform = Matrix44::LookAt(m_turretRenderable->m_transform.GetLocalPosition(), localPos);
-	Matrix44 currentTransform = m_turretRenderable->m_transform.GetLocalMatrix();
-	//currentTransform.RotateDegrees3D(Vector3(0.f, 60.f, 0.f));
-
-	float turnThisFrame = m_degPerSecond * g_theGame->GetDeltaSeconds();
-	Matrix44 localMat = TurnToward(currentTransform, targetTransform, turnThisFrame);
-	m_turretRenderable->m_transform.SetLocalMatrix(localMat);
-	
-	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->m_transform.GetWorldPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix(), RGBA::YELLOW);
-
-}
-
-void Player::UpdateTarget()
-{
-	//ray cast against the world from camera forward
-	Ray3D ray = Ray3D(g_theGame->m_mainCamera->GetPosition(), g_theGame->m_mainCamera->GetForward() );
-	
-	Contact3D contact;
-	if (g_theGame->m_currentMap->Raycast(contact, 1, ray, 1000.f)) {
-		//if we hit something, update target
-		m_target = contact.m_position;
-		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_barrelPosition->GetWorldPosition(), m_target, RGBA::RED.GetColorWithAlpha(128), RGBA::RED.GetColorWithAlpha(128));
-		g_theGame->m_debugRenderSystem->MakeDebugRenderQuad(0.f, m_target, Vector2::HALF * .2f, g_theGame->GetCurrentCameraRight(), g_theGame->GetCurrentCameraUp(), RGBA::RED, RGBA::RED, DEBUG_RENDER_IGNORE_DEPTH);
-		//g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_target, .1f);
-		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_target, m_target + contact.m_normal, RGBA::RED, RGBA::YELLOW);
-	} else {
-		m_target = ray.Evaluate(1000.f);
-		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_cameraTarget->GetWorldPosition(), m_target, RGBA::RED, RGBA::RED);
-	}
-}
-
-float Player::GetHeightAtCurrentPos()
-{
-	return g_theGame->m_currentMap->GetHeightAtCoord(m_positionXZ);
-}
 

@@ -103,6 +103,7 @@ private:
 	AABB2 m_inputLineBox	= AABB2();		//the single line of input
 	AABB2 m_outputLineBox	= AABB2();		//the single line of output, 
 	AABB2 m_outputBox		= AABB2();			//the entire area of output??
+	AABB2 m_screenBounds	= AABB2();
 
 	int m_maxAutoCompletes  = 15;
 	int m_autoCompleteIndex = 0;

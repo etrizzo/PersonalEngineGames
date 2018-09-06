@@ -1,0 +1,22 @@
+<PlotGrammars>
+	<PlotGrammar>
+		<!-- *[X] indicates a character name who should be replaced at rutntime -->
+		<Action = "*A kicks *B" />
+		<CharacterRequirements>
+			<A Trait1 = "< 40" />
+			<A Trait2 = "> 30" />
+		</CharacterRequirements>
+		<StoryRequirements>
+			<A tag = "isAlive" target="true"/> 
+			<!-- tags are a string:string map which contain tag:data-->
+			<B tag = "isAlive" target="true"/>
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="1.0" />
+				<A Trait1 = "-10" />
+				<B hasTag = "isAngry" target="*A"/>
+				<Story Action="+5" Romance="-10" /> 
+			</EffectSet>
+		</StoryEffects>
+	</PlotGrammar>
+</PlotGrammars>

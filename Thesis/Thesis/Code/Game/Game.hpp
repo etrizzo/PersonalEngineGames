@@ -2,7 +2,8 @@
 #include "GameCommon.hpp"
 #include "Game/GameState_Playing.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
-
+#include "Engine/DataTypes/DirectedGraph.hpp"
+#include "Game/StoryData.hpp"
 
 class Camera;
 class PerspectiveCamera;
@@ -14,17 +15,19 @@ class ParticleSystem;
 
 class Map;
 
-
-
-enum EntityTypes{
-	NUM_ENTITIES
-};
-
 class Game{
 
 public:
-	~Game();											// destructor: do nothing (for speed)
-	Game();											// default constructor: do nothing (for speed)
+	~Game();										
+	Game();											
+
+	DirectedGraph<StoryData> m_graph; 
+
+
+
+	/*
+	TO BE DELETED
+	*/
 
 	bool m_isPaused;
 	bool m_devMode;
@@ -90,19 +93,7 @@ public:
 	RenderScene* GetScene();
 
 
-	void AddNewLight(std::string type, RGBA color = RGBA::WHITE);		//adds in front of camera
-	void AddNewLight(std::string type, Vector3 pos, RGBA color = RGBA::WHITE);
-	void AddNewPointLight(Vector3 pos, RGBA color);
-	void AddNewSpotLight(Vector3 pos, RGBA color, float innerAngle = 20.f, float outerAngle = 25.f);
-	void AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotation = Vector3::ZERO);
-	void RemoveLight(int idx = 0);
-	void SetLightPosition(Vector3 newPos, unsigned int idx = 0);
-	void SetLightColor(RGBA newColor, unsigned int idx = 0);
-	void SetLightColor(Vector4 newColor, unsigned int idx = 0);
 
-	void SetLightAttenuation(int lightIndex, Vector3 att);
-
-	unsigned int GetNumActiveLights() const;
 
 	SoundID m_soundTrackID;
 	SoundPlaybackID m_soundtrackPlayback;
@@ -110,25 +101,12 @@ public:
 	bool m_godMode;
 
 private:
-	void LoadTileDefinitions();
 
 	void RenderGame();
 	void RenderUI();
 
-	//float m_specAmount = .5f;
-	//float m_specFactor = 3.f;
-	//int m_numActiveLights = 0;
-
-	//eDebugShaders m_debugShader = SHADER_LIT;
-
-	//void UpdateShader(int direction);
-	//void SetShader();		//sets which shader to draw scene with
-	//std::string GetShaderName() const;
-
-	////for objects drawn using drawmeshimmediate
-	//Material* m_couchMaterial;
-
-	//ParticleSystem* m_particleSystem;
+	void GraphTests();
+	void StoryGraphTests();
 };
 
 extern Game* g_theGame;

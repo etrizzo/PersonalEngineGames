@@ -35,6 +35,7 @@ public:
 	// sets how much of the buffer is readable; 
 	void SetEndianness( eEndianness newEndianness ); 
 	bool SetReadableByteCount( size_t byte_count );		//is this max size or readable data?
+	void AdvanceWriteHead(size_t bytesToAdvance);
 
 	// tries to write data to the end of the buffer;  Returns success
 	bool WriteBytes( size_t byte_count, void const *data, bool convertEndianness = true); 
@@ -50,6 +51,8 @@ public:
 	bool WriteString( char const *str ); 
 	size_t ReadString( char *out_str, size_t max_byte_size ); // max_str_size should be enough to contain the null terminator as well; 
 
+	void* GetWriteHeadLocation() const;
+	void* GetBuffer() const;
 															   // HELPERS
 															   // suggested method names for commonly needed information; 
 	void ResetWrite();  // resets writing to the beginning of the buffer.  Make sure read head stays valid (<= write_head)

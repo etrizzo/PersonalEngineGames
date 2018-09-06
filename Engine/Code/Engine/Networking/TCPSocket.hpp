@@ -15,13 +15,15 @@ public:
 	// - - - - - -
 	// Options
 	// - - - - - -
-	// ...todo
+	bool SetUnblocking();
+	bool SetBlocking();
 
 	// - - - - - -
 	// STARTING/STOPPING
 	// - - - - - -
 	bool Listen( std::string port, unsigned int max_queued = 16); 
 	TCPSocket* Accept(); 
+	
 
 	// for joining
 	bool Connect( NetAddress const &addr ); 
@@ -41,6 +43,8 @@ public:
 	// HELPERS
 	// - - - - - -
 	bool IsClosed() const { return !m_isOpen; }; 
+	std::string ToString() const;
+	bool HasFatalError();
 
 public:
 	socket_t m_handle = nullptr; 

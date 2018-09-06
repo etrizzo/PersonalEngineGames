@@ -25,21 +25,6 @@
     <ClCompile Include="GameCommon.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="Tile.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="TileDefinition.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="MapDefinition.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="MapGenStep.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
     <ClCompile Include="DebugRenderTask.cpp">
       <Filter>General</Filter>
     </ClCompile>
@@ -58,16 +43,16 @@
     <ClCompile Include="Player.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="Chunk.cpp">
+    <ClCompile Include="StoryData.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="Bullet.cpp">
+    <ClCompile Include="StoryStructure.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
+    <ClCompile Include="Character.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="Spawner.cpp">
+    <ClCompile Include="StoryGraph.cpp">
       <Filter>General</Filter>
     </ClCompile>
   </ItemGroup>
@@ -85,21 +70,6 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="EngineBuildPreferences.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Tile.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="TileDefinition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="MapDefinition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="MapGenStep.hpp">
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="DebugRenderTask.hpp">
@@ -120,16 +90,16 @@
     <ClInclude Include="Player.hpp">
       <Filter>General</Filter>
     </ClInclude>
-    <ClInclude Include="Chunk.hpp">
+    <ClInclude Include="StoryData.hpp">
       <Filter>General</Filter>
     </ClInclude>
-    <ClInclude Include="Bullet.hpp">
+    <ClInclude Include="StoryStructure.hpp">
       <Filter>General</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.hpp">
+    <ClInclude Include="StoryGraph.hpp">
       <Filter>General</Filter>
     </ClInclude>
-    <ClInclude Include="Spawner.hpp">
+    <ClInclude Include="Character.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

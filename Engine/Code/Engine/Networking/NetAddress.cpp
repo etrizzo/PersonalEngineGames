@@ -84,7 +84,7 @@ std::string NetAddress::ToString() const
 	return s;
 }
 
-NetAddress NetAddress::GetLocal()
+NetAddress NetAddress::GetLocal(char const* port)
 {
 	char my_name[256];
 	if (SOCKET_ERROR == ::gethostname (my_name, 256)) {		//gethostname gets YOUR machine name
@@ -92,7 +92,7 @@ NetAddress NetAddress::GetLocal()
 		return NetAddress();
 	}
 
-	char const* service = "80"; //service is like "http" or "ftp" which translates to a port (80 or 21).
+	//char const* service = "80"; //service is like "http" or "ftp" which translates to a port (80 or 21).
 								//we will just use port 80 for this example (tends to be http).
 
 								//if there is no host name, can't resolve
@@ -114,10 +114,10 @@ NetAddress NetAddress::GetLocal()
 
 
 	addrinfo *result = nullptr;
-	int status = ::getaddrinfo(my_name, service, &hints, &result );		//goes until next us null
+	int status = ::getaddrinfo(my_name, port, &hints, &result );		//goes until next us null
 	if (status != 0) {
 		LogErrorf( "net", "Failed to find addresses for [%s:%s].  Error[%s]", 
-			my_name, service, ::gai_strerror(status) );
+			my_name, port, ::gai_strerror(status) );
 		return NetAddress(); 
 	}
 

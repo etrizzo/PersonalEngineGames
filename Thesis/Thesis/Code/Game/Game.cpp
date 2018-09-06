@@ -1,6 +1,4 @@
 #include "Game.hpp"
-#include "Game/TileDefinition.hpp"
-#include "Game/Map.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Game/Player.hpp"
@@ -77,10 +75,16 @@ void Game::PostStartup()
 	//m_debugRenderSystem->DetachCamera();
 
 	m_currentState = new GameState_Attract();
-	m_currentMap = new Map("Heightmap_2.png", AABB2(-150.f, -150.f, 150.f, 150.f), -5.f, 5.f, IntVector2(10,10), 20.f);
 	//m_currentMap = new Map("Heightmap.png", AABB2(-100.f, -100.f, 100.f, 100.f), -5.f, 2.f, IntVector2(20,20), 40.f);
 
 	m_soundtrackPlayback = g_theAudio->PlaySound(m_soundTrackID, true, .5f);
+
+
+	GraphTests();
+
+
+
+
 	
 }
 
@@ -252,102 +256,6 @@ RenderScene * Game::GetScene()
 	return m_playState->GetScene();
 }
 
-void Game::AddNewLight(std::string type, RGBA color)
-{
-	if (m_playState != nullptr){
-		m_playState->AddNewLight(type, color);
-	}
-}
-
-void Game::AddNewLight(std::string type, Vector3 pos, RGBA color)
-{
-	if (m_playState != nullptr){
-		m_playState->AddNewLight(type, pos, color);
-	}
-}
-
-void Game::AddNewPointLight(Vector3 pos, RGBA color)
-{
-	if (m_playState != nullptr){
-		m_playState->AddNewPointLight(pos, color);
-	}
-}
-
-void Game::AddNewSpotLight(Vector3 pos, RGBA color, float innerAngle, float outerAngle)
-{
-	if (m_playState != nullptr){
-		m_playState->AddNewSpotLight(pos, color, innerAngle, outerAngle);
-	}
-}
-
-void Game::AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotation)
-{
-	if (m_playState != nullptr){
-		m_playState->AddNewDirectionalLight(pos, color, rotation);
-	}
-}
-
-void Game::RemoveLight(int idx)
-{
-	if (m_playState != nullptr){
-		m_playState->RemoveLight(idx);
-	}
-}
-
-void Game::SetLightPosition(Vector3 newPos, unsigned int idx)
-{
-	if (m_playState != nullptr){
-		m_playState->SetLightPosition(newPos, idx);
-	}
-}
-
-void Game::SetLightColor(RGBA newColor, unsigned int idx)
-{
-	if (m_playState != nullptr){
-		m_playState->SetLightColor(newColor, idx);
-	}
-}
-
-void Game::SetLightColor(Vector4 newColor, unsigned int idx)
-{
-	if (m_playState != nullptr){
-		m_playState->SetLightColor(newColor, idx);
-	}
-}
-
-void Game::SetLightAttenuation(int lightIndex, Vector3 att)
-{
-	if (m_playState != nullptr){
-		m_playState->SetLightAttenuation(lightIndex, att);
-	}
-}
-
-unsigned int Game::GetNumActiveLights() const
-{
-	if (m_playState != nullptr){
-		return m_playState->GetNumActiveLights();
-	} else {
-		ConsolePrintf(RGBA::RED, "no play state!");
-		return 0;
-	}
-}
-
-
-
-void Game::LoadTileDefinitions()
-{
-	tinyxml2::XMLDocument tileDefDoc;
-	tileDefDoc.LoadFile("Data/Data/Tiles.xml");
-
-
-	tinyxml2::XMLElement* root = tileDefDoc.FirstChildElement("TileDefinitions");
-	for (tinyxml2::XMLElement* tileDefElement = root->FirstChildElement("TileDefinition"); tileDefElement != NULL; tileDefElement = tileDefElement->NextSiblingElement("TileDefinition")){
-		TileDefinition newDefinition = TileDefinition(tileDefElement);
-		TileDefinition::s_definitions.insert(std::pair<std::string, TileDefinition>(newDefinition.m_name, newDefinition));
-	}
-
-
-}
 
 
 
@@ -360,6 +268,169 @@ void Game::RenderGame()
 void Game::RenderUI()
 {
 	
+}
+
+void Game::GraphTests()
+{
+	m_graph = DirectedGraph<StoryData>();
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 0, "Num nodes should be 0");
+	StoryData AData = StoryData("A", 1.f);
+	Node<StoryData>* a = m_graph.AddNode(AData);
+	//Test graph addition
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 1, "Num nodes should be 1");
+
+	//Test ContainsNode
+	ASSERT_OR_DIE(m_graph.ContainsNode(a), "ContainsNode not working with node");
+	ASSERT_OR_DIE(m_graph.ContainsNode(AData), "ContainsNode not working with data");
+	
+	//Test for duplicates
+	m_graph.AddNode(a);
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 1, "Num nodes should be 1");
+	ASSERT_OR_DIE(m_graph.ContainsNode(a), "ContainsNode not working with node");
+
+	//add new nodes to graph
+	Node<StoryData>* b = m_graph.AddNode(StoryData("B", 2.f));
+	Node<StoryData>* c = m_graph.AddNode(StoryData("C", 3.f));
+	Node<StoryData>* d = m_graph.AddNode(StoryData("D", 4.f));
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 4, "Num nodes should be 4");
+	
+	//Test graph edges
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 0, "Num edges should be 0");
+	DirectedEdge<StoryData>* testEdge = m_graph.AddEdge(a,b, 0.f);
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 1, "Num edges should be 1");
+	
+	//test ContainsEdge
+	ASSERT_OR_DIE(m_graph.ContainsEdge(a, b), "ContainsEdge not working with edges");
+	ASSERT_OR_DIE(m_graph.ContainsEdge(testEdge), "ContainsEdge not working with edges");
+
+	m_graph.AddEdge(b,c, 1.f);
+	m_graph.AddEdge(b,d, 3.f);
+	m_graph.AddEdge(a,d, 2.f);
+	m_graph.AddEdge(c,d, 5.f);
+
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 5, "Num edges should be 5");
+
+	//Test Removals
+	m_graph.RemoveEdge(b,c);
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 4, "Num edges should be 4");
+	ASSERT_OR_DIE(!m_graph.ContainsEdge(b, c), "Edge was not removed");
+	ASSERT_OR_DIE(m_graph.ContainsNode(b), "ContainsNode not working with node");
+	ASSERT_OR_DIE(m_graph.ContainsNode(c), "ContainsNode not working with node");
+
+	//return graph to previous state
+	m_graph.AddEdge(b,c);
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 5, "Num edges should be 5");
+
+	//test RemoveNode with node
+	m_graph.RemoveNode(b);
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 3, "Num nodes should be 3");
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 2, "Edges attached to b should have been destroyed");
+	ASSERT_OR_DIE(!m_graph.ContainsNode(b), "Graph should not contian b");
+	ASSERT_OR_DIE(!m_graph.ContainsEdge(b, c), "b->c should not exist in graph");
+
+	//test RemoveNode with data
+	m_graph.RemoveNode(AData);
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 2, "Num nodes should be 2");
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 1, "Edges attached to a should have been destroyed");
+	ASSERT_OR_DIE(!m_graph.ContainsNode(a), "Graph should not contian b");
+	ASSERT_OR_DIE(!m_graph.ContainsEdge(a, d), "a->d should not exist in graph");
+
+	//test graph clearing
+	m_graph.Clear();
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 0, "Num nodes should be 0");
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 0, "Num nodes should be 0");
+
+	a = m_graph.AddNode(StoryData("A", 1.f));
+	b = m_graph.AddNode(StoryData("B", 2.f));
+	c = m_graph.AddNode(StoryData("C", 3.f));
+	d = m_graph.AddNode(StoryData("D", 4.f));
+
+	m_graph.AddEdge(a,b, 10.f);
+	m_graph.AddEdge(b,c, 1.f);
+	m_graph.AddEdge(b,d, 3.f);
+	m_graph.AddEdge(a,d, 2.f);
+	m_graph.AddEdge(c,d, 5.f);
+
+}
+
+void Game::StoryGraphTests()
+{
+	m_graph = DirectedGraph<StoryData>();
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 0, "Num nodes should be 0");
+	StoryData AData = StoryData("A", 1.f);
+	Node<StoryData>* a = m_graph.AddNode(AData);
+	//Test graph addition
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 1, "Num nodes should be 1");
+
+	//Test ContainsNode
+	ASSERT_OR_DIE(m_graph.ContainsNode(a), "ContainsNode not working with node");
+	ASSERT_OR_DIE(m_graph.ContainsNode(AData), "ContainsNode not working with data");
+
+	//Test for duplicates
+	m_graph.AddNode(a);
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 1, "Num nodes should be 1");
+	ASSERT_OR_DIE(m_graph.ContainsNode(a), "ContainsNode not working with node");
+
+	//add new nodes to graph
+	Node<StoryData>* b = m_graph.AddNode(StoryData("B", 2.f));
+	Node<StoryData>* c = m_graph.AddNode(StoryData("C", 3.f));
+	Node<StoryData>* d = m_graph.AddNode(StoryData("D", 4.f));
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 4, "Num nodes should be 4");
+
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 0, "Num edges should be 0");
+	DirectedEdge<StoryData>* testEdge = m_graph.AddEdge(a,b, 0.f);
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 1, "Num edges should be 1");
+
+	//test ContainsEdge
+	ASSERT_OR_DIE(m_graph.ContainsEdge(a, b), "ContainsEdge not working with edges");
+	ASSERT_OR_DIE(m_graph.ContainsEdge(testEdge), "ContainsEdge not working with edges");
+
+	m_graph.AddEdge(b,c, 1.f);
+	m_graph.AddEdge(b,d, 3.f);
+	m_graph.AddEdge(a,d, 2.f);
+	m_graph.AddEdge(c,d, 5.f);
+
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 5, "Num edges should be 5");
+
+	//Test Removals
+	m_graph.RemoveEdge(b,c);
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 4, "Num edges should be 4");
+	ASSERT_OR_DIE(!m_graph.ContainsEdge(b, c), "Edge was not removed");
+	ASSERT_OR_DIE(m_graph.ContainsNode(b), "ContainsNode not working with node");
+	ASSERT_OR_DIE(m_graph.ContainsNode(c), "ContainsNode not working with node");
+
+	//return graph to previous state
+	m_graph.AddEdge(b,c);
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 5, "Num edges should be 5");
+
+	//test DeleteNode with node
+	m_graph.RemoveNode(b);
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 3, "Num nodes should be 3");
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 2, "Edges attached to b should have been destroyed");
+	ASSERT_OR_DIE(!m_graph.ContainsNode(b), "Graph should not contian b");
+	ASSERT_OR_DIE(!m_graph.ContainsEdge(b, c), "b->c should not exist in graph");
+
+	//test DeleteNode with data
+	m_graph.RemoveNode(AData);
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 2, "Num nodes should be 2");
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 1, "Edges attached to a should have been destroyed");
+	ASSERT_OR_DIE(!m_graph.ContainsNode(a), "Graph should not contian b");
+	ASSERT_OR_DIE(!m_graph.ContainsEdge(a, d), "a->d should not exist in graph");
+
+	m_graph.Clear();
+	ASSERT_OR_DIE(m_graph.GetNumNodes() == 0, "Num nodes should be 0");
+	ASSERT_OR_DIE(m_graph.GetNumEdges() == 0, "Num nodes should be 0");
+
+	m_graph.AddNode(StoryData("A", 1.f));
+	m_graph.AddNode(StoryData("B", 2.f));
+	m_graph.AddNode(StoryData("C", 3.f));
+	m_graph.AddNode(StoryData("D", 4.f));
+
+	m_graph.AddEdge(a,b, 10.f);
+	m_graph.AddEdge(b,c, 1.f);
+	m_graph.AddEdge(b,d, 3.f);
+	m_graph.AddEdge(a,d, 2.f);
+	m_graph.AddEdge(c,d, 5.f);
 }
 
 

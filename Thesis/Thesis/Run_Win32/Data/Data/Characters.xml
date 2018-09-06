@@ -1,0 +1,24 @@
+<Characters>
+	<Character>
+		<Name = "CharacterA" />
+		<Trait1 = "75" />
+		<Trait2 = "20" />
+		<Trait3 = "45" />
+	</Character>
+
+	<Character>
+		<Name = "CharacterB" />
+		<Trait1 = "25" />
+		<Trait2 = "80" />
+		<Trait3 = "15" />
+	</Character>
+
+	<Character>
+		<Name = "CharacterC" />
+		<Trait1 = "45" />
+		<Trait2 = "30" />
+		<Trait3 = "75" />
+	</Character>
+
+
+</Characters>

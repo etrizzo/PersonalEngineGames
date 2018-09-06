@@ -2,6 +2,7 @@
 #include "Engine/Core/DevConsole.hpp"
 #include "Engine/Math/Renderer.hpp"
 #include "Engine/Networking/Net.hpp"
+#include "Engine/Networking/RemoteCommandService.hpp"
 #include <corecrt_io.h>
 
 unsigned int Command::g_commandCount = 0;
@@ -276,4 +277,10 @@ void CommandHostServer(Command & cmd)
 	ThreadCreateAndDetach((thread_cb) HostExample, "12345");
 	//ThreadCreateAndDetach((thread_cb) HostExampleWinSock, "12345");
 	//HostExampleWinSock("12345");
+}
+
+void CommandSendRemoteMessage(Command & cmd)
+{
+	std::string msg = cmd.GetNextString();
+	RemoteCommandService::GetInstance()->SendMessageAll(msg);
 }

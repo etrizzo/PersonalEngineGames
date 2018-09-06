@@ -20,7 +20,7 @@ public:
 	uint16_t m_port				= 0; 
 
 public: // STATICS
-	static NetAddress GetLocal(); 
+	static NetAddress GetLocal(char const* port = "80"); 
 	static bool GetBindableAddress(NetAddress* out, std::string port);
 
 	/* these are optional, but useful helpers

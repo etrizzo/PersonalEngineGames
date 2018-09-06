@@ -35,6 +35,8 @@
 #include "Engine/Core/Window.hpp"
 #include "Engine/Core/DevConsole.hpp"
 
+#include "Engine/Core/BytePacker.hpp"
+
 
 #include <vector>
 

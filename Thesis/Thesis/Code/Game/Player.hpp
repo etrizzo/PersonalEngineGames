@@ -30,10 +30,6 @@ public:
 	Vector3 m_target;
 
 private:
-	void SetWorldPosition();
-	void MoveTurretTowardTarget();
-	void UpdateTarget();
 
-	float GetHeightAtCurrentPos();
 
 };

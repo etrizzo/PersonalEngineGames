@@ -3,6 +3,7 @@
 #include "Engine/Core/Clock.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Core/BytePacker.hpp"
+#include "Engine/Networking/RemoteCommandService.hpp"
 
 using namespace std;
 
@@ -50,18 +51,20 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_theAudio->LoadAudioGroupsFromFile("Audio.xml");
 	
 	g_theGame = new Game();
-	g_theInput->LockMouse();
+	//g_theInput->LockMouse();
 	g_theInput->ShowCursor(false);
 
 	g_Window->SetInputSystem(g_theInput);
 	AABB2 UIBounds = g_theGame->m_uiCamera->GetBounds();
+	Net::Startup();
 	g_devConsole = new DevConsole(UIBounds);
 	g_devConsole->SetRenderer(g_theRenderer);
 
 	g_profilerVisualizer = new ProfilerVisualizer(g_theRenderer, g_theInput, UIBounds);
 
 	LogSystemStartup();
-	Net::Startup();
+
+	
 
 	RegisterCommands();
 	CommandStartup();
@@ -203,11 +206,11 @@ void App::HandleInput()
 	if (g_theInput->WasKeyJustPressed(192)){		//the ` key
 		if (!DevConsoleIsOpen()){
 			g_devConsole->Open();
+			g_theInput->SetMouseLocked(false);
+			g_theInput->ShowCursor(true);
 		} else {
 			g_devConsole->Close();
 		}
-		g_theInput->ToggleMouseLock();
-		g_theInput->ToggleCursor();
 	}
 
 	if (g_theInput->WasKeyJustPressed(VK_F2)){
@@ -246,10 +249,6 @@ void App::HandleInput()
 
 void App::PostStartup()
 {
-	
-
-
-
 	g_theGame->PostStartup();
 	
 }

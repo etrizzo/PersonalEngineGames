@@ -1,0 +1,27 @@
+<DetailGrammars>
+	<DetailGrammar>
+		<Action = "*A talks to *B about *A_TAG" />
+		<CharacterRequirements>
+			<A Trait3 = "> 30" />
+		</CharacterRequirements>
+		<StoryRequirements>
+			<A tag = "isAlive" target="true"/> 
+			<B tag = "isAlive" target="true"/>
+			<A tag = "isAngry" target="!*B" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="*B_INVERSE_TRAIT1"/>
+				<A Trait2 = "+10" />
+				<B Trait2 = "+10" />
+				<B hasTag = "isTrusting" target="*A"/>
+				<Story Action="+5" Romance="+10" /> 
+			</EffectSet>
+			<EffectSet chance="default"/>
+				<A Trait2 = "-10" />
+				<B Trait2 = "-10" />
+				<B hasTag = "isAngry" target="*A"/>
+				<Story Action="+5" Tension="+10" /> 
+			</EffectSet>
+		</StoryEffects>
+	</DetailGrammar>
+</DetailGrammars>

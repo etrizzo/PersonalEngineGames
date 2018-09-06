@@ -83,7 +83,7 @@ void GameState_Attract::Update(float ds)
 	int selection = m_mainMenu->GetFrameSelection();
 	if (selection != -1){
 		if (selection == 0){
-			g_theGame->TransitionToState(new GameState_Select());
+			g_theGame->TransitionToState(g_theGame->m_playState);
 		}
 		if (selection == 1){
 			//CommandQuit(Command("text"));
@@ -332,7 +332,6 @@ void GameState_Defeat::RenderUI()
 void GameState_Defeat::HandleInput()
 {
 	if (AcceptJustPressed() || g_theInput->WasKeyJustPressed(VK_SPACE)){
-		m_encounterGameState->RespawnPlayer();
 		g_theGame->TransitionToState(m_encounterGameState);
 	}
 }
