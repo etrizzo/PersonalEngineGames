@@ -94,8 +94,12 @@ bool BytePacker::WriteBytes(size_t byte_count, void const * data, bool convertEn
 	return true;
 }
 
-size_t BytePacker::ReadBytes(void * out_data, size_t max_byte_count)
+size_t BytePacker::ReadBytes(void * out_data, size_t max_byte_count, bool convertEndianness)
 {
+	if (max_byte_count == 0){
+		ConsolePrintf(RGBA::RED, "Tried to read 0 bytes from buffer");
+		return 0;
+	}
 	//tries to read to out_data up to max_byte_count
 	// returns number of bytes read
 	size_t readable = GetReadableByteCount();
@@ -105,7 +109,9 @@ size_t BytePacker::ReadBytes(void * out_data, size_t max_byte_count)
 	} 
 	memcpy(out_data, ((byte_t*) m_buffer) + m_readHead, bytesRead);
 	m_readHead += bytesRead;
-	FromEndianness(bytesRead, out_data, GetEndianness());
+	if (convertEndianness){
+		FromEndianness(bytesRead, out_data, GetEndianness());
+	}
 	return bytesRead;
 }
 
@@ -147,7 +153,7 @@ size_t BytePacker::ReadSize(size_t * out_size)
 		//	Conversion:
 		//	0.5 (read a byte from b0offer)
 		byte_t readByte;
-		ReadBytes((void*) &readByte, 1);
+		ReadBytes((void*) &readByte, 1, false);
 		//	1. AND with 0b1000'0000 to see if this is the final bit
 		keepReading = ((readByte & 0b1000'0000) != 0);
 		//	2. AND byte with 0b0111'1111 to get least significant 7 bits
@@ -168,12 +174,12 @@ bool BytePacker::WriteString(char const * str)
 {
 	// converts str to std::string to get size
 	std::string asString = std::string(str);
-	size_t sizeOfString = asString.size();
+	size_t sizeOfString = asString.size() + 1;
 	// write the size of the string
 	WriteSize(sizeOfString);
 	// toEndianness(str, GetEndianness())
 	// calls writebytes(str)
-	bool wrote = WriteBytes(sizeOfString, str, false);
+	bool wrote = WriteBytes(sizeOfString, str + '\0');
 	//for (size_t i = 0; i < sizeOfString; i++){
 	//	// write each byte individually for reasons???????? Endianness???????
 	//	wrote = WriteBytes(1, (void*) &str[i]);
@@ -186,7 +192,7 @@ size_t BytePacker::ReadString(char * out_str, size_t max_byte_size)
 	// calls readsize()
 	size_t sizeToRead = 0;
 	ReadSize(&sizeToRead);
-	sizeToRead = Min((int) sizeToRead, (int) max_byte_size);
+	sizeToRead = Min( sizeToRead, max_byte_size);
 	ReadBytes((void*) out_str, sizeToRead);
 	if (sizeToRead < max_byte_size){
 		out_str[sizeToRead] = '\0';
@@ -211,6 +217,7 @@ void BytePacker::ResetWrite()
 	// DUMP MEMORY 
 	m_writeHead = 0;
 	free (m_buffer);
+	m_buffer = malloc(m_maxSize);
 }
 
 void BytePacker::ResetRead()

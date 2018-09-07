@@ -170,7 +170,7 @@ bool TCPSocket::HasFatalError()
 {
 	int error = WSAGetLastError();
 	// WSAEWOULDBLOCK, WSAEMSGSIZE, and WSAECONNRESET, are non-fatal.  
-	if (error == WSAEWOULDBLOCK || error == WSAEMSGSIZE || error == WSAECONNRESET){
+	if (error == WSAEWOULDBLOCK || error == WSAEMSGSIZE || error == WSAECONNRESET || error == 0){
 		return false;
 	} 
 	return true;

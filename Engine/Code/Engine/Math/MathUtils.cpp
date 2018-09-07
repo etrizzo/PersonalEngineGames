@@ -246,6 +246,15 @@ int Min(const int & x, const int & y)
 	}
 }
 
+size_t Min(const size_t & x, const size_t & y)
+{
+	if (x > y){
+		return y;
+	} else {
+		return x;
+	}
+}
+
 int Max(const int & x, const int & y)
 {
 	if (x > y){

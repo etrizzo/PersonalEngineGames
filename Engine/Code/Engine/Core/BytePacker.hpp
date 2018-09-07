@@ -41,7 +41,7 @@ public:
 	bool WriteBytes( size_t byte_count, void const *data, bool convertEndianness = true); 
 	// Tries to read into out_data.  Returns how much
 	// ended up being read; 
-	size_t ReadBytes( void *out_data, size_t max_byte_count );
+	size_t ReadBytes( void *out_data, size_t max_byte_count, bool convertEndianness = true);
 
 	//compressing function
 	size_t WriteSize( size_t size ); // returns how many bytes used

@@ -83,6 +83,7 @@ bool IsInRange(float value, float minInclusive, float maxExclusive);
 
 float Min(const float& x, const float& y);
 int Min(const int& x, const int& y);
+size_t Min(const size_t& x, const size_t& y);
 int Max(const int& x, const int& y);
 float Max(const float& x, const float& y);
 

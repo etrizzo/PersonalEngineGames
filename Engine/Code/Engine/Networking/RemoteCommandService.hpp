@@ -34,7 +34,7 @@ public:
 	void ProcessMessage(TCPSocket* socket, BytePacker* payload);
 
 	void SendMessageAll(std::string msgString);
-	void SendMessage(unsigned int connectionIndex, std::string msgString);
+	void SendAMessageToAHotSingleClientInYourArea(unsigned int connectionIndex, std::string msgString);
 
 	void ReceiveDataOnSocket(int connectionIndex);
 

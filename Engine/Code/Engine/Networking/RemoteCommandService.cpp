@@ -173,16 +173,16 @@ void RemoteCommandService::ProcessMessage(TCPSocket * socket, BytePacker * paylo
 void RemoteCommandService::SendMessageAll(std::string msgString)
 {
 	for (int i = 0; i < (unsigned int) m_connections.size(); i++){
-		SendMessage(i, msgString);
+		SendAMessageToAHotSingleClientInYourArea(i, msgString);
 	}
 }
 
-void RemoteCommandService::SendMessage(unsigned int connectionIndex, std::string msgString)
+void RemoteCommandService::SendAMessageToAHotSingleClientInYourArea(unsigned int connectionIndex, std::string msgString)
 {
 	if (connectionIndex > (unsigned int) m_connections.size()){
 		return;
 	}
-	BytePacker message( BIG_ENDIAN ); 
+	BytePacker message = BytePacker(); 
 	TCPSocket *sock = m_connections[connectionIndex];
 	if (sock == nullptr) {
 		return; 
@@ -191,13 +191,13 @@ void RemoteCommandService::SendMessage(unsigned int connectionIndex, std::string
 	//message.write<bool>( is_echo );  
 	message.WriteString(msgString.c_str());
 
-	size_t len = message.GetWrittenByteCount(); 
+	size_t len = message.GetWrittenByteCount() + 1; 
 	if( len > 0xffff){
 		ConsolePrintf(RGBA::RED, "bytepacker format doesn't support format > max ushort"); // format doesn't support lengths larger than a max ushort; 
 	}
 	uint16_t uintlen = (uint16_t)len; 
-	ToEndianness(sizeof(uintlen), &uintlen , BIG_ENDIAN); 
-	sock->Send( (void*) uintlen , sizeof(uintlen));  // templated overload
+	//ToEndianness(sizeof(uintlen), &uintlen , BIG_ENDIAN); 
+	sock->Send( (void*) &uintlen , sizeof(uintlen));  // templated overload
 	sock->Send(  message.GetBuffer(), len ); 
 
 }
@@ -213,7 +213,7 @@ void RemoteCommandService::ReceiveDataOnSocket(int connectionIndex)
 
 
 
-		//gotta read until it's two
+		//gotta read until it's two - get the size of the packet
 		if (buffer->GetWrittenByteCount() < 2){
 			//write size data into buffer
 			size_t read = tcp->Receive (buffer->GetWriteHeadLocation(), 2 - buffer->GetWrittenByteCount());
@@ -228,7 +228,7 @@ void RemoteCommandService::ReceiveDataOnSocket(int connectionIndex)
 			uint16_t len;
 			byte_t outLength[sizeof(uint16_t)];
 			buffer->ReadBytes(outLength, sizeof(uint16_t));		//should be 2?
-			len = (uint16_t(outLength));
+			len = (uint16_t)(outLength[0] + outLength[1]);
 			//delete[] outLength;
 
 			// the packet has 2 bytes
@@ -246,12 +246,17 @@ void RemoteCommandService::ReceiveDataOnSocket(int connectionIndex)
 			}
 
 			isReadyToProcess = (bytesNeeded == 0);
+			if (!isReadyToProcess){
+				buffer->ResetRead();
+			}
 		}
 
-		ProcessMessage( tcp, buffer);
-		//gotta read frame-to-frame, can't block. Ready 2 receive, always
-		buffer->ResetWrite();
-	} while (isReadyToProcess);
+	} while (!isReadyToProcess);
+
+	//ToEndianness(buffer->GetWrittenByteCount(), buffer->GetBuffer(), BIG_ENDIAN);
+	ProcessMessage( tcp, buffer);
+	//gotta read frame-to-frame, can't block. Ready 2 receive, always
+	buffer->ResetWrite();
 }
 
 RemoteCommandService * RemoteCommandService::GetInstance()

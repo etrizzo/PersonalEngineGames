@@ -263,11 +263,16 @@ bool App::IsQuitting()
 
 void App::Startup()
 {
-	BytePacker packer = BytePacker();
+	BytePacker packer = BytePacker(BIG_ENDIAN);
 	packer.WriteString("yeezy");
 	char out[50];
 	packer.ReadString(out, 50);
-	std::string strang = out;
+
+	BytePacker packer2 = BytePacker(BIG_ENDIAN);
+	packer2.WriteBytes(packer.GetWrittenByteCount(), packer.GetBuffer(), false);
+	char out2[50];
+	packer2.ReadString(out2, 50);
+	std::string strang = out2;
 
 }
 
