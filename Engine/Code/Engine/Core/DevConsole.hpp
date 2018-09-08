@@ -87,7 +87,7 @@ private:
 	bool m_isOpen = false;
 	int m_cursorPosition = 0;
 
-	Strings m_commandHistory;		//newest commands first
+	ThreadSafeVector<std::string> m_commandHistory;		//newest commands first
 	int m_historyPosition = 0;
 
 	//config junk for the rendering

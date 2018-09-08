@@ -179,7 +179,7 @@ bool BytePacker::WriteString(char const * str)
 	WriteSize(sizeOfString);
 	// toEndianness(str, GetEndianness())
 	// calls writebytes(str)
-	bool wrote = WriteBytes(sizeOfString, str + '\0');
+	bool wrote = WriteBytes(sizeOfString, str + '\0', false);
 	//for (size_t i = 0; i < sizeOfString; i++){
 	//	// write each byte individually for reasons???????? Endianness???????
 	//	wrote = WriteBytes(1, (void*) &str[i]);
@@ -193,7 +193,7 @@ size_t BytePacker::ReadString(char * out_str, size_t max_byte_size)
 	size_t sizeToRead = 0;
 	ReadSize(&sizeToRead);
 	sizeToRead = Min( sizeToRead, max_byte_size);
-	ReadBytes((void*) out_str, sizeToRead);
+	ReadBytes((void*) out_str, sizeToRead, false);
 	if (sizeToRead < max_byte_size){
 		out_str[sizeToRead] = '\0';
 	}

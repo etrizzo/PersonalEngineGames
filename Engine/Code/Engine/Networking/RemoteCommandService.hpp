@@ -25,16 +25,20 @@ public:
 	void Update();
 	void Render(Renderer* r, AABB2 screenBounds);
 
-	bool JoinRCS();
-	bool HostRCS();
+	bool JoinRCS(std::string addr = "local");
+	bool HostRCS(std::string port = REMOTE_COMMAND_SERVICE_PORT);
 
 	void ProcessNewConnections();
 	//checks if you received any data
 	void ProcessAllConnections();
 	void ProcessMessage(TCPSocket* socket, BytePacker* payload);
 
+	void CleanupDisconnects();
+	void DisconnectAll();
+
 	void SendMessageAll(std::string msgString);
-	void SendAMessageToAHotSingleClientInYourArea(unsigned int connectionIndex, std::string msgString);
+	void SendMessageBroadcast(std::string msgString);
+	void SendAMessageToAHotSingleClientInYourArea(unsigned int connectionIndex, std::string msgString, bool isEcho = false);
 
 	void ReceiveDataOnSocket(int connectionIndex);
 

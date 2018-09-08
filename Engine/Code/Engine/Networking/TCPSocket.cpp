@@ -84,6 +84,7 @@ TCPSocket * TCPSocket::Accept()
 		return nullptr;
 	}
 	TCPSocket* them = new TCPSocket((socket_t) their_sock, NetAddress((sockaddr*) &their_addr));
+	them->m_isOpen = true;
 	return them;
 }
 
@@ -113,7 +114,7 @@ void TCPSocket::Close()
 
 size_t TCPSocket::Send(void const * data, size_t const data_byte_size)
 {
-	int sent = ::send( (SOCKET) m_handle, (char*) data, data_byte_size, MSG_OOB ); 
+	int sent = ::send( (SOCKET) m_handle, (char*) data, data_byte_size, 0 ); 
 	if (sent == SOCKET_ERROR) {
 		// there are non-fatal errors - but we'll go over them 
 		// on Monday.  For now, you can assume any error with blocking
@@ -130,7 +131,7 @@ size_t TCPSocket::Send(void const * data, size_t const data_byte_size)
 			256,     // size of msgbuf, bytes
 			NULL);               // va_list of arguments
 		ConsolePrintf(RGBA::RED, "Send failed: [%i] %s", err, msgbuf);
-		//Close(); 
+		Close(); 
 		return 0U; 
 	} else { 
 		return sent;
@@ -170,7 +171,7 @@ bool TCPSocket::HasFatalError()
 {
 	int error = WSAGetLastError();
 	// WSAEWOULDBLOCK, WSAEMSGSIZE, and WSAECONNRESET, are non-fatal.  
-	if (error == WSAEWOULDBLOCK || error == WSAEMSGSIZE || error == WSAECONNRESET || error == 0){
+	if (error == WSAEWOULDBLOCK || error == WSAEMSGSIZE || error == 0){
 		return false;
 	} 
 	return true;

@@ -281,6 +281,42 @@ void CommandHostServer(Command & cmd)
 
 void CommandSendRemoteMessage(Command & cmd)
 {
+	std::string intString = cmd.GetNextString();
+	std::string msg;
+	int rcsIndex = 0;
+	if (atoi(intString.c_str()) != 0){
+		rcsIndex = atoi(intString.c_str());
+		msg = cmd.GetNextString();
+	} else {
+		msg = intString;
+	}
+	RemoteCommandService::GetInstance()->SendAMessageToAHotSingleClientInYourArea(rcsIndex, msg);
+}
+
+void CommandSendRemoteMessageBroadcast(Command & cmd)
+{
+	std::string msg = cmd.GetNextString();
+	RemoteCommandService::GetInstance()->SendMessageBroadcast(msg);
+}
+
+void CommandSendRemoteMessageAll(Command & cmd)
+{
 	std::string msg = cmd.GetNextString();
 	RemoteCommandService::GetInstance()->SendMessageAll(msg);
+}
+
+void CommandRemoteJoin(Command & cmd)
+{
+	std::string address = cmd.GetNextString();
+	RemoteCommandService::GetInstance()->JoinRCS(address);
+}
+
+void CommandRemoteHost(Command & cmd)
+{
+	std::string port = cmd.GetNextString();
+	RemoteCommandService::GetInstance()->HostRCS(port);
+}
+
+void CommandRemoteSetEcho(Command & cmd)
+{
 }

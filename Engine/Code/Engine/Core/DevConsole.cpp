@@ -35,14 +35,15 @@ DevConsole::DevConsole(AABB2 screenBounds)
 	m_inputLineBox.AddPaddingToSides(-.25f * m_lineHeight,-.1f * m_lineHeight);
 
 	m_currentInput = "";
-	m_commandHistory = Strings();
+	//m_commandHistory = Strings();
 
 	RegisterCommands();
 	ReadConsoleHistoryFromFile();
 
 
 	//Startup RCS
-	ThreadCreateAndDetach( (thread_cb) RemoteCommandServiceUpdate);
+	RemoteCommandService::GetInstance();
+	//ThreadCreateAndDetach( (thread_cb) RemoteCommandServiceUpdate);
 }
 
 DevConsole::~DevConsole()
@@ -62,6 +63,8 @@ void DevConsole::Update(float deltaSeconds)
 		m_lastFlash = m_age;
 	}
 	FindAutoCompleteStrings();
+
+	RemoteCommandService::GetInstance()->Update();
 	
 }
 
@@ -233,10 +236,10 @@ std::string DevConsole::GetOutput()
 	return output;
 }
 
-std::vector<std::string> DevConsole::GetCommandHistory()
+Strings DevConsole::GetCommandHistory()
 {
 
-	return m_commandHistory;
+	return m_commandHistory.get_vector();
 }
 
 void DevConsole::AddCommandToHistory(std::string commandText)
@@ -244,11 +247,15 @@ void DevConsole::AddCommandToHistory(std::string commandText)
 	if (m_commandHistory.size() == 0){
 		m_commandHistory.push_back(commandText);
 	} else {
-		auto findPos = std::find(m_commandHistory.begin(), m_commandHistory.end(),commandText);
-		if (findPos != m_commandHistory.end()){
-			m_commandHistory.erase(findPos);
+		bool found = false;
+		for (unsigned int i = 0; i <  m_commandHistory.size() ; i++){
+			if (m_commandHistory.at(i) == commandText){
+				m_commandHistory.erase(i);
+				break;
+			}
 		}
-		m_commandHistory.insert(m_commandHistory.begin() + 1, commandText);
+
+		m_commandHistory.insert(1, commandText);
 	}
 }
 
@@ -264,7 +271,7 @@ void DevConsole::MoveThroughCommandHistory(int direction)
 	if (m_historyPosition > (int) m_commandHistory.size() - 1){
 		m_historyPosition = (int) m_commandHistory.size() - 1;
 	}
-	m_currentInput = m_commandHistory[m_historyPosition];
+	m_currentInput = m_commandHistory.at(m_historyPosition);
 	m_cursorPosition = (int) m_currentInput.size();
 }
 
@@ -358,7 +365,7 @@ void DevConsole::WriteHistoryToFile()
 	int numlines = Min((int) m_commandHistory.size(), MAX_HISTORY_SIZE);
 	
 	for (int i = 0; i < numlines; i++){
-		std::string line = m_commandHistory[i] + '\n';
+		std::string line = m_commandHistory.at(i) + '\n';
 		historyFile->write(line.c_str(), line.size());
 	}
 
@@ -366,7 +373,7 @@ void DevConsole::WriteHistoryToFile()
 
 void DevConsole::ReadConsoleHistoryFromFile()
 {
-	m_commandHistory = Strings();
+	//m_commandHistory = ThreadSafeVector<std::string>();
 	std::fstream historyFile = std::fstream();
 	std::string fileLog = LOG_DIRECTORY + CONSOLE_HISTORY_FILE;
 	historyFile.open(fileLog,  std::fstream::in);
@@ -391,7 +398,12 @@ void DevConsole::RegisterCommands()
 	CommandRegister("net_host_server", CommandHostServer, "starts hosting a server i guess");
 
 	//RCS
-	CommandRegister("rc", CommandSendRemoteMessage, "Sends message to specified client through remote command service", "rc <clientindex> \"message\"");
+	CommandRegister("rc", CommandSendRemoteMessage, "Sends command to specified connections through remote command service", "rc <clientindex> \"message\"");
+	CommandRegister("rca", CommandSendRemoteMessageAll, "Sends command to all connections and runs locally", "rca \"message\"");
+	CommandRegister("rcb", CommandSendRemoteMessageBroadcast, "Sends command to all connections and does not run locally", "rcb \"message\"");
+	CommandRegister("rc_join", CommandRemoteJoin, "Tries to join RCS on specified address", "rc_join \"ip:port\"" );
+	CommandRegister("rc_host", CommandRemoteHost, "Tries to host RCS on specified port (blank for default port)", "rc_host \"port\"" );
+
 }
 
 

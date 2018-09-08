@@ -78,15 +78,22 @@ void RemoteCommandService::Render(Renderer* r, AABB2 screenBounds)
 	}
 }
 
-bool RemoteCommandService::JoinRCS()
+bool RemoteCommandService::JoinRCS(std::string addr)
 {
-	NetAddress localAddr = NetAddress::GetLocal(REMOTE_COMMAND_SERVICE_PORT);
+	DisconnectAll();
+	NetAddress addrToJoin;
+	if (addr == "" || addr == "local"){
+		addrToJoin = NetAddress::GetLocal(REMOTE_COMMAND_SERVICE_PORT);
+	} else {
+		addrToJoin = NetAddress(addr);
+	}
 	TCPSocket* connectionSocket = new TCPSocket();
-	if (connectionSocket->Connect(localAddr)){
+	if (connectionSocket->Connect(addrToJoin)){
 		connectionSocket->SetUnblocking();
 		//connectionSocket->Listen()
 		m_connections.push_back(connectionSocket);
-		m_packers.push_back(new BytePacker());
+		m_packers.push_back(new BytePacker(BIG_ENDIAN));
+		m_currentState = RCS_STATE_CLIENT;
 		return true;
 	} else {
 		delete connectionSocket;
@@ -94,16 +101,18 @@ bool RemoteCommandService::JoinRCS()
 	}
 }
 
-bool RemoteCommandService::HostRCS()
+bool RemoteCommandService::HostRCS(std::string port)
 {
-	//NetAddress localAddr = NetAddress::GetLocal("29283");
+	DisconnectAll();
+	if (port == ""){
+		port = REMOTE_COMMAND_SERVICE_PORT;
+	}
 	m_listenSocket = new TCPSocket();
 	
-	if (m_listenSocket->Listen(REMOTE_COMMAND_SERVICE_PORT, MAX_REMOTE_CONNECTIONS)){
+	if (m_listenSocket->Listen(port, MAX_REMOTE_CONNECTIONS)){
 		m_listenSocket->SetUnblocking();
-		ConsolePrintf(RGBA::YELLOW, "Remote Command Service Started Up");
-		
-		//ThreadCreateAndDetach((thread_cb) RemoteCommandServiceListen);
+		ConsolePrintf(RGBA::YELLOW, "Remote Command Service Started On Port %s", port.c_str());
+		m_currentState = RCS_STATE_HOST;
 		return true;
 	} else {
 		delete m_listenSocket;
@@ -120,7 +129,7 @@ void RemoteCommandService::ProcessNewConnections()
 	if (newSocket != nullptr){
 		LogTaggedPrintf("net", "Added new connection: %s", newSocket->m_address.ToString().c_str());
 		m_connections.push_back(newSocket);
-		m_packers.push_back(new BytePacker());
+		m_packers.push_back(new BytePacker(BIG_ENDIAN));
 	}
 	/*
 	while (!m_listenSocket->IsClosed()) {
@@ -151,7 +160,7 @@ void RemoteCommandService::ProcessAllConnections()
 void RemoteCommandService::ProcessMessage(TCPSocket * socket, BytePacker * payload)
 {
 	bool isEcho = true;
-	//payload->read(isEcho);
+	payload->ReadBytes(&isEcho, 1);
 
 	char str[256];
 	if (payload->ReadString(str, 256)){		//read & write are specialty functions - it does some work for you
@@ -165,9 +174,30 @@ void RemoteCommandService::ProcessMessage(TCPSocket * socket, BytePacker * paylo
 		} else {
 			//Otherwise, it's a command, so ~do it ~
 			//RunCommand(str);
+			ConsolePrintf( "COMMAND: %s", str );
+			CommandRun(str);
 
 		}
 	}
+}
+
+void RemoteCommandService::CleanupDisconnects()
+{
+	for (int i = ( int) m_connections.size() - 1; i >= 0 ; i--){
+		TCPSocket* connection = m_connections[i];
+		if (connection->IsClosed()){
+			RemoveAtFast(m_connections, i);
+			delete connection;
+		}
+	}
+}
+
+void RemoteCommandService::DisconnectAll()
+{
+	for (int i = 0; (int) i < m_connections.size(); i++){
+		m_connections[i]->Close();
+	}
+	CleanupDisconnects();
 }
 
 void RemoteCommandService::SendMessageAll(std::string msgString)
@@ -175,20 +205,28 @@ void RemoteCommandService::SendMessageAll(std::string msgString)
 	for (int i = 0; i < (unsigned int) m_connections.size(); i++){
 		SendAMessageToAHotSingleClientInYourArea(i, msgString);
 	}
+	CommandRun(msgString.c_str());
 }
 
-void RemoteCommandService::SendAMessageToAHotSingleClientInYourArea(unsigned int connectionIndex, std::string msgString)
+void RemoteCommandService::SendMessageBroadcast(std::string msgString)
+{
+	for (int i = 0; i < (unsigned int) m_connections.size(); i++){
+		SendAMessageToAHotSingleClientInYourArea(i, msgString);
+	}
+}
+
+void RemoteCommandService::SendAMessageToAHotSingleClientInYourArea(unsigned int connectionIndex, std::string msgString, bool isEcho)
 {
 	if (connectionIndex > (unsigned int) m_connections.size()){
 		return;
 	}
-	BytePacker message = BytePacker(); 
+	BytePacker message = BytePacker(BIG_ENDIAN); 
 	TCPSocket *sock = m_connections[connectionIndex];
 	if (sock == nullptr) {
 		return; 
 	}
 
-	//message.write<bool>( is_echo );  
+	message.WriteBytes( 1, (void*) &isEcho );  
 	message.WriteString(msgString.c_str());
 
 	size_t len = message.GetWrittenByteCount() + 1; 
@@ -226,10 +264,10 @@ void RemoteCommandService::ReceiveDataOnSocket(int connectionIndex)
 		//once you have two, how many more bytes to get?
 		if (buffer->GetWrittenByteCount() >= 2) {
 			uint16_t len;
-			byte_t outLength[sizeof(uint16_t)];
+			byte_t* outLength = (byte_t*) malloc(sizeof(uint16_t));
 			buffer->ReadBytes(outLength, sizeof(uint16_t));		//should be 2?
 			len = (uint16_t)(outLength[0] + outLength[1]);
-			//delete[] outLength;
+			free(outLength);
 
 			// the packet has 2 bytes
 			// len is everything that's in your "payload"
@@ -274,12 +312,12 @@ RemoteCommandService * RemoteCommandService::GetInstance()
 
 void RemoteCommandService::UpdateInitial()
 {
-	if (JoinRCS()){
-		m_currentState = RCS_STATE_CLIENT;
-	} else if (HostRCS()){
-		m_currentState = RCS_STATE_HOST;
+	if (!JoinRCS()){
+		if (!HostRCS()){
+			//else: delay lol
+		}
 	}
-	//else: delay lol
+	
 }
 
 void RemoteCommandService::UpdateClient()
@@ -287,8 +325,13 @@ void RemoteCommandService::UpdateClient()
 	//ProcessAllConnections
 	ProcessAllConnections();
 	//CleanupDisconnects
+	CleanupDisconnects();
 	//if (no Host)
 	//		Go Back To Initial
+	if (m_connections.size() == 0){
+		m_currentState = RCS_STATE_INITIAL;
+	}
+
 }
 
 void RemoteCommandService::UpdateHost()
@@ -298,6 +341,7 @@ void RemoteCommandService::UpdateHost()
 	//Process All Connections
 	ProcessAllConnections();
 	//Cleanup Disconnects
+	CleanupDisconnects();
 }
 
 void RemoteCommandServiceListen()

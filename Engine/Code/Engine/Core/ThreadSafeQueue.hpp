@@ -58,13 +58,20 @@ public:
 		// no longer true...
 	}
 
+	void insert(int index, T const& v)
+	{
+		m_lock.enter();
+		m_data.insert(m_data.begin() + index, v);
+		m_lock.leave();
+	}
+
 	void erase(int index)
 	{
 		m_lock.enter();
 
 		m_data.erase(m_data.begin() + index);
 
-		m_data.leave();
+		m_lock.leave();
 	}
 
 	void remove(T const& v)
@@ -100,6 +107,11 @@ public:
 		T data = m_data[index];
 		//leave();
 		return data;
+	}
+
+	std::vector<T> get_vector()
+	{
+		return m_data;
 	}
 
 	unsigned int size()

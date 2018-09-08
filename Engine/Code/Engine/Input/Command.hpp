@@ -91,6 +91,11 @@ void CommandSendMessage(Command& cmd);
 void CommandHostServer(Command& cmd);
 
 void CommandSendRemoteMessage(Command& cmd);
+void CommandSendRemoteMessageBroadcast(Command& cmd);
+void CommandSendRemoteMessageAll(Command& cmd);
+void CommandRemoteJoin(Command& cmd);
+void CommandRemoteHost(Command& cmd);
+void CommandRemoteSetEcho(Command& cmd);
 
 CommandDefinition* GetCommandDefinition(std::string name);
 
