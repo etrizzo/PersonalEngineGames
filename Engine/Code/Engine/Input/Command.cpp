@@ -237,6 +237,15 @@ Vector3 Command::GetNextVec3()
 	return pos;
 }
 
+bool Command::GetNextBool()
+{
+	std::string str = GetNextString();
+	if (str == "" || str == "true"){
+		return true;
+	}
+	return false;
+}
+
 int Command::GetNumArguments()
 {
 	return (int) m_splitCommand.size() - 1;
@@ -319,4 +328,49 @@ void CommandRemoteHost(Command & cmd)
 
 void CommandRemoteSetEcho(Command & cmd)
 {
+	bool echo = cmd.GetNextBool();
+	RemoteCommandService::GetInstance()->SetShouldEcho(echo);
+}
+
+void CommandSpawnProcess(Command & cmd)
+{
+	int numToSpawn = cmd.GetNextInt();
+	if (numToSpawn == 0){
+		numToSpawn == 1;
+	}
+
+	for (int i = 0; i < numToSpawn; i++){
+		//get the module name
+		wchar_t buffer[MAX_PATH]; //or wchar_t * buffer;
+		::GetModuleFileName(NULL, buffer, MAX_PATH) ;
+
+
+
+
+		STARTUPINFO si;
+		PROCESS_INFORMATION pi;
+
+		ZeroMemory( &si, sizeof(si) );
+		si.cb = sizeof(si);
+		ZeroMemory( &pi, sizeof(pi) );
+
+
+		// Start the child process. 
+		if( !CreateProcess( buffer,   // No module name (use command line)
+			::GetCommandLine(),        // Command line
+			NULL,           // Process handle not inheritable
+			NULL,           // Thread handle not inheritable
+			FALSE,          // Set handle inheritance to FALSE
+			0,              // No creation flags
+			NULL,           // Use parent's environment block
+			NULL,           // Use parent's starting directory 
+			&si,            // Pointer to STARTUPINFO structure
+			&pi )           // Pointer to PROCESS_INFORMATION structure
+			) 
+		{
+			printf( "CreateProcess failed (%d).\n", GetLastError() );
+			return;
+		}
+	}
+
 }

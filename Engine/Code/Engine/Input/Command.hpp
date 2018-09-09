@@ -25,6 +25,7 @@ public:
 	int GetNextInt();
 	RGBA GetNextColor();
 	Vector3 GetNextVec3();
+	bool GetNextBool();
 
 	int GetNumArguments();
 
@@ -96,6 +97,7 @@ void CommandSendRemoteMessageAll(Command& cmd);
 void CommandRemoteJoin(Command& cmd);
 void CommandRemoteHost(Command& cmd);
 void CommandRemoteSetEcho(Command& cmd);
+void CommandSpawnProcess(Command& cmd);
 
 CommandDefinition* GetCommandDefinition(std::string name);
 

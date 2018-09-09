@@ -430,7 +430,9 @@ void DevConsole::RegisterCommands()
 	CommandRegister("rcb", CommandSendRemoteMessageBroadcast, "Sends command to all connections and does not run locally", "rcb \"message\"");
 	CommandRegister("rc_join", CommandRemoteJoin, "Tries to join RCS on specified address", "rc_join \"ip:port\"" );
 	CommandRegister("rc_host", CommandRemoteHost, "Tries to host RCS on specified port (blank for default port)", "rc_host \"port\"" );
+	CommandRegister("rc_echo", CommandRemoteSetEcho, "Sets echo functionality for RCS (default = true)", "rc_echo <enabled=true>");
 
+	CommandRegister("spawn_process", CommandSpawnProcess, "Spawns n new clone(s) of this process", "spawn_process <numToSpawn=1>");
 }
 
 

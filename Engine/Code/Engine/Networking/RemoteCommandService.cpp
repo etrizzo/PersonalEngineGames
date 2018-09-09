@@ -174,7 +174,9 @@ void RemoteCommandService::ProcessMessage(TCPSocket * socket, BytePacker * paylo
 		// succeeded in getting a command/string
 		if (isEcho) {
 			//Print this to the console, can format how you want
-			ConsolePrintf(RGBA(84,84,128,255), "ECHO: %s", str );
+			if (m_shouldEcho){
+				ConsolePrintf(RGBA(84,84,128,255), "ECHO: %s", str );
+			}
 		} else {
 			//Otherwise, it's a command, so ~do it ~
 			//RunCommand(str);
@@ -318,6 +320,11 @@ void RemoteCommandService::ReceiveDataOnSocket(int connectionIndex)
 	//gotta read frame-to-frame, can't block. Ready 2 receive, always
 	buffer->ResetWrite();
 	buffer->ResetRead();
+}
+
+void RemoteCommandService::SetShouldEcho(bool shouldEcho)
+{
+	m_shouldEcho = shouldEcho;
 }
 
 RemoteCommandService * RemoteCommandService::GetInstance()

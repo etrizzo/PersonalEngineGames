@@ -43,6 +43,9 @@ public:
 
 	void ReceiveDataOnSocket(int connectionIndex);
 
+	void SetShouldEcho(bool shouldEcho);
+
+
 	std::vector<BytePacker*> m_packers;
 	std::vector<TCPSocket*> m_connections;
 	TCPSocket* m_listenSocket;
@@ -52,6 +55,7 @@ public:
 	
 	//index of the connection currently being checked (for echos)
 	int m_currentConnectionIndex = 0;
+	bool m_shouldEcho = true;
 
 	DevConsole* m_consoleReference;
 	
