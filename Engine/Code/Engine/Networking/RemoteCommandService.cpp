@@ -98,6 +98,7 @@ bool RemoteCommandService::JoinRCS(std::string addr)
 		return true;
 	} else {
 		delete connectionSocket;
+		m_currentState = RCS_STATE_INITIAL;
 		return false;
 	}
 }
@@ -118,6 +119,7 @@ bool RemoteCommandService::HostRCS(std::string port)
 	} else {
 		delete m_listenSocket;
 		m_listenSocket = nullptr;
+		m_currentState = RCS_STATE_INITIAL;
 		return false;
 	}
 }
@@ -154,6 +156,7 @@ void RemoteCommandService::ProcessNewConnections()
 void RemoteCommandService::ProcessAllConnections()
 {
 	for (int connectionIndex = 0; connectionIndex < (int) m_connections.size(); connectionIndex++){
+		m_currentConnectionIndex = connectionIndex;
 		ReceiveDataOnSocket(connectionIndex);
 	}
 }
@@ -171,11 +174,11 @@ void RemoteCommandService::ProcessMessage(TCPSocket * socket, BytePacker * paylo
 		// succeeded in getting a command/string
 		if (isEcho) {
 			//Print this to the console, can format how you want
-			ConsolePrintf( "ECHO: %s", str );
+			ConsolePrintf(RGBA(84,84,128,255), "ECHO: %s", str );
 		} else {
 			//Otherwise, it's a command, so ~do it ~
 			//RunCommand(str);
-			ConsolePrintf( "COMMAND: %s", str );
+			ConsolePrintf(RGBA(128,84,128,255), "COMMAND: %s", str );
 			m_consoleReference->AddHook(RCSEchoHook);
 			CommandRun(str);
 			m_consoleReference->RemoveHook(RCSEchoHook);
@@ -197,10 +200,16 @@ void RemoteCommandService::CleanupDisconnects()
 
 void RemoteCommandService::DisconnectAll()
 {
+	if (m_listenSocket != nullptr){
+		m_listenSocket->Close();
+		delete m_listenSocket;
+		m_listenSocket = nullptr;
+	}
 	for (int i = 0; (int) i < m_connections.size(); i++){
 		m_connections[i]->Close();
 	}
 	CleanupDisconnects();
+	m_currentState = RCS_STATE_INITIAL;
 }
 
 void RemoteCommandService::SendMessageAll(std::string msgString, bool isEcho)
@@ -241,6 +250,11 @@ void RemoteCommandService::SendAMessageToAHotSingleClientInYourArea(unsigned int
 	sock->Send( (void*) &uintlen , sizeof(uintlen));  // templated overload
 	sock->Send(  message.GetBuffer(), len ); 
 
+}
+
+void RemoteCommandService::SendEchoMessage(std::string msgString)
+{
+	SendAMessageToAHotSingleClientInYourArea(m_currentConnectionIndex, msgString, true);
 }
 
 void RemoteCommandService::ReceiveDataOnSocket(int connectionIndex)
@@ -303,6 +317,7 @@ void RemoteCommandService::ReceiveDataOnSocket(int connectionIndex)
 	ProcessMessage( tcp, buffer);
 	//gotta read frame-to-frame, can't block. Ready 2 receive, always
 	buffer->ResetWrite();
+	buffer->ResetRead();
 }
 
 RemoteCommandService * RemoteCommandService::GetInstance()

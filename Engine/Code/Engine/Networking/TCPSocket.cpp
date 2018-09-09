@@ -165,6 +165,8 @@ bool TCPSocket::HasFatalError()
 	// WSAEWOULDBLOCK, WSAEMSGSIZE, and WSAECONNRESET, are non-fatal.  
 	if (error == WSAEWOULDBLOCK || error == WSAEMSGSIZE || error == 0){
 		return false;
-	} 
+	} else {
+		ConsolePrintf("Fatal error: [%i]", error);
+	}
 	return true;
 }

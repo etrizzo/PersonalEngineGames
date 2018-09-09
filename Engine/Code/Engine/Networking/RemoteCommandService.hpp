@@ -39,6 +39,7 @@ public:
 	void SendMessageAll(std::string msgString, bool isEcho = false);
 	void SendMessageBroadcast(std::string msgString, bool isEcho = false);
 	void SendAMessageToAHotSingleClientInYourArea(unsigned int connectionIndex, std::string msgString, bool isEcho = false);
+	void SendEchoMessage(std::string msgString);
 
 	void ReceiveDataOnSocket(int connectionIndex);
 
@@ -48,6 +49,9 @@ public:
 	eRCSState m_currentState = RCS_STATE_INITIAL;
 
 	bool m_isRunning = true;
+	
+	//index of the connection currently being checked (for echos)
+	int m_currentConnectionIndex = 0;
 
 	DevConsole* m_consoleReference;
 	

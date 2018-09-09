@@ -63,11 +63,13 @@ void DevConsole::PostStartup()
 
 void DevConsole::Update(float deltaSeconds)
 {
-	m_age += deltaSeconds;
-	if (m_age - m_lastFlash > (m_cursorFlashTime * 2.f)){
-		m_lastFlash = m_age;
+	if (m_isOpen){
+		m_age += deltaSeconds;
+		if (m_age - m_lastFlash > (m_cursorFlashTime * 2.f)){
+			m_lastFlash = m_age;
+		}
+		FindAutoCompleteStrings();
 	}
-	FindAutoCompleteStrings();
 
 	RemoteCommandService::GetInstance()->Update();
 	
@@ -548,5 +550,5 @@ void DevConsoleHandler(unsigned int msg, size_t wparam, size_t lparam)
 
 void RCSEchoHook(OutputLine hookLine)
 {
-	RemoteCommandService::GetInstance()->SendMessageBroadcast(hookLine.text, true);
+	RemoteCommandService::GetInstance()->SendEchoMessage(hookLine.text);
 }
