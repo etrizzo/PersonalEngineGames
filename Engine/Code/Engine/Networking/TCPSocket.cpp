@@ -25,8 +25,8 @@ TCPSocket::~TCPSocket()
 
 bool TCPSocket::SetUnblocking()
 {
-	u_long blocking = 1;
-	::ioctlsocket( (SOCKET)m_handle, FIONBIO, &blocking );
+	u_long nonblocking = 1;
+	::ioctlsocket( (SOCKET)m_handle, FIONBIO, &nonblocking );
 	return true;
 }
 
@@ -119,19 +119,11 @@ size_t TCPSocket::Send(void const * data, size_t const data_byte_size)
 		// there are non-fatal errors - but we'll go over them 
 		// on Monday.  For now, you can assume any error with blocking
 		// is a disconnect; 
-		char msgbuf[256];
-		msgbuf [0] = '\0'; 
-		int err = WSAGetLastError ();
-
-		FormatMessage (FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,   // flags
-			NULL,                // lpsource
-			err,                 // message id
-			MAKELANGID (LANG_NEUTRAL, SUBLANG_DEFAULT),    // languageid
-			(LPWSTR) msgbuf,              // output buffer
-			256,     // size of msgbuf, bytes
-			NULL);               // va_list of arguments
-		ConsolePrintf(RGBA::RED, "Send failed: [%i] %s", err, msgbuf);
-		Close(); 
+		if (HasFatalError()){
+			ConsolePrintf(RGBA::RED, "Send failed");
+			Close(); 
+			
+		}
 		return 0U; 
 	} else { 
 		return sent;

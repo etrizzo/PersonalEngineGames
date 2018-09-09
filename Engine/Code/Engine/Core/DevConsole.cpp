@@ -41,9 +41,7 @@ DevConsole::DevConsole(AABB2 screenBounds)
 	ReadConsoleHistoryFromFile();
 
 
-	//Startup RCS
-	RemoteCommandService::GetInstance();
-	//ThreadCreateAndDetach( (thread_cb) RemoteCommandServiceUpdate);
+
 }
 
 DevConsole::~DevConsole()
@@ -54,6 +52,13 @@ DevConsole::~DevConsole()
 void DevConsole::SetRenderer(Renderer * renderer)
 {
 	m_renderer = renderer;
+}
+
+void DevConsole::PostStartup()
+{
+	//Startup RCS
+	RemoteCommandService::GetInstance()->m_consoleReference = this;
+	//ThreadCreateAndDetach( (thread_cb) RemoteCommandServiceUpdate);
 }
 
 void DevConsole::Update(float deltaSeconds)
@@ -219,12 +224,32 @@ void DevConsole::MoveInputCusor(int direction)
 
 void DevConsole::AddLineToOutput(std::string line, RGBA color)
 {
-	m_outputLines.push_back(OutputLine(line, color));
+	OutputLine newLine = OutputLine(line, color);
+	m_outputLines.push_back(newLine);
+	for(int i = 0; i < (int) m_hooks.size(); i++){
+		m_hooks.at(i)(newLine);
+	}
 }
 
 void DevConsole::AddLineToOutput(std::string line)
 {
-	m_outputLines.push_back(OutputLine(line, m_defaultTextColor));
+	AddLineToOutput(line, m_defaultTextColor);
+	//m_outputLines.push_back(OutputLine(line, m_defaultTextColor));
+}
+
+void DevConsole::AddHook(consolehook_cb newHook)
+{
+	m_hooks.push_back(newHook);
+}
+
+void DevConsole::RemoveHook(consolehook_cb hook)
+{
+	for (int i = 0; i < (int) m_hooks.size(); i++){
+		if (m_hooks.at(i) == hook){
+			m_hooks.erase(i);
+			break;
+		}
+	}
 }
 
 std::string DevConsole::GetOutput()
@@ -519,4 +544,9 @@ void DevConsoleHandler(unsigned int msg, size_t wparam, size_t lparam)
 		g_devConsole->ProcessKeydownEvents(asKey);
 		break;
 	}
+}
+
+void RCSEchoHook(OutputLine hookLine)
+{
+	RemoteCommandService::GetInstance()->SendMessageBroadcast(hookLine.text, true);
 }

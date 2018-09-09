@@ -7,6 +7,7 @@ const std::string CONSOLE_HISTORY_FILE = "console_history.txt";
 const unsigned int MAX_HISTORY_SIZE = 64;
 
 
+
 class CommandDefinition;
 
 struct OutputLine{
@@ -18,6 +19,8 @@ struct OutputLine{
 	RGBA color = RGBA();
 };
 
+typedef void (*consolehook_cb)( OutputLine hookText ); 
+
 class DevConsole 
 {
 public: 
@@ -25,6 +28,7 @@ public:
 	~DevConsole(); 
 
 	void SetRenderer(Renderer* renderer);
+	void PostStartup();
 
 	// Handles all input
 	void Update(float deltaSeconds);
@@ -45,6 +49,9 @@ public:
 
 	void AddLineToOutput(std::string line, RGBA color);
 	void AddLineToOutput(std::string line);
+
+	void AddHook(consolehook_cb newHook);
+	void RemoveHook(consolehook_cb hook);
 
 	std::string GetOutput();
 
@@ -89,6 +96,8 @@ private:
 
 	ThreadSafeVector<std::string> m_commandHistory;		//newest commands first
 	int m_historyPosition = 0;
+
+	ThreadSafeVector<consolehook_cb> m_hooks;
 
 	//config junk for the rendering
 	RGBA m_backgroundColor = RGBA(16, 0, 64, 200);		//bg color of the console
@@ -138,3 +147,6 @@ void ConsolePrintf( char const *format, ... );
 void ConsolePrint(char const* content );
 
 void DevConsoleHandler(unsigned int msg, size_t wparam, size_t lparam);
+
+
+void RCSEchoHook(OutputLine hookLine);

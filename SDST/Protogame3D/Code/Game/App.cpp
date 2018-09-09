@@ -58,6 +58,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 	AABB2 UIBounds = g_theGame->m_uiCamera->GetBounds();
 	Net::Startup();
 	g_devConsole = new DevConsole(UIBounds);
+	g_devConsole->PostStartup();
 	g_devConsole->SetRenderer(g_theRenderer);
 
 	g_profilerVisualizer = new ProfilerVisualizer(g_theRenderer, g_theInput, UIBounds);

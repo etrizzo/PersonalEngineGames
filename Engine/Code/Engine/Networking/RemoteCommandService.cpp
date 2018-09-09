@@ -1,5 +1,6 @@
 #include "RemoteCommandService.hpp"
 #include "Engine/Math/Renderer.hpp"
+#include "Engine/Core/DevConsole.hpp"
 
 RemoteCommandService* RemoteCommandService::g_remoteCommandService = nullptr;
 
@@ -164,10 +165,10 @@ void RemoteCommandService::ProcessMessage(TCPSocket * socket, BytePacker * paylo
 
 	char str[256];
 	if (payload->ReadString(str, 256)){		//read & write are specialty functions - it does some work for you
-									//// if everything is right, could guarantee that the readable byte count is 0 at this point
-									//ASSERT( payload->GetReadableByteCount() == 0);
+		//// if everything is right, could guarantee that the readable byte count is 0 at this point
+		//ASSERT( payload->GetReadableByteCount() == 0);
 
-									// succeeded in getting a command/string
+		// succeeded in getting a command/string
 		if (isEcho) {
 			//Print this to the console, can format how you want
 			ConsolePrintf( "ECHO: %s", str );
@@ -175,7 +176,9 @@ void RemoteCommandService::ProcessMessage(TCPSocket * socket, BytePacker * paylo
 			//Otherwise, it's a command, so ~do it ~
 			//RunCommand(str);
 			ConsolePrintf( "COMMAND: %s", str );
+			m_consoleReference->AddHook(RCSEchoHook);
 			CommandRun(str);
+			m_consoleReference->RemoveHook(RCSEchoHook);
 
 		}
 	}
@@ -200,24 +203,24 @@ void RemoteCommandService::DisconnectAll()
 	CleanupDisconnects();
 }
 
-void RemoteCommandService::SendMessageAll(std::string msgString)
+void RemoteCommandService::SendMessageAll(std::string msgString, bool isEcho)
 {
 	for (int i = 0; i < (unsigned int) m_connections.size(); i++){
-		SendAMessageToAHotSingleClientInYourArea(i, msgString);
+		SendAMessageToAHotSingleClientInYourArea(i, msgString, isEcho);
 	}
 	CommandRun(msgString.c_str());
 }
 
-void RemoteCommandService::SendMessageBroadcast(std::string msgString)
+void RemoteCommandService::SendMessageBroadcast(std::string msgString, bool isEcho)
 {
 	for (int i = 0; i < (unsigned int) m_connections.size(); i++){
-		SendAMessageToAHotSingleClientInYourArea(i, msgString);
+		SendAMessageToAHotSingleClientInYourArea(i, msgString, isEcho);
 	}
 }
 
 void RemoteCommandService::SendAMessageToAHotSingleClientInYourArea(unsigned int connectionIndex, std::string msgString, bool isEcho)
 {
-	if (connectionIndex > (unsigned int) m_connections.size()){
+	if ((int) connectionIndex > (int) m_connections.size()-1){
 		return;
 	}
 	BytePacker message = BytePacker(BIG_ENDIAN); 
@@ -234,7 +237,7 @@ void RemoteCommandService::SendAMessageToAHotSingleClientInYourArea(unsigned int
 		ConsolePrintf(RGBA::RED, "bytepacker format doesn't support format > max ushort"); // format doesn't support lengths larger than a max ushort; 
 	}
 	uint16_t uintlen = (uint16_t)len; 
-	//ToEndianness(sizeof(uintlen), &uintlen , BIG_ENDIAN); 
+	ToEndianness(sizeof(uintlen), &uintlen , BIG_ENDIAN); 
 	sock->Send( (void*) &uintlen , sizeof(uintlen));  // templated overload
 	sock->Send(  message.GetBuffer(), len ); 
 
@@ -245,10 +248,14 @@ void RemoteCommandService::ReceiveDataOnSocket(int connectionIndex)
 	ASSERT_OR_DIE(connectionIndex < (int) m_connections.size(), "Invalid connection index");
 	TCPSocket *tcp = m_connections[connectionIndex];
 	BytePacker *buffer = m_packers[connectionIndex];
+	
 	bool isReadyToProcess = false;
 	do {
 		isReadyToProcess = false;
-
+		if (tcp->IsClosed()){
+			ConsolePrintf(RGBA::RED, "Connection closed unexpectedly.");
+			return;
+		}
 
 
 		//gotta read until it's two - get the size of the packet
@@ -266,6 +273,7 @@ void RemoteCommandService::ReceiveDataOnSocket(int connectionIndex)
 			uint16_t len;
 			byte_t* outLength = (byte_t*) malloc(sizeof(uint16_t));
 			buffer->ReadBytes(outLength, sizeof(uint16_t));		//should be 2?
+			FromEndianness(2, outLength, BIG_ENDIAN);
 			len = (uint16_t)(outLength[0] + outLength[1]);
 			free(outLength);
 

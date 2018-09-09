@@ -36,8 +36,8 @@ public:
 	void CleanupDisconnects();
 	void DisconnectAll();
 
-	void SendMessageAll(std::string msgString);
-	void SendMessageBroadcast(std::string msgString);
+	void SendMessageAll(std::string msgString, bool isEcho = false);
+	void SendMessageBroadcast(std::string msgString, bool isEcho = false);
 	void SendAMessageToAHotSingleClientInYourArea(unsigned int connectionIndex, std::string msgString, bool isEcho = false);
 
 	void ReceiveDataOnSocket(int connectionIndex);
@@ -48,6 +48,8 @@ public:
 	eRCSState m_currentState = RCS_STATE_INITIAL;
 
 	bool m_isRunning = true;
+
+	DevConsole* m_consoleReference;
 	
 
 
