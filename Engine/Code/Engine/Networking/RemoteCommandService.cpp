@@ -45,8 +45,10 @@ void RemoteCommandService::Update()
 
 void RemoteCommandService::Render(Renderer* r, AABB2 screenBounds)
 {
-	AABB2 textBox = screenBounds.GetPercentageBox(Vector2(.6f, .98f), Vector2(1.f,1.f));
+	screenBounds.AddPaddingToSides(-.005f, -.005f);
+	AABB2 textBox = screenBounds.GetPercentageBox(Vector2(.6f, .986f), Vector2(1.f,1.f));
 	float height = textBox.GetHeight();
+	float textHeight = height * .95f;
 	//print header
 	std::string headerString = "";
 	switch (m_currentState){
@@ -65,16 +67,13 @@ void RemoteCommandService::Render(Renderer* r, AABB2 screenBounds)
 		break;
 	}
 	r->DrawTextInBox2D(headerString, textBox, Vector2 (1.f, .5f), height, TEXT_DRAW_SHRINK_TO_FIT);
-	//if (m_listenSocket != nullptr){
-	//	r->DrawTextInBox2D(m_listenSocket->ToString(), textBox, Vector2 (1.f, .5f), height, TEXT_DRAW_SHRINK_TO_FIT);
-	//} else {
-	//	r->DrawTextInBox2D("Not Hosting", textBox, Vector2 (1.f, .5f), height, TEXT_DRAW_SHRINK_TO_FIT);
-	//}
+	textBox.Translate(Vector2(0.f, -height * 1.5f));
+	
+	r->DrawTextInBox2D(Stringf("Connections: %i", (int) m_connections.size()), textBox, Vector2 (1.f, .5f), height, TEXT_DRAW_SHRINK_TO_FIT);
 	textBox.Translate(Vector2(0.f, -height));
-	r->DrawTextInBox2D("Connections:", textBox, Vector2 (0.f, .5f), height, TEXT_DRAW_SHRINK_TO_FIT);
-	textBox.Translate(Vector2(0.f, -height));
-	for(TCPSocket* connection : m_connections){
-		r->DrawTextInBox2D(connection->ToString(), textBox, Vector2 (1.f, .5f), height, TEXT_DRAW_SHRINK_TO_FIT);
+	for(int i = 0; i < (int) m_connections.size(); i++){
+		std::string connectionString = Stringf("[C%i] %s", i, m_connections[i]->m_address.ToString().c_str());
+		r->DrawTextInBox2D(connectionString, textBox, Vector2 (1.f, .5f), textHeight, TEXT_DRAW_SHRINK_TO_FIT);
 		textBox.Translate(Vector2(0.f, -height));
 	}
 }
@@ -175,12 +174,12 @@ void RemoteCommandService::ProcessMessage(TCPSocket * socket, BytePacker * paylo
 		if (isEcho) {
 			//Print this to the console, can format how you want
 			if (m_shouldEcho){
-				ConsolePrintf(RGBA(84,84,128,255), "ECHO: %s", str );
+				ConsolePrintf(RGBA(84,84,128,255), "[C%i ECHO] %s", m_currentConnectionIndex, str );
 			}
 		} else {
 			//Otherwise, it's a command, so ~do it ~
 			//RunCommand(str);
-			ConsolePrintf(RGBA(128,84,128,255), "COMMAND: %s", str );
+			ConsolePrintf(RGBA(128,84,128,255), "[C%i COMMAND] %s", m_currentConnectionIndex, str );
 			m_consoleReference->AddHook(RCSEchoHook);
 			CommandRun(str);
 			m_consoleReference->RemoveHook(RCSEchoHook);
