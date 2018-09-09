@@ -52,7 +52,7 @@ bool TCPSocket::Listen(std::string port, unsigned int max_queued)
 	size_t addrlen; 
 	m_address.ToSockAddr( (sockaddr*)&saddr, &addrlen ); 
 
-	int result = ::bind( (SOCKET) m_handle, (sockaddr*)&saddr, addrlen ); 
+	int result = ::bind( (SOCKET) m_handle, (sockaddr*)&saddr,(int) addrlen ); 
 	if (result == SOCKET_ERROR) {
 		// failed to bind - if you want to know why, call WSAGetLastError()
 		Close();
@@ -114,7 +114,7 @@ void TCPSocket::Close()
 
 size_t TCPSocket::Send(void const * data, size_t const data_byte_size)
 {
-	int sent = ::send( (SOCKET) m_handle, (char*) data, data_byte_size, 0 ); 
+	int sent = ::send( (SOCKET) m_handle, (char*) data,(int) data_byte_size, 0 ); 
 	if (sent == SOCKET_ERROR) {
 		// there are non-fatal errors - but we'll go over them 
 		// on Monday.  For now, you can assume any error with blocking
@@ -134,7 +134,7 @@ size_t TCPSocket::Receive(void * buffer, size_t const max_byte_size)
 {
 	int recvd = ::recv( (SOCKET) m_handle, 
 		(char*) buffer,           // what we read into
-		max_byte_size,         // max we can read
+		(int) max_byte_size,         // max we can read
 		0U );             // flags (unused)
 	if (recvd == SOCKET_ERROR){
 		if (HasFatalError()){

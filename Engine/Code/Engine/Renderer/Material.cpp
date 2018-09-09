@@ -30,7 +30,7 @@ Material::Material(tinyxml2::XMLElement * matElement)
 			std::string path = ParseXmlAttribute(*texElement, "path", "NO_PATH");
 			ASSERT_OR_DIE(path != "NO_PATH", "Must specify texture path in material data!!!!!");
 			if (idx == -1){
-				idx = m_textures.size();
+				idx = (int) m_textures.size();
 			}
 			SetTexture(idx, Texture::CreateOrGetTexture(path, IMAGE_DIRECTORY));
 		}
@@ -142,7 +142,7 @@ void Material::SetShader(Shader * shader)
 
 void Material::RemoveProperty(const char * name)
 {
-	for (int i = m_properties.size() - 1; i >=0; i--){
+	for (int i = (int) m_properties.size() - 1; i >=0; i--){
 		if (m_properties[i]->m_name == name){
 			//MaterialProperty* p = m_properties[i];
 			RemoveAtFast(m_properties, i);

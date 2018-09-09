@@ -274,7 +274,6 @@ void DevConsole::AddCommandToHistory(std::string commandText)
 	if (m_commandHistory.size() == 0){
 		m_commandHistory.push_back(commandText);
 	} else {
-		bool found = false;
 		for (unsigned int i = 0; i <  m_commandHistory.size() ; i++){
 			if (m_commandHistory.at(i) == commandText){
 				m_commandHistory.erase(i);
@@ -389,7 +388,7 @@ void DevConsole::WriteHistoryToFile()
 	std::fstream* historyFile = new std::fstream();
 	std::string fileLog = LOG_DIRECTORY + CONSOLE_HISTORY_FILE;
 	historyFile->open(fileLog,  std::fstream::out | std::fstream::trunc );
-	int numlines = Min((int) m_commandHistory.size(), MAX_HISTORY_SIZE);
+	int numlines = Min((int) m_commandHistory.size(), (int) MAX_HISTORY_SIZE);
 	
 	for (int i = 0; i < numlines; i++){
 		std::string line = m_commandHistory.at(i) + '\n';

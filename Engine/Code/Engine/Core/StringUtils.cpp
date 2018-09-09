@@ -53,7 +53,7 @@ const std::string Stringv(const char * format, va_list args)
  void Split(std::string stringToSplit, const char splitOn, Strings & splitVector)
 {
 	splitVector = std::vector<std::string>();
-	unsigned int oldIndex = 0;
+	size_t oldIndex = 0;
 	size_t newIndex = (size_t) stringToSplit.find(splitOn);
 	while (newIndex != std::string::npos){
 		std::string indexString = stringToSplit.substr(oldIndex,newIndex - oldIndex);

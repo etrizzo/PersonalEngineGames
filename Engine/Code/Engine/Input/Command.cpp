@@ -336,7 +336,7 @@ void CommandSpawnProcess(Command & cmd)
 {
 	int numToSpawn = cmd.GetNextInt();
 	if (numToSpawn == 0){
-		numToSpawn == 1;
+		numToSpawn = 1;
 	}
 
 	for (int i = 0; i < numToSpawn; i++){

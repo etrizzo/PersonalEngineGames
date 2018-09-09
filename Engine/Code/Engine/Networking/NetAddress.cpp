@@ -143,10 +143,10 @@ NetAddress NetAddress::GetLocal(char const* port)
 		}
 		iter = iter->ai_next;
 	}
-
-	return NetAddress();
 	//free up result
 	::freeaddrinfo( result );
+	return NetAddress();
+
 }
 
 bool NetAddress::GetBindableAddress(NetAddress * out,  std::string port)

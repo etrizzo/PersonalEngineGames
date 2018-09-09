@@ -58,6 +58,8 @@ void ThreadYield()
 
 void ThreadSetName(char const * name)
 {
+	name;
+	//name = x;
 	//this is some hacky bullshit to get visual studio to name the thread
 
 	//if (nullptr == name) {

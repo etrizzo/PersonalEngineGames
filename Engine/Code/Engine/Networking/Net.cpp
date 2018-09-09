@@ -193,7 +193,7 @@ void ConnectExampleWinSock( std::string addr_str, std::string msg)
 
 	// you send raw bytes over the network in whatever format you want; 
 	char payload[256]; 
-	::send( sock, msg.c_str(), msg.size(), 0 ); 
+	::send( sock, msg.c_str(), (int) msg.size(), 0 ); 
 
 	// with TCP/IP, data sent together is not guaranteed to arrive together.  
 	// so make sure you check the return value.  This will return SOCKET_ERROR
@@ -253,7 +253,7 @@ bool HostExampleWinSock( void* port )
 	size_t addrlen; 
 	addr.ToSockAddr( (sockaddr*)&saddr, &addrlen ); 
 
-	int result = ::bind( sock, (sockaddr*)&saddr, addrlen ); 
+	int result = ::bind( sock, (sockaddr*)&saddr,(int) addrlen ); 
 	if (result == SOCKET_ERROR) {
 		// failed to bind - if you want to know why, call WSAGetLastError()
 		::closesocket(sock); 
@@ -328,7 +328,7 @@ bool HostExample(void * port)
 		TCPSocket *them = host.Accept();
 		if (them != nullptr) {
 			byte_t buffer[1 * KB]; 
-			unsigned int received = them->Receive( buffer, (1 * KB) - 1U ); 
+			unsigned int received = (unsigned int) them->Receive( buffer, (1 * KB) - 1U ); 
 			if (received > 0U) {
 				buffer[received] = NULL;
 				ConsolePrintf(RGBA::YELLOW, "Receieved: %s", buffer ); 

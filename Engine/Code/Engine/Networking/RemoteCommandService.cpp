@@ -162,6 +162,7 @@ void RemoteCommandService::ProcessAllConnections()
 
 void RemoteCommandService::ProcessMessage(TCPSocket * socket, BytePacker * payload)
 {
+	UNUSED(socket);
 	bool isEcho = true;
 	payload->ReadBytes(&isEcho, 1);
 
@@ -215,7 +216,7 @@ void RemoteCommandService::DisconnectAll()
 
 void RemoteCommandService::SendMessageAll(std::string msgString, bool isEcho)
 {
-	for (int i = 0; i < (unsigned int) m_connections.size(); i++){
+	for (int i = 0; i < ( int) m_connections.size(); i++){
 		SendAMessageToAHotSingleClientInYourArea(i, msgString, isEcho);
 	}
 	CommandRun(msgString.c_str());
@@ -223,7 +224,7 @@ void RemoteCommandService::SendMessageAll(std::string msgString, bool isEcho)
 
 void RemoteCommandService::SendMessageBroadcast(std::string msgString, bool isEcho)
 {
-	for (int i = 0; i < (unsigned int) m_connections.size(); i++){
+	for (int i = 0; i < ( int) m_connections.size(); i++){
 		SendAMessageToAHotSingleClientInYourArea(i, msgString, isEcho);
 	}
 }

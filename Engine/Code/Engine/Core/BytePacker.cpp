@@ -22,6 +22,7 @@ BytePacker::BytePacker(size_t buffer_size, void * buffer, eEndianness byte_order
 	m_byteOrder = byte_order;
 	m_options = 0U;
 	m_maxSize = buffer_size;
+	m_buffer = buffer;
 }
 
 BytePacker::~BytePacker()

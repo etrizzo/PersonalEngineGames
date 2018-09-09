@@ -24,7 +24,7 @@ void ToEndianness(size_t const size, void * data, eEndianness desiredEndianness)
 	//otherwise, you need to swap from little endian to big endian
 	//basically, just reversing the bytes
 	unsigned int i = 0;
-	unsigned int j = size - 1U;
+	unsigned int j = (unsigned int) size - 1U;
 	while (i < j){
 		std::swap(byte_buffer[i], byte_buffer[j]);
 		++i;
@@ -44,7 +44,7 @@ void FromEndianness(size_t const size, void * data, eEndianness sourceEndianness
 	//otherwise, you need to swap from little endian to big endian
 	//basically, just reversing the bytes
 	unsigned int i = 0;
-	unsigned int j = size - 1U;
+	unsigned int j = (unsigned int) size - 1U;
 	while (i < j){
 		std::swap(byte_buffer[i], byte_buffer[j]);
 		++i;

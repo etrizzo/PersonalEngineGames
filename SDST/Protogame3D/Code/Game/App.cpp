@@ -654,9 +654,9 @@ void CommandGetAddress(Command & cmd)
 	UNUSED(cmd);
 	sockaddr_storage addr;
 	int addr_len;
-	bool gotit = GetAddressForHost((sockaddr*) &addr, &addr_len, "10.8.151.155", "12345");
-	sockaddr_in* in = (sockaddr_in*) &addr;
-	int x = 0;
+	GetAddressForHost((sockaddr*) &addr, &addr_len, "10.8.151.155", "12345");
+	//sockaddr_in* in = (sockaddr_in*) &addr;
+	//int x = 0;
 	//LogIP((sockaddr_in*) addr);
 	//GetAddressForHost(addr, addr_len, "https://www.google.com/");
 	//GetAddressExample();
