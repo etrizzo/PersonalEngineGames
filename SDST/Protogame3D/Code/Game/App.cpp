@@ -4,6 +4,7 @@
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Core/BytePacker.hpp"
 #include "Engine/Networking/RemoteCommandService.hpp"
+#include "Engine/Networking/UDPTests.hpp"
 
 using namespace std;
 
@@ -199,6 +200,10 @@ void App::RegisterCommands()
 	CommandRegister("log_show_all", CommandLogShowAll, "Shows all log tags");
 
 	CommandRegister("get_address", CommandGetAddress, "Gets machine address");
+
+	CommandRegister("udp_test_start", CommandUDPTestStart, "Starts udp test system lol");
+	CommandRegister("udp_test_stop", CommandUDPTestStop, "Stops udp test systemlol");
+	CommandRegister("udp_test_send", CommandUDPTestSend, "Sends message through udp test system", "udp_test_send <ip:port> \"msg\"");
 }
 
 void App::HandleInput()
@@ -660,5 +665,35 @@ void CommandGetAddress(Command & cmd)
 	//LogIP((sockaddr_in*) addr);
 	//GetAddressForHost(addr, addr_len, "https://www.google.com/");
 	//GetAddressExample();
+}
+
+void CommandUDPTestStart(Command & cmd)
+{
+
+	g_theGame->m_udp->Start();
+}
+
+void CommandUDPTestStop(Command & cmd)
+{
+	g_theGame->m_udp->Stop();
+}
+
+void CommandUDPTestSend(Command & cmd)
+{
+	NetAddress addr;
+	std::string str = cmd.GetNextString();
+	std::string msg = cmd.GetNextString();
+	addr = NetAddress(str);
+	if (!addr.IsValid()){
+		ConsolePrintf(RGBA::RED, "Requires address.");
+		return;
+	}
+	if (msg == ""){
+		ConsolePrintf(RGBA::RED, "Requires message.");
+		return;
+	}
+
+	ConsolePrintf(RGBA::YELLOW, "Sending message \"%s\"...", msg.c_str());
+	g_theGame->m_udp->SendTo(addr, msg.data(), (unsigned int) msg.size());
 }
 

@@ -117,12 +117,30 @@ void XboxController::SetTriggers(unsigned char bLeftTrigger, unsigned char bRigh
 {
 	m_leftTrigger = RangeMapFloat(bLeftTrigger, 0.f, 255.f, 0.f, 1.f);
 	m_rightTrigger = RangeMapFloat(bRightTrigger, 0.f, 255.f, 0.f, 1.f);
+
+	//set virtual buttons
+	if (m_leftTrigger > TRIGGER_PRESS_THRESHOLD){
+		PressXboxButton(XBOX_TRIGGER_PRESS_LEFT);
+	}
+	if (m_rightTrigger > TRIGGER_PRESS_THRESHOLD){
+		PressXboxButton(XBOX_TRIGGER_PRESS_RIGHT);
+	}
+
+	if (m_leftTrigger < TRIGGER_RELEASE_THRESHOLD){
+		PressXboxButton(XBOX_TRIGGER_PRESS_LEFT);
+	}
+	if (m_rightTrigger < TRIGGER_RELEASE_THRESHOLD){
+		PressXboxButton(XBOX_TRIGGER_PRESS_RIGHT);
+	}
+
 }
 
 void XboxController::SetJoysticks(short sThumbLX, short sThumbLY, short sThumbRX, short sThumbRY)
 {
 	m_leftStick.SetJoystick(sThumbLX, sThumbLY);
 	m_rightStick.SetJoystick(sThumbRX, sThumbRY);
+
+	SetJoystickVirtualButtons();
 }
 
 XboxController::XboxController()
@@ -180,6 +198,31 @@ void XboxController::SetStates()
 
 	}
 
+}
+
+void XboxController::SetJoystickVirtualButtons()
+{
+	//set left press
+	SetJoystickVirtualButton(m_leftStick.GetX()			, XBOX_THUMBSTICK_LEFT_PRESS_RIGHT	);
+	SetJoystickVirtualButton(1.f - m_leftStick.GetX()	, XBOX_THUMBSTICK_LEFT_PRESS_LEFT	);
+	SetJoystickVirtualButton(m_leftStick.GetY()			, XBOX_THUMBSTICK_LEFT_PRESS_UP	);
+	SetJoystickVirtualButton(1.f - m_leftStick.GetY()	, XBOX_THUMBSTICK_LEFT_PRESS_DOWN	);
+
+	//set right press
+	SetJoystickVirtualButton(m_rightStick.GetX()		, XBOX_THUMBSTICK_RIGHT_PRESS_RIGHT	);
+	SetJoystickVirtualButton(1.f - m_rightStick.GetX()	, XBOX_THUMBSTICK_RIGHT_PRESS_LEFT	);
+	SetJoystickVirtualButton(m_rightStick.GetY()		, XBOX_THUMBSTICK_RIGHT_PRESS_UP	);
+	SetJoystickVirtualButton(1.f - m_rightStick.GetY()	, XBOX_THUMBSTICK_RIGHT_PRESS_DOWN	);
+}
+
+void XboxController::SetJoystickVirtualButton(float axisVal, XboxButton virtualButton)
+{
+	if (axisVal > THUMBSTICK_PRESS_THRESHOLD){
+		PressXboxButton(virtualButton);
+	}
+	if (axisVal > THUMBSTICK_PRESS_THRESHOLD){
+		PressXboxButton(virtualButton);
+	}
 }
 
 void XboxController::PassFrame()

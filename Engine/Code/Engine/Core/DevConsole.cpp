@@ -357,7 +357,7 @@ void DevConsole::RenderAutoComplete()
 	float autoCompleteWidth = m_outputBox.GetWidth() * .3f;
 	if (m_autoCompletes.size() > 0){
 		AABB2 autoBG = AABB2(m_outputBox.mins, Vector2(m_outputBox.mins.x + autoCompleteWidth, m_outputBox.mins.y + (m_lineHeight * m_maxAutoCompletes)));
-		m_renderer->DrawAABB2(autoBG, RGBA::BLACK.GetColorWithAlpha(128));
+		m_renderer->DrawAABB2(autoBG, RGBA::BLACK.GetColorWithAlpha(164));
 		m_renderer->DrawAABB2Outline(autoBG, RGBA::WHITE);
 		AABB2 autoBox = AABB2(m_outputBox.mins, Vector2(m_outputBox.mins.x + autoCompleteWidth, m_outputBox.mins.y + m_lineHeight));
 		autoBox.AddPaddingToSides(autoCompleteWidth * -.01f, autoCompleteWidth * -.01f);
@@ -373,7 +373,7 @@ void DevConsole::RenderAutoComplete()
 			if ((int) i == m_autoCompleteIndex){
 				m_renderer->DrawTextInBox2D(m_autoCompletes[i]->m_name, autoBox, Vector2(0.0f,0.5f), m_drawTextHeight, TEXT_DRAW_OVERRUN, RGBA::GREEN);
 			} else {
-				m_renderer->DrawTextInBox2D(m_autoCompletes[i]->m_name, autoBox, Vector2(0.0f,0.5f), m_drawTextHeight, TEXT_DRAW_OVERRUN, RGBA::WHITE.GetColorWithAlpha(200));
+				m_renderer->DrawTextInBox2D(m_autoCompletes[i]->m_name, autoBox, Vector2(0.0f,0.5f), m_drawTextHeight, TEXT_DRAW_OVERRUN, RGBA::WHITE.GetColorWithAlpha(240));
 			}
 			autoBox.Translate(0.f, m_lineHeight);
 		}

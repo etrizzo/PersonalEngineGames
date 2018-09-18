@@ -331,7 +331,10 @@
     <ClCompile Include="Networking\Net.cpp" />
     <ClCompile Include="Networking\NetAddress.cpp" />
     <ClCompile Include="Networking\RemoteCommandService.cpp" />
+    <ClCompile Include="Networking\Socket.cpp" />
     <ClCompile Include="Networking\TCPSocket.cpp" />
+    <ClCompile Include="Networking\UDPSocket.cpp" />
+    <ClCompile Include="Networking\UDPTests.cpp" />
     <ClCompile Include="Renderer\BitmapFont.cpp" />
     <ClCompile Include="Renderer\Camera.cpp" />
     <ClCompile Include="Renderer\DrawCall.cpp" />
@@ -440,7 +443,10 @@
     <ClInclude Include="Networking\Net.hpp" />
     <ClInclude Include="Networking\NetAddress.hpp" />
     <ClInclude Include="Networking\RemoteCommandService.hpp" />
+    <ClInclude Include="Networking\Socket.hpp" />
     <ClInclude Include="Networking\TCPSocket.hpp" />
+    <ClInclude Include="Networking\UDPSocket.hpp" />
+    <ClInclude Include="Networking\UDPTests.hpp" />
     <ClInclude Include="Renderer\BitmapFont.hpp" />
     <ClInclude Include="Renderer\Camera.hpp" />
     <ClInclude Include="Renderer\DrawCall.hpp" />

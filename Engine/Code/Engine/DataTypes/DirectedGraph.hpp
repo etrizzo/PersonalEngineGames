@@ -261,8 +261,9 @@ DirectedEdge<T>* DirectedGraph<T>::RemoveEdge(Node<T>* start, Node<T>* end)
 	for(int index = (int) m_edges.size() - 1; index >= 0; index--){
 		if (m_edges[index]->GetStart() == start){
 			if (m_edges[index]->GetEnd() == end){
+				DirectedEdge<T>* foundEdge = m_edges[index];
 				RemoveAtFast(m_edges, index); 
-				return m_edges[index];
+				return foundEdge;
 			}
 		}
 	}
@@ -274,8 +275,9 @@ DirectedEdge<T>* DirectedGraph<T>::RemoveEdge(DirectedEdge<T>* edge)
 {
 	for(int index = (int) m_edges.size() - 1; index >= 0; index--){
 		if (m_edges[index] == edge){
+			DirectedEdge<T>* foundEdge = m_edges[index];
 			RemoveAtFast(m_edges, index); 
-			return edge;
+			return foundEdge;
 		}
 	}
 	return nullptr;

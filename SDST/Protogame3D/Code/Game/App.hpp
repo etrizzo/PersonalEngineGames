@@ -97,3 +97,8 @@ void CommandLogShowAll(Command& cmd);
 
 void CommandGetAddress(Command& cmd);
 //void CommandSendMessage(Command& cmd);
+
+
+void CommandUDPTestStart(Command& cmd);
+void CommandUDPTestStop(Command& cmd);
+void CommandUDPTestSend(Command& cmd);

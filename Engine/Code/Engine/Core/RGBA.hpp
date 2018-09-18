@@ -52,6 +52,10 @@ public:
 	const static RGBA YELLOW;
 	const static RGBA MAGENTA;
 	const static RGBA CYAN;
+	const static RGBA LIGHTGRAY;
+	const static RGBA GRAY;
+	const static RGBA DARKGRAY;
+	const static RGBA BLANCHEDALMOND;
 
 };
 

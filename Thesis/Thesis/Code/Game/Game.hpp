@@ -3,7 +3,7 @@
 #include "Game/GameState_Playing.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
 #include "Engine/DataTypes/DirectedGraph.hpp"
-#include "Game/StoryData.hpp"
+#include "Game/StoryGraph.hpp"
 
 class Camera;
 class PerspectiveCamera;
@@ -21,8 +21,8 @@ public:
 	~Game();										
 	Game();											
 
-	DirectedGraph<StoryData> m_graph; 
-
+	//DirectedGraph<StoryData> m_graph; 
+	StoryGraph m_graph;
 
 
 	/*
@@ -33,9 +33,9 @@ public:
 	bool m_devMode;
 	//float m_gameTime;
 	Map* m_currentMap;
-	PerspectiveCamera* m_mainCamera;
+	Camera* m_mainCamera;
 	Camera* m_uiCamera;
-	PerspectiveCamera* m_currentCamera;
+	Camera* m_currentCamera;
 	Texture* m_tileTexture;
 
 

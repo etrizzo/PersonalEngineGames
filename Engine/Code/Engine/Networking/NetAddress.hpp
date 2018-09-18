@@ -13,6 +13,8 @@ public:
 	bool ToSockAddr( sockaddr *out, size_t *out_addrlen ) const; 
 	bool FromSockAddr( sockaddr const *sa ); 
 
+	bool IsValid() const;
+
 	std::string ToString() const; 
 
 public:
@@ -30,3 +32,6 @@ public: // STATICS
 	char const *service_name ); 
 	static uint GetAllLocal( net_address_t *out, uint max_count ); */
 };
+
+
+void NetAddressToSocketAddress( sockaddr* outSockAddr, size_t& outSockAddrLen, NetAddress addr );

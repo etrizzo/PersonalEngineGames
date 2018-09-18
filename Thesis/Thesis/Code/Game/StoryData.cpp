@@ -20,6 +20,18 @@ std::string StoryData::ToString() const
 	return Stringf("%s  |  %f", m_name.c_str(), m_value);
 }
 
+void StoryData::SetPosition(Vector2 pos)
+{
+	m_graphPosition = pos;
+}
+
+Vector2 StoryData::GetPosition() const
+{
+	return m_graphPosition;
+}
+
+
+
 bool StoryData::operator==(const StoryData & compare) const
 {
 	if (m_name == compare.m_name){

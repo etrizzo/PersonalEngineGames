@@ -1,8 +1,8 @@
 // Core/BytePacker.hpp or equivalent
 #pragma once
 #include "Engine/Core/Endianness.hpp"
+#define BIT_FLAG(f)   (1U << (f))
 
- #define BIT_FLAG(f)   (1U << (f))
 
 // Engine/Core/BytePacker.hpp
 enum eBytePackerOptionBit : unsigned int

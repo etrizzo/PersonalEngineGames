@@ -70,6 +70,11 @@ bool NetAddress::FromSockAddr(sockaddr const * sa)
 	return true; 
 }
 
+bool NetAddress::IsValid() const
+{
+	return (m_ip4address != 0);
+}
+
 std::string NetAddress::ToString() const
 {
 	// tostring
@@ -214,5 +219,4 @@ bool NetAddress::GetBindableAddress(NetAddress * out,  std::string port)
 	::freeaddrinfo( result );
 	return false;
 }
-
 

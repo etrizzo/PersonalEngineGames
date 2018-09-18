@@ -11,6 +11,7 @@ class Entity;
 class Light;
 class SpotLight;
 class ParticleSystem;
+class UDPTest;
 
 class Map;
 
@@ -25,6 +26,10 @@ class Game{
 public:
 	~Game();											// destructor: do nothing (for speed)
 	Game();											// default constructor: do nothing (for speed)
+
+
+	UDPTest* m_udp = nullptr;
+
 
 	bool m_isPaused;
 	bool m_devMode;

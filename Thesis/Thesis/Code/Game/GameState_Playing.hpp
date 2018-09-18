@@ -31,4 +31,5 @@ public:
 	
 protected:
 	void RenderGraph() const;
+	void UpdateGraph();
 };

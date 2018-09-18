@@ -24,4 +24,119 @@
 			</EffectSet>
 		</StoryEffects>
 	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A tells *B they want to leave the country." /> <!-- Hamlet asks claudius to leave the country -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action "*A dwells on their *A_TRAIT tendency" /> <!-- Hamlet dwells on his own depression, could also be dwelling on *A_TAG-->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action "*A tells *B to investigate a ghost" />  	<!-- Horatio tells hamlet to investigate the ghost -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action "*A criticizes *B for their relationship with *C" /> <!-- laertes calls ophelia a sloot -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action "*A warns *B about their relationship with *C" /> <!-- what about these things? maybe some kind of relevant keyword based on traits? this is polonius to oph btw -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action "*A tells *B about their relationship with *C" /> <!-- ophelia being like "oh he wrote me letters :)" -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action "*A and *B go looking for a ghost" />  <!-- Hammy and Horatio -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action "A ghost appears before *A and *B" />
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A recognizes the ghost as *A_RELATIONSHIP" />
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "Ghost beckons to *A" />
+	</DetailGrammar>
+
+	<!-- This can probably be a plot grammar!! -->
+	<DetailGrammar>
+		<Action = "The ghost reveals to *A that they were murdered by *B" />
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A tells *B about *B_RELATIONSHIP 's relationship with *C" />  <!-- hamlet tells the ghost about claudius & gertrude... h o w? -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A swears to kill *B" />   <!-- assign a motive?? -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A pretends to be insane in front of *B" />   <!-- hamlet just kind of literally shitting himself in front of ophelia for attention -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A insinuates that *B may be insane" />  <!-- polonius to hamlet -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A tests *B 's sanity" />  <!-- polonius to hamlet -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A plays a joke on *B" /> <!-- hamlet to polonius -->
+		<!-- maybe some branching options? -->
+			<Outcome = "*B is offended">
+				<Effect = "B-A -10"/>
+			</Outcome>
+			<Outcome = "*B does not understand the joke">
+				<Effect = "Comedy +10"/>
+			</Outcome>
+		</DetailGrammar>
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<!-- Assign motive?? -->
+		<Action ="*A is sent to spy on *B by *C" />   	<!-- R&G are summoned to spy on Hamlet by Claudius -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A arrives and greets *B" />  <!-- R&G arrive and greet Hamlet -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A talks to *B about *A_TRAIT" />  <!-- hamlet gives his angsty speech about man to R&G -->
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A leaves to be alone" />
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A dwells on *A_TAG" />
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A ends their relationship with *B" />
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A mocks *B" />
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action = "*A flirts with their ex *B" />
+	</DetailGrammar>
+
+	
+
+
+
 </DetailGrammars>

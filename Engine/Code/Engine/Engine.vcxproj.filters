@@ -337,6 +337,15 @@
     <ClCompile Include="DataTypes\DirectedGraph.cpp">
       <Filter>DataTypes</Filter>
     </ClCompile>
+    <ClCompile Include="Networking\Socket.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\UDPSocket.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\UDPTests.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -671,6 +680,15 @@
     </ClInclude>
     <ClInclude Include="DataTypes\DirectedGraph.hpp">
       <Filter>DataTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\Socket.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\UDPSocket.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\UDPTests.hpp">
+      <Filter>Networking</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

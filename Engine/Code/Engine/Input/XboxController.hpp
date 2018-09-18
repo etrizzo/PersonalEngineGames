@@ -18,11 +18,30 @@ enum XboxButton{
 	XBOX_BUMPER_LEFT,
 	XBOX_STICK_LEFT,
 	XBOX_STICK_RIGHT,
+
+	XBOX_TRIGGER_PRESS_LEFT,
+	XBOX_TRIGGER_PRESS_RIGHT,
+
+	XBOX_THUMBSTICK_LEFT_PRESS_LEFT		,
+	XBOX_THUMBSTICK_LEFT_PRESS_RIGHT	,
+	XBOX_THUMBSTICK_LEFT_PRESS_UP		,
+	XBOX_THUMBSTICK_LEFT_PRESS_DOWN		,
+	XBOX_THUMBSTICK_RIGHT_PRESS_LEFT	,
+	XBOX_THUMBSTICK_RIGHT_PRESS_RIGHT	,
+	XBOX_THUMBSTICK_RIGHT_PRESS_UP		,
+	XBOX_THUMBSTICK_RIGHT_PRESS_DOWN	,
+
 	XBOX_NUM_BUTTONS
 };
 
+#define TRIGGER_RELEASE_THRESHOLD (.45f)
+#define TRIGGER_PRESS_THRESHOLD (.55f)
+
+#define THUMBSTICK_PRESS_THRESHOLD (.95f)
+#define THUMBSTICK_RELEASE_THRESHOLD (.9f)
+
 class XboxController {
-	KeyButtonState m_buttons[14];
+	KeyButtonState m_buttons[XBOX_NUM_BUTTONS];
 	AnalogJoystick m_leftStick;
 	AnalogJoystick m_rightStick;
 	int m_controllerID;
@@ -46,6 +65,8 @@ public:
 	XboxController(int ID);
 
 	void SetStates();
+	void SetJoystickVirtualButtons();
+	void SetJoystickVirtualButton(float axisVal, XboxButton virtualButton);
 	void PassFrame();
 
 	float GetLeftThumbstickMagnitude();

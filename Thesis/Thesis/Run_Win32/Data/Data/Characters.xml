@@ -1,9 +1,21 @@
 <Characters>
 	<Character>
-		<Name = "CharacterA" />
-		<Trait1 = "75" />
-		<Trait2 = "20" />
-		<Trait3 = "45" />
+		<Name = "Hamlet" />
+		<Traits>
+			<Trait name="Neuroticism"  value = "90" />
+			<Trait name="Stubbornness"  value = "70" />
+			<Trait name="Predictability"  value = "90" />
+			<Trait name="Sociability"  value = "20" />
+		</Traits>
+
+		<Tags>
+			<Tag name="IsAlive" value="true" type="bool"/>
+		</Tags>
+
+		<Relationships>
+			<Relationship name="Ghost" type="Father" />
+			<Relationshp name="Ophelia" type="Lover" />
+		</Relationships>
 	</Character>
 
 	<Character>

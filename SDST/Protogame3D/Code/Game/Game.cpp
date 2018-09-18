@@ -7,6 +7,7 @@
 #include "Engine/Renderer/Light.hpp"
 #include "Engine/Renderer/ParticleSystem.hpp"
 #include <map>
+#include "Engine/Networking/UDPTests.hpp"
 
 
 Game::~Game()
@@ -58,7 +59,7 @@ Game::Game()
 
 
 	m_currentState = new GameState_Loading();
-
+	m_udp = new UDPTest();
 	
 }
 
@@ -82,6 +83,7 @@ void Game::PostStartup()
 
 	//m_soundtrackPlayback = g_theAudio->PlaySound(m_soundTrackID, true, .5f);
 	
+
 }
 
 void Game::Update()
@@ -90,6 +92,10 @@ void Game::Update()
 	//PROFILE_LOG_SCOPE_FUNCTION();
 	float ds = GetDeltaSeconds();
 	m_currentState->Update(ds);
+	
+
+	m_udp->Update();
+
 	PROFILE_POP();
 	
 }

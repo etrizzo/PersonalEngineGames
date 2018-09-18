@@ -47,4 +47,5 @@ void AnalogJoystick::SetJoystick(float inX, float inY)
 	float correctedY = correctedR * SinDegreesf(theta);
 	m_cartesian = Vector2(correctedX, correctedY);
 
+
 }

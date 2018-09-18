@@ -114,9 +114,9 @@ void App::Update()
 	}
 
 	g_theGame->Update();
-	if (DevConsoleIsOpen()){
-		g_devConsole->Update(ds);
-	}
+	//if (DevConsoleIsOpen()){
+	g_devConsole->Update(ds);
+	//}
 	g_profilerVisualizer->Update();
 
 	m_appTime = GetCurrentTimeSeconds();

@@ -31,8 +31,8 @@ Game::Game()
 	m_mainCamera->SetDepthStencilTarget( g_theRenderer->m_defaultDepthTarget );
 
 
-	m_mainCamera->SetPerspectiveOrtho(70.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.1f, 150.f);
-	m_mainCamera->LookAt(Vector3(0.f, 2.f, -2.5f), Vector3(0.f, 1.f, 0.f));
+	m_mainCamera->SetProjectionOrtho(1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
+	
 
 	m_uiCamera = new Camera();
 
@@ -47,6 +47,8 @@ Game::Game()
 	m_uiCamera->SetProjectionOrtho(1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
 	Vector2 center = m_uiCamera->GetBounds().GetCenter();
 	m_uiCamera->LookAt( Vector3( center.x, center.y, -1.f ), Vector3(center.x, center.y, .5f)); 
+	m_mainCamera->LookAt( Vector3( center.x, center.y, -1.f ), Vector3(center.x, center.y, .5f)); 
+
 
 	SetMainCamera();
 
@@ -81,6 +83,7 @@ void Game::PostStartup()
 
 
 	GraphTests();
+	StoryGraphTests();
 
 
 
@@ -272,93 +275,93 @@ void Game::RenderUI()
 
 void Game::GraphTests()
 {
-	m_graph = DirectedGraph<StoryData>();
-	ASSERT_OR_DIE(m_graph.GetNumNodes() == 0, "Num nodes should be 0");
+	DirectedGraph<StoryData> engineGraph = DirectedGraph<StoryData>();
+	ASSERT_OR_DIE(engineGraph.GetNumNodes() == 0, "Num nodes should be 0");
 	StoryData AData = StoryData("A", 1.f);
-	Node<StoryData>* a = m_graph.AddNode(AData);
+	Node<StoryData>* a = engineGraph.AddNode(AData);
 	//Test graph addition
-	ASSERT_OR_DIE(m_graph.GetNumNodes() == 1, "Num nodes should be 1");
+	ASSERT_OR_DIE(engineGraph.GetNumNodes() == 1, "Num nodes should be 1");
 
 	//Test ContainsNode
-	ASSERT_OR_DIE(m_graph.ContainsNode(a), "ContainsNode not working with node");
-	ASSERT_OR_DIE(m_graph.ContainsNode(AData), "ContainsNode not working with data");
+	ASSERT_OR_DIE(engineGraph.ContainsNode(a), "ContainsNode not working with node");
+	ASSERT_OR_DIE(engineGraph.ContainsNode(AData), "ContainsNode not working with data");
 	
 	//Test for duplicates
-	m_graph.AddNode(a);
-	ASSERT_OR_DIE(m_graph.GetNumNodes() == 1, "Num nodes should be 1");
-	ASSERT_OR_DIE(m_graph.ContainsNode(a), "ContainsNode not working with node");
+	engineGraph.AddNode(a);
+	ASSERT_OR_DIE(engineGraph.GetNumNodes() == 1, "Num nodes should be 1");
+	ASSERT_OR_DIE(engineGraph.ContainsNode(a), "ContainsNode not working with node");
 
 	//add new nodes to graph
-	Node<StoryData>* b = m_graph.AddNode(StoryData("B", 2.f));
-	Node<StoryData>* c = m_graph.AddNode(StoryData("C", 3.f));
-	Node<StoryData>* d = m_graph.AddNode(StoryData("D", 4.f));
-	ASSERT_OR_DIE(m_graph.GetNumNodes() == 4, "Num nodes should be 4");
+	Node<StoryData>* b = engineGraph.AddNode(StoryData("B", 2.f));
+	Node<StoryData>* c = engineGraph.AddNode(StoryData("C", 3.f));
+	Node<StoryData>* d = engineGraph.AddNode(StoryData("D", 4.f));
+	ASSERT_OR_DIE(engineGraph.GetNumNodes() == 4, "Num nodes should be 4");
 	
 	//Test graph edges
-	ASSERT_OR_DIE(m_graph.GetNumEdges() == 0, "Num edges should be 0");
-	DirectedEdge<StoryData>* testEdge = m_graph.AddEdge(a,b, 0.f);
-	ASSERT_OR_DIE(m_graph.GetNumEdges() == 1, "Num edges should be 1");
+	ASSERT_OR_DIE(engineGraph.GetNumEdges() == 0, "Num edges should be 0");
+	DirectedEdge<StoryData>* testEdge = engineGraph.AddEdge(a,b, 0.f);
+	ASSERT_OR_DIE(engineGraph.GetNumEdges() == 1, "Num edges should be 1");
 	
 	//test ContainsEdge
-	ASSERT_OR_DIE(m_graph.ContainsEdge(a, b), "ContainsEdge not working with edges");
-	ASSERT_OR_DIE(m_graph.ContainsEdge(testEdge), "ContainsEdge not working with edges");
+	ASSERT_OR_DIE(engineGraph.ContainsEdge(a, b), "ContainsEdge not working with edges");
+	ASSERT_OR_DIE(engineGraph.ContainsEdge(testEdge), "ContainsEdge not working with edges");
 
-	m_graph.AddEdge(b,c, 1.f);
-	m_graph.AddEdge(b,d, 3.f);
-	m_graph.AddEdge(a,d, 2.f);
-	m_graph.AddEdge(c,d, 5.f);
+	engineGraph.AddEdge(b,c, 1.f);
+	engineGraph.AddEdge(b,d, 3.f);
+	engineGraph.AddEdge(a,d, 2.f);
+	engineGraph.AddEdge(c,d, 5.f);
 
-	ASSERT_OR_DIE(m_graph.GetNumEdges() == 5, "Num edges should be 5");
+	ASSERT_OR_DIE(engineGraph.GetNumEdges() == 5, "Num edges should be 5");
 
 	//Test Removals
-	m_graph.RemoveEdge(b,c);
-	ASSERT_OR_DIE(m_graph.GetNumEdges() == 4, "Num edges should be 4");
-	ASSERT_OR_DIE(!m_graph.ContainsEdge(b, c), "Edge was not removed");
-	ASSERT_OR_DIE(m_graph.ContainsNode(b), "ContainsNode not working with node");
-	ASSERT_OR_DIE(m_graph.ContainsNode(c), "ContainsNode not working with node");
+	engineGraph.RemoveEdge(b,c);
+	ASSERT_OR_DIE(engineGraph.GetNumEdges() == 4, "Num edges should be 4");
+	ASSERT_OR_DIE(!engineGraph.ContainsEdge(b, c), "Edge was not removed");
+	ASSERT_OR_DIE(engineGraph.ContainsNode(b), "ContainsNode not working with node");
+	ASSERT_OR_DIE(engineGraph.ContainsNode(c), "ContainsNode not working with node");
 
 	//return graph to previous state
-	m_graph.AddEdge(b,c);
-	ASSERT_OR_DIE(m_graph.GetNumEdges() == 5, "Num edges should be 5");
+	engineGraph.AddEdge(b,c);
+	ASSERT_OR_DIE(engineGraph.GetNumEdges() == 5, "Num edges should be 5");
 
 	//test RemoveNode with node
-	m_graph.RemoveNode(b);
-	ASSERT_OR_DIE(m_graph.GetNumNodes() == 3, "Num nodes should be 3");
-	ASSERT_OR_DIE(m_graph.GetNumEdges() == 2, "Edges attached to b should have been destroyed");
-	ASSERT_OR_DIE(!m_graph.ContainsNode(b), "Graph should not contian b");
-	ASSERT_OR_DIE(!m_graph.ContainsEdge(b, c), "b->c should not exist in graph");
+	engineGraph.RemoveNode(b);
+	ASSERT_OR_DIE(engineGraph.GetNumNodes() == 3, "Num nodes should be 3");
+	ASSERT_OR_DIE(engineGraph.GetNumEdges() == 2, "Edges attached to b should have been destroyed");
+	ASSERT_OR_DIE(!engineGraph.ContainsNode(b), "Graph should not contian b");
+	ASSERT_OR_DIE(!engineGraph.ContainsEdge(b, c), "b->c should not exist in graph");
 
 	//test RemoveNode with data
-	m_graph.RemoveNode(AData);
-	ASSERT_OR_DIE(m_graph.GetNumNodes() == 2, "Num nodes should be 2");
-	ASSERT_OR_DIE(m_graph.GetNumEdges() == 1, "Edges attached to a should have been destroyed");
-	ASSERT_OR_DIE(!m_graph.ContainsNode(a), "Graph should not contian b");
-	ASSERT_OR_DIE(!m_graph.ContainsEdge(a, d), "a->d should not exist in graph");
+	engineGraph.RemoveNode(AData);
+	ASSERT_OR_DIE(engineGraph.GetNumNodes() == 2, "Num nodes should be 2");
+	ASSERT_OR_DIE(engineGraph.GetNumEdges() == 1, "Edges attached to a should have been destroyed");
+	ASSERT_OR_DIE(!engineGraph.ContainsNode(a), "Graph should not contian b");
+	ASSERT_OR_DIE(!engineGraph.ContainsEdge(a, d), "a->d should not exist in graph");
 
 	//test graph clearing
-	m_graph.Clear();
-	ASSERT_OR_DIE(m_graph.GetNumNodes() == 0, "Num nodes should be 0");
-	ASSERT_OR_DIE(m_graph.GetNumEdges() == 0, "Num nodes should be 0");
+	engineGraph.Clear();
+	ASSERT_OR_DIE(engineGraph.GetNumNodes() == 0, "Num nodes should be 0");
+	ASSERT_OR_DIE(engineGraph.GetNumEdges() == 0, "Num nodes should be 0");
 
-	a = m_graph.AddNode(StoryData("A", 1.f));
-	b = m_graph.AddNode(StoryData("B", 2.f));
-	c = m_graph.AddNode(StoryData("C", 3.f));
-	d = m_graph.AddNode(StoryData("D", 4.f));
+	a = engineGraph.AddNode(StoryData("A", 1.f));
+	b = engineGraph.AddNode(StoryData("B", 2.f));
+	c = engineGraph.AddNode(StoryData("C", 3.f));
+	d = engineGraph.AddNode(StoryData("D", 4.f));
 
-	m_graph.AddEdge(a,b, 10.f);
-	m_graph.AddEdge(b,c, 1.f);
-	m_graph.AddEdge(b,d, 3.f);
-	m_graph.AddEdge(a,d, 2.f);
-	m_graph.AddEdge(c,d, 5.f);
+	engineGraph.AddEdge(a,b, 10.f);
+	engineGraph.AddEdge(b,c, 1.f);
+	engineGraph.AddEdge(b,d, 3.f);
+	engineGraph.AddEdge(a,d, 2.f);
+	engineGraph.AddEdge(c,d, 5.f);
 
 }
 
 void Game::StoryGraphTests()
 {
-	m_graph = DirectedGraph<StoryData>();
+	m_graph = StoryGraph();
 	ASSERT_OR_DIE(m_graph.GetNumNodes() == 0, "Num nodes should be 0");
 	StoryData AData = StoryData("A", 1.f);
-	Node<StoryData>* a = m_graph.AddNode(AData);
+	StoryNode* a = m_graph.AddNode(AData);
 	//Test graph addition
 	ASSERT_OR_DIE(m_graph.GetNumNodes() == 1, "Num nodes should be 1");
 
@@ -372,13 +375,13 @@ void Game::StoryGraphTests()
 	ASSERT_OR_DIE(m_graph.ContainsNode(a), "ContainsNode not working with node");
 
 	//add new nodes to graph
-	Node<StoryData>* b = m_graph.AddNode(StoryData("B", 2.f));
-	Node<StoryData>* c = m_graph.AddNode(StoryData("C", 3.f));
-	Node<StoryData>* d = m_graph.AddNode(StoryData("D", 4.f));
+	StoryNode* b = m_graph.AddNode(StoryData("B", 2.f));
+	StoryNode* c = m_graph.AddNode(StoryData("C", 3.f));
+	StoryNode* d = m_graph.AddNode(StoryData("D", 4.f));
 	ASSERT_OR_DIE(m_graph.GetNumNodes() == 4, "Num nodes should be 4");
 
 	ASSERT_OR_DIE(m_graph.GetNumEdges() == 0, "Num edges should be 0");
-	DirectedEdge<StoryData>* testEdge = m_graph.AddEdge(a,b, 0.f);
+	StoryEdge* testEdge = m_graph.AddEdge(a,b, 0.f);
 	ASSERT_OR_DIE(m_graph.GetNumEdges() == 1, "Num edges should be 1");
 
 	//test ContainsEdge
@@ -393,7 +396,7 @@ void Game::StoryGraphTests()
 	ASSERT_OR_DIE(m_graph.GetNumEdges() == 5, "Num edges should be 5");
 
 	//Test Removals
-	m_graph.RemoveEdge(b,c);
+	m_graph.RemoveAndDeleteEdge(b,c);
 	ASSERT_OR_DIE(m_graph.GetNumEdges() == 4, "Num edges should be 4");
 	ASSERT_OR_DIE(!m_graph.ContainsEdge(b, c), "Edge was not removed");
 	ASSERT_OR_DIE(m_graph.ContainsNode(b), "ContainsNode not working with node");
@@ -404,14 +407,14 @@ void Game::StoryGraphTests()
 	ASSERT_OR_DIE(m_graph.GetNumEdges() == 5, "Num edges should be 5");
 
 	//test DeleteNode with node
-	m_graph.RemoveNode(b);
+	m_graph.RemoveAndDeleteNode(b);
 	ASSERT_OR_DIE(m_graph.GetNumNodes() == 3, "Num nodes should be 3");
 	ASSERT_OR_DIE(m_graph.GetNumEdges() == 2, "Edges attached to b should have been destroyed");
 	ASSERT_OR_DIE(!m_graph.ContainsNode(b), "Graph should not contian b");
 	ASSERT_OR_DIE(!m_graph.ContainsEdge(b, c), "b->c should not exist in graph");
 
 	//test DeleteNode with data
-	m_graph.RemoveNode(AData);
+	m_graph.RemoveAndDeleteNode(AData);
 	ASSERT_OR_DIE(m_graph.GetNumNodes() == 2, "Num nodes should be 2");
 	ASSERT_OR_DIE(m_graph.GetNumEdges() == 1, "Edges attached to a should have been destroyed");
 	ASSERT_OR_DIE(!m_graph.ContainsNode(a), "Graph should not contian b");
@@ -421,16 +424,36 @@ void Game::StoryGraphTests()
 	ASSERT_OR_DIE(m_graph.GetNumNodes() == 0, "Num nodes should be 0");
 	ASSERT_OR_DIE(m_graph.GetNumEdges() == 0, "Num nodes should be 0");
 
-	m_graph.AddNode(StoryData("A", 1.f));
-	m_graph.AddNode(StoryData("B", 2.f));
-	m_graph.AddNode(StoryData("C", 3.f));
-	m_graph.AddNode(StoryData("D", 4.f));
+	a = m_graph.AddNode(StoryData("A", 1.f));
+	b = m_graph.AddNode(StoryData("B", 2.f));
+	c = m_graph.AddNode(StoryData("C", 3.f));
+	d = m_graph.AddNode(StoryData("D", 4.f));
+	StoryNode* ee = m_graph.AddNode(StoryData("E", 5.f));
+	StoryNode* f = m_graph.AddNode(StoryData("F", 1.f));
 
 	m_graph.AddEdge(a,b, 10.f);
 	m_graph.AddEdge(b,c, 1.f);
 	m_graph.AddEdge(b,d, 3.f);
 	m_graph.AddEdge(a,d, 2.f);
 	m_graph.AddEdge(c,d, 5.f);
+	m_graph.AddEdge(b, ee, 3.f);
+	m_graph.AddEdge(ee, d);
+	m_graph.AddEdge(a,f, 1.f);
+	m_graph.AddEdge(f, c,6.f);
+	//m_graph.AddEdge(f, d, 2.f);
+
+	m_graph.AddStart(a);
+	m_graph.AddEnd(d);
+
+	GetRandomFloatInRange(.4f, .6f);
+	b->m_data.SetPosition( Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f)));
+	c->m_data.SetPosition( Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f)));
+	ee->m_data.SetPosition(Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f)));
+	f->m_data.SetPosition( Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f)));
+
+
+
+	m_graph.RunNodeAdjustments();
 }
 
 

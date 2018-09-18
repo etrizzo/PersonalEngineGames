@@ -37,9 +37,7 @@ void ProfilerVisualizer::Update()
 			m_currentReport->GenerateReportFlatFromFrame(frame);
 		}
 
-	} else {
-		m_renderer->DrawTextInBox2D("No profiler frame found- profiling may be disabled in EngineBuildPreferences.hpp", m_reportArea, Vector2::HALF, .05f, TEXT_DRAW_WORD_WRAP, RGBA::RED);
-	}
+	} 
 }
 
 void ProfilerVisualizer::HandleInput(InputSystem* input)
