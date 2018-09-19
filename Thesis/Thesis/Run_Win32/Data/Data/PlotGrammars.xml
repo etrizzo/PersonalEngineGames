@@ -3,13 +3,15 @@
 		<!-- *[X] indicates a character name who should be replaced at rutntime -->
 		<Action = "*A kicks *B" />
 		<CharacterRequirements>
-			<A Trait1 = "< 40" />
-			<A Trait2 = "> 30" />
+			<Character name="*A">
+				<Requirement trait="Neuroticism" value="60" compare="greater" />
+				<Requirement trait="Predictability" value="40" compare="less" />
+			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>
-			<A tag = "isAlive" target="true"/> 
+			<A tag = "isAlive" value="true"/> 
 			<!-- tags are a string:string map which contain tag:data-->
-			<B tag = "isAlive" target="true"/>
+			<B tag = "isAlive" value="true"/>
 		</StoryRequirements>
 		<StoryEffects>
 			<EffectSet chance="1.0" />
@@ -19,7 +21,19 @@
 			</EffectSet>
 		</StoryEffects>
 	</PlotGrammar>
+
+
+		<!-- This can probably be a plot grammar!! -->
+	<DetailGrammar>
+		<Action = "A ghost reveals to *A that they were murdered by *B" /> <!-- assign motive to kill B -->
+	</DetailGrammar>
+
+
+
 </PlotGrammars>
+
+
+
 
 
 

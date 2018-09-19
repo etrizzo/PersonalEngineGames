@@ -32,6 +32,26 @@ void StoryGraph::RunNodeAdjustments()
 
 std::vector<StoryNode*> StoryGraph::FindPath(StoryHeuristicCB heuristic)
 {
+	std::vector<StoryNode*> openNodes = std::vector<StoryNode*>();
+	openNodes.push_back(m_startNode);
+
+	StoryNode* currentNode;
+	while (!openNodes.empty()){
+		currentNode = openNodes.back();
+		openNodes.pop_back();
+
+		//break if the end node is found
+		if (currentNode == m_endNode){
+			//return the path
+			break;
+		} else {
+			//otherwise, get all out-bound neighbors.
+			std::vector<StoryNode*> outboundNeighbors;
+			for (StoryEdge* edge : currentNode->m_outboundEdges){
+				outboundNeighbors.push_back(edge->GetEnd());
+			}
+		}
+	}
 
 	return std::vector<StoryNode*>();
 }

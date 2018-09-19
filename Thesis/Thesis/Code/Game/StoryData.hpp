@@ -16,9 +16,14 @@ public:
 	bool operator==( const StoryData& compare ) const;
 	bool operator!=( const StoryData& compare ) const;
 
-	//test
+	//test bits
 	std::string m_name;
 	float m_value;
+
+	//actual members
+	std::string m_id;
+	std::string m_action;
+
 
 	Vector2 m_graphPosition = Vector2::HALF;
 };
