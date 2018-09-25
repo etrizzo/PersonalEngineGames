@@ -6,6 +6,10 @@ StoryData::StoryData(std::string name, float value)
 	m_value = value;
 }
 
+StoryData::StoryData(tinyxml2::XMLElement * nodeElement)
+{
+}
+
 StoryData::~StoryData()
 {
 }

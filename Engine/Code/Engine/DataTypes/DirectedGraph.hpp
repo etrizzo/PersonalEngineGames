@@ -12,12 +12,16 @@ public:
 	Node(T data);
 	~Node();
 	T m_data;
+	float m_shortestDistance;
 
 	std::string GetName();	//all data types T must have GetName function
 	std::string GetData();	//all data types T must have ToString function
 
 	void AddOutboundEdge(DirectedEdge<T>* edge);
 	void AddInboundEdge(DirectedEdge<T>* edge);
+
+	float GetShortestDistance() const;
+	void SetShortestDistance(float distance);
 
 	std::vector<DirectedEdge<T>*> m_outboundEdges;
 	std::vector<DirectedEdge<T>*> m_inboundEdges;
@@ -120,6 +124,18 @@ template<typename T>
 inline void Node<T>::AddInboundEdge(DirectedEdge<T>* edge)
 {
 	m_inboundEdges.push_back(edge);
+}
+
+template<typename T>
+inline float Node<T>::GetShortestDistance() const
+{
+	return m_shortestDistance;
+}
+
+template<typename T>
+inline void Node<T>::SetShortestDistance(float distance)
+{
+	m_shortestDistance = distance;
 }
 
 template<typename T>

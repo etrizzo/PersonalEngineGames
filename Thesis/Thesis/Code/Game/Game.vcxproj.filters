@@ -55,6 +55,15 @@
     <ClCompile Include="StoryStructure.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterRequirements.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="StoryRequirements.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectSet.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -100,6 +109,15 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="StoryStructure.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterRequirements.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="StoryRequirements.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectSet.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

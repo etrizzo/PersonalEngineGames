@@ -5,6 +5,7 @@ class StoryData{
 public:
 	StoryData(){};
 	StoryData(std::string name, float value);
+	StoryData(tinyxml2::XMLElement* nodeElement);
 	~StoryData();
 
 	std::string GetName() const;

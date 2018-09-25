@@ -16,7 +16,7 @@ typedef DirectedEdge<StoryData> StoryEdge;
 #define NUM_NODE_ITERATIONS (2000)
 
 //comparison for 
-typedef bool (*StoryHeuristicCB) (StoryNode* a, StoryNode* b, StoryStructure* currentStructure);
+typedef float (*StoryHeuristicCB) (StoryNode* a, StoryNode* b, StoryStructure* currentStructure);
 
 // wrapper for DirectedGraph which stores all project-specific information
 // such as characters, story structure, etc.
@@ -24,6 +24,16 @@ typedef bool (*StoryHeuristicCB) (StoryNode* a, StoryNode* b, StoryStructure* cu
 class StoryGraph{
 public:
 	StoryGraph();
+
+	/*
+	===========================
+	Initialization Functions
+	===========================
+	*/
+	void ReadPlotNodesFromXML(std::string filePath);
+	void ReadDetailNodesFromXML(std::string filePath);
+	void ReadCharactersFromXML(std::string filePath);
+
 	
 	/*
 	=====================
@@ -40,6 +50,15 @@ public:
 	Generation Functions
 	=====================
 	*/
+	void RunGeneration(int numPlotNodes = 3, int desiredSize = 10);
+	void GenerateSkeleton(int numPlotNodes);
+	bool TryToAddDetailNode();
+	bool AddPlotNode(StoryNode* newPlotNode);
+
+	//adds a new node on the edge between two existing nodes (insert between nodes)
+	void AddNodeAtEdge(StoryNode* newNode, StoryEdge* existingEdge);
+
+
 	std::vector<StoryNode*> FindPath( StoryHeuristicCB heuristic );
 
 	/*
@@ -76,7 +95,7 @@ public:
 	bool ContainsEdge(StoryEdge* edge)					const;
 	bool ContainsEdge(StoryNode* start, StoryNode* end)	const;
 
-	
+	bool NodeRequirementsAreMet(StoryNode* node, StoryEdge* atEdge);
 	
 
 protected:
@@ -95,6 +114,12 @@ protected:
 	Vector2 CalculateNodePush(StoryNode* node) const;
 	void RenderNode(StoryNode* node, Vector2 position) const;
 	void RenderEdge(StoryEdge* edge) const;
+
+public:
+	static std::vector<StoryNode*> s_plotNodes;
+	static std::vector<StoryNode*> s_detailNodes;
+	static StoryNode* GetRandomPlotNode();
+	static StoryNode* GetRandomDetailNode();
 
 
 };

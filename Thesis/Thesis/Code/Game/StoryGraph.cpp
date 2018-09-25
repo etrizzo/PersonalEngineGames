@@ -1,9 +1,48 @@
 #include "StoryGraph.hpp"
 #include "Game/Game.hpp"
+#include "Game/Character.hpp"
+
+std::vector<StoryNode*> StoryGraph::s_plotNodes = std::vector<StoryNode*>();
+std::vector<StoryNode*> StoryGraph::s_detailNodes = std::vector<StoryNode*>();
 
 StoryGraph::StoryGraph()
 {
 
+}
+
+void StoryGraph::ReadPlotNodesFromXML(std::string filePath)
+{
+	tinyxml2::XMLDocument nodeDoc;
+//	std::string filePath = "Data/Data/" + fileName;
+	nodeDoc.LoadFile(filePath.c_str());
+	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("PlotGrammar"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("PlotGrammar")){
+		StoryData data = StoryData(nodeElement);
+		s_plotNodes.push_back(new StoryNode(data));
+	}
+	
+}
+
+void StoryGraph::ReadDetailNodesFromXML(std::string filePath)
+{
+	tinyxml2::XMLDocument nodeDoc;
+	//	std::string filePath = "Data/Data/" + fileName;
+	nodeDoc.LoadFile(filePath.c_str());
+	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("DetailGrammar"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("DetailGrammar")){
+		StoryData data = StoryData(nodeElement);
+		s_detailNodes.push_back(new StoryNode(data));
+	}
+}
+
+void StoryGraph::ReadCharactersFromXML(std::string filePath)
+{
+	tinyxml2::XMLDocument charDoc;
+	//	std::string filePath = "Data/Data/" + fileName;
+	charDoc.LoadFile(filePath.c_str());
+	for (tinyxml2::XMLElement* charElement = charDoc.FirstChildElement("Character"); charElement != NULL; charElement = charElement->NextSiblingElement("Character")){
+		Character* newChar = new Character();
+		newChar->InitFromXML(charElement);
+		m_characters.push_back(newChar);
+	}
 }
 
 void StoryGraph::UpdateNodePositions()
@@ -30,6 +69,68 @@ void StoryGraph::RunNodeAdjustments()
 	}
 }
 
+void StoryGraph::RunGeneration(int numPlotNodes, int desiredSize)
+{
+	GenerateSkeleton(numPlotNodes);
+	bool canAdd = true;
+	while(m_graph.GetNumNodes() < desiredSize && canAdd){
+		canAdd = TryToAddDetailNode();
+	}
+}
+
+void StoryGraph::GenerateSkeleton(int numPlotNodes)
+{
+	while(GetNumNodes() < numPlotNodes){
+		AddPlotNode(StoryGraph::GetRandomPlotNode());
+	}
+}
+
+bool StoryGraph::TryToAddDetailNode()
+{
+	return false;
+}
+
+bool StoryGraph::AddPlotNode(StoryNode* newPlotNode)
+{
+	//walk along story until you can place the node
+	std::queue<StoryEdge*> openEdges;
+	openEdges.push(m_startNode->m_outboundEdges[0]);
+	StoryNode* nodeToAddAfter; 
+	StoryEdge* edgeToAddAt = nullptr;
+	bool foundSpot = false;
+	while (!openEdges.empty()){
+		edgeToAddAt = openEdges.back();
+		openEdges.pop();
+		//if the story meets the requirements of the new nodes at that edge, continue.
+		//if not, add the end of the edge to the open list.
+		if (!NodeRequirementsAreMet(newPlotNode, edgeToAddAt)){
+			for (StoryEdge* edge : edgeToAddAt->GetEnd()->m_outboundEdges){
+				openEdges.push(edge);
+			}
+		} else {
+			foundSpot = true;
+			break;
+		}
+
+	}
+
+	//add the plot node at the found node
+	if (foundSpot){
+		AddNodeAtEdge(newPlotNode, edgeToAddAt);
+	}
+
+	return foundSpot;
+}
+
+void StoryGraph::AddNodeAtEdge(StoryNode * newNode, StoryEdge * existingEdge)
+{
+	m_graph.RemoveEdge(existingEdge);
+	//not sure what to do with cost...
+	float newCost = existingEdge->GetCost() * .5f;
+	m_graph.AddEdge(existingEdge->GetStart(), newNode, newCost);
+	m_graph.AddEdge(newNode, existingEdge->GetEnd(), newCost);
+}
+
 std::vector<StoryNode*> StoryGraph::FindPath(StoryHeuristicCB heuristic)
 {
 	std::vector<StoryNode*> openNodes = std::vector<StoryNode*>();
@@ -46,9 +147,26 @@ std::vector<StoryNode*> StoryGraph::FindPath(StoryHeuristicCB heuristic)
 			break;
 		} else {
 			//otherwise, get all out-bound neighbors.
-			std::vector<StoryNode*> outboundNeighbors;
+			//std::vector<StoryNode*> outboundNeighbors;
+			float cost = currentNode->GetShortestDistance();
 			for (StoryEdge* edge : currentNode->m_outboundEdges){
-				outboundNeighbors.push_back(edge->GetEnd());
+				//outboundNeighbors.push_back(edge->GetEnd());
+				StoryNode* neighbor = edge->GetEnd();
+				//if the new path is faster than the old path, update cost
+				float newCost = cost + (float) (heuristic(currentNode, neighbor, &m_targetStructure));
+				if (neighbor->GetShortestDistance() > newCost){
+					neighbor->SetShortestDistance(newCost);
+					// if the neighbor isn't in your list of open nodes, add it
+					bool contains = false;
+					for (StoryNode* node : openNodes){
+						if (node == neighbor){
+							contains = true;
+						}
+					}
+					if (!contains){
+						openNodes.insert(openNodes.begin(), neighbor);
+					}
+				}
 			}
 		}
 	}
@@ -321,6 +439,11 @@ bool StoryGraph::ContainsEdge(StoryNode * start, StoryNode * end) const
 	return m_graph.ContainsEdge(start, end);
 }
 
+bool StoryGraph::NodeRequirementsAreMet(StoryNode * node, StoryEdge* atEdge)
+{
+	return true;
+}
+
 
 
 
@@ -367,4 +490,16 @@ void StoryGraph::RenderEdge(StoryEdge * edge) const
 	
 	std::string cost = Stringf("%f", edge->GetCost());
 	g_theRenderer->DrawText2D(cost, halfPoint - Vector2(.002f, 0.f), .008f, RGBA::YELLOW);
+}
+
+StoryNode * StoryGraph::GetRandomPlotNode()
+{
+	int i = GetRandomIntLessThan(StoryGraph::s_plotNodes.size());
+	return StoryGraph::s_plotNodes[i];
+}
+
+StoryNode * StoryGraph::GetRandomDetailNode()
+{
+	int i = GetRandomIntLessThan(StoryGraph::s_detailNodes.size());
+	return StoryGraph::s_detailNodes[i];
 }
