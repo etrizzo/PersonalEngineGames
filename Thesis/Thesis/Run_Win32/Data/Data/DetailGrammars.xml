@@ -1,79 +1,108 @@
-<DetailGrammars>
+
 	<DetailGrammar>
-		<Action = "*A talks to *B about *A_TAG" />
+		<Action text="*0* talks to *1* about *0_TAG*" />
 		<CharacterRequirements>
-			<Character name="*A">
-				<Requirement trait="Neuroticism" value="60" compare="greater" />
+			<Character number="0">
+				<Requirement trait="Social" value="60" compare="greater" />
 			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>
 			<A tag = "isAlive" target="true"/> 
 			<B tag = "isAlive" target="true"/>
-			<A tag = "isAngry" target="!*B" />
+			<A tag = "isAngryAt" target="! *0*" />
 		</StoryRequirements>
 		<StoryEffects>
+			<!--
 			<EffectSet chance="*B_INVERSE_TRAIT1"/>
 				<TraitChange character="*A" trait="Social" change="+10" />
 				<TraitChange character="*B" trait="Social" change="+10" />
 				<TagChange character="*B" hasTag = "isTrusting" target="*A" />
 				<StoryChange Action="+5" Romance="+10" /> 
 			</EffectSet>
+		-->
 			<EffectSet chance="default">
-				<TraitChange character="*A" trait="Social" change="-10" />
-				<TraitChange character="*B" trait="Social" change="-10" />
-				<TagChange character="*B" hasTag = "isAngry" target="*A" />
+				<TraitChange character="0" trait="Social" change="-10" />
+				<TraitChange character="1" trait="Social" change="-10" />
+				<TagChange character="1" hasTag = "isAngry" target="*A" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</StoryEffects>
 	</DetailGrammar>
 
 	<DetailGrammar>
-		<Action "*A thinks about their *A_TRAIT tendency" /> <!-- could also be a tag that A has -->
+		<Action text="*0* flirts with *1*" />
 		<CharacterRequirements>
-			<Character name="*A">
-				<Requirement trait="*A_TRAIT" value="60" compare="greater" />
+			<Character number="0">
+				<Requirement trait="Social" value="60" compare="greater" />
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isAngryAt" target="*1*"/>
+			</Character>
+			<Character number="1">
+				<Requirement tag="isAlive" target="true" />
 			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>
-			<A tag = "isAlive" target="true"/> 
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
 		</StoryRequirements>
 		<StoryEffects>
-			<EffectSet chance="default" >
-				<TraitChange character="*A" trait="*A_TRAIT" change="+10" />
-				<StoryChange Action="-5" />
+			<EffectSet chance="default">
+				<TraitChange character="0" trait="Social" change="-10" />
+				<TraitChange character="1" trait="Social" change="-10" />
+				<TagChange character="1" hasTag = "isAngry" target="*0*" />
+				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</StoryEffects>
 	</DetailGrammar>
 
 	<DetailGrammar>
-		<Action "*A tells *B about a ghost" />  	
+		<Action text="*0* finds a cave treasure" />
+		<CharacterRequirements>
+			<Character number="0">
+				<Requirement trait="Social" value="60" compare="greater" />
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isAngryAt" target="*1*"/>
+			</Character>
+			<Character number="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inCave" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TraitChange character="0" trait="Social" change="-10" />
+				<TraitChange character="1" trait="Social" change="-10" />
+				<TagChange character="1" hasTag = "isAngry" target="*0*" />
+				<StoryChange Action="+5" Tension="+10" /> 
+			</EffectSet>
+		</StoryEffects>
 	</DetailGrammar>
+
 
 	<DetailGrammar>
-		<Action "*A criticizes *B for their relationship with *C" />
+		<Action text="*0* finds a dungeon treasure" />
+		<CharacterRequirements>
+			<Character number="0">
+				<Requirement trait="Social" value="60" compare="greater" />
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isAngryAt" target="*1*"/>
+			</Character>
+			<Character number="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inDungeon" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TraitChange character="0" trait="Social" change="-10" />
+				<TraitChange character="1" trait="Social" change="-10" />
+				<TagChange character="1" hasTag = "isAngry" target="*0*" />
+				<StoryChange Action="+5" Tension="+10" /> 
+			</EffectSet>
+		</StoryEffects>
 	</DetailGrammar>
-
-	<DetailGrammar>
-		<Action "*A tells *B about their relationship with *C" /> 
-	</DetailGrammar>
-
-	<DetailGrammar>
-		<Action "*A and *B go looking for a ghost" />  <!-- Hammy and Horatio -->
-	</DetailGrammar>
-
-	<DetailGrammar>
-		<Action "A ghost appears before *A and *B" />
-	</DetailGrammar>
-
-	<DetailGrammar>
-		<Action = "*A recognizes the ghost as *A_RELATIONSHIP" />
-	</DetailGrammar>
-
-	<!-- This can probably be a plot grammar!! -->
-	<DetailGrammar>
-		<Action = "The ghost reveals to *A that they were murdered by *B" />
-	</DetailGrammar>
-
-
-
-</DetailGrammars>

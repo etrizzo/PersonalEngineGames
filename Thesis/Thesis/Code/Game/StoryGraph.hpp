@@ -1,22 +1,22 @@
 #pragma once;
-#include "Engine/DataTypes/DirectedGraph.hpp"
 #include "Game/StoryData.hpp"
 #include "Game/StoryStructure.hpp"
 
 class Character;
 
-typedef Node<StoryData> StoryNode ;
-typedef DirectedEdge<StoryData> StoryEdge;
 
-#define NODE_SIZE (.05f)
+#define START_NODE_POSITION (Vector2(.15f, .5f))
+#define END_NODE_POSITION (Vector2(1.25f, .5f))
+#define NODE_SIZE (.04f)
+#define NODE_FONT_SIZE (.008f)
 #define PULL_WEIGHT (.51f)
 #define PUSH_WEIGHT (.89f)
-#define MIN_NODE_DISTANCE (.2f)
-#define MAX_NODE_DISTANCE (.35f)
+#define MIN_NODE_DISTANCE (.15f)
+#define MAX_NODE_DISTANCE (.3f)
 #define NUM_NODE_ITERATIONS (2000)
 
 //comparison for 
-typedef float (*StoryHeuristicCB) (StoryNode* a, StoryNode* b, StoryStructure* currentStructure);
+typedef StoryState* (*StoryHeuristicCB) (StoryEdge* edge, StoryStructure* currentStructure);
 
 // wrapper for DirectedGraph which stores all project-specific information
 // such as characters, story structure, etc.
@@ -51,9 +51,15 @@ public:
 	=====================
 	*/
 	void RunGeneration(int numPlotNodes = 3, int desiredSize = 10);
+
 	void GenerateSkeleton(int numPlotNodes);
+	void GenerateStartAndEnd();
 	bool TryToAddDetailNode();
 	bool AddPlotNode(StoryNode* newPlotNode);
+	bool AddDetailNode(StoryNode* newDetailNode);
+
+	//by default, adds 1/4 * (numNodes) branches
+	void IdentifyBranchesAndAdd(int numBranchesToAdd = -1);
 
 	//adds a new node on the edge between two existing nodes (insert between nodes)
 	void AddNodeAtEdge(StoryNode* newNode, StoryEdge* existingEdge);
@@ -67,17 +73,18 @@ public:
 	=====================================
 	*/
 	//Modifiers
-	StoryNode* AddNode(StoryData data);
+	StoryNode* AddNode(StoryData* data);
 	StoryNode* AddNode(StoryNode* newNode);
-	StoryEdge* AddEdge(StoryNode* start, StoryNode* end, float cost = 0.f);
-	void RemoveAndDeleteNode(StoryData data);
+	StoryEdge* AddEdge(StoryNode* start, StoryNode* end);
+	StoryEdge* AddEdge(StoryNode* start, StoryNode* end, StoryState* cost);
+	void RemoveAndDeleteNode(StoryData* data);
 	void RemoveAndDeleteNode(StoryNode* node);
 	void RemoveAndDeleteEdge(StoryNode* start, StoryNode* end);
 	void RemoveAndDeleteEdge(StoryEdge* edge);
 
-	StoryNode* AddStart(StoryData data);
+	StoryNode* AddStart(StoryData* data);
 	StoryNode* AddStart(StoryNode* startNode);
-	StoryNode* AddEnd(StoryData data);
+	StoryNode* AddEnd(StoryData* data);
 	StoryNode* AddEnd(StoryNode* endNode);
 
 	void Clear();
@@ -91,19 +98,20 @@ public:
 
 	//Checks
 	bool ContainsNode(StoryNode* node)					const;
-	bool ContainsNode(StoryData data)					const;
+	bool ContainsNode(StoryData* data)					const;
 	bool ContainsEdge(StoryEdge* edge)					const;
 	bool ContainsEdge(StoryNode* start, StoryNode* end)	const;
 
 	bool NodeRequirementsAreMet(StoryNode* node, StoryEdge* atEdge);
-	
+	bool StoryRequirementsMet(StoryNode* node, StoryEdge* atEdge);
+	bool TryToSetCharactersForNode(StoryNode* node, StoryEdge* atEdge);
 
 protected:
-	StoryNode* m_startNode					= nullptr;
-	StoryNode* m_endNode					= nullptr;;
-	DirectedGraph<StoryData> m_graph		= DirectedGraph<StoryData>();
-	std::vector<Character*> m_characters	= std::vector<Character*>();
-	StoryStructure m_targetStructure		= StoryStructure();
+	StoryNode* m_startNode							= nullptr;
+	StoryNode* m_endNode							= nullptr;;
+	DirectedGraph<StoryData*, StoryState*> m_graph	= DirectedGraph<StoryData*, StoryState*>();
+	std::vector<Character*> m_characters			= std::vector<Character*>();
+	StoryStructure m_targetStructure				= StoryStructure();
 
 	//float m_nodeSize						= .05f;
 	
@@ -123,3 +131,6 @@ public:
 
 
 };
+
+
+StoryState* ShortestPathHeuristic(StoryEdge* edge,  StoryStructure* currentStructure);

@@ -1,36 +1,50 @@
-<Characters>
-	<Character>
-		<Name = "Hamlet" />
+
+	<Character name="CharacterA">
 		<Traits>
-			<Trait name="Neuroticism"  value = "90" />
-			<Trait name="Stubbornness"  value = "70" />
-			<Trait name="Predictability"  value = "90" />
-			<Trait name="Sociability"  value = "20" />
+			<Trait name="Social"  		value = "20" />
+			<Trait name="Information"   value = "90" />
+			<Trait name="Decisions"  	value = "70" />
+			<Trait name="Structure"  	value = "90" />
 		</Traits>
 
 		<Tags>
 			<Tag name="IsAlive" value="true" type="bool"/>
 		</Tags>
 
+		<!--
 		<Relationships>
-			<Relationship name="Ghost" type="Father" />
-			<Relationshp name="Ophelia" type="Lover" />
+			<Relationship name="CharacterB" type="Father" />
+			<Relationshp name="CharacterC" type="Lover" />
 		</Relationships>
+	-->
 	</Character>
 
-	<Character>
-		<Name = "CharacterB" />
-		<Trait1 = "25" />
-		<Trait2 = "80" />
-		<Trait3 = "15" />
+	<Character name="CharacterB">
+		<Traits>
+			<Trait name="Social"  		value = "60" />
+			<Trait name="Information"   value = "20" />
+			<Trait name="Decisions"  	value = "10" />
+			<Trait name="Structure"  	value = "70" />
+		</Traits>
+
+		<Tags>
+			<Tag name="IsAlive" value="true" type="bool"/>
+		</Tags>
+
 	</Character>
 
-	<Character>
-		<Name = "CharacterC" />
-		<Trait1 = "45" />
-		<Trait2 = "30" />
-		<Trait3 = "75" />
+	<Character name="CharacterC">>
+		<Traits>
+			<Trait name="Social"  		value = "80" />
+			<Trait name="Information"   value = "70" />
+			<Trait name="Decisions"  	value = "85" />
+			<Trait name="Structure"  	value = "50" />
+		</Traits>
+
+		<Tags>
+			<Tag name="IsAlive" value="true" type="bool"/>
+		</Tags>
+
 	</Character>
 
 
-</Characters>

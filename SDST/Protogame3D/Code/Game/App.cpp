@@ -5,6 +5,8 @@
 #include "Engine/Core/BytePacker.hpp"
 #include "Engine/Networking/RemoteCommandService.hpp"
 #include "Engine/Networking/UDPTests.hpp"
+#include "Engine/Networking/NetSession.hpp"
+#include "Engine/Networking/NetConnection.hpp"
 
 using namespace std;
 
@@ -201,9 +203,13 @@ void App::RegisterCommands()
 
 	CommandRegister("get_address", CommandGetAddress, "Gets machine address");
 
-	CommandRegister("udp_test_start", CommandUDPTestStart, "Starts udp test system lol");
-	CommandRegister("udp_test_stop", CommandUDPTestStop, "Stops udp test systemlol");
-	CommandRegister("udp_test_send", CommandUDPTestSend, "Sends message through udp test system", "udp_test_send <ip:port> \"msg\"");
+	//CommandRegister("udp_test_start", CommandUDPTestStart, "Starts udp test system lol");
+	//CommandRegister("udp_test_stop", CommandUDPTestStop, "Stops udp test systemlol");
+	//CommandRegister("udp_test_send", CommandUDPTestSend, "Sends message through udp test system", "udp_test_send <ip:port> \"msg\"");
+
+	CommandRegister("add_connection", CommandAddConnection, "Adds connection to this session at specified index", "add_connection <conn_idx> \"ip:port\" ");
+	CommandRegister("send_ping", CommandSendPing, "Sends ping message to specified connection", "send_ping <conn_idx> \"msg\"" );
+	CommandRegister("send_add", CommandSendAdd, "Sends add message to specified connection", "send_add <conn_idx> <val1> <val2>" );
 }
 
 void App::HandleInput()
@@ -667,33 +673,112 @@ void CommandGetAddress(Command & cmd)
 	//GetAddressExample();
 }
 
-void CommandUDPTestStart(Command & cmd)
-{
+//void CommandUDPTestStart(Command & cmd)
+//{
+//	UNUSED(cmd);
+//	g_theGame->m_udp->Start();
+//}
+//
+//void CommandUDPTestStop(Command & cmd)
+//{
+//	UNUSED(cmd);
+//	g_theGame->m_udp->Stop();
+//}
+//
+//void CommandUDPTestSend(Command & cmd)
+//{
+//	NetAddress addr;
+//	std::string str = cmd.GetNextString();
+//	std::string msg = cmd.GetNextString();
+//	addr = NetAddress(str);
+//	if (!addr.IsValid()){
+//		ConsolePrintf(RGBA::RED, "Requires address.");
+//		return;
+//	}
+//	if (msg == ""){
+//		ConsolePrintf(RGBA::RED, "Requires message.");
+//		return;
+//	}
+//
+//	ConsolePrintf(RGBA::YELLOW, "Sending message \"%s\"...", msg.c_str());
+//	g_theGame->m_udp->SendTo(addr, msg.data(), (unsigned int) msg.size());
+//}
 
-	g_theGame->m_udp->Start();
-}
-
-void CommandUDPTestStop(Command & cmd)
+void CommandAddConnection(Command & cmd)
 {
-	g_theGame->m_udp->Stop();
-}
+	uint8_t idx;
+	NetAddress addr; 
 
-void CommandUDPTestSend(Command & cmd)
-{
-	NetAddress addr;
-	std::string str = cmd.GetNextString();
-	std::string msg = cmd.GetNextString();
-	addr = NetAddress(str);
+	idx = cmd.GetNextInt();
+	std::string addrString = cmd.GetNextString();
+	addr = NetAddress(addrString);
 	if (!addr.IsValid()){
-		ConsolePrintf(RGBA::RED, "Requires address.");
-		return;
-	}
-	if (msg == ""){
-		ConsolePrintf(RGBA::RED, "Requires message.");
+		ConsolePrintf("could not connect to %s ", addrString.c_str());
 		return;
 	}
 
-	ConsolePrintf(RGBA::YELLOW, "Sending message \"%s\"...", msg.c_str());
-	g_theGame->m_udp->SendTo(addr, msg.data(), (unsigned int) msg.size());
+	if (idx > MAX_CONNECTIONS){
+		ConsolePrintf(RGBA::RED, "%i is too big - max connections is %i", idx, MAX_CONNECTIONS);
+		return;
+	}
+
+
+	// notice this can't fail - we do no validation that that
+	// address is reachable.   UDP can't tell; 
+	NetSession *session = g_theGame->m_session;
+	NetConnection *cp = session->AddConnection( idx, addr ); 
+	if (cp == nullptr) {
+		ConsolePrintf(RGBA::RED, "Failed to add connection." ); 
+	} else {
+		ConsolePrintf(RGBA::YELLOW, "Connection added at index [%u]", idx ); 
+	}
+}
+
+void CommandSendPing(Command & cmd)
+{
+	uint8_t idx = (uint8_t) cmd.GetNextInt(); 
+	if (idx > MAX_CONNECTIONS){
+		ConsolePrintf(RGBA::RED, "%i is too big - max connections is %i", idx, MAX_CONNECTIONS);
+		return;
+	}
+
+	NetSession *session = g_theGame->m_session;
+	NetConnection *cp = session->GetConnection( idx ); 
+	if (nullptr == cp) {
+		ConsolePrintf(RGBA::RED, "No connection at index %u", idx ); 
+		return; 
+	}
+
+	NetMessage* msg = new NetMessage("ping"); 
+	std::string str = cmd.GetNextString();
+	msg->WriteData( str ); 
+
+	// messages are sent to connections (not sessions)
+	cp->Send( msg ); 
+}
+
+void CommandSendAdd(Command & cmd)
+{
+	uint8_t idx = cmd.GetNextInt(); 
+	float val0 = cmd.GetNextFloat(); 
+	float val1 = cmd.GetNextFloat(); 
+
+	//// using a variadic template to shorthand this; 
+	//if (!args.get_next( &idx, val0, val1 )) {
+	//	ConsoleErrorf( "Not all args provided." ); 
+	//	return; 
+	//}
+
+	NetSession *sp = g_theGame->m_session;
+	NetConnection *cp = sp->GetConnection( idx ); 
+	if (cp == nullptr) {
+		ConsolePrintf(RGBA::RED, "Unknown connection: %u", idx ); 
+		return; 
+	}
+
+	NetMessage* msg = new NetMessage("add"); 
+	msg->Write( val0 ); 
+	msg->Write( val1 ); 
+	cp->Send( msg );
 }
 

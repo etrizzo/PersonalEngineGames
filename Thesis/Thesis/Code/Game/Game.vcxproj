@@ -303,7 +303,9 @@
     <ClCompile Include="StoryData.cpp" />
     <ClCompile Include="StoryGraph.cpp" />
     <ClCompile Include="StoryRequirements.cpp" />
+    <ClCompile Include="StoryState.cpp" />
     <ClCompile Include="StoryStructure.cpp" />
+    <ClCompile Include="Tags.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Engine\Code\Engine\Engine.vcxproj">
@@ -328,7 +330,9 @@
     <ClInclude Include="StoryData.hpp" />
     <ClInclude Include="StoryGraph.hpp" />
     <ClInclude Include="StoryRequirements.hpp" />
+    <ClInclude Include="StoryState.hpp" />
     <ClInclude Include="StoryStructure.hpp" />
+    <ClInclude Include="Tags.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\..\Run_Win32\Data\Data\GameConfig.xml" />

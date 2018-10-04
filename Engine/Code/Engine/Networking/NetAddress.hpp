@@ -9,15 +9,19 @@ public:
 	NetAddress() {};
 	NetAddress( sockaddr const *addr ); 
 	NetAddress( std::string addrstr );		//takes "host:port" and constructs sockaddr
+	bool operator==(const NetAddress& other);
 
 	bool ToSockAddr( sockaddr *out, size_t *out_addrlen ) const; 
 	bool FromSockAddr( sockaddr const *sa ); 
+
+	void IncrementPort();
 
 	bool IsValid() const;
 
 	std::string ToString() const; 
 
 public:
+	std::string m_ipString;
 	unsigned int m_ip4address	= 0;		//what should these be??
 	uint16_t m_port				= 0; 
 

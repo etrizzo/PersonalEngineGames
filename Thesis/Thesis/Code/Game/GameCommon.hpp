@@ -12,9 +12,12 @@
 #include "Engine/Core/Image.hpp"
 #include "Engine/Core/Clock.hpp"
 
+#include "Engine/DataTypes/DirectedGraph.hpp"
+
 
 #define SMALL_VALUE .05f
 #define MAX_STEPS 16
+
 
 const int TILE_WIDTH = 1;
 

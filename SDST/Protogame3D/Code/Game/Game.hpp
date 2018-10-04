@@ -2,7 +2,7 @@
 #include "GameCommon.hpp"
 #include "Game/GameState_Playing.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
-
+#include "Engine/Networking/NetMessage.hpp"
 
 class Camera;
 class PerspectiveCamera;
@@ -12,6 +12,7 @@ class Light;
 class SpotLight;
 class ParticleSystem;
 class UDPTest;
+class NetSession;
 
 class Map;
 
@@ -27,8 +28,8 @@ public:
 	~Game();											// destructor: do nothing (for speed)
 	Game();											// default constructor: do nothing (for speed)
 
-
-	UDPTest* m_udp = nullptr;
+	NetSession* m_session = nullptr;
+	//UDPTest* m_udp = nullptr;
 
 
 	bool m_isPaused;
@@ -137,3 +138,9 @@ private:
 };
 
 extern Game* g_theGame;
+
+
+bool OnPing( NetMessage msg, net_sender_t const &from ) ;
+bool OnPong( NetMessage msg, net_sender_t const & from) ;
+bool OnAdd( NetMessage msg, net_sender_t const & from) ;
+

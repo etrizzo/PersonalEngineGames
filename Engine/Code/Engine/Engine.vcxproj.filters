@@ -346,6 +346,18 @@
     <ClCompile Include="Networking\UDPTests.cpp">
       <Filter>Networking</Filter>
     </ClCompile>
+    <ClCompile Include="Networking\NetSession.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\NetMessage.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\NetConnection.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="Networking\NetPacket.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -688,6 +700,18 @@
       <Filter>Networking</Filter>
     </ClInclude>
     <ClInclude Include="Networking\UDPTests.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\NetSession.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\NetMessage.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\NetConnection.hpp">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="Networking\NetPacket.hpp">
       <Filter>Networking</Filter>
     </ClInclude>
   </ItemGroup>

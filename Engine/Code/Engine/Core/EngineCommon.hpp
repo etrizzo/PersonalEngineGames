@@ -261,6 +261,16 @@ void RemoveAtFast(std::vector<T*>& array, unsigned int index)
 }
 
 
+//template specialization! neat!
+// https://stackoverflow.com/questions/14466620/c-template-specialization-calling-methods-on-types-that-could-be-pointers-or/14466705
+template<typename T>
+T * ptr(T & obj) { return &obj; }; //turn reference into pointer!
+
+template<typename T>
+T * ptr(T * obj) { return obj; }; //obj is already pointer, return it!
+
+
+
 
 eCullMode	StringToCullMode	( std::string text);
 eFillMode	StringToFillMode	( std::string text);

@@ -49,12 +49,50 @@ bool BytePacker::SetReadableByteCount(size_t byte_count)
 	return true;
 }
 
+void BytePacker::SetWriteHead(size_t position)
+{
+	m_writeHead = position;
+	if (m_readHead > m_writeHead){
+		m_readHead = m_writeHead;
+	}
+}
+
 void BytePacker::AdvanceWriteHead(size_t bytesToAdvance)
 {
 	m_writeHead += bytesToAdvance;
 	if (m_writeHead > m_maxSize){
 		m_writeHead = m_maxSize;
 	}
+}
+
+bool BytePacker::Write(uint16_t data, bool convertEndianness)
+{
+	return WriteBytes(sizeof(uint16_t), &data, convertEndianness);
+}
+
+bool BytePacker::Write(uint8_t data, bool convertEndianness)
+{
+	return WriteBytes(sizeof(uint8_t), &data, convertEndianness);
+}
+
+bool BytePacker::Write(float data, bool convertEndianness)
+{
+	return WriteBytes(sizeof(float), &data, convertEndianness);
+}
+
+size_t BytePacker::Read(uint16_t * outData, bool convertEndianness)
+{
+	return ReadBytes(outData, sizeof(uint16_t), convertEndianness);
+}
+
+size_t BytePacker::Read(uint8_t * outData, bool convertEndianness)
+{
+	return ReadBytes(outData, sizeof(uint8_t), convertEndianness);
+}
+
+size_t BytePacker::Read(float * outData, bool convertEndianness)
+{
+	return ReadBytes(outData, sizeof(float), convertEndianness);
 }
 
 bool BytePacker::WriteBytes(size_t byte_count, void const * data, bool convertEndianness)
@@ -171,13 +209,13 @@ size_t BytePacker::ReadSize(size_t * out_size)
 	return bytesRead;
 }
 
-bool BytePacker::WriteString(char const * str)
+size_t BytePacker::WriteString(char const * str)
 {
 	// converts str to std::string to get size
 	std::string asString = std::string(str);
 	size_t sizeOfString = asString.size() + 1;
 	// write the size of the string
-	WriteSize(sizeOfString);
+	size_t sizeBytesWritten  = WriteSize(sizeOfString);
 	// toEndianness(str, GetEndianness())
 	// calls writebytes(str)
 	bool wrote = WriteBytes(sizeOfString, str + '\0', false);
@@ -185,7 +223,7 @@ bool BytePacker::WriteString(char const * str)
 	//	// write each byte individually for reasons???????? Endianness???????
 	//	wrote = WriteBytes(1, (void*) &str[i]);
 	//}
-	return wrote;
+	return sizeOfString + sizeBytesWritten;
 }
 
 size_t BytePacker::ReadString(char * out_str, size_t max_byte_size)

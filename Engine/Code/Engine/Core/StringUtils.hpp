@@ -19,6 +19,8 @@ void Strip(std::string& stringToStrip, const char stripChar);
 bool Contains(std::string baseWord, std::string subString );
 bool StartsWith(std::string baseWord, std::string startString);
 
+bool ContainsNumber(std::string stringToCheck);
+
 std::string ToLower(std::string stringIn);
 
 void* FileReadToNewBuffer( char const *filename );

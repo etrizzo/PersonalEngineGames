@@ -24,20 +24,29 @@ NetAddress::NetAddress(std::string addrstr)
 
 	Strings addrbits; 
 	Split(addrstr, ':', addrbits);
-	std::string ip = addrbits[0];
-	std::string port = addrbits[1];
+	m_ip4address	= (unsigned int) atoi(addrbits[0].c_str());
+	m_port			= (uint16_t) atoi(addrbits[1].c_str());
+	//std::string ip = addrbits[0];
+	//std::string port = addrbits[1];
+	m_ipString = addrbits[0];
+	std::string port = std::to_string(m_port);
 
 	// sockaddr storage is a sockaddr struct that
 	// is large enough to fit any other sockaddr struct
 	// sizeof(sockaddr_storage) >= sizeof(any other sockaddr)
 	sockaddr_storage saddr;
 	int addrlen; 
-	if (!GetAddressForHost( (sockaddr*)&saddr, &addrlen, ip.c_str(), port.c_str() )) {
-		ConsolePrintf(RGBA::RED, "Could not resolve host.");
+	if (!GetAddressForHost( (sockaddr*)&saddr, &addrlen, m_ipString.c_str(), port.c_str() )) {
+		ConsolePrintf(RGBA::RED, "Could not resolve host %s:%s", m_ipString.c_str(), port.c_str());
 		return;
 	}
 
 	FromSockAddr((sockaddr*) &saddr);
+}
+
+bool NetAddress::operator==(const NetAddress & other)
+{
+	return (m_ip4address == other.m_ip4address) && (m_port == other.m_port);
 }
 
 bool NetAddress::ToSockAddr(sockaddr * out, size_t * out_addrlen) const
@@ -68,6 +77,25 @@ bool NetAddress::FromSockAddr(sockaddr const * sa)
 	m_ip4address = ip;
 	m_port = (uint16_t) port; 
 	return true; 
+}
+
+void NetAddress::IncrementPort()
+{
+	m_port++;
+	//std::string ip = std::to_string(m_ip4address);
+	std::string port = std::to_string(m_port);
+
+	// sockaddr storage is a sockaddr struct that
+	// is large enough to fit any other sockaddr struct
+	// sizeof(sockaddr_storage) >= sizeof(any other sockaddr)
+	sockaddr_storage saddr;
+	int addrlen; 
+	if (!GetAddressForHost( (sockaddr*)&saddr, &addrlen, m_ipString.c_str(), port.c_str() )) {
+		ConsolePrintf(RGBA::RED, "Could not resolve host %s:%s", m_ipString.c_str(), port.c_str());
+		return;
+	}
+
+	FromSockAddr((sockaddr*) &saddr);
 }
 
 bool NetAddress::IsValid() const

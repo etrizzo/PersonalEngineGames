@@ -59,6 +59,8 @@ public:
 	DebugRenderSystem* m_debugRenderSystem;
 	void PostStartup();
 
+	void GenerateGraph();
+
 	void Update();
 	void Render();
 	void HandleInput();

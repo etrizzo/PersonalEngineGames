@@ -1,10 +1,14 @@
+#pragma once
 #include "Game/GameCommon.hpp"
+#include "Game/Tags.hpp"
 
 class Character{
 public:
 	Character();
 
 	void InitFromXML(tinyxml2::XMLElement* characterDefinition);
+
+	std::string GetName() const;
 
 	void AddExtroversion (float val);
 

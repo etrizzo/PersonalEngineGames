@@ -99,6 +99,11 @@ void CommandGetAddress(Command& cmd);
 //void CommandSendMessage(Command& cmd);
 
 
-void CommandUDPTestStart(Command& cmd);
-void CommandUDPTestStop(Command& cmd);
-void CommandUDPTestSend(Command& cmd);
+//void CommandUDPTestStart(Command& cmd);
+//void CommandUDPTestStop(Command& cmd);
+//void CommandUDPTestSend(Command& cmd);
+
+
+void CommandAddConnection(Command& cmd);
+void CommandSendPing(Command& cmd);
+void CommandSendAdd(Command& cmd);

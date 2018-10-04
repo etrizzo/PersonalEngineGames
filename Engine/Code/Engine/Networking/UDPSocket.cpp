@@ -6,7 +6,7 @@
 // cpp
 //port_range is the range of ports you ~could~ bind if you can't get your first choice.
 // i.e., if you try to bind to port 10, but it's taken, try port 11, 12, 13 ... until one succeeds or you hit port_range attempts
-bool UDPSocket::Bind( NetAddress const &addr, uint16_t port_range /*= 0U*/ )
+bool UDPSocket::Bind( NetAddress &addr, uint16_t port_range /*= 0U*/ )
 {
 	// create the socket. Maybe want to check if you have a socket already, but whatever
 	SOCKET my_socket = socket( AF_INET,	// IPv4 to send...
@@ -18,22 +18,27 @@ bool UDPSocket::Bind( NetAddress const &addr, uint16_t port_range /*= 0U*/ )
 		return false;
 	}
 
-	// TODO, try to bind all ports within the range.  
-	// Shown - just trying one; 
-	sockaddr_storage sock_addr;
-	size_t sock_addr_len;
-	addr.ToSockAddr((sockaddr*) &sock_addr, &sock_addr_len);
-	//NetAddressToSocketAddress( (sockaddr*)&sock_addr, &sock_addr_len, addr );
+	for(uint16_t i = 0; i < port_range; i++){
+		
+		// TODO, try to bind all ports within the range.  
+		// Shown - just trying one; 
+		sockaddr_storage sock_addr;
+		size_t sock_addr_len;
+		addr.ToSockAddr((sockaddr*) &sock_addr, &sock_addr_len);
+		//NetAddressToSocketAddress( (sockaddr*)&sock_addr, &sock_addr_len, addr );
 
-	// try to bind - if it succeeds - great.  If not, try the next port in the range.
-	//this is the standing on a table step. If you fail, you don't have a table to stand on.
-	int result = ::bind( my_socket, (sockaddr*)&sock_addr, (int)sock_addr_len );
-	if (0 == result) {
-		m_handle = (socket_t)my_socket; 
-		m_address = addr; 
-		m_isOpen = true;
-		return true; 
-	} 
+		// try to bind - if it succeeds - great.  If not, try the next port in the range.
+		//this is the standing on a table step. If you fail, you don't have a table to stand on.
+		int result = ::bind( my_socket, (sockaddr*)&sock_addr, (int)sock_addr_len );
+		if (0 == result) {
+			m_handle = (socket_t)my_socket; 
+			m_address = addr; 
+			m_isOpen = true;
+			return true; 
+		} else {
+			addr.IncrementPort();
+		}
+	}
 
 	return false; 
 }

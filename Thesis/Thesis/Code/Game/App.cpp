@@ -189,6 +189,8 @@ void App::RegisterCommands()
 	CommandRegister("get_address", CommandGetAddress, "Gets machine address");
 
 	CommandRegister("print_graph", CommandPrintGraph, "Prints current graph as text");
+	CommandRegister("generate_graph", CommandGenerateGraph, "Re-generates story graph");
+
 }
 
 void App::HandleInput()
@@ -587,5 +589,11 @@ void CommandPrintGraph(Command & cmd)
 	UNUSED(cmd);
 	std::string graphString = g_theGame->m_graph.ToString();
 	ConsolePrintf(graphString.c_str());
+}
+
+void CommandGenerateGraph(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->GenerateGraph();
 }
 

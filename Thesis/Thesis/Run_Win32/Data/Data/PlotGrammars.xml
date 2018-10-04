@@ -1,43 +1,100 @@
-<PlotGrammars>
+
 	<PlotGrammar>
-		<!-- *[X] indicates a character name who should be replaced at rutntime -->
-		<Action = "*A kicks *B" />
+		<!-- *[X]* indicates a character name who should be replaced at rutntime -->
+		<Action text="*0* fights with *1*" />
 		<CharacterRequirements>
-			<Character name="*A">
-				<Requirement trait="Neuroticism" value="60" compare="greater" />
-				<Requirement trait="Predictability" value="40" compare="less" />
+			<Character number="0">
+				<Requirement trait="Social" value="60" compare="greater" />
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isAngryAt" target="*1*"/>
+			</Character>
+			<Character number="1">
+				<Requirement tag="isAlive" target="true" />
 			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>
-			<A tag = "isAlive" value="true"/> 
-			<!-- tags are a string:string map which contain tag:data-->
-			<B tag = "isAlive" value="true"/>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
 		</StoryRequirements>
 		<StoryEffects>
-			<EffectSet chance="1.0" />
-				<A Trait1 = "-10" />
-				<B hasTag = "isAngry" target="*A"/>
-				<Story Action="+5" Romance="-10" /> 
+			<EffectSet chance="default">
+				<TraitChange character="0" trait="Social" change="-10" />
+				<TraitChange character="1" trait="Social" change="-10" />
+				<TagChange character="1" hasTag = "isAngry" target="*0*" />
+				<StoryChange Action="+5" Tension="+10" /> 
+			</EffectSet>
+		</StoryEffects>
+	</PlotGrammar>
+
+	<PlotGrammar>
+		<Action text="*0* goes on a quest to a cave" />
+		<CharacterRequirements>
+			<Character number="0">
+				<Requirement tag="isAlive" target="true"/>
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TraitChange character="0" trait="Social" change="-10" />
+				<TraitChange character="1" trait="Social" change="-10" />
+				<TagChange character="1" hasTag = "isAngry" target="*0*" />
+				<TagChange character="0" hasTag = "onQuest,inCave" target="true" />
+				<StoryChange Action="+5" Tension="+10" /> 
+			</EffectSet>
+		</StoryEffects>
+	</PlotGrammar>
+
+	<PlotGrammar>
+		<Action text="*0* goes on a quest to a dungeon" />
+		<CharacterRequirements>
+			<Character number="0">
+				<Requirement tag="isAlive" target="true"/>
+			</Character>
+			<Character number="1">
+				<Requirement tag="isAlive" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TraitChange character="0" trait="Social" change="-10" />
+				<TraitChange character="1" trait="Social" change="-10" />
+				<TagChange character="1" hasTag = "isAngry" target="*0*" />
+				<TagChange character="0" hasTag = "onQuest,inDungeon" target="true" />
+				<StoryChange Action="+5" Tension="+10" /> 
+			</EffectSet>
+		</StoryEffects>
+	</PlotGrammar>
+
+	<PlotGrammar>
+		<!-- *[X]* indicates a character name who should be replaced at rutntime -->
+		<Action text="*0* parties with *1*" />
+		<CharacterRequirements>
+			<Character number="0">
+				<Requirement trait="Social" value="60" compare="greater" />
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isAngryAt" target="*1*"/>
+			</Character>
+			<Character number="1">
+				<Requirement tag="isAlive" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TraitChange character="0" trait="Social" change="-10" />
+				<TraitChange character="1" trait="Social" change="-10" />
+				<TagChange character="1" hasTag = "isAngry" target="*0*" />
+				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</StoryEffects>
 	</PlotGrammar>
 
 
-		<!-- This can probably be a plot grammar!! -->
-	<DetailGrammar>
-		<Action = "A ghost reveals to *A that they were murdered by *B" /> <!-- assign motive to kill B -->
-	</DetailGrammar>
 
-
-
-</PlotGrammars>
-
-
-
-
-
-
-3-4 main characters
-4-5 sub-characters 
-
-RimWorld - character model.

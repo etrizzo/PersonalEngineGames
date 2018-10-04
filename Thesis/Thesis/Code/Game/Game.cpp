@@ -4,6 +4,7 @@
 #include "Game/Player.hpp"
 #include "Engine/Renderer/Light.hpp"
 #include "Engine/Renderer/ParticleSystem.hpp"
+#include "Game/StoryState.hpp"
 #include <map>
 
 
@@ -79,16 +80,32 @@ void Game::PostStartup()
 	m_currentState = new GameState_Attract();
 	//m_currentMap = new Map("Heightmap.png", AABB2(-100.f, -100.f, 100.f, 100.f), -5.f, 2.f, IntVector2(20,20), 40.f);
 
-	m_soundtrackPlayback = g_theAudio->PlaySound(m_soundTrackID, true, .5f);
+	//m_soundtrackPlayback = g_theAudio->PlaySound(m_soundTrackID, true, .5f);
 
 
-	GraphTests();
-	StoryGraphTests();
+	m_graph = StoryGraph();
+
+	m_graph.ReadPlotNodesFromXML("Data/Data/PlotGrammars.xml");
+	m_graph.ReadDetailNodesFromXML("Data/Data/DetailGrammars.xml");
+	m_graph.ReadCharactersFromXML("Data/Data/Characters.xml");
+
+	GenerateGraph();
+
+	//GraphTests();
+	//StoryGraphTests();
 
 
 
 
 	
+}
+
+void Game::GenerateGraph()
+{
+	m_graph.Clear();
+
+	m_graph.RunGeneration(4,6);
+	m_graph.RunNodeAdjustments();
 }
 
 void Game::Update()
@@ -275,10 +292,10 @@ void Game::RenderUI()
 
 void Game::GraphTests()
 {
-	DirectedGraph<StoryData> engineGraph = DirectedGraph<StoryData>();
+	DirectedGraph<StoryData, StoryState> engineGraph = DirectedGraph<StoryData, StoryState>();
 	ASSERT_OR_DIE(engineGraph.GetNumNodes() == 0, "Num nodes should be 0");
 	StoryData AData = StoryData("A", 1.f);
-	Node<StoryData>* a = engineGraph.AddNode(AData);
+	Node<StoryData, StoryState>* a = engineGraph.AddNode(AData);
 	//Test graph addition
 	ASSERT_OR_DIE(engineGraph.GetNumNodes() == 1, "Num nodes should be 1");
 
@@ -292,24 +309,24 @@ void Game::GraphTests()
 	ASSERT_OR_DIE(engineGraph.ContainsNode(a), "ContainsNode not working with node");
 
 	//add new nodes to graph
-	Node<StoryData>* b = engineGraph.AddNode(StoryData("B", 2.f));
-	Node<StoryData>* c = engineGraph.AddNode(StoryData("C", 3.f));
-	Node<StoryData>* d = engineGraph.AddNode(StoryData("D", 4.f));
+	Node<StoryData, StoryState>* b = engineGraph.AddNode(StoryData("B", 2.f));
+	Node<StoryData, StoryState>* c = engineGraph.AddNode(StoryData("C", 3.f));
+	Node<StoryData, StoryState>* d = engineGraph.AddNode(StoryData("D", 4.f));
 	ASSERT_OR_DIE(engineGraph.GetNumNodes() == 4, "Num nodes should be 4");
 	
 	//Test graph edges
 	ASSERT_OR_DIE(engineGraph.GetNumEdges() == 0, "Num edges should be 0");
-	DirectedEdge<StoryData>* testEdge = engineGraph.AddEdge(a,b, 0.f);
+	DirectedEdge<StoryData, StoryState>* testEdge = engineGraph.AddEdge(a,b, StoryState(0.f));
 	ASSERT_OR_DIE(engineGraph.GetNumEdges() == 1, "Num edges should be 1");
 	
 	//test ContainsEdge
 	ASSERT_OR_DIE(engineGraph.ContainsEdge(a, b), "ContainsEdge not working with edges");
 	ASSERT_OR_DIE(engineGraph.ContainsEdge(testEdge), "ContainsEdge not working with edges");
 
-	engineGraph.AddEdge(b,c, 1.f);
-	engineGraph.AddEdge(b,d, 3.f);
-	engineGraph.AddEdge(a,d, 2.f);
-	engineGraph.AddEdge(c,d, 5.f);
+	engineGraph.AddEdge(b,c, StoryState(1.f));
+	engineGraph.AddEdge(b,d, StoryState(3.f));
+	engineGraph.AddEdge(a,d, StoryState(2.f));
+	engineGraph.AddEdge(c,d, StoryState(5.f));
 
 	ASSERT_OR_DIE(engineGraph.GetNumEdges() == 5, "Num edges should be 5");
 
@@ -358,9 +375,9 @@ void Game::GraphTests()
 
 void Game::StoryGraphTests()
 {
-	m_graph = StoryGraph();
+
 	ASSERT_OR_DIE(m_graph.GetNumNodes() == 0, "Num nodes should be 0");
-	StoryData AData = StoryData("A", 1.f);
+	StoryData* AData = new StoryData("A", 1.f);
 	StoryNode* a = m_graph.AddNode(AData);
 	//Test graph addition
 	ASSERT_OR_DIE(m_graph.GetNumNodes() == 1, "Num nodes should be 1");
@@ -375,23 +392,23 @@ void Game::StoryGraphTests()
 	ASSERT_OR_DIE(m_graph.ContainsNode(a), "ContainsNode not working with node");
 
 	//add new nodes to graph
-	StoryNode* b = m_graph.AddNode(StoryData("B", 2.f));
-	StoryNode* c = m_graph.AddNode(StoryData("C", 3.f));
-	StoryNode* d = m_graph.AddNode(StoryData("D", 4.f));
+	StoryNode* b = m_graph.AddNode(new StoryData("B", 2.f));
+	StoryNode* c = m_graph.AddNode(new StoryData("C", 3.f));
+	StoryNode* d = m_graph.AddNode(new StoryData("D", 4.f));
 	ASSERT_OR_DIE(m_graph.GetNumNodes() == 4, "Num nodes should be 4");
 
 	ASSERT_OR_DIE(m_graph.GetNumEdges() == 0, "Num edges should be 0");
-	StoryEdge* testEdge = m_graph.AddEdge(a,b, 0.f);
+	StoryEdge* testEdge = m_graph.AddEdge(a,b, new StoryState(0.f));
 	ASSERT_OR_DIE(m_graph.GetNumEdges() == 1, "Num edges should be 1");
 
 	//test ContainsEdge
 	ASSERT_OR_DIE(m_graph.ContainsEdge(a, b), "ContainsEdge not working with edges");
 	ASSERT_OR_DIE(m_graph.ContainsEdge(testEdge), "ContainsEdge not working with edges");
 
-	m_graph.AddEdge(b,c, 1.f);
-	m_graph.AddEdge(b,d, 3.f);
-	m_graph.AddEdge(a,d, 2.f);
-	m_graph.AddEdge(c,d, 5.f);
+	m_graph.AddEdge(b,c, new StoryState(1.f));
+	m_graph.AddEdge(b,d, new StoryState(3.f));
+	m_graph.AddEdge(a,d, new StoryState(2.f));
+	m_graph.AddEdge(c,d, new StoryState(5.f));
 
 	ASSERT_OR_DIE(m_graph.GetNumEdges() == 5, "Num edges should be 5");
 
@@ -424,32 +441,32 @@ void Game::StoryGraphTests()
 	ASSERT_OR_DIE(m_graph.GetNumNodes() == 0, "Num nodes should be 0");
 	ASSERT_OR_DIE(m_graph.GetNumEdges() == 0, "Num nodes should be 0");
 
-	a = m_graph.AddNode(StoryData("A", 1.f));
-	b = m_graph.AddNode(StoryData("B", 2.f));
-	c = m_graph.AddNode(StoryData("C", 3.f));
-	d = m_graph.AddNode(StoryData("D", 4.f));
-	StoryNode* ee = m_graph.AddNode(StoryData("E", 5.f));
-	StoryNode* f = m_graph.AddNode(StoryData("F", 1.f));
+	a = m_graph.AddNode(new StoryData("A", 1.f));
+	b = m_graph.AddNode(new StoryData("B", 2.f));
+	c = m_graph.AddNode(new StoryData("C", 3.f));
+	d = m_graph.AddNode(new StoryData("D", 4.f));
+	StoryNode* ee = m_graph.AddNode(new StoryData("E", 5.f));
+	StoryNode* f = m_graph.AddNode(new StoryData("F", 1.f));
 
-	m_graph.AddEdge(a,b, 10.f);
-	m_graph.AddEdge(b,c, 1.f);
-	m_graph.AddEdge(b,d, 3.f);
-	m_graph.AddEdge(a,d, 2.f);
-	m_graph.AddEdge(c,d, 5.f);
-	m_graph.AddEdge(b, ee, 3.f);
+	m_graph.AddEdge(a,b, new StoryState(10.f));
+	m_graph.AddEdge(b,c, new StoryState(1.f) );
+	m_graph.AddEdge(b,d, new StoryState(3.f) );
+	m_graph.AddEdge(a,d, new StoryState(2.f) );
+	m_graph.AddEdge(c,d, new StoryState(5.f) );
+	m_graph.AddEdge(b, ee, new StoryState(3.f));
 	m_graph.AddEdge(ee, d);
-	m_graph.AddEdge(a,f, 1.f);
-	m_graph.AddEdge(f, c,6.f);
+	m_graph.AddEdge(a, f, new StoryState(1.f));
+	m_graph.AddEdge(f, c, new StoryState(6.f));
 	//m_graph.AddEdge(f, d, 2.f);
 
 	m_graph.AddStart(a);
 	m_graph.AddEnd(d);
 
-	GetRandomFloatInRange(.4f, .6f);
-	b->m_data.SetPosition( Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f)));
-	c->m_data.SetPosition( Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f)));
-	ee->m_data.SetPosition(Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f)));
-	f->m_data.SetPosition( Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f)));
+	GetRandomFloatInRange(.3f, .7f);
+	b->m_data->SetPosition( Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f)));
+	c->m_data->SetPosition( Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f)));
+	ee->m_data->SetPosition(Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f)));
+	f->m_data->SetPosition( Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f)));
 
 
 

@@ -8,6 +8,8 @@
 #include "Engine/Renderer/ParticleSystem.hpp"
 #include <map>
 #include "Engine/Networking/UDPTests.hpp"
+#include "Engine/Networking/NetSession.hpp"
+#include "Engine/Networking/NetConnection.hpp"
 
 
 Game::~Game()
@@ -59,8 +61,11 @@ Game::Game()
 
 
 	m_currentState = new GameState_Loading();
-	m_udp = new UDPTest();
-	
+	//m_udp = new UDPTest();
+
+
+	m_session = new NetSession();
+
 }
 
 void Game::PostStartup()
@@ -82,6 +87,18 @@ void Game::PostStartup()
 	//m_currentMap = new Map("Heightmap.png", AABB2(-100.f, -100.f, 100.f, 100.f), -5.f, 2.f, IntVector2(20,20), 40.f);
 
 	//m_soundtrackPlayback = g_theAudio->PlaySound(m_soundTrackID, true, .5f);
+
+
+	// describe what this session can do; 
+	m_session->RegisterMessage( "ping", (NetSessionMessageCB*) &OnPing ); 
+	m_session->RegisterMessage( "pong", (NetSessionMessageCB*) &OnPong ); 
+	m_session->RegisterMessage( "add" , (NetSessionMessageCB*) &OnAdd  ); 
+
+	// temp - eventually we either "host" or "join" a session
+	// bor now we'll just shortcut to the first
+	// state that is "bound"
+	// This creates the socket(s) we can communicate on; 
+	m_session->AddBinding( GAME_PORT ); 
 	
 
 }
@@ -94,7 +111,8 @@ void Game::Update()
 	m_currentState->Update(ds);
 	
 
-	m_udp->Update();
+	//m_udp->Update();
+	m_session->Update();
 
 	PROFILE_POP();
 	
@@ -370,8 +388,63 @@ void Game::RenderUI()
 
 
 
+bool OnPing( NetMessage msg, net_sender_t const &from ) 
+{
+	std::string str; 
+	msg.ReadString( str ); 
+
+	ConsolePrintf( "Received ping from %s: %s", 
+		from.m_connection->GetAddress().ToString().c_str(), 
+		str.c_str() ); 
+
+	// ping responds with pong
+	NetMessage* pong = new NetMessage( "pong" ); 
+	from.m_connection->Send( pong ); 
+
+	// all messages serve double duty
+	// do some work, and also validate
+	// if a message ends up being malformed, we return false
+	// to notify the session we may want to kick this connection; 
+	return true; 
+}
+
+bool OnPong( NetMessage msg, net_sender_t const &from ) 
+{
+	std::string str; 
+	msg.ReadString( str ); 
+
+	ConsolePrintf( "Received pong from %s: %s", 
+		from.m_connection->GetAddress().ToString().c_str(), 
+		str.c_str() ); 
+
+	// all messages serve double duty
+	// do some work, and also validate
+	// if a message ends up being malformed, we return false
+	// to notify the session we may want to kick this connection; 
+	return true; 
+}
 
 
+//------------------------------------------------------------------------
+bool OnAdd( NetMessage msg, net_sender_t const &from ) 
+{
+	float val0;
+	float val1; 
+	float sum;
+
+	if (!msg.Read( &val0 ) || !msg.Read( &val1 )) {
+		// this probaby isn't a real connection to send us a bad message
+		return false; 
+	}
+
+	sum = val0 + val1; 
+	ConsolePrintf( "Add: %f + %f = %f", val0, val1, sum ); 
+
+	// would could send back a response here if we want;
+	// ...
+
+	return true; 
+}
 
 
 

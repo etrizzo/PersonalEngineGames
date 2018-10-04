@@ -1,5 +1,6 @@
 #include "Engine/Core/StringUtils.hpp"
 #include <stdarg.h>
+#include <algorithm>
 
 
 
@@ -134,6 +135,11 @@ const std::string Stringv(const char * format, va_list args)
 	//made it through entire startString
 	return true;
 }
+
+ bool ContainsNumber(std::string stringToCheck)
+ {
+	 return std::find_if(stringToCheck.begin(), stringToCheck.end(), ::isdigit) != stringToCheck.end();       
+ }
 
 std::string ToLower(std::string stringIn)
 {

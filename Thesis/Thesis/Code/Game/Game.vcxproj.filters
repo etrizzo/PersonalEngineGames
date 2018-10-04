@@ -64,6 +64,12 @@
     <ClCompile Include="EffectSet.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="Tags.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="StoryState.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -118,6 +124,12 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="EffectSet.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Tags.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="StoryState.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

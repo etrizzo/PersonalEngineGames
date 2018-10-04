@@ -1,6 +1,7 @@
 // Core/BytePacker.hpp or equivalent
 #pragma once
 #include "Engine/Core/Endianness.hpp"
+#include <stdint.h>
 #define BIT_FLAG(f)   (1U << (f))
 
 
@@ -35,7 +36,30 @@ public:
 	// sets how much of the buffer is readable; 
 	void SetEndianness( eEndianness newEndianness ); 
 	bool SetReadableByteCount( size_t byte_count );		//is this max size or readable data?
+	void SetWriteHead(size_t position);					//sets write head but does not erase buffer
 	void AdvanceWriteHead(size_t bytesToAdvance);
+
+	bool Write(uint16_t data, bool convertEndianness = true);
+	bool Write(uint8_t	data, bool convertEndianness = true);
+	bool Write(float	data, bool convertEndianness = true);
+
+	size_t Read(uint16_t*	outData, bool convertEndianness = true);
+	size_t Read(uint8_t*	outData, bool convertEndianness = true);
+	size_t Read(float*		outData, bool convertEndianness = true);
+
+	////.... Someday :(
+	//template <typename T>
+	//bool Write(T data, bool convertEndianness = true)
+	//{
+	//	WriteBytes( sizeof(T), (void*) ptr(data), convertEndianness);
+	//}
+
+	//template<typename T>
+	//size_t Read( T data, bool convertEndianness = true)
+	//{
+	//	ReadBytes(ptr(data), sizeof(T), convertEndianness);
+	//}
+
 
 	// tries to write data to the end of the buffer;  Returns success
 	bool WriteBytes( size_t byte_count, void const *data, bool convertEndianness = true); 
@@ -48,7 +72,7 @@ public:
 	size_t ReadSize( size_t *out_size ); // returns how many bytes read, fills out_size
 
 	 // See notes on encoding!
-	bool WriteString( char const *str ); 
+	size_t WriteString( char const *str ); 
 	size_t ReadString( char *out_str, size_t max_byte_size ); // max_str_size should be enough to contain the null terminator as well; 
 
 	void* GetWriteHeadLocation() const;
@@ -64,7 +88,7 @@ public:
 	size_t GetReadableByteCount() const;   // how much more data can I read;
 
 
-private:
+protected:
 	// TODO: Figure out what members and methods
 	// you will need to do the above; 
 

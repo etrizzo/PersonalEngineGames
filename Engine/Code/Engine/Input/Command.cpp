@@ -160,9 +160,11 @@ Command::Command(char const * str)
 	for (unsigned int i = 0; i < quoteSplitStrings.size(); i++){
 		Strip(quoteSplitStrings[i], ' ');
 		Strings splitSegment = Strings();
+		//if you're on an even index, you're not inside a quote, so split on space here
 		if (i % 2 == 0){
 			Split(quoteSplitStrings[i], ' ', splitSegment);
-		} else {
+		} else {	
+			//if on even index, this index is a quoted string so add the whole thing.
 			splitSegment.push_back(quoteSplitStrings[i]);
 		}
 		for (unsigned int j = 0; j < splitSegment.size(); j++){
