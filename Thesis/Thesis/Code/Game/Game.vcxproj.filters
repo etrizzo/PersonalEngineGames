@@ -55,9 +55,6 @@
     <ClCompile Include="StoryStructure.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterRequirements.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
     <ClCompile Include="StoryRequirements.cpp">
       <Filter>General</Filter>
     </ClCompile>
@@ -68,6 +65,21 @@
       <Filter>General</Filter>
     </ClCompile>
     <ClCompile Include="StoryState.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Requirement.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterRequirement.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterRequirementSet.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="TagPair.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterState.cpp">
       <Filter>General</Filter>
     </ClCompile>
   </ItemGroup>
@@ -117,9 +129,6 @@
     <ClInclude Include="StoryStructure.hpp">
       <Filter>General</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterRequirements.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
     <ClInclude Include="StoryRequirements.hpp">
       <Filter>General</Filter>
     </ClInclude>
@@ -130,6 +139,21 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="StoryState.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Requirement.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterRequirement.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterRequirementSet.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="TagPair.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterState.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

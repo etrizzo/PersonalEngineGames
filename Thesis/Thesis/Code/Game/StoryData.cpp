@@ -1,5 +1,7 @@
 #include "StoryData.hpp"
 #include "Game/Character.hpp"
+#include "Game/CharacterState.hpp"
+#include "Game/StoryState.hpp"
 
 StoryData::StoryData(std::string name, float value)
 {
@@ -15,6 +17,7 @@ StoryData::StoryData(tinyxml2::XMLElement * nodeElement, eNodeType type)
 	TODO("Change structure of action to incorporate characters");
 
 	m_characters = std::vector<Character*>();
+	m_characterReqs = std::vector<CharacterRequirementSet>();
 	m_numCharacters = 0;
 	//find num characters
 	Strings splitString;
@@ -29,6 +32,7 @@ StoryData::StoryData(tinyxml2::XMLElement * nodeElement, eNodeType type)
 	}
 	for (int i= 0; i < m_numCharacters; i++){
 		m_characters.push_back(nullptr);
+		m_characterReqs.push_back(CharacterRequirementSet());
 	}
 
 
@@ -51,8 +55,10 @@ StoryData::StoryData(StoryData * clone)
 
 	m_numCharacters			= clone->m_numCharacters;
 	m_characters			= std::vector<Character*>();
+	m_characterReqs			= std::vector<CharacterRequirementSet>();
 	for (unsigned int i = 0; i < m_numCharacters; i++){
 		m_characters.push_back(nullptr);
+		m_characterReqs.push_back(clone->m_characterReqs[i]);
 	}
 
 	m_graphPosition =  Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f));
@@ -125,7 +131,10 @@ unsigned int StoryData::GetNumCharacters() const
 bool StoryData::DoesCharacterMeetSlotRequirementsAtEdge(Character * character, unsigned int charSlot, StoryEdge * atEdge)
 {
 	TODO("Implement checks on character requirements at edge.");
-	return true;
+	//maybe edge needs character states?
+	CharacterState* charState = atEdge->GetCost()->GetCharacterStateForCharacter(character);
+	return m_characterReqs[charSlot].DoesCharacterMeetRequirements(charState);
+	//return true;
 }
 
 void StoryData::SetPosition(Vector2 pos)

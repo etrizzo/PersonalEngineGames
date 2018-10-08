@@ -2,7 +2,7 @@
 
 Tags::Tags(const std::string & commaSeparatedTagNames)
 {
-	m_tags = Strings();
+	m_tags = std::vector<TagPair>();
 	SetOrRemoveTags(commaSeparatedTagNames);
 }
 
@@ -19,8 +19,8 @@ int Tags::GetNumTags() const
 std::string Tags::GetTagsAsString() const
 {
 	std::string tags = "";
-	for (std::string tag : m_tags){
-		tags+= tag + ", ";
+	for (TagPair tag : m_tags){
+		tags+= tag.GetName() + ":" + tag.GetValue() + ", ";
 	}
 	return tags;
 }
@@ -89,9 +89,9 @@ void Tags::SetTag(const std::string & tagName)
 
 void Tags::RemoveTag(const std::string & tagName)
 {
-	for( Strings::iterator tagIter = m_tags.begin(); tagIter != m_tags.end(); ++tagIter )
+	for( std::vector<TagPair>::iterator tagIter = m_tags.begin(); tagIter != m_tags.end(); ++tagIter )
 	{
-		if( *tagIter == tagName )
+		if( tagIter->GetName() == tagName )
 		{
 			m_tags.erase( tagIter );
 			break;
@@ -101,10 +101,28 @@ void Tags::RemoveTag(const std::string & tagName)
 
 bool Tags::HasTag(const std::string & tagName)
 {
-	for (std::string tag : m_tags){
-		if (tag == tagName){
+	for (TagPair tag : m_tags){
+		if (tag.HasName(tagName)){
 			return true;
 		}
 	}
 	return false;
+}
+
+bool Tags::HasTag(TagPair tag)
+{
+	for (TagPair tag : m_tags){
+		if (tag.HasName(tag.GetName()) && tag.HasValue(tag.GetValue())){
+			return true;
+		}
+	}
+}
+
+bool Tags::HasTagWithValue(const std::string & tagName, const std::string & value)
+{
+	for (TagPair tag : m_tags){
+		if (tag.HasName(tagName) && tag.HasValue(value)){
+			return true;
+		}
+	}
 }

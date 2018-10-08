@@ -53,7 +53,7 @@ NetConnection * NetSession::GetConnectionByAddress(NetAddress addr) const
 	return nullptr;
 }
 
-void NetSession::RegisterMessage(std::string name, NetSessionMessageCB* messageCB)
+void NetSession::RegisterMessage(std::string name, NetSessionMessageCB messageCB)
 {
 	net_message_definition_t* messageDef = new net_message_definition_t();
 	messageDef->m_messageCB = messageCB;
@@ -190,7 +190,7 @@ void NetSession::ProcessMessage(NetMessage message, NetAddress from)
 	// figure out which kind of message it is
 	// seems like the name is encoded as the first string?
 	uint8_t messageType;
-	message.Read(&messageType);
+	message.Read(&messageType, false);
 
 	//get the appropriate callback from the map of registered callbacks
 	if (IsMessageRegistered(messageType)){
@@ -198,9 +198,8 @@ void NetSession::ProcessMessage(NetMessage message, NetAddress from)
 		NetConnection* connection = GetConnectionByAddress(from);
 		if (connection != nullptr){
 			net_message_definition_t* definition = GetRegisteredMessageByID(messageType);
-			(*definition->m_messageCB)( message, net_sender_t(connection));
+			((definition->m_messageCB))( message, net_sender_t(connection));
 		}
-
 	}
 }
 

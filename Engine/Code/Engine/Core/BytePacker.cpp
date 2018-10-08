@@ -240,6 +240,11 @@ size_t BytePacker::ReadString(char * out_str, size_t max_byte_size)
 	return sizeToRead;
 }
 
+void * BytePacker::GetReadHeadLocation() const
+{
+	return ((byte_t*)m_buffer) + m_readHead;
+}
+
 void* BytePacker::GetWriteHeadLocation() const
 {
 	return ((byte_t*)m_buffer) + m_writeHead;

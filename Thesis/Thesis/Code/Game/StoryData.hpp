@@ -1,7 +1,7 @@
 #pragma once
 #include "Game/GameCommon.hpp"
 #include "Game/StoryRequirements.hpp"
-#include "Game/CharacterRequirements.hpp"
+#include "Game/CharacterRequirementSet.hpp"
 #include "Game/EffectSet.hpp"
 
 class Character;
@@ -48,7 +48,7 @@ public:
 	//actual members
 	std::string m_id;
 	std::string m_action;
-	CharacterRequirements m_characterReqs;
+	std::vector<CharacterRequirementSet> m_characterReqs;
 	StoryRequirements m_storyReqs;
 	EffectSet m_effects;
 

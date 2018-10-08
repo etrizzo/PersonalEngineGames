@@ -26,7 +26,7 @@ public:
 	NetConnection* GetConnectionByAddress(NetAddress addr) const;
 
 	//adds the callback to the map of possible messages this session can handle
-	void RegisterMessage(std::string name, NetSessionMessageCB* messageCB);
+	void RegisterMessage(std::string name, NetSessionMessageCB messageCB);
 	void SortMessageIDs();
 	bool IsMessageRegistered(std::string name);
 	bool IsMessageRegistered(uint16_t id);

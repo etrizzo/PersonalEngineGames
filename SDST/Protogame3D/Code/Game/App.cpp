@@ -779,6 +779,7 @@ void CommandSendAdd(Command & cmd)
 	NetMessage* msg = new NetMessage("add"); 
 	msg->Write( val0 ); 
 	msg->Write( val1 ); 
+	msg->IncrementMessageSize((uint16_t)(sizeof(float) + sizeof(float)));
 	cp->Send( msg );
 }
 

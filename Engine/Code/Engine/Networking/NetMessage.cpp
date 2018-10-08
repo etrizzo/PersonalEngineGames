@@ -16,6 +16,19 @@ NetMessage::NetMessage(std::string msg)
 {
 	m_definition = new net_message_definition_t();
 	m_msgName = msg;
+	MoveWriteHeadPastHeader();
+}
+
+void NetMessage::IncrementMessageSize(uint16_t size)
+{
+	m_msgSize+=size;
+}
+
+void NetMessage::MoveWriteHeadPastHeader()
+{
+	if (m_writeHead == 0){
+		AdvanceWriteHead(sizeof(uint8_t) + sizeof(uint16_t));		//advance bytes for message ID & message size
+	}
 }
 
 void NetMessage::WriteHeader()
@@ -30,12 +43,8 @@ void NetMessage::WriteHeader()
 
 void NetMessage::WriteData(std::string data)
 {
-	if (m_writeHead == 0){
-		AdvanceWriteHead(sizeof(uint8_t) + sizeof(uint16_t));		//advance bytes for message ID & message size
-	}
-
 	size_t bytesAdded = WriteString(data.c_str());
-	m_msgSize+= (uint16_t) bytesAdded;
+	m_msgSize+= (uint16_t) (bytesAdded);
 }
 
 void NetMessage::ReadString(std::string & outString)

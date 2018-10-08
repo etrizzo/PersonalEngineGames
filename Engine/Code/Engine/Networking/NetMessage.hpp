@@ -24,7 +24,8 @@ public:
 	//template this however you do that
 	//void Write(float val);
 	//void WriteString(std::string str);
-
+	void IncrementMessageSize(uint16_t size);
+	void MoveWriteHeadPastHeader();
 	void WriteHeader();
 	void WriteData(std::string data);
 
@@ -50,7 +51,7 @@ typedef void (*NetSessionMessageCB) ( NetMessage msg, net_sender_t const& from);
 struct net_message_definition_t{
 	uint8_t m_messageID		= INVALID_MESSAGE_ID;
 	std::string m_messageName	= "";
-	NetSessionMessageCB* m_messageCB;
+	NetSessionMessageCB m_messageCB;
 };
 
 

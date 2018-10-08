@@ -288,7 +288,9 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Character.cpp" />
-    <ClCompile Include="CharacterRequirements.cpp" />
+    <ClCompile Include="CharacterRequirement.cpp" />
+    <ClCompile Include="CharacterRequirementSet.cpp" />
+    <ClCompile Include="CharacterState.cpp" />
     <ClCompile Include="DebugRenderSystem.cpp" />
     <ClCompile Include="DebugRenderTask.cpp" />
     <ClCompile Include="EffectSet.cpp" />
@@ -300,11 +302,13 @@
     <ClCompile Include="Main_Win32.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Requirement.cpp" />
     <ClCompile Include="StoryData.cpp" />
     <ClCompile Include="StoryGraph.cpp" />
     <ClCompile Include="StoryRequirements.cpp" />
     <ClCompile Include="StoryState.cpp" />
     <ClCompile Include="StoryStructure.cpp" />
+    <ClCompile Include="TagPair.cpp" />
     <ClCompile Include="Tags.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -315,7 +319,9 @@
   <ItemGroup>
     <ClInclude Include="App.hpp" />
     <ClInclude Include="Character.hpp" />
-    <ClInclude Include="CharacterRequirements.hpp" />
+    <ClInclude Include="CharacterRequirement.hpp" />
+    <ClInclude Include="CharacterRequirementSet.hpp" />
+    <ClInclude Include="CharacterState.hpp" />
     <ClInclude Include="DebugRenderSystem.hpp" />
     <ClInclude Include="DebugRenderTask.hpp" />
     <ClInclude Include="EffectSet.hpp" />
@@ -327,11 +333,13 @@
     <ClInclude Include="GameState_Playing.hpp" />
     <ClInclude Include="Menu.hpp" />
     <ClInclude Include="Player.hpp" />
+    <ClInclude Include="Requirement.hpp" />
     <ClInclude Include="StoryData.hpp" />
     <ClInclude Include="StoryGraph.hpp" />
     <ClInclude Include="StoryRequirements.hpp" />
     <ClInclude Include="StoryState.hpp" />
     <ClInclude Include="StoryStructure.hpp" />
+    <ClInclude Include="TagPair.hpp" />
     <ClInclude Include="Tags.hpp" />
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 help -a
 quit
+find_path
 generate_graph
 print_graph
 net_send_message "192.168.0.11:12345" "Hey bicchaaaaa what up"

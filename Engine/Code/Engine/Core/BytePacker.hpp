@@ -75,6 +75,7 @@ public:
 	size_t WriteString( char const *str ); 
 	size_t ReadString( char *out_str, size_t max_byte_size ); // max_str_size should be enough to contain the null terminator as well; 
 
+	void* GetReadHeadLocation() const;
 	void* GetWriteHeadLocation() const;
 	void* GetBuffer() const;
 															   // HELPERS

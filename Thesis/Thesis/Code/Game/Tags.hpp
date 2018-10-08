@@ -1,9 +1,11 @@
+#pragma once
 #include "GameCommon.hpp"
+#include "Game/TagPair.hpp"
 
 class Tags
 {
 public:
-	Tags(){ m_tags = Strings();};
+	Tags(){ m_tags = std::vector<TagPair>();};
 	Tags(const std::string& commaSeparatedTagNames);
 	~Tags();
 
@@ -14,7 +16,9 @@ public:
 	void SetTag( const std::string& tagName );
 	void RemoveTag( const std::string& tagName );
 	bool HasTag( const std::string& tagName );
+	bool HasTag(TagPair tag);
+	bool HasTagWithValue(const std::string& tagName, const std::string& value);
 
 protected:
-	Strings m_tags;
+	std::vector<TagPair> m_tags;
 };

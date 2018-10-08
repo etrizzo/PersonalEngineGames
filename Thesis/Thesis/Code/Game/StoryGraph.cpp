@@ -2,6 +2,7 @@
 #include "Game/Game.hpp"
 #include "Game/Character.hpp"
 #include "Game/StoryState.hpp"
+#include "Game/CharacterRequirementSet.hpp"
 
 std::vector<StoryNode*> StoryGraph::s_plotNodes = std::vector<StoryNode*>();
 std::vector<StoryNode*> StoryGraph::s_detailNodes = std::vector<StoryNode*>();
@@ -70,6 +71,8 @@ void StoryGraph::RunNodeAdjustments()
 	}
 }
 
+
+
 void StoryGraph::RunGeneration(int numPlotNodes, int desiredSize)
 {
 	GenerateSkeleton(numPlotNodes);
@@ -106,7 +109,7 @@ void StoryGraph::GenerateStartAndEnd()
 	TODO("figure out how this should work.");
 	AddStart(new StoryNode(new StoryData("START", 1.f)));
 	AddEnd(new StoryNode(new StoryData("END", 1.f)));
-	AddEdge(m_startNode, m_endNode, new StoryState(1.f));
+	AddEdge(m_startNode, m_endNode, new StoryState(1.f, m_characters.size()));
 }
 
 bool StoryGraph::TryToAddDetailNode()
@@ -201,11 +204,43 @@ void StoryGraph::IdentifyBranchesAndAdd(int numBranchesToAdd)
 		numBranchesToAdd = (int) GetNumNodes() * .25;
 	}
 
-	for (int i = 0; i < numBranchesToAdd; i++){
-		//make a queue of nodes to check, starting at START node
-		//identify all "future" nodes (any node that can be reached by this node)
-		//for each future node, see if an outgoing edge would meet the story state requirements of that node.
-		//if so, add an edge and continue (tier 1)
+	int branchesAdded = 0;
+	int tries = 0;
+	while (branchesAdded < numBranchesToAdd && tries < 100){
+		//make a queue of nodes to check, starting at random node
+		std::queue<StoryNode*> checks = std::queue<StoryNode*>();
+		StoryNode* randomNode = m_graph.m_nodes[GetRandomIntLessThan(GetNumNodes())];
+		checks.push(randomNode);
+		
+		StoryNode* currentNode = checks.back();
+		bool added = false;
+		while (!added && currentNode != nullptr && currentNode != m_endNode && !checks.empty()){
+			currentNode = checks.back();
+			checks.pop();
+			//identify all "future" nodes (any node that can be reached by this node)
+					//note: right now, just one layer deep
+			std::vector<StoryNode*> reachableNodes = std::vector<StoryNode*>();
+			for(StoryEdge* outbound : currentNode->m_outboundEdges){
+				checks.push(outbound->GetEnd());
+				for(StoryEdge* secondLayer : outbound->GetEnd()->m_outboundEdges){
+					reachableNodes.push_back(secondLayer->GetEnd());
+				}
+			}
+			//for each future node, see if an outgoing edge would meet the story state requirements of that node.
+			for (StoryNode* reachable : reachableNodes){
+				//if so, add an edge and continue (tier 1)
+				if (true){
+					StoryState* newState = new StoryState(GetRandomFloatInRange(0.f, 5.f), GetNumCharacters());
+					m_graph.AddEdge(currentNode, reachable, newState);
+					branchesAdded++;
+					added = true;
+					break;
+				}
+			}
+			
+		}
+		tries++;
+
 	}
 }
 
@@ -213,15 +248,19 @@ void StoryGraph::AddNodeAtEdge(StoryNode * newNode, StoryEdge * existingEdge)
 {
 	m_graph.RemoveEdge(existingEdge);
 	//not sure what to do with cost...
-	//StoryState newCost = existingEdge->GetCost() * .5f;
-	m_graph.AddEdge(existingEdge->GetStart(), newNode);
-	m_graph.AddEdge(newNode, existingEdge->GetEnd());
+	StoryState* newCost = new StoryState(GetRandomFloatInRange(0.f, 5.f), m_characters.size());
+	m_graph.AddEdge(existingEdge->GetStart(), newNode, newCost);
+	m_graph.AddEdge(newNode, existingEdge->GetEnd(), newCost);
 }
 
-std::vector<StoryNode*> StoryGraph::FindPath(StoryHeuristicCB heuristic)
+void StoryGraph::FindPath(StoryHeuristicCB heuristic)
 {
+	for (StoryNode* node : m_graph.m_nodes){
+		node->SetShortestDistance(9999.f);
+	}
 	std::vector<StoryNode*> openNodes = std::vector<StoryNode*>();
 	openNodes.push_back(m_startNode);
+	m_startNode->SetShortestDistance(0.f);
 
 	//assign shortest distance to nodes, with heuristic
 	StoryNode* currentNode;
@@ -261,23 +300,35 @@ std::vector<StoryNode*> StoryGraph::FindPath(StoryHeuristicCB heuristic)
 	}
 
 	////traverse nodes in order 
-	//std::vector<StoryNode*> shortestPath = std::vector<StoryNode*>();
-	//StoryNode* currentNode = m_startNode;
-	//while (currentNode != m_endNode){
-	//	shortestPath.push_back(currentNode);
-	//	StoryNode* minNode = nullptr;
-	//	float minCost = 9999.f;
-	//	for(StoryEdge* edge : minNode->m_outboundEdges){
-	//		if (edge->GetEnd()->GetShortestDistance() < minCost){
-	//			minNode = edge->GetEnd();
-	//			minCost = minNode->GetShortestDistance();
-	//		}
-	//	}
-	//	currentNode = minNode;
-	//}
-	//shortestPath.push_back(m_endNode);
-	//
-	return std::vector<StoryNode*>();
+	m_pathFound = std::vector<StoryNode*>();
+	currentNode = m_startNode;
+	while (currentNode != m_endNode){
+		m_pathFound.push_back(currentNode);
+		StoryNode* minNode = nullptr;
+		float minCost = 9999.f;
+		for(StoryEdge* edge : currentNode->m_outboundEdges){
+			if (edge->GetEnd()->GetShortestDistance() < minCost){
+				minNode = edge->GetEnd();
+				minCost = minNode->GetShortestDistance();
+			}
+		}
+		currentNode = minNode;
+	}
+	m_pathFound.push_back(m_endNode);
+	
+}
+
+Character * StoryGraph::GetCharacter(unsigned int index) const
+{
+	if (index < m_characters.size()){
+		return m_characters[index];
+	}
+	return nullptr;
+}
+
+unsigned int StoryGraph::GetNumCharacters() const
+{
+	return (unsigned int) m_characters.size();
 }
 
 Vector2 StoryGraph::CalculateNodeForces(StoryNode * node) const
@@ -396,6 +447,7 @@ void StoryGraph::RenderGraph() const
 	for (StoryNode* node : m_graph.m_nodes){
 		RenderNode(node, node->m_data->GetPosition());
 	}
+	RenderPath();
 
 	std::string characters = "Characters: \n";
 	for (Character* c : m_characters){
@@ -403,9 +455,24 @@ void StoryGraph::RenderGraph() const
 		characters += "\n";
 	}
 	g_theRenderer->DrawTextInBox2D(characters, bounds, Vector2(1.f, 1.f), .01f, TEXT_DRAW_SHRINK_TO_FIT);
-	
+}
 
-
+void StoryGraph::RenderPath() const
+{
+	if (m_pathFound.size() > 0){
+		for (int i = 0; i < (int) m_pathFound.size(); i++){
+			if (i > 0){
+				RenderEdge(m_graph.GetEdge(m_pathFound[i - 1], m_pathFound[i]), RGBA::GREEN);
+			}
+		}
+		for (int i = 0; i < (int) m_pathFound.size(); i++){
+			StoryNode* node = m_pathFound[i];
+			if (i > 0){
+				RenderEdge(m_graph.GetEdge(m_pathFound[i - 1], node), RGBA::GREEN);
+			}
+			RenderNode(node, node->m_data->GetPosition(), RGBA::GREEN);
+		}
+	}
 }
 
 /*
@@ -581,7 +648,7 @@ bool StoryGraph::TryToSetCharactersForNode(StoryNode * node, StoryEdge * atEdge)
 	//checks all characters and sees if they meet the requirements of the node.
 	// for now, just take the first characters that fit w/o duplicates.
 	StoryData* data = node->m_data;
-	CharacterRequirements reqs = node->m_data->m_characterReqs;
+	//CharacterRequirementSet reqs = node->m_data->m_characterReqs;
 
 	// keep track of which characters meet requirements in which story node slots 
 	//	- may want to change this to a score not a bool later.
@@ -648,7 +715,7 @@ bool StoryGraph::TryToSetCharactersForNode(StoryNode * node, StoryEdge * atEdge)
 
 
 
-void StoryGraph::RenderNode(StoryNode * node, Vector2 position) const
+void StoryGraph::RenderNode(StoryNode * node, Vector2 position, RGBA color) const
 {
 	std::string nodeName = node->GetName();
 
@@ -656,7 +723,7 @@ void StoryGraph::RenderNode(StoryNode * node, Vector2 position) const
 	AABB2 nodeBox = AABB2 (position, NODE_SIZE, NODE_SIZE);
 	
 
-	g_theRenderer->DrawAABB2(nodeBox, RGBA::BLANCHEDALMOND);
+	g_theRenderer->DrawAABB2(nodeBox, color);
 	nodeBox.AddPaddingToSides(-.001f, -.001f);
 	if (!g_theGame->IsDevMode()){
 		g_theRenderer->DrawTextInBox2D(nodeName, nodeBox, Vector2(.5f, .5f), NODE_FONT_SIZE, TEXT_DRAW_WORD_WRAP, RGBA::RED);
@@ -667,7 +734,7 @@ void StoryGraph::RenderNode(StoryNode * node, Vector2 position) const
 }
 	
 
-void StoryGraph::RenderEdge(StoryEdge * edge) const
+void StoryGraph::RenderEdge(StoryEdge * edge, RGBA color) const
 {
 	Vector2 startPos = edge->GetStart()->m_data->GetPosition();
 	Vector2 endPos = edge->GetEnd()->m_data->GetPosition();
@@ -685,11 +752,11 @@ void StoryGraph::RenderEdge(StoryEdge * edge) const
 	direction *= .5f;
 	Vector2 halfPoint = startPos + direction;
 	//Vector2 secondThirdPoint = firstThirdPoint + direction;
-	g_theRenderer->DrawLine2D(startPos, endPos, RGBA::WHITE);
-	g_theRenderer->DrawLine2D(halfPoint, halfPoint - angledLeft, RGBA::WHITE);
-	g_theRenderer->DrawLine2D(halfPoint, halfPoint - angledRight, RGBA::WHITE);
+	g_theRenderer->DrawLine2D(startPos, endPos, color);
+	g_theRenderer->DrawLine2D(halfPoint, halfPoint - angledLeft, color);
+	g_theRenderer->DrawLine2D(halfPoint, halfPoint - angledRight, color);
 	
-	std::string cost = Stringf("%f", edge->GetCost());
+	std::string cost = Stringf("%f", edge->GetCost()->GetCost());
 	g_theRenderer->DrawText2D(cost, halfPoint - Vector2(.002f, 0.f), .008f, RGBA::YELLOW);
 }
 

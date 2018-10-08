@@ -143,4 +143,5 @@ extern Game* g_theGame;
 bool OnPing( NetMessage msg, net_sender_t const &from ) ;
 bool OnPong( NetMessage msg, net_sender_t const & from) ;
 bool OnAdd( NetMessage msg, net_sender_t const & from) ;
+bool OnAddResponse( NetMessage msg, net_sender_t const & from) ;
 

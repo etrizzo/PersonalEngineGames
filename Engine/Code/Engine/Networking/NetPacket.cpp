@@ -31,6 +31,6 @@ bool NetPacket::ReadMessage(NetMessage * outMsg)
 	Read(&msgSize, false);
 
 	//write message header and message
-	bool read = outMsg->WriteBytes(msgSize, outMsg->GetWriteHeadLocation(), false);
+	bool read = outMsg->WriteBytes(msgSize, GetReadHeadLocation(), false);
 	return read;
 }

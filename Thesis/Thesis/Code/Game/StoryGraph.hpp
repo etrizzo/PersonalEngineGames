@@ -44,6 +44,7 @@ public:
 	void RenderGraph() const;
 	void UpdateNodePositions();
 	void RunNodeAdjustments();
+	void RenderPath() const;
 
 	/*
 	=====================
@@ -65,7 +66,16 @@ public:
 	void AddNodeAtEdge(StoryNode* newNode, StoryEdge* existingEdge);
 
 
-	std::vector<StoryNode*> FindPath( StoryHeuristicCB heuristic );
+	void FindPath( StoryHeuristicCB heuristic );
+
+	/*
+	=========
+	Accessors
+	=========
+	*/
+	Character* GetCharacter(unsigned int index) const;
+	unsigned int GetNumCharacters() const;
+
 
 	/*
 	=====================================
@@ -113,6 +123,8 @@ protected:
 	std::vector<Character*> m_characters			= std::vector<Character*>();
 	StoryStructure m_targetStructure				= StoryStructure();
 
+	std::vector<StoryNode*> m_pathFound				= std::vector<StoryNode*>();
+
 	//float m_nodeSize						= .05f;
 	
 	
@@ -120,8 +132,8 @@ protected:
 	Vector2 CalculateNodePosition(StoryNode* node);
 	Vector2 CalculateNodePull(StoryNode* node) const;
 	Vector2 CalculateNodePush(StoryNode* node) const;
-	void RenderNode(StoryNode* node, Vector2 position) const;
-	void RenderEdge(StoryEdge* edge) const;
+	void RenderNode(StoryNode* node, Vector2 position, RGBA color = RGBA::BLANCHEDALMOND) const;
+	void RenderEdge(StoryEdge* edge, RGBA color = RGBA::WHITE) const;
 
 public:
 	static std::vector<StoryNode*> s_plotNodes;

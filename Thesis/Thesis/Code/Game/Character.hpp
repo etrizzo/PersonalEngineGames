@@ -7,6 +7,7 @@ public:
 	Character();
 
 	void InitFromXML(tinyxml2::XMLElement* characterDefinition);
+	bool HasTag(TagPair tag);
 
 	std::string GetName() const;
 

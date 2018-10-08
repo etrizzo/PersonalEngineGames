@@ -90,9 +90,12 @@ void Game::PostStartup()
 
 
 	// describe what this session can do; 
-	m_session->RegisterMessage( "ping", (NetSessionMessageCB*) &OnPing ); 
-	m_session->RegisterMessage( "pong", (NetSessionMessageCB*) &OnPong ); 
-	m_session->RegisterMessage( "add" , (NetSessionMessageCB*) &OnAdd  ); 
+	m_session->RegisterMessage( "ping", (NetSessionMessageCB) OnPing ); 
+	m_session->RegisterMessage( "pong", (NetSessionMessageCB) OnPong ); 
+	m_session->RegisterMessage( "add" , (NetSessionMessageCB) OnAdd  ); 
+	m_session->RegisterMessage( "add_response", (NetSessionMessageCB) OnAddResponse );
+
+	m_session->SortMessageIDs();
 
 	// temp - eventually we either "host" or "join" a session
 	// bor now we'll just shortcut to the first
@@ -399,6 +402,7 @@ bool OnPing( NetMessage msg, net_sender_t const &from )
 
 	// ping responds with pong
 	NetMessage* pong = new NetMessage( "pong" ); 
+	//pong->WriteData( str ); 
 	from.m_connection->Send( pong ); 
 
 	// all messages serve double duty
@@ -410,12 +414,11 @@ bool OnPing( NetMessage msg, net_sender_t const &from )
 
 bool OnPong( NetMessage msg, net_sender_t const &from ) 
 {
-	std::string str; 
-	msg.ReadString( str ); 
+	//std::string str; 
+	//msg.ReadString( str ); 
 
-	ConsolePrintf( "Received pong from %s: %s", 
-		from.m_connection->GetAddress().ToString().c_str(), 
-		str.c_str() ); 
+	ConsolePrintf( "Received pong from %s", 
+		from.m_connection->GetAddress().ToString().c_str()); 
 
 	// all messages serve double duty
 	// do some work, and also validate
@@ -443,6 +446,30 @@ bool OnAdd( NetMessage msg, net_sender_t const &from )
 	// would could send back a response here if we want;
 	// ...
 
+	return true; 
+}
+
+bool OnAddResponse(NetMessage msg, net_sender_t const & from)
+{
+	float val0;
+	float val1; 
+	float sum;
+
+	if (!msg.Read( &val0 ) || !msg.Read( &val1 )) {
+		// this probaby isn't a real connection to send us a bad message
+		return false; 
+	}
+
+	sum = val0 + val1; 
+	std::string printStr = Stringf("Add: %f + %f = %f", val0, val1, sum );
+	ConsolePrintf( printStr.c_str() ); 
+
+	// would could send back a response here if we want;
+	// ...
+
+	NetMessage* addResponse = new NetMessage( "add_response" ); 
+	addResponse->WriteData( printStr ); 
+	from.m_connection->Send( addResponse ); 
 	return true; 
 }
 

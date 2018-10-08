@@ -95,3 +95,4 @@ void CommandGetAddress(Command& cmd);
 
 void CommandPrintGraph(Command& cmd);
 void CommandGenerateGraph(Command& cmd);
+void CommandFindPath(Command& cmd);

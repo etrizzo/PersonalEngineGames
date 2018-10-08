@@ -190,6 +190,7 @@ void App::RegisterCommands()
 
 	CommandRegister("print_graph", CommandPrintGraph, "Prints current graph as text");
 	CommandRegister("generate_graph", CommandGenerateGraph, "Re-generates story graph");
+	CommandRegister("find_path", CommandFindPath, "Finds the shortest path in the graph");
 
 }
 
@@ -595,5 +596,11 @@ void CommandGenerateGraph(Command & cmd)
 {
 	UNUSED(cmd);
 	g_theGame->GenerateGraph();
+}
+
+void CommandFindPath(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->m_graph.FindPath(ShortestPathHeuristic);
 }
 

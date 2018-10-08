@@ -23,6 +23,9 @@ public:
 	void AddOutboundEdge(DirectedEdge<T, C>* edge);
 	void AddInboundEdge(DirectedEdge<T, C>* edge);
 
+	bool RemoveOutboundEdge(DirectedEdge<T, C>* edge);
+	bool RemoveInboundEdge(DirectedEdge<T, C>* edge);
+
 	float GetShortestDistance() const;
 	void SetShortestDistance(float distance);
 
@@ -116,7 +119,8 @@ inline std::string Node<T, C>::GetName()
 template<typename T, typename C>
 inline std::string Node<T, C>::GetData()
 {
-	return  ptr(m_data)->ToString();
+	return Stringf("%f", m_shortestDistance);
+	//return  ptr(m_data)->ToString();
 }
 
 template<typename T, typename C>
@@ -129,6 +133,30 @@ template<typename T, typename C>
 inline void Node<T, C>::AddInboundEdge(DirectedEdge<T, C>* edge)
 {
 	m_inboundEdges.push_back(edge);
+}
+
+template<typename T, typename C>
+inline bool Node<T, C>::RemoveOutboundEdge(DirectedEdge<T, C>* edge)
+{
+	for (unsigned int i = 0; i < (unsigned int) m_outboundEdges.size(); i++){
+		if (m_outboundEdges[i] == edge){
+			RemoveAtFast(m_outboundEdges, i);
+			return true;
+		}
+	}
+	return false;
+}
+
+template<typename T, typename C>
+inline bool Node<T, C>::RemoveInboundEdge(DirectedEdge<T, C>* edge)
+{
+	for (unsigned int i = 0; i < (unsigned int) m_inboundEdges.size(); i++){
+		if (m_inboundEdges[i] == edge){
+			RemoveAtFast(m_inboundEdges, i);
+			return true;
+		}
+	}
+	return false;
 }
 
 template<typename T, typename C>
@@ -156,6 +184,7 @@ inline DirectedEdge<T, C>::DirectedEdge(Node<T, C>* start, Node<T, C>* end)
 {
 	m_start = start;
 	m_end = end;
+	m_cost = C();
 }
 
 template<typename T, typename C>
@@ -310,6 +339,8 @@ DirectedEdge<T, C>* DirectedGraph<T, C>::RemoveEdge(Node<T, C>* start, Node<T, C
 		if (m_edges[index]->GetStart() == start){
 			if (m_edges[index]->GetEnd() == end){
 				DirectedEdge<T, C>* foundEdge = m_edges[index];
+				foundEdge->GetStart()->RemoveOutboundEdge(foundEdge);
+				foundEdge->GetEnd()->RemoveInboundEdge(foundEdge);
 				RemoveAtFast(m_edges, index); 
 				return foundEdge;
 			}
@@ -324,6 +355,8 @@ DirectedEdge<T, C>* DirectedGraph<T, C>::RemoveEdge(DirectedEdge<T, C>* edge)
 	for(int index = (int) m_edges.size() - 1; index >= 0; index--){
 		if (m_edges[index] == edge){
 			DirectedEdge<T, C>* foundEdge = m_edges[index];
+			foundEdge->GetStart()->RemoveOutboundEdge(foundEdge);
+			foundEdge->GetEnd()->RemoveInboundEdge(foundEdge);
 			RemoveAtFast(m_edges, index); 
 			return foundEdge;
 		}
