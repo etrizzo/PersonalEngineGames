@@ -82,6 +82,9 @@
     <ClCompile Include="CharacterState.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -154,6 +157,9 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="CharacterState.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

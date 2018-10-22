@@ -72,27 +72,11 @@ void PrintTree(ProfilerReportEntry* tree, int depth = 0);
 
 std::string FormatProfilerReport(ProfilerReportEntry* entry, int parentCount = 0);
 
-
-void ThreadTestWork( void* ) ;
-
-void CommandConsoleNonThreadedTest( Command& cmd ) ;
-void CommandConsoleThreadedTest( Command& cmd  ) ;
-void CommandLogThreadTest(Command& cmd);
-void CommandLogFlushTest(Command& cmd);
-void CommandLogTestWarning(Command& cmd);
-void CommandLogTestError(Command& cmd);
-void CommandLogTest(Command& cmd);
-void CommandLogShowFilter(Command& cmd);
-void CommandLogHideFilter(Command& cmd);
-void CommandLogToggleWhitelist(Command& cmd);
-void CommandLogHideAll(Command& cmd);
-void CommandLogShowAll(Command& cmd);
-
-
-void CommandGetAddress(Command& cmd);
-//void CommandSendMessage(Command& cmd);
-
-
 void CommandPrintGraph(Command& cmd);
 void CommandGenerateGraph(Command& cmd);
 void CommandFindPath(Command& cmd);
+void CommandPrintStory(Command& cmd);
+void CommandFindBranches(Command& cmd);
+
+void CommandGenerateSkeleton(Command& cmd);
+void CommandAddDetails(Command& cmd);

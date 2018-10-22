@@ -1,4 +1,4 @@
-
+<!--
 	<DetailGrammar>
 		<Action text="*0* talks to *1* about *0_TAG*" />
 		<CharacterRequirements>
@@ -7,19 +7,12 @@
 			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>
-			<A tag = "isAlive" target="true"/> 
-			<B tag = "isAlive" target="true"/>
+			<A tag = "isAlive" 	target="true"/> 
+			<B tag = "isAlive" 	target="true"/>
 			<A tag = "isAngryAt" target="! *0*" />
 		</StoryRequirements>
 		<StoryEffects>
-			<!--
-			<EffectSet chance="*B_INVERSE_TRAIT1"/>
-				<TraitChange character="*A" trait="Social" change="+10" />
-				<TraitChange character="*B" trait="Social" change="+10" />
-				<TagChange character="*B" hasTag = "isTrusting" target="*A" />
-				<StoryChange Action="+5" Romance="+10" /> 
-			</EffectSet>
-		-->
+
 			<EffectSet chance="default">
 				<TraitChange character="0" trait="Social" change="-10" />
 				<TraitChange character="1" trait="Social" change="-10" />
@@ -30,7 +23,7 @@
 	</DetailGrammar>
 
 	<DetailGrammar>
-		<Action text="*0* flirts with *1*" />
+		<Action text="*0* chats with *1*" />
 		<CharacterRequirements>
 			<Character number="0">
 				<Requirement trait="Social" value="60" compare="greater" />
@@ -53,16 +46,12 @@
 			</EffectSet>
 		</StoryEffects>
 	</DetailGrammar>
+-->
 
 	<DetailGrammar>
-		<Action text="*0* finds a cave treasure" />
+		<Action text="*0* fights a cave jelly" />
 		<CharacterRequirements>
-			<Character number="0">
-				<Requirement trait="Social" value="60" compare="greater" />
-				<Requirement tag="isAlive" target="true"/>
-				<Requirement tag="isAngryAt" target="*1*"/>
-			</Character>
-			<Character number="0">
+			<Character index="0">
 				<Requirement tag="isAlive" target="true" />
 				<Requirement tag="inCave" target="true" />
 			</Character>
@@ -72,9 +61,6 @@
 		</StoryRequirements>
 		<StoryEffects>
 			<EffectSet chance="default">
-				<TraitChange character="0" trait="Social" change="-10" />
-				<TraitChange character="1" trait="Social" change="-10" />
-				<TagChange character="1" hasTag = "isAngry" target="*0*" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</StoryEffects>
@@ -82,14 +68,9 @@
 
 
 	<DetailGrammar>
-		<Action text="*0* finds a dungeon treasure" />
+		<Action text="*0* fights a dungeon monster" />
 		<CharacterRequirements>
-			<Character number="0">
-				<Requirement trait="Social" value="60" compare="greater" />
-				<Requirement tag="isAlive" target="true"/>
-				<Requirement tag="isAngryAt" target="*1*"/>
-			</Character>
-			<Character number="0">
+			<Character index="0">
 				<Requirement tag="isAlive" target="true" />
 				<Requirement tag="inDungeon" target="true" />
 			</Character>
@@ -99,10 +80,17 @@
 		</StoryRequirements>
 		<StoryEffects>
 			<EffectSet chance="default">
-				<TraitChange character="0" trait="Social" change="-10" />
-				<TraitChange character="1" trait="Social" change="-10" />
-				<TagChange character="1" hasTag = "isAngry" target="*0*" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</StoryEffects>
 	</DetailGrammar>
+
+
+				<!--
+			<EffectSet chance="*B_INVERSE_TRAIT1"/>
+				<TraitChange character="*A" trait="Social" change="+10" />
+				<TraitChange character="*B" trait="Social" change="+10" />
+				<TagChange character="*B" hasTag = "isTrusting" target="*A" />
+				<StoryChange Action="+5" Romance="+10" /> 
+			</EffectSet>
+		-->

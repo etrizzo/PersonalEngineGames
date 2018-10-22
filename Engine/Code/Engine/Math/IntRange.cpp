@@ -1,5 +1,5 @@
 #include "IntRange.hpp"
-#include <string>
+#include "Engine/Core/StringUtils.hpp"
 
 IntRange::IntRange(int initialMin, int initialMax)
 {
@@ -39,6 +39,11 @@ bool IntRange::IsIntInRange(int isInRange) const
 		return true;
 	}
 	return false;
+}
+
+std::string IntRange::ToString() const
+{
+	return Stringf("%i-%i", min, max);
 }
 
 bool DoRangesOverlap(const IntRange & a, const IntRange & b)

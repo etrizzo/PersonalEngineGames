@@ -18,7 +18,8 @@ void StoryGraph::ReadPlotNodesFromXML(std::string filePath)
 //	std::string filePath = "Data/Data/" + fileName;
 	nodeDoc.LoadFile(filePath.c_str());
 	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("PlotGrammar"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("PlotGrammar")){
-		StoryData* data = new StoryData(nodeElement, PLOT_NODE);
+		StoryData* data = new StoryData( PLOT_NODE);
+		data->InitFromXML(nodeElement);
 		s_plotNodes.push_back(new StoryNode(data));
 	}
 	
@@ -30,7 +31,8 @@ void StoryGraph::ReadDetailNodesFromXML(std::string filePath)
 	//	std::string filePath = "Data/Data/" + fileName;
 	nodeDoc.LoadFile(filePath.c_str());
 	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("DetailGrammar"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("DetailGrammar")){
-		StoryData* data = new StoryData(nodeElement, DETAIL_NODE);
+		StoryData* data = new StoryData( DETAIL_NODE);
+		data->InitFromXML(nodeElement);
 		s_detailNodes.push_back(new StoryNode(data));
 	}
 }
@@ -58,8 +60,10 @@ void StoryGraph::UpdateNodePositions()
 			node->m_data->SetPosition(END_NODE_POSITION);
 		} else {
 			Vector2 nodeForce = CalculateNodeForces(node);
-			Vector2 newNodePos = (nodeForce * .016) + node->m_data->GetPosition();
-			node->m_data->SetPosition(newNodePos);
+			if (nodeForce.GetLengthSquared() > (MIN_DISTANCE_TO_MOVE * MIN_DISTANCE_TO_MOVE)){
+				Vector2 newNodePos = (nodeForce * .016) + node->m_data->GetPosition();
+				node->m_data->SetPosition(newNodePos);
+			}
 		}
 	}
 }
@@ -76,15 +80,13 @@ void StoryGraph::RunNodeAdjustments()
 void StoryGraph::RunGeneration(int numPlotNodes, int desiredSize)
 {
 	GenerateSkeleton(numPlotNodes);
-	bool canAdd = true;
-	while(m_graph.GetNumNodes() < desiredSize && canAdd){
-		canAdd = TryToAddDetailNode();
-	}
+	RunNodeAdjustments();
+	AddDetailNodesToDesiredSize(desiredSize);
 }
 
 void StoryGraph::GenerateSkeleton(int numPlotNodes)
 {
-	TODO("Clean up cloning of nodes.");
+	m_pathFound.clear();
 	GenerateStartAndEnd();
 	StoryNode* addNode = nullptr;
 	StoryData* newData = nullptr;
@@ -101,7 +103,16 @@ void StoryGraph::GenerateSkeleton(int numPlotNodes)
 		}
 	}
 
-	IdentifyBranchesAndAdd(2);
+	//IdentifyBranchesAndAdd(2);
+}
+
+void StoryGraph::AddDetailNodesToDesiredSize(int desiredSize)
+{
+	m_pathFound.clear();
+	bool canAdd = true;
+	while(m_graph.GetNumNodes() < desiredSize && canAdd){
+		canAdd = TryToAddDetailNode();
+	}
 }
 
 void StoryGraph::GenerateStartAndEnd()
@@ -143,14 +154,34 @@ bool StoryGraph::AddPlotNode(StoryNode* newPlotNode)
 	StoryNode* nodeToAddAfter; 
 	StoryEdge* edgeToAddAt = nullptr;
 	bool foundSpot = false;
-	while (!openEdges.empty()){
+	while (!openEdges.empty() && !foundSpot){
 		edgeToAddAt = openEdges.back();
 		openEdges.pop();
 		//if the story meets the requirements of the new nodes at that edge, continue.
 		//if not, add the end of the edge to the open list.
 		if (!NodeRequirementsAreMet(newPlotNode, edgeToAddAt)){
-			for (StoryEdge* edge : edgeToAddAt->GetEnd()->m_outboundEdges){
-				openEdges.push(edge);
+			if (CheckRandomChance(BRANCH_CHANCE_ON_FAIL)){
+				//if you can't add at a real edge, random chance to add a branch
+				//branches are "fake" edges between the node and any reachable node,
+				// with the same starting state as the edge you are trying to add at (?)
+				// but now, the compare will happen on the new end node
+				TODO("Check to add branch");
+				for (int i = 0; i < 5; i++){
+					bool addedBranch = AttemptToAddBranchAfterFail(edgeToAddAt->GetStart(), edgeToAddAt, newPlotNode);
+					if (addedBranch){
+						//foundSpot = true;
+						//edgeToAddAt = addedFakeEdge;
+						return true;
+						break;
+					}
+				}
+
+			}
+			//if you didn't branch and find a spot, add all your outbout edges to the open edges list
+			if (!foundSpot){
+				for (StoryEdge* edge : edgeToAddAt->GetEnd()->m_outboundEdges){
+					openEdges.push(edge);
+				}
 			}
 		} else {
 			foundSpot = true;
@@ -226,16 +257,10 @@ void StoryGraph::IdentifyBranchesAndAdd(int numBranchesToAdd)
 					reachableNodes.push_back(secondLayer->GetEnd());
 				}
 			}
-			//for each future node, see if an outgoing edge would meet the story state requirements of that node.
-			for (StoryNode* reachable : reachableNodes){
-				//if so, add an edge and continue (tier 1)
-				if (true){
-					StoryState* newState = new StoryState(GetRandomFloatInRange(0.f, 5.f), GetNumCharacters());
-					m_graph.AddEdge(currentNode, reachable, newState);
-					branchesAdded++;
-					added = true;
-					break;
-				}
+
+			added = (CheckReachableNodesForBranch(reachableNodes, currentNode) != nullptr);
+			if (added){
+				branchesAdded++;
 			}
 			
 		}
@@ -244,13 +269,88 @@ void StoryGraph::IdentifyBranchesAndAdd(int numBranchesToAdd)
 	}
 }
 
+bool StoryGraph::AttemptToAddBranchAfterFail(StoryNode * startingNode, StoryEdge * failedEdge, StoryNode* newNode)
+{
+	//if you can't add at a real edge, random chance to add a branch
+	//branches are "fake" edges between the node and any reachable node,
+	// with the same starting state as the edge you are trying to add at (?)
+	// but now, the compare will happen on the new end node
+	std::vector<StoryNode*> reachableNodes = startingNode->GetReachableNodes();
+	StoryEdge* fakeEdge = CheckReachableNodesForBranch(reachableNodes, startingNode);
+	if (fakeEdge == nullptr){
+		return false;
+	}
+	//Add the new node onto the fake edge
+
+	//copied from AddNodeAtEdge
+	//m_graph.RemoveEdge(existingEdge);
+	//not sure what to do with cost...
+	if (NodeRequirementsAreMet(newNode, fakeEdge)){
+		AddNodeAtEdge(newNode, fakeEdge);
+		return true;
+	};
+	return false;
+	//StoryState* incomingCost = new StoryState(*fakeEdge->GetCost());
+	//StoryState* outgoingCost = new StoryState(*fakeEdge->GetCost());
+	//outgoingCost->PredictUpdateOnCharacter(newNode->m_data);
+	//m_graph.AddEdge(existingEdge->GetStart(), newNode, incomingCost);
+	//m_graph.AddEdge(newNode, existingEdge->GetEnd(), outgoingCost);
+	//delete existingEdge;
+
+	////newNode->UpdateState(newNode->m_data->m_effects);
+	//std::vector<StoryNode*> reachableNodes = newNode->GetReachableNodes();
+
+	//for (StoryNode* reachable : reachableNodes){
+	//	//edge->UpdateDataFromNode(data);
+	//	reachable->UpdateData(newNode->m_data);
+	//	for (StoryEdge* edge : reachable->m_outboundEdges){
+	//		edge->GetCost()->UpdateFromNode(newNode->m_data);
+	//	}
+	//}
+
+	//return false;
+}
+
+StoryEdge* StoryGraph::CheckReachableNodesForBranch(std::vector<StoryNode*> reachableNodes, StoryNode * startingNode)
+{
+	StoryEdge* added = nullptr;
+	//for each future node, see if an outgoing edge would meet the story state requirements of that node.
+	for (StoryNode* reachable : reachableNodes){
+		//if so, add an edge and continue (tier 1)
+		if (true){
+			TODO("Check for cycles properly");
+			if (!m_graph.ContainsEdge(startingNode, reachable) && !m_graph.ContainsEdge(reachable, startingNode)){
+				StoryState* newState = new StoryState(GetRandomFloatInRange(0.f, 5.f), GetNumCharacters());
+				added = m_graph.AddEdge(startingNode, reachable, newState);
+				return added;
+			}
+		}
+	}
+
+	return added;
+}
+
 void StoryGraph::AddNodeAtEdge(StoryNode * newNode, StoryEdge * existingEdge)
 {
 	m_graph.RemoveEdge(existingEdge);
 	//not sure what to do with cost...
-	StoryState* newCost = new StoryState(GetRandomFloatInRange(0.f, 5.f), m_characters.size());
-	m_graph.AddEdge(existingEdge->GetStart(), newNode, newCost);
-	m_graph.AddEdge(newNode, existingEdge->GetEnd(), newCost);
+	StoryState* incomingCost = new StoryState(*existingEdge->GetCost());
+	StoryState* outgoingCost = new StoryState(*existingEdge->GetCost());
+	outgoingCost->UpdateFromNode(newNode->m_data);
+	m_graph.AddEdge(existingEdge->GetStart(), newNode, incomingCost);
+	m_graph.AddEdge(newNode, existingEdge->GetEnd(), outgoingCost);
+	delete existingEdge;
+
+	//newNode->UpdateState(newNode->m_data->m_effects);
+	std::vector<StoryNode*> reachableNodes = newNode->GetReachableNodes();
+
+	for (StoryNode* reachable : reachableNodes){
+		//edge->UpdateDataFromNode(data);
+		reachable->UpdateData(newNode->m_data);
+		for (StoryEdge* edge : reachable->m_outboundEdges){
+			edge->GetCost()->UpdateFromNode(newNode->m_data);
+		}
+	}
 }
 
 void StoryGraph::FindPath(StoryHeuristicCB heuristic)
@@ -303,6 +403,10 @@ void StoryGraph::FindPath(StoryHeuristicCB heuristic)
 	m_pathFound = std::vector<StoryNode*>();
 	currentNode = m_startNode;
 	while (currentNode != m_endNode){
+		if (currentNode == nullptr){
+			ConsolePrintf(RGBA::RED, "path could not be found");
+			return;
+		}
 		m_pathFound.push_back(currentNode);
 		StoryNode* minNode = nullptr;
 		float minCost = 9999.f;
@@ -316,6 +420,21 @@ void StoryGraph::FindPath(StoryHeuristicCB heuristic)
 	}
 	m_pathFound.push_back(m_endNode);
 	
+}
+
+void StoryGraph::PrintPath() 
+{
+	if (m_pathFound.size() == 0){
+		ConsolePrintf(RGBA::RED, "No path found. Run find_path");
+		return;
+	}
+	m_pathString = "";
+	//Create the story
+	for (StoryNode* node : m_pathFound){
+		m_pathString += node->GetName();
+		ConsolePrintf(node->GetName().c_str());
+	}
+
 }
 
 Character * StoryGraph::GetCharacter(unsigned int index) const
@@ -437,8 +556,8 @@ Vector2 StoryGraph::CalculateNodePush(StoryNode * node) const
 void StoryGraph::RenderGraph() const
 {
 	AABB2 bounds = g_theGame->GetUIBounds();
-	std::string graphText = g_theGame->m_graph.ToString();
-	g_theRenderer->DrawTextInBox2D(graphText, bounds, Vector2(0.f, 1.f), .01f, TEXT_DRAW_SHRINK_TO_FIT);
+	//std::string graphText = g_theGame->m_graph.ToString();
+	g_theRenderer->DrawTextInBox2D(m_pathString, bounds, Vector2(0.f, 1.f), .01f, TEXT_DRAW_SHRINK_TO_FIT);
 
 	for (StoryEdge* edge : m_graph.m_edges){
 		RenderEdge(edge);
@@ -578,6 +697,7 @@ void StoryGraph::Clear()
 {
 	TODO("define whether directed graph should delete its nodes...")
 	m_graph.Clear();
+	m_pathFound.clear();
 }
 
 StoryEdge * StoryGraph::GetEdge(StoryNode * start, StoryNode * end) const
@@ -723,13 +843,17 @@ void StoryGraph::RenderNode(StoryNode * node, Vector2 position, RGBA color) cons
 	AABB2 nodeBox = AABB2 (position, NODE_SIZE, NODE_SIZE);
 	
 
-	g_theRenderer->DrawAABB2(nodeBox, color);
+	if (node->m_data->m_type == PLOT_NODE){
+		g_theRenderer->DrawDisc2(nodeBox.GetCenter(), NODE_SIZE * 1.05, color);
+	} else {
+		g_theRenderer->DrawAABB2(nodeBox, color);
+	}
 	nodeBox.AddPaddingToSides(-.001f, -.001f);
 	if (!g_theGame->IsDevMode()){
 		g_theRenderer->DrawTextInBox2D(nodeName, nodeBox, Vector2(.5f, .5f), NODE_FONT_SIZE, TEXT_DRAW_WORD_WRAP, RGBA::RED);
 	} else {
-		std::string nodeData = node->GetData();
-		g_theRenderer->DrawTextInBox2D(nodeData, nodeBox, Vector2(.5f, 1.f), NODE_FONT_SIZE, TEXT_DRAW_WORD_WRAP, RGBA::BLACK);
+		std::string nodeData = node->GetDataAsString();
+		g_theRenderer->DrawTextInBox2D(nodeData, nodeBox, Vector2(.5f, .5f), NODE_FONT_SIZE, TEXT_DRAW_WORD_WRAP, RGBA::RED);
 	}
 }
 	
@@ -749,15 +873,22 @@ void StoryGraph::RenderEdge(StoryEdge * edge, RGBA color) const
 	angledLeft *= .01f;
 	angledRight *= .01f;
 
-	direction *= .5f;
+	TODO("Find a way to improve placement of edge text.");
+	float pos = RangeMapFloat(edge->GetCost()->GetCost(), 0.f, 5.f, .4f, .6f);
+
+	direction *= pos;
 	Vector2 halfPoint = startPos + direction;
 	//Vector2 secondThirdPoint = firstThirdPoint + direction;
-	g_theRenderer->DrawLine2D(startPos, endPos, color);
-	g_theRenderer->DrawLine2D(halfPoint, halfPoint - angledLeft, color);
-	g_theRenderer->DrawLine2D(halfPoint, halfPoint - angledRight, color);
+	g_theRenderer->DrawLine2D(startPos, endPos, color, color);
+	g_theRenderer->DrawLine2D(halfPoint, halfPoint - angledLeft, color, color);
+	g_theRenderer->DrawLine2D(halfPoint, halfPoint - angledRight, color, color);
 	
-	std::string cost = Stringf("%f", edge->GetCost()->GetCost());
-	g_theRenderer->DrawText2D(cost, halfPoint - Vector2(.002f, 0.f), .008f, RGBA::YELLOW);
+
+	AABB2 costBox = AABB2(halfPoint, .01, .008);
+
+	std::string cost = edge->GetCost()->ToString();
+	g_theRenderer->DrawTextInBox2D(cost, costBox, Vector2::HALF, EDGE_FONT_SIZE, TEXT_DRAW_WORD_WRAP,RGBA::YELLOW);
+	//g_theRenderer->DrawText2D(cost, halfPoint - Vector2(.002f, 0.f), EDGE_FONT_SIZE, RGBA::YELLOW);
 }
 
 StoryNode * StoryGraph::GetRandomPlotNode()

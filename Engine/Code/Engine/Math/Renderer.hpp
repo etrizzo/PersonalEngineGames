@@ -129,6 +129,7 @@ public:
 	
 	void DrawTriangle(const Vector2 vertices[], const RGBA& color);
 	void DrawAABB2(const AABB2& bounds, const RGBA& color,  const Vector2& uvMins = Vector2::ZERO, const Vector2& uvMaxs = Vector2::ONE);
+	void DrawDisc2(const Vector2& center, const float& radius, const RGBA& color, int segments = 10);
 	void DrawBlendedAABB2(const AABB2& bounds, const RGBA& topLeftColor, const RGBA& bottomLeftColor, const RGBA& topRightColor, const RGBA& bottomRightColor);
 	void DrawAABB2Outline(const AABB2& bounds, const RGBA& color);
 	void DrawTexturedAABB2( const AABB2& bounds, const Texture& texture, const Vector2& texCoordsAtMins, const Vector2& texCoordsAtMaxs, const RGBA& tint);

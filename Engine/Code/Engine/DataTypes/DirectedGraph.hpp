@@ -16,18 +16,23 @@ public:
 	~Node();
 	T m_data;
 	float m_shortestDistance;
+	int m_orderAdded;
 
 	std::string GetName();	//all data types T must have GetName function
-	std::string GetData();	//all data types T must have ToString function
+	std::string GetDataAsString();	//all data types T must have ToString function
 
 	void AddOutboundEdge(DirectedEdge<T, C>* edge);
 	void AddInboundEdge(DirectedEdge<T, C>* edge);
+
+	void UpdateData(T data);
 
 	bool RemoveOutboundEdge(DirectedEdge<T, C>* edge);
 	bool RemoveInboundEdge(DirectedEdge<T, C>* edge);
 
 	float GetShortestDistance() const;
 	void SetShortestDistance(float distance);
+
+	std::vector<Node<T,C>*> GetReachableNodes(int targetDepth = -1, int depth = 0);
 
 	std::vector<DirectedEdge<T, C>*> m_outboundEdges;
 	std::vector<DirectedEdge<T, C>*> m_inboundEdges;
@@ -50,6 +55,7 @@ public:
 	Node<T, C>* GetEnd() const;
 
 	std::string ToString() const;
+	//std::string ToStringDebug() const;
 
 private:
 	Node<T, C>* m_start;
@@ -117,10 +123,10 @@ inline std::string Node<T, C>::GetName()
 }
 
 template<typename T, typename C>
-inline std::string Node<T, C>::GetData()
+inline std::string Node<T, C>::GetDataAsString()
 {
-	return Stringf("%f", m_shortestDistance);
-	//return  ptr(m_data)->ToString();
+	std::string data = Stringf("cost:%.2f\nOrder Added: %i\n", m_shortestDistance, m_orderAdded);
+	return  data + ptr(m_data)->ToString();
 }
 
 template<typename T, typename C>
@@ -133,6 +139,12 @@ template<typename T, typename C>
 inline void Node<T, C>::AddInboundEdge(DirectedEdge<T, C>* edge)
 {
 	m_inboundEdges.push_back(edge);
+}
+
+template<typename T, typename C>
+inline void Node<T, C>::UpdateData(T data)
+{
+	ptr(m_data)->AddData(data);
 }
 
 template<typename T, typename C>
@@ -172,6 +184,37 @@ inline void Node<T, C>::SetShortestDistance(float distance)
 }
 
 template<typename T, typename C>
+inline std::vector<Node<T,C>*> Node<T, C>::GetReachableNodes(int targetDepth, int depth)
+{
+	if (targetDepth > 0){
+		if (depth > targetDepth){
+			return std::vector<Node<T,C>*>();
+		}
+	}
+	std::vector<Node<T,C>*> nodes = std::vector<Node<T,C>*>();
+	for (DirectedEdge<T,C>* edge : m_outboundEdges){
+		nodes.push_back(edge->GetEnd());
+		//recursively get all reachable nodes and add to found list
+		std::vector<Node<T,C>*> outboundNodes = edge->GetEnd()->GetReachableNodes(targetDepth, depth + 1);
+		for (Node<T,C>* node : outboundNodes){
+			bool add = true;
+			//check for duplicates
+			for (Node<T,C>* alreadyAdded : nodes){
+				if (node == alreadyAdded){
+					add = false;
+					break;
+				}
+			}
+			if (add){
+				nodes.push_back(node);
+			}
+		}
+	}
+	return nodes;
+}
+
+
+template<typename T, typename C>
 inline DirectedEdge<T, C>::DirectedEdge(Node<T, C>* start, Node<T, C>* end, C cost)
 {
 	m_start = start;
@@ -198,6 +241,8 @@ inline void DirectedEdge<T, C>::SetCost(C cost)
 	m_cost = cost;
 }
 
+
+
 template<typename T, typename C>
 C DirectedEdge<T, C>::GetCost() const
 {
@@ -219,7 +264,7 @@ Node<T, C> * DirectedEdge<T, C>::GetEnd() const
 template<typename T, typename C>
 std::string DirectedEdge<T, C>::ToString() const
 {
-	std::string s = Stringf("%s --%3.2f--> %s", m_start->GetName().c_str(), GetCost(), m_end->GetName().c_str());
+	std::string s = Stringf("%s --%s--> %s", m_start->GetName().c_str(), m_cost->ToString().c_str(), m_end->GetName().c_str());
 	return s;
 }
 
@@ -234,6 +279,7 @@ inline Node<T, C>* DirectedGraph<T, C>::AddNode(T data)
 {
 	if (!ContainsNode(data)){
 		Node<T, C>* n = new Node<T, C>(data);
+		n->m_orderAdded = (int) m_nodes.size();
 		m_nodes.push_back(n);
 		return n;
 	}
@@ -244,6 +290,7 @@ template<typename T, typename C>
 inline Node<T, C>* DirectedGraph<T, C>::AddNode(Node<T, C>* newNode)
 {
 	if (!ContainsNode(newNode)){
+		newNode->m_orderAdded = (int) m_nodes.size();
 		m_nodes.push_back(newNode);
 		return newNode;
 	}
@@ -464,7 +511,7 @@ std::string DirectedGraph<T, C>::ToString() const
 {
 	std::string nodes = "NODES:\n";
 	for(Node<T, C>* node : m_nodes){
-		nodes += node->GetData();
+		nodes += node->GetDataAsString();
 		nodes += "\n";
 	}
 

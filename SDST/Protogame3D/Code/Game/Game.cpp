@@ -126,7 +126,7 @@ void Game::Render()
 	PROFILE_PUSH_FUNCTION_SCOPE();
 	m_currentState->Render();
 	//RenderGame();
-	//RenderUI();
+	RenderUI();
 }
 
 void Game::HandleInput()
@@ -386,7 +386,12 @@ void Game::RenderGame()
 
 void Game::RenderUI()
 {
-	
+	AABB2 screenBounds = SetUICamera();
+	AABB2 netSessionBox  = screenBounds.GetPercentageBox(Vector2(.02f, .6f), Vector2(.98f, .9f));
+
+	g_theRenderer->DrawAABB2(netSessionBox, RGBA::BLACK.GetColorWithAlpha(100));
+	g_theRenderer->DrawAABB2Outline(netSessionBox, RGBA::GetRandomRainbowColor());
+	m_session->RenderInfo(netSessionBox, g_theRenderer);
 }
 
 
@@ -441,10 +446,18 @@ bool OnAdd( NetMessage msg, net_sender_t const &from )
 	}
 
 	sum = val0 + val1; 
-	ConsolePrintf( "Add: %f + %f = %f", val0, val1, sum ); 
+	std::string printStr = Stringf("Add Response: %f + %f = %f", val0, val1, sum );
+	ConsolePrintf( printStr.c_str() ); 
 
 	// would could send back a response here if we want;
 	// ...
+
+	// would could send back a response here if we want;
+	// ...
+
+	NetMessage* addResponse = new NetMessage( "add_response" ); 
+	addResponse->WriteData( printStr ); 
+	from.m_connection->Send( addResponse ); 
 
 	return true; 
 }
@@ -456,20 +469,16 @@ bool OnAddResponse(NetMessage msg, net_sender_t const & from)
 	float sum;
 
 	if (!msg.Read( &val0 ) || !msg.Read( &val1 )) {
-		// this probaby isn't a real connection to send us a bad message
+		// this probalby isn't a real connection to send us a bad message
 		return false; 
 	}
 
 	sum = val0 + val1; 
-	std::string printStr = Stringf("Add: %f + %f = %f", val0, val1, sum );
-	ConsolePrintf( printStr.c_str() ); 
+	ConsolePrintf( "Add: %f + %f = %f", val0, val1, sum ); 
 
-	// would could send back a response here if we want;
-	// ...
 
-	NetMessage* addResponse = new NetMessage( "add_response" ); 
-	addResponse->WriteData( printStr ); 
-	from.m_connection->Send( addResponse ); 
+
+
 	return true; 
 }
 

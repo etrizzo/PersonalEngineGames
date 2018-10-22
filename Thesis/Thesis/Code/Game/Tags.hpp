@@ -7,6 +7,7 @@ class Tags
 public:
 	Tags(){ m_tags = std::vector<TagPair>();};
 	Tags(const std::string& commaSeparatedTagNames);
+	Tags( const Tags& copy);
 	~Tags();
 
 	int GetNumTags() const;
@@ -14,6 +15,7 @@ public:
 	void SetOrRemoveTags( const std::string& commaSeparatedTagNames ); // "blessed,!poisoned"
 	bool HasTags( const std::string& commaSeparatedTagNames ); // "good,!cursed"
 	void SetTag( const std::string& tagName );
+	void SetTagWithValue( const std::string& tagName, const std::string& value);
 	void RemoveTag( const std::string& tagName );
 	bool HasTag( const std::string& tagName );
 	bool HasTag(TagPair tag);

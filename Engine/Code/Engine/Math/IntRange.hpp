@@ -1,5 +1,6 @@
 #pragma once
 #include "MathUtils.hpp"
+#include "Engine/Core/StringUtils.hpp"
 
 class IntRange{
 public:
@@ -14,6 +15,8 @@ public:
 	int GetRandomInRange() const;
 	void SetFromText(const char* text);
 	bool IsIntInRange(int isInRange) const;
+
+	std::string ToString() const;
 };
 
 bool DoRangesOverlap( const IntRange& a, const IntRange& b);

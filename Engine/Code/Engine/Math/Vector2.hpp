@@ -42,6 +42,18 @@ public:
 	const static Vector2 ZERO;
 	const static Vector2 ONE;
 	const static Vector2 HALF;
+	const static Vector2 TOP_LEFT;
+	const static Vector2 BOTTOM_RIGHT;
+	const static Vector2 ALIGN_CENTER_LEFT;
+	const static Vector2 ALIGN_CENTER_RIGHT;
+	const static Vector2 ALIGN_CENTER_TOP;
+	const static Vector2 ALIGN_CENTER_BOTTOM;
+
+	const static Vector2 TOP_LEFT_PADDED;
+	const static Vector2 TOP_RIGHT_PADDED;
+	const static Vector2 BOTTOM_LEFT_PADDED;
+	const static Vector2 BOTTOM_RIGHT_PADDED;
+
 	const static Vector2 NORTH;
 	const static Vector2 SOUTH;
 	const static Vector2 EAST;

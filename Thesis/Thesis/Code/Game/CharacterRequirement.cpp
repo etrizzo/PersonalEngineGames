@@ -19,3 +19,15 @@ bool CharacterRequirement_Tag::PassesRequirement(CharacterState * character)
 {
 	return character->HasTag(m_tag);
 }
+
+CharacterRequirement_Trait::CharacterRequirement_Trait(unsigned int charID, tinyxml2::XMLElement * element)
+	:CharacterRequirement(charID, element)
+{
+	std::string traitString = ParseXmlAttribute(*element, "trait", "NO_TRAIT");
+	m_trait = GetTraitFromString(traitString);
+}
+
+bool CharacterRequirement_Trait::PassesRequirement(CharacterState * character)
+{
+	return character->IsTraitInRange(m_trait, m_traitRange, m_wiggleroom);
+}

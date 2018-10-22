@@ -10,30 +10,8 @@ StoryData::StoryData(std::string name, float value)
 	m_action = name;
 }
 
-StoryData::StoryData(tinyxml2::XMLElement * nodeElement, eNodeType type)
+StoryData::StoryData( eNodeType type)
 {
-	tinyxml2::XMLElement* actionElement = nodeElement->FirstChildElement("Action");
-	m_action = ParseXmlAttribute(*actionElement, "text", "NO_ACTION");
-	TODO("Change structure of action to incorporate characters");
-
-	m_characters = std::vector<Character*>();
-	m_characterReqs = std::vector<CharacterRequirementSet>();
-	m_numCharacters = 0;
-	//find num characters
-	Strings splitString;
-	Split(m_action, '*', splitString);
-	if (splitString.size() > 1){
-		for (int i = 0; i < (int) splitString.size(); i++){
-			if (i % 2 == 0){
-				//if even index, you're inside a ** pair - parse to index
-				m_numCharacters++;
-			}
-		}
-	}
-	for (int i= 0; i < m_numCharacters; i++){
-		m_characters.push_back(nullptr);
-		m_characterReqs.push_back(CharacterRequirementSet());
-	}
 
 
 	m_type = type;
@@ -51,11 +29,13 @@ StoryData::StoryData(StoryData * clone)
 	m_action					= clone->m_action;
 	m_characterReqs	= clone->m_characterReqs;
 	m_storyReqs						= clone->m_storyReqs;
-	m_effects						= clone->m_effects;
+	m_effectSet						= new EffectSet(clone->m_effectSet, this);
 
 	m_numCharacters			= clone->m_numCharacters;
 	m_characters			= std::vector<Character*>();
-	m_characterReqs			= std::vector<CharacterRequirementSet>();
+	m_characterReqs			= std::vector<CharacterRequirementSet*>();
+
+	m_type = clone->m_type;
 	for (unsigned int i = 0; i < m_numCharacters; i++){
 		m_characters.push_back(nullptr);
 		m_characterReqs.push_back(clone->m_characterReqs[i]);
@@ -66,6 +46,47 @@ StoryData::StoryData(StoryData * clone)
 
 StoryData::~StoryData()
 {
+}
+
+void StoryData::InitFromXML(tinyxml2::XMLElement* nodeElement)
+{
+	tinyxml2::XMLElement* actionElement = nodeElement->FirstChildElement("Action");
+	m_action = ParseXmlAttribute(*actionElement, "text", "NO_ACTION");
+	TODO("Change structure of action to incorporate characters");
+
+	m_characters = std::vector<Character*>();
+	m_characterReqs = std::vector<CharacterRequirementSet*>();
+	m_numCharacters = 0;
+	//find num characters
+	Strings splitString;
+	Split(m_action, '*', splitString);
+	if (splitString.size() > 1){
+		for (int i = 0; i < (int) splitString.size(); i++){
+			if (i % 2 == 0){
+				//if even index, you're inside a ** pair - parse to index
+				m_numCharacters++;
+			}
+		}
+	}
+	//fill data with empty stuff
+	for (int i= 0; i < m_numCharacters; i++){
+		m_characters.push_back(nullptr);
+		m_characterReqs.push_back(new CharacterRequirementSet());
+	}
+
+	//fill character requirements with actual data that's available
+	tinyxml2::XMLElement* charReqElement = nodeElement->FirstChildElement("CharacterRequirements");
+	for (tinyxml2::XMLElement* reqElement = charReqElement->FirstChildElement("Character"); reqElement != nullptr; reqElement = reqElement->NextSiblingElement("Character")){
+		int charIndex = (unsigned int) ParseXmlAttribute(*reqElement, "index", (int) -1);
+		if (charIndex >= 0 && charIndex < m_characterReqs.size()){
+			m_characterReqs[charIndex]->InitFromXML(reqElement);
+		}
+	}
+
+	//parse effects
+	tinyxml2::XMLElement* allEffects = nodeElement->FirstChildElement("StoryEffects");
+	m_effectSet = new EffectSet(allEffects->FirstChildElement("EffectSet"), this);
+
 }
 
 std::string StoryData::GetName() const
@@ -97,7 +118,16 @@ std::string StoryData::GetName() const
 
 std::string StoryData::ToString() const
 {
-	return Stringf("%s  |  %f", m_name.c_str(), m_value);
+	return m_action;
+}
+
+//void StoryData::UpdateState(EffectSet * effects)
+//{
+//	for (StoryEdge* edge 
+//}
+
+void StoryData::AddData(StoryData * data)
+{
 }
 
 bool StoryData::AreAllCharactersSet() const
@@ -132,9 +162,48 @@ bool StoryData::DoesCharacterMeetSlotRequirementsAtEdge(Character * character, u
 {
 	TODO("Implement checks on character requirements at edge.");
 	//maybe edge needs character states?
-	CharacterState* charState = atEdge->GetCost()->GetCharacterStateForCharacter(character);
-	return m_characterReqs[charSlot].DoesCharacterMeetRequirements(charState);
+	StoryState* edgeState = atEdge->GetCost();
+	StoryState* resultState = new StoryState(*edgeState);
+	resultState->PredictUpdateOnCharacter(character, charSlot, this);
+	//resultState->UpdateFromNode(this);		//apply the potential new node's effects to see if the result still fits the graph
+
+	CharacterState* charState = edgeState->GetCharacterStateForCharacter(character);
+	CharacterState* resultingState = resultState->GetCharacterStateForCharacter(character);
+	
+	//check if the change would fit on this edge
+	bool meetsExistingConditions = m_characterReqs[charSlot]->DoesCharacterMeetRequirements(charState);
+	if (meetsExistingConditions){
+		//check if the change would fuck up future nodes
+		StoryData* endData = atEdge->GetEnd()->m_data;
+		//if this character has future requirements, have to meet them
+		//NOTE: this should maybe be a recursive call to DoesCharacterMeetSlotRequirements?
+		CharacterRequirementSet* charReqs = endData->GetRequirementsForCharacter(character);
+		if (charReqs != nullptr){
+			bool meetsFutureConditions = charReqs->DoesCharacterMeetRequirements(resultingState);
+			if (meetsFutureConditions){
+				delete resultingState;
+				return true;
+			}
+		} else {
+			//if there are no requirements for this character on the end node, it's chill
+			delete resultingState;
+			return true;
+		}
+	}
+
+	return false;
 	//return true;
+}
+
+CharacterRequirementSet* StoryData::GetRequirementsForCharacter(Character * character)
+{
+	for (int i = 0; i < m_characterReqs.size(); i++){
+		if (m_characters[i] == character){
+			return m_characterReqs[i];
+		}
+	}
+	return nullptr;
+	
 }
 
 void StoryData::SetPosition(Vector2 pos)

@@ -8,11 +8,13 @@ public:
 	TagPair() {};
 	TagPair(std::string name, std::string value = "true");
 
-	std::string GetName();
-	std::string GetValue();
+	std::string GetName() const;
+	std::string GetValue() const;
 
-	bool HasName(std::string tagName);
-	bool HasValue(std::string tagValue);
+	void SetValue(const std::string& value);
+
+	bool HasName(std::string tagName) const;
+	bool HasValue(std::string tagValue) const;
 
 
 	float		ReadValueAsFloat(float failValue = -1.f);

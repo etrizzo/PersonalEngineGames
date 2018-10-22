@@ -8,12 +8,14 @@ class Character;
 #define START_NODE_POSITION (Vector2(.15f, .5f))
 #define END_NODE_POSITION (Vector2(1.25f, .5f))
 #define NODE_SIZE (.04f)
-#define NODE_FONT_SIZE (.008f)
-#define PULL_WEIGHT (.51f)
-#define PUSH_WEIGHT (.89f)
-#define MIN_NODE_DISTANCE (.15f)
-#define MAX_NODE_DISTANCE (.3f)
+#define NODE_FONT_SIZE (.0083f)
+#define EDGE_FONT_SIZE (.01f)
+#define PULL_WEIGHT (0.1f)
+#define PUSH_WEIGHT (.99f)
+#define MIN_NODE_DISTANCE (.25f)
+#define MAX_NODE_DISTANCE (.4f)
 #define NUM_NODE_ITERATIONS (2000)
+#define MIN_DISTANCE_TO_MOVE (.06f)
 
 //comparison for 
 typedef StoryState* (*StoryHeuristicCB) (StoryEdge* edge, StoryStructure* currentStructure);
@@ -54,6 +56,7 @@ public:
 	void RunGeneration(int numPlotNodes = 3, int desiredSize = 10);
 
 	void GenerateSkeleton(int numPlotNodes);
+	void AddDetailNodesToDesiredSize(int desiredSize = 10);
 	void GenerateStartAndEnd();
 	bool TryToAddDetailNode();
 	bool AddPlotNode(StoryNode* newPlotNode);
@@ -61,12 +64,16 @@ public:
 
 	//by default, adds 1/4 * (numNodes) branches
 	void IdentifyBranchesAndAdd(int numBranchesToAdd = -1);
+	bool AttemptToAddBranchAfterFail(StoryNode* startingNode, StoryEdge* failedEdge, StoryNode* newNode);
+	StoryEdge* CheckReachableNodesForBranch(std::vector<StoryNode*> reachableNodes, StoryNode* startingNode);
+
 
 	//adds a new node on the edge between two existing nodes (insert between nodes)
 	void AddNodeAtEdge(StoryNode* newNode, StoryEdge* existingEdge);
 
 
 	void FindPath( StoryHeuristicCB heuristic );
+	void PrintPath() ;
 
 	/*
 	=========
@@ -124,6 +131,7 @@ protected:
 	StoryStructure m_targetStructure				= StoryStructure();
 
 	std::vector<StoryNode*> m_pathFound				= std::vector<StoryNode*>();
+	std::string m_pathString						= "";
 
 	//float m_nodeSize						= .05f;
 	

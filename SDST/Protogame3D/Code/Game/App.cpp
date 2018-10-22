@@ -171,13 +171,13 @@ void App::RegisterCommands()
 	CommandRegister("debug_task", CommandDebugDrawTask, "Draws debug render task", "debug_task <render_task_type>");
 
 
-	CommandRegister("new_light", CommandMakeNewLight, "Adds new light of specified in front of the camera, with color rgba", "new_light <point|dir|spot> <r,g,b,a>");
-	CommandRegister("delete_light", CommandRemoveLight, "Removes light at index i", "delete_light <i>");
-	CommandRegister("delete_lights_all", CommandRemoveAllLights, "Removes all lights in the scene");
-	CommandRegister("set_light_color", CommandSetLightColor, "Sets light color to rgba", "set_light_color <r,g,b,a>");
-	CommandRegister("set_light_pos", CommandSetLightPosition, "Sets light position to xyz", "set_light_pos <x,y,z>");
-	CommandRegister("set_light_attenuation", CommandSetLightAttenuation, "Sets attenuation for light i to a0,a1,a2", "set_light_attenuation <i> <a0,a1,a2>");
-	CommandRegister("set_ambient_light", CommandSetAmbientLight, "Sets ambient light on renderer.", "set_ambient_light <r,g,b,a>");
+	//CommandRegister("new_light", CommandMakeNewLight, "Adds new light of specified in front of the camera, with color rgba", "new_light <point|dir|spot> <r,g,b,a>");
+	//CommandRegister("delete_light", CommandRemoveLight, "Removes light at index i", "delete_light <i>");
+	//CommandRegister("delete_lights_all", CommandRemoveAllLights, "Removes all lights in the scene");
+	//CommandRegister("set_light_color", CommandSetLightColor, "Sets light color to rgba", "set_light_color <r,g,b,a>");
+	//CommandRegister("set_light_pos", CommandSetLightPosition, "Sets light position to xyz", "set_light_pos <x,y,z>");
+	//CommandRegister("set_light_attenuation", CommandSetLightAttenuation, "Sets attenuation for light i to a0,a1,a2", "set_light_attenuation <i> <a0,a1,a2>");
+	//CommandRegister("set_ambient_light", CommandSetAmbientLight, "Sets ambient light on renderer.", "set_ambient_light <r,g,b,a>");
 
 	CommandRegister("set_god_mode", CommandSetGodMode, "Sets god mode", "set_god_mode <bool>");
 	CommandRegister("toggle_god_mode", CommandToggleGodMode, "Toggles god mode");
@@ -188,13 +188,13 @@ void App::RegisterCommands()
 	CommandRegister("profiler_pause", CommandProfilePause, "Pauses profiling");
 	CommandRegister("profiler_resume", CommandProfileResume, "Resumes profiling");
 
-	CommandRegister("threaded_test",CommandConsoleThreadedTest, "Runs threading test");
-	CommandRegister("nonthreaded_test", CommandConsoleNonThreadedTest, "Runs non-threaded test");
-	CommandRegister("log_thread_test", CommandLogThreadTest, "Runs logging thread test", "log_thread_test <thread_count>");
-	CommandRegister("log_flush_test", CommandLogFlushTest, "Tests log flushing");
-	CommandRegister("log_warning", CommandLogTestWarning, "Prints a test warning log");
-	CommandRegister("log_error", CommandLogTestError, "Prints a test error log");
-	CommandRegister("log_print", CommandLogTest, "Prints a test log message");
+	//CommandRegister("threaded_test",CommandConsoleThreadedTest, "Runs threading test");
+	//CommandRegister("nonthreaded_test", CommandConsoleNonThreadedTest, "Runs non-threaded test");
+	//CommandRegister("log_thread_test", CommandLogThreadTest, "Runs logging thread test", "log_thread_test <thread_count>");
+	//CommandRegister("log_flush_test", CommandLogFlushTest, "Tests log flushing");
+	//CommandRegister("log_warning", CommandLogTestWarning, "Prints a test warning log");
+	//CommandRegister("log_error", CommandLogTestError, "Prints a test error log");
+	//CommandRegister("log_print", CommandLogTest, "Prints a test log message");
 	CommandRegister("log_hide_tag", CommandLogHideFilter, "Hides tag from log", "log_hide_tag <tagname>");
 	CommandRegister("log_show_tag", CommandLogShowFilter, "Shows tag in log", "log_show_tag <tagname>");
 	CommandRegister("log_toggle_filters", CommandLogToggleWhitelist, "toggles hidden tags to be shown and vice versa");
@@ -208,8 +208,15 @@ void App::RegisterCommands()
 	//CommandRegister("udp_test_send", CommandUDPTestSend, "Sends message through udp test system", "udp_test_send <ip:port> \"msg\"");
 
 	CommandRegister("add_connection", CommandAddConnection, "Adds connection to this session at specified index", "add_connection <conn_idx> \"ip:port\" ");
+	CommandRegister("add_connection_local", CommandAddLocalConnectionAtIndexWithOffset, "Adds a connection at the specified index with local port and port offset.", "add_connection_local <idx=0> <offset=0>" );
 	CommandRegister("send_ping", CommandSendPing, "Sends ping message to specified connection", "send_ping <conn_idx> \"msg\"" );
 	CommandRegister("send_add", CommandSendAdd, "Sends add message to specified connection", "send_add <conn_idx> <val1> <val2>" );
+	CommandRegister("net_set_heart_rate", CommandSetHeartbeat, "Sets the heartbeat rate for net session", "net_set_heart_rate <rateHZ>");
+	CommandRegister("net_set_loss", CommandSetSimulatedLoss, "Sets simulated loss for net session", "net_set_loss <lossrate>");
+	CommandRegister("net_set_lag", CommandSetSimulatedLatency, "Sets simulated latency for net session", "net_set_lag <minLagMS> <maxLagMS>");
+	
+	CommandRegister("net_set_session_send_rate", CommandSetSessionSendRate, "Sets send rate for net session", "net_set_session_send_rate <sendRateMS>");
+	CommandRegister("net_set_connection_send_rate", CommandSetConnectionSendRate, "Sets send rate for net session", "net_set_connection_send_rate <connIndex> <sendRateMS>");
 }
 
 void App::HandleInput()
@@ -734,6 +741,38 @@ void CommandAddConnection(Command & cmd)
 	}
 }
 
+void CommandAddLocalConnectionAtIndexWithOffset(Command & cmd)
+{
+	int index = cmd.GetNextInt();
+	int offset = cmd.GetNextInt();
+
+	int port = atoi(GAME_PORT);
+	port += offset;
+	std::string portString = std::to_string(port);
+
+	NetAddress addr = NetAddress::GetLocal(portString.c_str());
+	if (!addr.IsValid()){
+		ConsolePrintf("could not connect to local port: %s ", portString.c_str());
+		return;
+	}
+
+	if (index > MAX_CONNECTIONS){
+		ConsolePrintf(RGBA::RED, "%i is too big - max connections is %i", index, MAX_CONNECTIONS);
+		return;
+	}
+
+
+	// notice this can't fail - we do no validation that that
+	// address is reachable.   UDP can't tell; 
+	NetSession *session = g_theGame->m_session;
+	NetConnection *cp = session->AddConnection( index, addr ); 
+	if (cp == nullptr) {
+		ConsolePrintf(RGBA::RED, "Failed to add connection." ); 
+	} else {
+		ConsolePrintf(RGBA::YELLOW, "Connection added at index [%u]", index ); 
+	}
+}
+
 void CommandSendPing(Command & cmd)
 {
 	uint8_t idx = (uint8_t) cmd.GetNextInt(); 
@@ -782,4 +821,61 @@ void CommandSendAdd(Command & cmd)
 	msg->IncrementMessageSize((uint16_t)(sizeof(float) + sizeof(float)));
 	cp->Send( msg );
 }
+
+void CommandSetHeartbeat(Command & cmd)
+{
+	float hz = cmd.GetNextFloat();
+	if (hz == 0.f){
+		hz = DEFAULT_HEARTBEAT;
+		ConsolePrintf(RGBA::RED, "No heartbeat rate specified. Setting to default heartbeat.");
+	}
+	NetSession *sp = g_theGame->m_session;
+	sp->SetHeartbeat(hz);
+}
+
+void CommandSetSimulatedLoss(Command & cmd)
+{
+	float simulatedLoss = cmd.GetNextFloat();
+	NetSession *sp = g_theGame->m_session;
+	sp->SetSimulatedLoss(simulatedLoss);
+}
+
+void CommandSetSimulatedLatency(Command & cmd)
+{
+	int simulatedLagMin = cmd.GetNextInt();
+	int simulatedLagMax = cmd.GetNextInt();
+	NetSession *sp = g_theGame->m_session;
+	sp->SetSimulatedLatency(simulatedLagMin, simulatedLagMax);
+}
+
+void CommandSetSessionSendRate(Command & cmd)
+{
+	float ms = cmd.GetNextFloat();
+	float seconds = ms * .001f;
+	float hz = DEFAULT_SESSION_SEND_RATE_HZ;
+	if (seconds != 0.f) {
+		hz = 1.f / seconds;
+	}
+
+	NetSession *sp = g_theGame->m_session;
+	sp->SetSessionSendRate(hz);
+	ConsolePrintf(RGBA::YELLOW, "Set net session send rate to %i ms ( %.2f hz)", (int) ms, hz );
+}
+
+void CommandSetConnectionSendRate(Command & cmd)
+{
+	int idx = cmd.GetNextInt();
+	float ms = cmd.GetNextFloat();
+	float seconds = ms * .001f;
+	float hz = DEFAULT_SESSION_SEND_RATE_HZ;
+	if (seconds != 0.f) {
+		hz = 1.f / seconds;
+	}
+
+	NetSession *sp = g_theGame->m_session;
+	sp->SetConnectionSendRate(idx, hz);
+	ConsolePrintf(RGBA::YELLOW, "Set connection %i send rate to %i ms ( %.2f hz)", idx, (int) ms, hz );
+}
+
+
 

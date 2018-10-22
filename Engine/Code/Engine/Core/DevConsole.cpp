@@ -281,21 +281,26 @@ void DevConsole::AddCommandToHistory(std::string commandText)
 			}
 		}
 
-		m_commandHistory.insert(1, commandText);
+		if (m_commandHistory.size() == 0){
+			m_commandHistory.push_back(commandText);
+		} else {
+			m_commandHistory.insert(1, commandText);
+		}
 	}
 }
 
 void DevConsole::MoveThroughCommandHistory(int direction)
 {
 	m_historyPosition+=direction;
+
+	if (m_historyPosition > (int) m_commandHistory.size() - 1){
+		m_historyPosition = (int) m_commandHistory.size() - 1;
+	}
 	if (m_historyPosition < 0){
 		m_historyPosition = -1;
 		m_currentInput = "";
 		m_cursorPosition = 0;
 		return;
-	}
-	if (m_historyPosition > (int) m_commandHistory.size() - 1){
-		m_historyPosition = (int) m_commandHistory.size() - 1;
 	}
 	m_currentInput = m_commandHistory.at(m_historyPosition);
 	m_cursorPosition = (int) m_currentInput.size();

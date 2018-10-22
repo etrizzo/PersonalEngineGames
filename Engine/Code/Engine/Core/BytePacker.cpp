@@ -65,6 +65,14 @@ void BytePacker::AdvanceWriteHead(size_t bytesToAdvance)
 	}
 }
 
+void BytePacker::AdvanceReadHead(size_t bytesToAdvance)
+{
+	m_readHead+=bytesToAdvance;
+	if (m_readHead > m_writeHead){
+		m_readHead = m_writeHead;
+	}
+}
+
 bool BytePacker::Write(uint16_t data, bool convertEndianness)
 {
 	return WriteBytes(sizeof(uint16_t), &data, convertEndianness);
@@ -98,6 +106,7 @@ size_t BytePacker::Read(float * outData, bool convertEndianness)
 bool BytePacker::WriteBytes(size_t byte_count, void const * data, bool convertEndianness)
 {
 	//if byte count + current count > max size & you can't grow, return false
+
 	if (byte_count + m_writeHead >= m_maxSize){
 		if (!AreBitsSet(m_options, BYTEPACKER_CAN_GROW)){
 			return false;

@@ -47,6 +47,11 @@ NetAddress const & Socket::GetAddress() const
 	return m_address;
 }
 
+std::string Socket::GetAddressAsString() const
+{
+	return m_address.ToString();
+}
+
 bool IsFatalSocketError(int errorCode)
 {
 	if (errorCode == WSAEWOULDBLOCK || errorCode == WSAEMSGSIZE || errorCode == 0){

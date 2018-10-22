@@ -24,5 +24,7 @@ public:
 	size_t ReceiveFrom( NetAddress *out_addr, void *buffer, size_t const max_read_size );
 	
 	bool HasFatalError();
+
+	
 };
 

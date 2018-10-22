@@ -16,6 +16,7 @@ public:
 
 
 class CharacterRequirement_Tag : public CharacterRequirement{
+public:
 	CharacterRequirement_Tag(unsigned int charID, tinyxml2::XMLElement* element);
 	
 	bool PassesRequirement(CharacterState* character) override;
@@ -25,10 +26,12 @@ class CharacterRequirement_Tag : public CharacterRequirement{
 };
 
 class CharacterRequirement_Trait : public CharacterRequirement{
+public:
 	CharacterRequirement_Trait(unsigned int charID, tinyxml2::XMLElement* element);
 
 	bool PassesRequirement(CharacterState* character) override;
 
-	std::string m_traitName;
-	FloatRange m_traitRange;
+	eCharacterTrait m_trait		= NUM_CHARACTER_TRAITS;
+	FloatRange m_traitRange		= FloatRange(0.f);
+	float m_wiggleroom			= 0.f;
 };

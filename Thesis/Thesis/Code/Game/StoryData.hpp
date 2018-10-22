@@ -21,12 +21,18 @@ class StoryData{
 public:
 	StoryData(){};
 	StoryData(std::string name, float value);
-	StoryData(tinyxml2::XMLElement* nodeElement, eNodeType type);
+	StoryData( eNodeType type);
 	StoryData(StoryData* clone);
 	~StoryData();
 
+	void InitFromXML(tinyxml2::XMLElement* nodeElement);
+
 	std::string GetName() const;
 	std::string ToString() const;
+
+	//state utilities
+	//updates node's story state w/ outbound edges with the effects set
+	void AddData(StoryData* data);
 
 	//character utilities
 	bool AreAllCharactersSet() const;
@@ -34,6 +40,7 @@ public:
 	void SetCharacter(int charSlot, Character* charToSet);
 	unsigned int GetNumCharacters() const;
 	bool DoesCharacterMeetSlotRequirementsAtEdge(Character* character, unsigned int charSlot, StoryEdge* atEdge);
+	CharacterRequirementSet* GetRequirementsForCharacter(Character* character);
 
 	void SetPosition(Vector2 pos);
 	Vector2 GetPosition() const;
@@ -48,9 +55,9 @@ public:
 	//actual members
 	std::string m_id;
 	std::string m_action;
-	std::vector<CharacterRequirementSet> m_characterReqs;
+	std::vector<CharacterRequirementSet*> m_characterReqs;
 	StoryRequirements m_storyReqs;
-	EffectSet m_effects;
+	EffectSet* m_effectSet;
 
 	//generation info
 	mutable std::string m_actionWithCharacters;		//mutable to update in GetString

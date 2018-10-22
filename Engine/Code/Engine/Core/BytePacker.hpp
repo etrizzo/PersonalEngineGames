@@ -38,6 +38,7 @@ public:
 	bool SetReadableByteCount( size_t byte_count );		//is this max size or readable data?
 	void SetWriteHead(size_t position);					//sets write head but does not erase buffer
 	void AdvanceWriteHead(size_t bytesToAdvance);
+	void AdvanceReadHead(size_t bytesToAdvance);
 
 	bool Write(uint16_t data, bool convertEndianness = true);
 	bool Write(uint8_t	data, bool convertEndianness = true);

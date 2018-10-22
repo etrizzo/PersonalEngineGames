@@ -51,8 +51,8 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_theAudio->LoadAudioGroupsFromFile("Audio.xml");
 	
 	g_theGame = new Game();
-	g_theInput->LockMouse();
-	g_theInput->ShowCursor(false);
+	//g_theInput->LockMouse();
+	g_theInput->ShowCursor(true);
 
 	g_Window->SetInputSystem(g_theInput);
 	AABB2 UIBounds = g_theGame->m_uiCamera->GetBounds();
@@ -173,24 +173,13 @@ void App::RegisterCommands()
 	CommandRegister("profiler_pause", CommandProfilePause, "Pauses profiling");
 	CommandRegister("profiler_resume", CommandProfileResume, "Resumes profiling");
 
-	CommandRegister("threaded_test",CommandConsoleThreadedTest, "Runs threading test");
-	CommandRegister("nonthreaded_test", CommandConsoleNonThreadedTest, "Runs non-threaded test");
-	CommandRegister("log_thread_test", CommandLogThreadTest, "Runs logging thread test", "log_thread_test <thread_count>");
-	CommandRegister("log_flush_test", CommandLogFlushTest, "Tests log flushing");
-	CommandRegister("log_warning", CommandLogTestWarning, "Prints a test warning log");
-	CommandRegister("log_error", CommandLogTestError, "Prints a test error log");
-	CommandRegister("log_print", CommandLogTest, "Prints a test log message");
-	CommandRegister("log_hide_tag", CommandLogHideFilter, "Hides tag from log", "log_hide_tag <tagname>");
-	CommandRegister("log_show_tag", CommandLogShowFilter, "Shows tag in log", "log_show_tag <tagname>");
-	CommandRegister("log_toggle_filters", CommandLogToggleWhitelist, "toggles hidden tags to be shown and vice versa");
-	CommandRegister("log_hide_all", CommandLogHideAll, "Hides all log tags");
-	CommandRegister("log_show_all", CommandLogShowAll, "Shows all log tags");
-
-	CommandRegister("get_address", CommandGetAddress, "Gets machine address");
-
-	CommandRegister("print_graph", CommandPrintGraph, "Prints current graph as text");
+	CommandRegister("output_graph_to_console", CommandPrintGraph, "Prints current graph as text");
 	CommandRegister("generate_graph", CommandGenerateGraph, "Re-generates story graph");
+	CommandRegister("generate_skeleton", CommandGenerateSkeleton, "Generates n plot nodes for a graph", "generate_skeleton, <int>");
+	CommandRegister("generate_details", CommandAddDetails, "Generates n detail nodes", "generate_details <int>");
 	CommandRegister("find_path", CommandFindPath, "Finds the shortest path in the graph");
+	CommandRegister("print_story", CommandPrintStory, "Prints the current story to the screen");
+	CommandRegister("add_branches", CommandFindBranches, "Adds branches to the graph");
 
 }
 
@@ -200,11 +189,11 @@ void App::HandleInput()
 	if (g_theInput->WasKeyJustPressed(192)){		//the ` key
 		if (!DevConsoleIsOpen()){
 			g_devConsole->Open();
+			g_theInput->SetMouseLocked(false);
+			g_theInput->ShowCursor(true);
 		} else {
 			g_devConsole->Close();
 		}
-		g_theInput->ToggleMouseLock();
-		g_theInput->ToggleCursor();
 	}
 
 	if (g_theInput->WasKeyJustPressed(VK_F2)){
@@ -243,9 +232,6 @@ void App::HandleInput()
 
 void App::PostStartup()
 {
-	
-
-
 
 	g_theGame->PostStartup();
 	
@@ -474,117 +460,6 @@ void PrintTree(ProfilerReportEntry * tree, int depth)
 }
 
 
-void ThreadTestWork(void *)
-{
-	// Open a file and output about 50MB of random numbers to it; 
-	FILE* file = nullptr;
-	fopen_s(&file, "garbage.dat", "w+");
-	if (file == nullptr) {
-		return; 
-	} 
-
-	for (unsigned int i = 0; i < 12000000; ++i) {
-		int randint = GetRandomIntLessThan(100000); 
-		fputs( std::to_string(randint).c_str(), file); 
-	}
-
-	fclose(file);
-	ConsolePrintf( "Finished ThreadTestWork" ); 
-}
-
-void CommandConsoleNonThreadedTest(Command & cmd)
-{
-	UNUSED(cmd);
-	ThreadTestWork(nullptr); 
-}
-
-void CommandConsoleThreadedTest(Command & cmd)
-{
-	UNUSED(cmd);
-	ThreadCreateAndDetach( ThreadTestWork, nullptr ); 
-}
-
-void CommandLogThreadTest(Command & cmd)
-{
-	int threadCount = cmd.GetNextInt();
-	std::string fileName = cmd.GetNextString();
-	if (threadCount <= 0){
-		threadCount = 1;
-	}
-	if (fileName == ""){
-		fileName = "Data/big.txt";
-	}
-	LogTest((unsigned int) threadCount, fileName);
-}
-
-void CommandLogFlushTest(Command & cmd)
-{
-	UNUSED(cmd);
-	LogTaggedPrintf("FLUSHTEST", "WE FLUSHING BOISS!!!!");
-	LogSystemFlush();
-}
-
-void CommandLogTestWarning(Command & cmd)
-{
-	UNUSED(cmd);
-	LogWarningf("Warning test!!!\n");
-}
-
-void CommandLogTestError(Command & cmd)
-{
-	UNUSED(cmd);
-	LogErrorf("Error Test!!!!!!!!\n");
-}
-
-void CommandLogTest(Command & cmd)
-{
-	UNUSED(cmd);
-	LogPrintf("Default log!!!!!!!!!!!!!!!\n");
-}
-
-void CommandLogShowFilter(Command & cmd)
-{
-	std::string filter = cmd.GetNextString();
-	LogShowTag(filter);
-}
-
-void CommandLogHideFilter(Command & cmd)
-{
-	std::string filter = cmd.GetNextString();
-	LogHideTag(filter);
-}
-
-void CommandLogToggleWhitelist(Command & cmd)
-{
-	UNUSED(cmd);
-	LogToggleWhitelist();
-}
-
-void CommandLogHideAll(Command & cmd)
-{
-	UNUSED(cmd);
-	LogHideAllTags();
-}
-
-void CommandLogShowAll(Command & cmd)
-{
-	UNUSED(cmd);
-	LogShowAllTags();
-}
-
-void CommandGetAddress(Command & cmd)
-{
-	UNUSED(cmd);
-	sockaddr_storage addr;
-	int addr_len;
-	bool gotit = GetAddressForHost((sockaddr*) &addr, &addr_len, "10.8.151.155", "12345");
-	sockaddr_in* in = (sockaddr_in*) &addr;
-	int x = 0;
-	//LogIP((sockaddr_in*) addr);
-	//GetAddressForHost(addr, addr_len, "https://www.google.com/");
-	//GetAddressExample();
-}
-
 void CommandPrintGraph(Command & cmd)
 {
 	UNUSED(cmd);
@@ -604,3 +479,35 @@ void CommandFindPath(Command & cmd)
 	g_theGame->m_graph.FindPath(ShortestPathHeuristic);
 }
 
+
+void CommandPrintStory(Command& cmd)
+{
+	UNUSED(cmd);
+	g_theGame->m_graph.PrintPath();
+}
+
+void CommandFindBranches(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->m_graph.IdentifyBranchesAndAdd();
+}
+
+void CommandGenerateSkeleton(Command & cmd)
+{
+	g_theGame->ClearGraph();
+	int numToGenerate = cmd.GetNextInt();
+	if (numToGenerate == 0){
+		numToGenerate = NUM_PLOT_NODES_TO_GENERATE;
+	}
+	numToGenerate+=2;	//for start and end nodes
+	g_theGame->GeneratePlotNodes(numToGenerate);
+}
+
+void CommandAddDetails(Command & cmd)
+{
+	int numToGenerate = cmd.GetNextInt();
+	if (numToGenerate == 0){
+		numToGenerate = NUM_DETAIL_NODES_TO_GENERATE;
+	}
+	g_theGame->GenerateDetailNodes(numToGenerate);
+}

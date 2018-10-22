@@ -6,6 +6,42 @@ AudioSystem* g_theAudio = nullptr;
 SpriteSheet* g_tileSpriteSheet = nullptr;
 
 
+eCharacterTrait GetTraitFromString(std::string traitString)
+{
+	if (traitString == "social"){
+		return TRAIT_SOCIAL;
+	}
+	if (traitString == "information"){
+		return TRAIT_INFORMATION;
+	}
+	if (traitString == "decisions"){
+		return TRAIT_DECISIONS;
+	}
+	if (traitString == "structure"){
+		return TRAIT_STRUCTURE;
+	}
+	return NUM_CHARACTER_TRAITS;
+}
+
+std::string GetStringFromTrait(eCharacterTrait trait)
+{
+	switch(trait){
+	case TRAIT_SOCIAL:
+		return "social";
+		break;
+	case TRAIT_INFORMATION:
+		return "information";
+		break;
+	case TRAIT_DECISIONS:
+		return "decisions";
+		break;
+	case TRAIT_STRUCTURE:
+		return "structure";
+		break;
+	}
+	return "NO_TRAIT";
+}
+
 bool RightJustPressed()
 {
 	return (g_theInput->WasKeyJustPressed(VK_RIGHT) || g_theInput->GetController(0)->WasButtonJustPressed(XBOX_D_RIGHT));

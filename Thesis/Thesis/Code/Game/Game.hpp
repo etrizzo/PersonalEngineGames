@@ -15,6 +15,7 @@ class ParticleSystem;
 
 class Map;
 
+
 class Game{
 
 public:
@@ -60,6 +61,9 @@ public:
 	void PostStartup();
 
 	void GenerateGraph();
+	void ClearGraph();
+	void GeneratePlotNodes(int numToGenerate = NUM_PLOT_NODES_TO_GENERATE);
+	void GenerateDetailNodes(int numToGenerate = NUM_DETAIL_NODES_TO_GENERATE);
 
 	void Update();
 	void Render();

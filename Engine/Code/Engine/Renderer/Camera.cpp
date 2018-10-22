@@ -58,12 +58,12 @@ void Camera::SetProjection(Matrix44 proj)
 	m_projMatrix.Load(proj);
 }
 
-void Camera::SetProjectionOrtho(float size, float aspect, float nearVal, float farVal)
+void Camera::SetProjectionOrtho(float height, float aspect, float nearVal, float farVal)
 {
-	float width = size * aspect;
-	m_orthographicSize = size;
-	m_bounds = AABB2(0.f,0.f, width, size);
-	SetProjection(Matrix44::MakeOrtho3D(Vector3(0.f,0.f,nearVal), Vector3(width, size, farVal)));
+	float width = height * aspect;
+	m_orthographicSize = height;
+	m_bounds = AABB2(0.f,0.f, width, height);
+	SetProjection(Matrix44::MakeOrtho3D(Vector3(0.f,0.f,nearVal), Vector3(width, height, farVal)));
 }
 
 

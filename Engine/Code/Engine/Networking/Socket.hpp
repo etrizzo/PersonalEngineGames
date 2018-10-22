@@ -37,6 +37,7 @@ public:
 	bool IsClosed() const; // m_handle == (socket_t)INVALID_SOCKET; 
 
 	NetAddress const& GetAddress() const; 
+	std::string GetAddressAsString()const;
 
 protected:
 	NetAddress m_address; // address assocated with this socket; 

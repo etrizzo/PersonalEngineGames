@@ -1247,6 +1247,31 @@ void Renderer::DrawAABB2(const AABB2 & bounds, const RGBA & color, const Vector2
 	free(verts);
 }
 
+void Renderer::DrawDisc2(const Vector2 & center, const float & radius, const RGBA & color, int segments)
+{
+	if (segments < 3){
+		ConsolePrintf("Can't draw a circle with < 3 segments :(");
+		return;
+	}
+	float currentAngle = 0.f;
+	float theta = 360.f / (float) segments;
+	std::vector<Vertex3D_PCU> verts = std::vector<Vertex3D_PCU>();
+
+	Vector2 currentPos;
+	for (int i = 0; i < segments + 1; i++){
+		Vector2 currentPos = PolarToCartesian(radius, currentAngle) + center;
+		Vector2 nextPos = PolarToCartesian(radius, currentAngle + theta) + center;
+		//add a triangle :)
+		verts.push_back(Vertex3D_PCU(center, color, Vector2::ZERO));				//center
+		verts.push_back(Vertex3D_PCU(currentPos, color, Vector2(0.f, 1.f)));		//first radius point
+		verts.push_back(Vertex3D_PCU(nextPos, color, Vector2(1.f, 0.f)));			//second radius point
+
+		currentAngle+=theta;
+	}
+	DrawMeshImmediate(verts.data(), (int) verts.size(), PRIMITIVE_TRIANGLES);
+	
+}
+
 void Renderer::DrawBlendedAABB2(const AABB2 & bounds, const RGBA & topLeftColor, const RGBA & bottomLeftColor, const RGBA & topRightColor, const RGBA & bottomRightColor)
 {
 	Vector2 topLeft = Vector2(bounds.mins.x, bounds.maxs.y);		//texCoords 0,1

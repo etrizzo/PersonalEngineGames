@@ -9,13 +9,13 @@ void NetPacket::WriteHeader(packet_header_t const & header)
 {
 	unsigned int writeHead = GetWrittenByteCount();
 	SetWriteHead(0);
-	WriteBytes(sizeof(packet_header_t), &header, false);
+	WriteBytes(sizeof(packet_header_t), &header, true);
 	SetWriteHead(writeHead);
 }
 
 bool NetPacket::ReadHeader(packet_header_t & header)
 {
-	size_t readBytes = ReadBytes(&header, sizeof(header), false);
+	size_t readBytes = ReadBytes(&header, sizeof(header), true);
 	return readBytes == sizeof(packet_header_t);
 }
 
@@ -32,5 +32,8 @@ bool NetPacket::ReadMessage(NetMessage * outMsg)
 
 	//write message header and message
 	bool read = outMsg->WriteBytes(msgSize, GetReadHeadLocation(), false);
+	if (read){
+		AdvanceReadHead(msgSize);
+	}
 	return read;
 }

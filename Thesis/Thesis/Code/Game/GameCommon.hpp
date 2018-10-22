@@ -18,6 +18,10 @@
 #define SMALL_VALUE .05f
 #define MAX_STEPS 16
 
+#define NUM_PLOT_NODES_TO_GENERATE (3 + 2)
+#define NUM_DETAIL_NODES_TO_GENERATE (3)
+#define BRANCH_CHANCE_ON_FAIL (0.4f)
+
 
 const int TILE_WIDTH = 1;
 
@@ -31,6 +35,15 @@ extern AudioSystem* g_theAudio;
 extern SpriteSheet* g_tileSpriteSheet;
 
 
+enum eCharacterTrait{
+	TRAIT_SOCIAL,			// Introversion --- Extroversion
+	TRAIT_INFORMATION,		//		Sensing --- Intuition
+	TRAIT_DECISIONS,		//		feeling --- thinking
+	TRAIT_STRUCTURE,		//		judging --- perceiving
+	NUM_CHARACTER_TRAITS
+};
+
+
 enum eDebugShaders{
 	SHADER_LIT,			//default
 	SHADER_NORMAL,
@@ -42,6 +55,11 @@ enum eDebugShaders{
 	SHADER_SPECULAR,
 	NUM_DEBUG_SHADERS
 };
+
+
+
+eCharacterTrait GetTraitFromString(std::string traitString);
+std::string GetStringFromTrait(eCharacterTrait trait);
 
 
 

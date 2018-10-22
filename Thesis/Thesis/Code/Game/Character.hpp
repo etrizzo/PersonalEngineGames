@@ -2,6 +2,8 @@
 #include "Game/GameCommon.hpp"
 #include "Game/Tags.hpp"
 
+
+
 class Character{
 public:
 	Character();
@@ -13,6 +15,8 @@ public:
 
 	void AddExtroversion (float val);
 
+	Tags m_tags;
+
 protected:
 	std::string m_name;
 	// traits
@@ -21,5 +25,5 @@ protected:
 	float m_decisions;		//		feeling --- thinking
 	float m_structure;		//		judging --- perceiving
 
-	Tags m_tags;
+
 };

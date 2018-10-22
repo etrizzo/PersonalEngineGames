@@ -6,6 +6,18 @@
 const Vector2 Vector2::ZERO = Vector2(0.f,0.f);
 const Vector2 Vector2::ONE = Vector2(1.f,1.f);
 const Vector2 Vector2::HALF = Vector2(.5f,.5f);
+const Vector2 Vector2::TOP_LEFT = Vector2(0.f, 1.f);
+const Vector2 Vector2::BOTTOM_RIGHT = Vector2(1.f, 0.f);
+const Vector2 Vector2::ALIGN_CENTER_LEFT	= Vector2(0.f, .5f);
+const Vector2 Vector2::ALIGN_CENTER_RIGHT	= Vector2(1.f, .5f);
+const Vector2 Vector2::ALIGN_CENTER_TOP		= Vector2(.5f, 1.f);
+const Vector2 Vector2::ALIGN_CENTER_BOTTOM	= Vector2(.5f, 0.f);
+
+const Vector2 Vector2::TOP_LEFT_PADDED		= Vector2(0.01f, 0.99f);
+const Vector2 Vector2::TOP_RIGHT_PADDED		= Vector2(0.99f, 0.99f);
+const Vector2 Vector2::BOTTOM_LEFT_PADDED	= Vector2(0.01f, 0.01f);
+const Vector2 Vector2::BOTTOM_RIGHT_PADDED	= Vector2(0.99f, 0.01f);
+
 const Vector2 Vector2::NORTH = Vector2(0.f,1.f);
 const Vector2 Vector2::SOUTH = Vector2(0.f,-1.f);
 const Vector2 Vector2::EAST = Vector2(1.f,0.f);

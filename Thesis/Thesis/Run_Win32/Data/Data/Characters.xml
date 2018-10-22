@@ -1,5 +1,5 @@
 
-	<Character name="CharacterA">
+	<Character name="Abby">
 		<Traits>
 			<Trait name="Social"  		value = "20" />
 			<Trait name="Information"   value = "90" />
@@ -8,7 +8,7 @@
 		</Traits>
 
 		<Tags>
-			<Tag name="IsAlive" value="true" type="bool"/>
+			<Tag tag="isAlive" value="true" type="bool"/>
 		</Tags>
 
 		<!--
@@ -19,7 +19,7 @@
 	-->
 	</Character>
 
-	<Character name="CharacterB">
+	<Character name="Bob">
 		<Traits>
 			<Trait name="Social"  		value = "60" />
 			<Trait name="Information"   value = "20" />
@@ -28,12 +28,12 @@
 		</Traits>
 
 		<Tags>
-			<Tag name="IsAlive" value="true" type="bool"/>
+			<Tag tag="isAlive" value="true" type="bool"/>
 		</Tags>
 
 	</Character>
-
-	<Character name="CharacterC">>
+<!--
+	<Character name="Charlie">>
 		<Traits>
 			<Trait name="Social"  		value = "80" />
 			<Trait name="Information"   value = "70" />
@@ -42,9 +42,9 @@
 		</Traits>
 
 		<Tags>
-			<Tag name="IsAlive" value="true" type="bool"/>
+			<Tag tag="isAlive" value="true" type="bool"/>
 		</Tags>
 
 	</Character>
-
+-->
 

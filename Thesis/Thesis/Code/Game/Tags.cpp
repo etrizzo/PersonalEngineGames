@@ -6,6 +6,14 @@ Tags::Tags(const std::string & commaSeparatedTagNames)
 	SetOrRemoveTags(commaSeparatedTagNames);
 }
 
+Tags::Tags(const Tags & copy)
+{
+	for (int i = 0; i < copy.m_tags.size(); i++){
+		TagPair tag = TagPair(copy.m_tags[i].GetName(), copy.m_tags[i].GetValue());
+		m_tags.push_back(tag);
+	}
+}
+
 Tags::~Tags()
 {
 	
@@ -83,7 +91,22 @@ bool Tags::HasTags(const std::string & commaSeparatedTagNames)
 void Tags::SetTag(const std::string & tagName)
 {
 	if (!HasTag(tagName)){
-		m_tags.push_back(tagName);
+		m_tags.push_back(TagPair(tagName));
+	}
+}
+
+void Tags::SetTagWithValue(const std::string & tagName, const std::string & value)
+{
+	if (!HasTag(tagName)){
+		TagPair tag = TagPair(tagName, value);
+		m_tags.push_back(tag);
+	} else {
+		//set the existing value
+		for(int i = 0; i < m_tags.size(); i++){
+			if (m_tags[i].GetName() == tagName){
+				m_tags[i].SetValue(value);
+			}
+		}
 	}
 }
 
@@ -109,13 +132,22 @@ bool Tags::HasTag(const std::string & tagName)
 	return false;
 }
 
-bool Tags::HasTag(TagPair tag)
+bool Tags::HasTag(TagPair checkTag)
 {
 	for (TagPair tag : m_tags){
-		if (tag.HasName(tag.GetName()) && tag.HasValue(tag.GetValue())){
-			return true;
+		if (tag.HasName(checkTag.GetName())){
+			if ( tag.HasValue(checkTag.GetValue())){
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
+	//if you don't have the tag, but the target is false, return true
+	if (checkTag.GetValue() == "false"){
+		return true;
+	}
+	return false;
 }
 
 bool Tags::HasTagWithValue(const std::string & tagName, const std::string & value)

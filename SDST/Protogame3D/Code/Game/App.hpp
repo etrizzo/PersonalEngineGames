@@ -105,5 +105,12 @@ void CommandGetAddress(Command& cmd);
 
 
 void CommandAddConnection(Command& cmd);
+void CommandAddLocalConnectionAtIndexWithOffset(Command& cmd);
 void CommandSendPing(Command& cmd);
 void CommandSendAdd(Command& cmd);
+void CommandSetHeartbeat(Command& cmd);
+void CommandSetSimulatedLoss(Command& cmd);
+void CommandSetSimulatedLatency(Command& cmd);
+void CommandSetSessionSendRate(Command& cmd);
+void CommandSetConnectionSendRate(Command& cmd);
+

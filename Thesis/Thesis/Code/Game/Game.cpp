@@ -94,19 +94,32 @@ void Game::PostStartup()
 	//GraphTests();
 	//StoryGraphTests();
 
-
-
-
-	
 }
 
 void Game::GenerateGraph()
 {
 	m_graph.Clear();
 
-	m_graph.RunGeneration(4,6);
+	m_graph.RunGeneration(NUM_PLOT_NODES_TO_GENERATE,NUM_DETAIL_NODES_TO_GENERATE + NUM_PLOT_NODES_TO_GENERATE);
 	m_graph.RunNodeAdjustments();
 }
+
+void Game::ClearGraph()
+{
+	m_graph.Clear();
+}
+
+void Game::GeneratePlotNodes(int numToGenerate)
+{
+	m_graph.GenerateSkeleton(numToGenerate);
+}
+
+void Game::GenerateDetailNodes(int numToGenerate)
+{
+	m_graph.AddDetailNodesToDesiredSize(numToGenerate + m_graph.GetNumNodes());
+}
+
+
 
 void Game::Update()
 {
@@ -115,6 +128,8 @@ void Game::Update()
 	float ds = GetDeltaSeconds();
 	m_currentState->Update(ds);
 	PROFILE_POP();
+
+	m_graph.UpdateNodePositions();
 	
 }
 
