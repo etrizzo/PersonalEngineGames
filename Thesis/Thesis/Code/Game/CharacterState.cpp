@@ -18,7 +18,7 @@ CharacterState::CharacterState(CharacterState * previousState)
 
 std::string CharacterState::ToString() const
 {
-	std::string toString = Stringf("%s\nTags: \n%s", m_character->GetName().c_str(), m_tags.GetTagsAsString().c_str());
+	std::string toString = Stringf("Character: %s\n%s\n==========================\n", m_character->GetName().c_str(), m_tags.GetTagsAsString().c_str());
 
 	return toString;
 }

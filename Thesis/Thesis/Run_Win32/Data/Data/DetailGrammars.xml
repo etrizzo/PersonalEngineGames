@@ -1,4 +1,48 @@
 <!--
+	Sample new format:
+-->
+	<DetailGrammer>
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="isFighting" target="true" type="boolean" required ="1.0"/>
+			</Character>
+		</CharacterRequirements>
+		<!--
+		<Trigger character="*0*" hasTag="isFighting" target="true" required="1.0" />
+	-->
+		<Actions>
+			<Action text="*0* wins the fight." chance=".6">
+				<Modifier trait="Bravery" minValue="70" multiplier="1.5"/>
+				<Modifier tag="isWounded" value="true" multiplier=".9" />
+				<TagChange character="*0*" hasTag="isFighting" target="false" />
+			</Action>
+
+			<Action text="*0* loses the fight and flees." chance=".3">
+				<Modifier trait="Bravery" maxValue="30" modifierMultiplier="1.5"/>
+				<Modifier tag="isWounded" value="true" multiplier="1.5" />
+				<TagChange character="*0*" hasTag="isFighting" target="false" />
+				<TagChange character="*0*" hasTag="onQuest" target="false" />
+				<TagChange character="*0*" hasTag="inCave" target="false" />
+				<TagChange character="*0*" hasTag="inDungeon" target="false" />
+				<TagChange character="*0*" hasTag="isWounded" target="true" expiration="3~5"/>
+			</Action>
+
+			<Action text="*0* loses the fight and dies." chance=".1">
+				<Modifier trait="Bravery" maxValue="30" modifierMultiplier="1.5"/>
+				<Modifier tag="isWounded" value="true" multiplier="1.5" />
+				<TagChange character="*0*" hasTag="isFighting" target="false" />
+				<TagChange character="*0*" hasTag="onQuest" target="false" />
+				<TagChange character="*0*" hasTag="isAlive" target="false" />
+			</Action>
+		</Actions>
+	</DetailGrammer>
+
+<!--
+
 	<DetailGrammar>
 		<Action text="*0* talks to *1* about *0_TAG*" />
 		<CharacterRequirements>
@@ -62,6 +106,7 @@
 		<StoryEffects>
 			<EffectSet chance="default">
 				<StoryChange Action="+5" Tension="+10" /> 
+				<TagChange character="0" hasTag="isFighting" target="true" type="boolean"/>
 			</EffectSet>
 		</StoryEffects>
 	</DetailGrammar>
@@ -81,6 +126,76 @@
 		<StoryEffects>
 			<EffectSet chance="default">
 				<StoryChange Action="+5" Tension="+10" /> 
+				<TagChange character="0" hasTag="isFighting" target="true" type="boolean"/>
+			</EffectSet>
+		</StoryEffects>
+	</DetailGrammar>
+
+	<DetailGrammer>
+		<Action text="*0* gets lost." />
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inDungeon" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+		</StoryRequirements>
+		<StoryEffects>
+		</StoryEffects>
+	</DetailGrammer>
+
+	<DetailGrammer>
+		<Action text="*0* gets lost." />
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inCave" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+		</StoryRequirements>
+		<StoryEffects>
+		</StoryEffects>
+	</DetailGrammer>
+
+	<!-- fighting a thing? -->
+	<DetailGrammar>
+		<Action text="*0* wins the fight." chance=".5"/>
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="isFighting" target="true" type="boolean"/>
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<StoryChange Action="+5" Tension="+10" /> 
+				<TagChange character="0" hasTag="isFighting" target="false" />
+			</EffectSet>
+		</StoryEffects>
+	</DetailGrammar>
+
+	<!-- fighting a person? -->
+	<DetailGrammar>
+		<Action text="*0* wins the fight with *1*." />
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="isFighting" target="*1*" type="character"/>
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<StoryChange Action="+5" Tension="+10" /> 
+				<TagChange character="0" hasTag="isFighting" target="false" />
+				<TagChange character="1" hasTag="isFighting" target="false" />
 			</EffectSet>
 		</StoryEffects>
 	</DetailGrammar>

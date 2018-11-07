@@ -217,6 +217,9 @@ void App::RegisterCommands()
 	
 	CommandRegister("net_set_session_send_rate", CommandSetSessionSendRate, "Sets send rate for net session", "net_set_session_send_rate <sendRateMS>");
 	CommandRegister("net_set_connection_send_rate", CommandSetConnectionSendRate, "Sets send rate for net session", "net_set_connection_send_rate <connIndex> <sendRateMS>");
+	CommandRegister("net_unreliable_test", CommandStartUnreliableTest, "Starts sending x unreliable test messages to connection", "net_unreliable_test <connIndex> <numMessages>");
+	CommandRegister("net_reliable_test", CommandStartReliableTest, "Starts sending x reliable test messages to connection", "net_reliable_test <connIndex> <numMessages>");
+
 }
 
 void App::HandleInput()
@@ -716,7 +719,7 @@ void CommandAddConnection(Command & cmd)
 	uint8_t idx;
 	NetAddress addr; 
 
-	idx = cmd.GetNextInt();
+	idx = (uint8_t) cmd.GetNextInt();
 	std::string addrString = cmd.GetNextString();
 	addr = NetAddress(addrString);
 	if (!addr.IsValid()){
@@ -765,7 +768,7 @@ void CommandAddLocalConnectionAtIndexWithOffset(Command & cmd)
 	// notice this can't fail - we do no validation that that
 	// address is reachable.   UDP can't tell; 
 	NetSession *session = g_theGame->m_session;
-	NetConnection *cp = session->AddConnection( index, addr ); 
+	NetConnection *cp = session->AddConnection( (uint8_t) index, addr ); 
 	if (cp == nullptr) {
 		ConsolePrintf(RGBA::RED, "Failed to add connection." ); 
 	} else {
@@ -798,7 +801,7 @@ void CommandSendPing(Command & cmd)
 
 void CommandSendAdd(Command & cmd)
 {
-	uint8_t idx = cmd.GetNextInt(); 
+	uint8_t idx = (uint8_t) cmd.GetNextInt(); 
 	float val0 = cmd.GetNextFloat(); 
 	float val1 = cmd.GetNextFloat(); 
 
@@ -875,6 +878,20 @@ void CommandSetConnectionSendRate(Command & cmd)
 	NetSession *sp = g_theGame->m_session;
 	sp->SetConnectionSendRate(idx, hz);
 	ConsolePrintf(RGBA::YELLOW, "Set connection %i send rate to %i ms ( %.2f hz)", idx, (int) ms, hz );
+}
+
+void CommandStartUnreliableTest(Command & cmd)
+{
+	int connIndex = cmd.GetNextInt();
+	int numToSend = cmd.GetNextInt();
+	g_theGame->StartUnreliableMsgTest(connIndex, numToSend);
+}
+
+void CommandStartReliableTest(Command & cmd)
+{
+	int connIndex = cmd.GetNextInt();
+	int numToSend = cmd.GetNextInt();
+	g_theGame->StartReliableMsgTest(connIndex, numToSend);
 }
 
 

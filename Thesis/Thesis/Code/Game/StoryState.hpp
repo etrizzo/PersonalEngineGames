@@ -16,6 +16,7 @@ public:
 
 	float GetCost() const;
 	std::string ToString() const;
+	std::string GetDevString() const;
 	CharacterState* GetCharacterStateForCharacter(Character* character);
 	CharacterState* GetCharacterStateAtIndex(int index);
 	CharacterState* GetCharacterStateForCharacterIndex(int charIndex);

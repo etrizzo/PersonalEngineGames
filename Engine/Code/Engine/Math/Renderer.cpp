@@ -1247,6 +1247,26 @@ void Renderer::DrawAABB2(const AABB2 & bounds, const RGBA & color, const Vector2
 	free(verts);
 }
 
+void Renderer::DrawOBB2(const OBB2 & bounds, const RGBA & color, const Vector2 & uvMins, const Vector2 & uvMaxs)
+{
+	Vector2 topLeft = bounds.GetWorldTopLeft();			//texCoords 0,1
+	Vector2 topRight = bounds.GetWorldMaxs();			//texCoords 1,1
+	Vector2 bottomLeft = bounds.GetWorldMins();			//texCoords 0,0
+	Vector2 bottomRight = bounds.GetWorldBottomRight();	//texCoords 1,0
+
+	size_t vsize = Vertex3D_PCU::LAYOUT.m_stride * 6; 
+	Vertex3D_PCU *verts = (Vertex3D_PCU*) malloc( vsize ); 
+	verts[0] = Vertex3D_PCU(bottomLeft,  color, Vector2(uvMins.x, uvMins.y));
+	verts[1] = Vertex3D_PCU(bottomRight, color, Vector2(uvMaxs.x, uvMins.y));
+	verts[2] = Vertex3D_PCU(topRight,	 color, Vector2(uvMaxs.x, uvMaxs.y));
+
+	verts[3] = Vertex3D_PCU(bottomLeft,  color, Vector2(uvMins.x, uvMins.y));
+	verts[4] = Vertex3D_PCU(topRight,	 color, Vector2(uvMaxs.x, uvMaxs.y));
+	verts[5] = Vertex3D_PCU(topLeft,	 color, Vector2(uvMins.x, uvMaxs.y));
+	DrawMeshImmediate(verts, 6, PRIMITIVE_TRIANGLES);
+	free(verts);
+}
+
 void Renderer::DrawDisc2(const Vector2 & center, const float & radius, const RGBA & color, int segments)
 {
 	if (segments < 3){

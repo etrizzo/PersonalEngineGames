@@ -4,6 +4,7 @@
 #include "Engine/Networking/UDPSocket.hpp"
 #include "Engine/Networking/NetPacket.hpp"
 #include "Engine/Math/Renderer.hpp"
+#include "Engine/Networking/PacketTracker.hpp"
 
 NetSession::NetSession()
 {
@@ -13,7 +14,11 @@ NetSession::NetSession()
 
 void NetSession::Startup()
 {
-	RegisterMessage("heartbeat", (NetSessionMessageCB) OnHeartbeat);
+	RegisterMessage( NETMSG_PING, "ping", (NetSessionMessageCB) OnPing , NETMESSAGE_OPTION_CONNECTIONLESS ); 
+	RegisterMessage( NETMSG_PONG, "pong", (NetSessionMessageCB) OnPong , NETMESSAGE_OPTION_CONNECTIONLESS ); 
+	RegisterMessage( NETMSG_HEARTBEAT, "heartbeat", (NetSessionMessageCB) OnHeartbeat, NETMESSAGE_OPTION_UNRELIABLE_REQUIRES_CONNECTION );
+	RegisterMessage( NETMSG_UNRELIABLE_TEST, "unreliable_test", (NetSessionMessageCB) OnNetMsgUnreliableTest, NETMESSAGE_OPTION_UNRELIABLE_REQUIRES_CONNECTION);
+	RegisterMessage( NETMSG_RELIABLE_TEST, "reliable_test", (NetSessionMessageCB) OnNetMsgReliableTest, NETMESSAGE_OPTION_RELIABLE );
 
 	SetHeartbeat(DEFAULT_HEARTBEAT);
 }
@@ -103,6 +108,45 @@ void NetSession::RenderInfo(AABB2 screenBounds, Renderer* renderer)
 		}
 	}
 
+}
+
+void NetSession::SendDirect(NetMessage * message, NetConnection * invalidConnection)
+{
+	message->SetDefinition(GetRegisteredMessageByName(message->m_msgName));
+	message->WriteHeader();
+	//invalidConnection->Send(message);
+
+	NetPacket* packet = new NetPacket();
+	packet->AdvanceWriteHead(sizeof(packet_header_t));
+	if (!packet->WriteMessage(*message)){
+		ConsolePrintf(RGBA::RED, "Invalid message in SendDirect - too big for a packet :(");
+		return;
+	}
+	//send packet to connection
+	packet_header_t packetHeader;
+	packetHeader.m_unreliableMessageCount = 1U;
+	packetHeader.m_senderConnectionIndex = (uint8_t) GetLocalConnectionIndex();
+	packetHeader.m_ack = invalidConnection->GetNextSentAck();
+	packetHeader.m_lastReceivedAck = invalidConnection->GetLastReceivedAck();
+	packetHeader.m_previousReceivedAckBitfield = invalidConnection->GetAckBitfield();
+
+	//// get the tracker slot for this ack being sent out; 
+	//TrackedPacket *tracker = AddTrackedPacket( header.m_ack );
+	//tracker;  // unused for now - will track reliables soon; 
+	PacketTracker* tracker = invalidConnection->AddTrackedPacketOnSend(packetHeader);
+	tracker;
+	//
+	packet->WriteHeader(packetHeader);
+
+	if (m_socket->SendTo(invalidConnection->GetAddress(), packet->GetBuffer(), packet->GetWrittenByteCount()) == 0U){
+		ConsolePrintf(RGBA::RED, "Invalid connection for DirectSend");
+	} else {
+		invalidConnection->IncrementSendAck();
+		invalidConnection->MarkSendTime();
+	}
+
+	delete packet;
+	//delete invalidConnection;		//we can delete connection because it's just for one message...right?
 }
 
 void NetSession::SetHeartbeat(float hz)
@@ -222,22 +266,44 @@ void NetSession::SetSimulatedLatency(int minAddedLatencyMS, int maxAddedLatencyM
 	m_simulatedLatency = IntRange(minAddedLatencyMS, maxAddedLatencyMS);
 }
 
-void NetSession::RegisterMessage(std::string name, NetSessionMessageCB messageCB)
+void NetSession::RegisterMessage(int msgIndex, std::string name, NetSessionMessageCB messageCB, eNetMessageOptions messageOptions)
 {
 	net_message_definition_t* messageDef = new net_message_definition_t();
 	messageDef->m_messageCB = messageCB;
 	messageDef->m_messageName = name;
-	messageDef->m_messageID = (uint16_t) m_registeredMessages.size();
-	m_registeredMessages.push_back(messageDef);
+	messageDef->m_messageOptions = messageOptions;
+	messageDef->m_fixedIndex = msgIndex;
+	if (msgIndex == -1){
+		messageDef->m_messageID = (uint8_t) m_registeredMessages.size();
+		m_unassignedMessages.push_back(messageDef);
+	} else {
+		messageDef->m_messageID = msgIndex;
+		m_fixedIndexMessages.push_back(messageDef);
+	}
 }
 
 void NetSession::SortMessageIDs()
 {
-	std::sort(m_registeredMessages.begin(), m_registeredMessages.end(), CompareDefinitionsByName);
-	for (int i = 0; i < (size_t) m_registeredMessages.size(); i++)
+	int numMessages = m_unassignedMessages.size() + m_fixedIndexMessages.size();
+	std::sort(m_unassignedMessages.begin(), m_unassignedMessages.end(), CompareDefinitionsByName);
+	m_registeredMessages.resize(numMessages);
+	int unassignedIndex = 0;
+	for (int i = 0; i < numMessages; i++)
 	{
-		m_registeredMessages[i]->m_messageID = (uint16_t) i;
+		bool addedFixedMessage = false;
+		for (net_message_definition_t* fixedIndexMsg : m_fixedIndexMessages){
+			if (fixedIndexMsg->m_fixedIndex == i){
+				m_registeredMessages[i] = fixedIndexMsg;
+				addedFixedMessage = true;
+			}
+		}
+		if (!addedFixedMessage){
+			m_registeredMessages[i] = m_unassignedMessages[unassignedIndex];
+			unassignedIndex++;
+		}
+		m_registeredMessages[i]->m_messageID = (uint8_t) i;
 	}
+	int x = 0;
 }
 
 bool NetSession::IsMessageRegistered(std::string name)
@@ -300,28 +366,36 @@ void NetSession::ProcessIncoming()
 	
 	//once you have a message, fill a BytePacker (NetMessage) like we did w/RCS (?)
 	if (read > 0U){
-		if (CheckRandomChance(m_simulatedLoss)){
-			ConsolePrintf(RGBA::RED, "Packet lost.");
-			return;
-		}
-
 		time_stamped_packet_t* timedPacket = new time_stamped_packet_t();
+		NetConnection* from = GetConnectionByAddress(from_addr);
+		if (from == nullptr){
+			//if the connection doesn't exist, make a pretend one for processing
+			from = new NetConnection(this, INVALID_CONNECTION_INDEX, from_addr);
+		}
+		if (from != nullptr){
+			if (CheckRandomChance(m_simulatedLoss)){
+				//ConsolePrintf(RGBA::RED, "Packet lost.");
+				return;
+			}
 
-		timedPacket->m_packet->WriteBytes(read, buffer);
-		timedPacket->m_fromConnection = GetConnectionByAddress(from_addr);
-		timedPacket->AddSimulatedLatency(m_simulatedLatency);
 
-		m_timeStampedPackets.push_back(timedPacket);
 
-		std::sort(m_timeStampedPackets.begin(), m_timeStampedPackets.end(), TimeStampedPacketCompare);
+			timedPacket->m_packet->WriteBytes(read, buffer);
+			timedPacket->m_fromConnection = from;
+			timedPacket->AddSimulatedLatency(m_simulatedLatency);
 
-		//NetPacket* packet = new NetPacket();
+			m_timeStampedPackets.push_back(timedPacket);
 
-		//NetMessage message;
-		//get the size of the entire buffer with the same method we used for RCS
-		//packet->WriteBytes(read, buffer);		//writes the rest of the buffer to the NetMessage packer
-		
-		
+			std::sort(m_timeStampedPackets.begin(), m_timeStampedPackets.end(), TimeStampedPacketCompare);
+
+			//NetPacket* packet = new NetPacket();
+
+			//NetMessage message;
+			//get the size of the entire buffer with the same method we used for RCS
+			//packet->WriteBytes(read, buffer);		//writes the rest of the buffer to the NetMessage packer
+			
+			
+		}
 	}
 }
 
@@ -348,28 +422,42 @@ void NetSession::ProcessMessage(NetMessage message, NetConnection* from)
 
 	//get the appropriate callback from the map of registered callbacks
 	if (IsMessageRegistered(messageType)){
-		// check to see if the sender is actually somebody connected to us? seems relevant?
-		//NetConnection* connection = GetConnectionByAddress(from);
-		if (from != nullptr){
-			net_message_definition_t* definition = GetRegisteredMessageByID(messageType);
+		net_message_definition_t* definition = GetRegisteredMessageByID(messageType);
+		if (definition== nullptr){
+			LogErrorf("No definition found for message index: %i", message.m_msgID);
+		}
+
+		//if the definition requires a connection and we don't have a valid connection, chuck it
+		if (!definition->IsConnectionless() && !from->IsValidConnection()){
+			//discard message and log warning
+			LogTaggedPrintf("net", "No connection found for incoming message that requires connection. (%s)", message.m_definition->m_messageName.c_str());
+		} else {
+			//process as usual
 			((definition->m_messageCB))( message, net_sender_t(from));
+		}
+
+		if (!from->IsValidConnection()){
+			//clean up "from" connection if it was made on the fly
+			delete from;
 		}
 	}
 }
+
+
 
 void NetSession::SendPacketsForConnection(unsigned int connectionIndex)
 {
 	NetPacket* packet = new NetPacket();
 	packet->AdvanceWriteHead(sizeof(packet_header_t));
 	uint8_t messagesSent = 0;
-	for (int msgNum = 0; msgNum < m_connections[connectionIndex]->m_messagesToSend.size(); msgNum++){
-		NetMessage* msg = m_connections[connectionIndex]->m_messagesToSend[msgNum];
+	for (int msgNum = 0; msgNum < m_connections[connectionIndex]->m_unsentUnreliableMessages.size(); msgNum++){
+		NetMessage* msg = m_connections[connectionIndex]->m_unsentUnreliableMessages[msgNum];
 
 		// write the message to the netpacket
 		// if you dont' have the space to write a packet, send existing packet,
 		// and start writing a new packet
 		if (!packet->WriteMessage(*msg)){
-			SendPacketToConnection(connectionIndex, packet, messagesSent);
+			SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent);
 			messagesSent = 0;
 			delete packet;
 			packet = new NetPacket();
@@ -379,10 +467,14 @@ void NetSession::SendPacketsForConnection(unsigned int connectionIndex)
 		//m_socket->SendTo(connection->GetAddress(), msg->GetBuffer(), msg->GetWrittenByteCount());
 	}
 	if (messagesSent > 0){
-		SendPacketToConnection(connectionIndex, packet, messagesSent);
+		SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent);
+		
 	}
-
-	m_connections[connectionIndex]->ClearMessageQueue();
+	delete packet;
+	//if we didn't remove the connection after a disconnect, clear the connection's message queue
+	if (m_connections[connectionIndex] != nullptr){
+		m_connections[connectionIndex]->ClearMessageQueue();
+	}
 }
 
 void NetSession::ProcessPackets()
@@ -392,12 +484,21 @@ void NetSession::ProcessPackets()
 		if (tsPacket->m_timeToProcess < GetCurrentTimeSeconds()){
 			//process a packet
 			packet_header_t packetHeader;
+
+			bool wasTrackedAndUnconfirmed = false;
 			tsPacket->m_packet->ReadHeader(packetHeader);
-			for (unsigned int i = 0; i < packetHeader.m_unreliableMessageCount; i++){
+			if (tsPacket->m_fromConnection != nullptr){
+				tsPacket->m_fromConnection->MarkReceiveTime();
+				tsPacket->m_fromConnection->UpdateReceivedAcks(packetHeader.m_ack);
+				wasTrackedAndUnconfirmed = tsPacket->m_fromConnection->ConfirmPacketReceived(packetHeader.m_ack);
+			}
+			for (unsigned int j = 0; j < packetHeader.m_unreliableMessageCount; j++){
 				NetMessage message;
 				tsPacket->m_packet->ReadMessage(&message);
 				ProcessMessage(message, tsPacket->m_fromConnection);
+				
 			}
+
 			m_timeStampedPackets[i] = nullptr;
 			delete tsPacket;
 		} else {
@@ -417,10 +518,24 @@ void NetSession::SendPacketToConnection(uint8_t connIndex, NetPacket * packet, u
 	NetConnection* connToSendTo = m_connections[connIndex];
 	packet_header_t packetHeader;
 	packetHeader.m_unreliableMessageCount = numMessages;
-	packetHeader.m_senderConnectionIndex = GetLocalConnectionIndex();
+	packetHeader.m_senderConnectionIndex = (uint8_t) GetLocalConnectionIndex();
+	packetHeader.m_ack = connToSendTo->GetNextSentAck();
+	packetHeader.m_lastReceivedAck = connToSendTo->GetLastReceivedAck();
+	packetHeader.m_previousReceivedAckBitfield = connToSendTo->GetAckBitfield();
+
+	//// get the tracker slot for this ack being sent out; 
+	//TrackedPacket *tracker = AddTrackedPacket( header.m_ack );
+	//tracker;  // unused for now - will track reliables soon; 
+	PacketTracker* tracker = connToSendTo->AddTrackedPacketOnSend(packetHeader);
+	tracker;
+	//
 	packet->WriteHeader(packetHeader);
+
 	if (m_socket->SendTo(connToSendTo->GetAddress(), packet->GetBuffer(), packet->GetWrittenByteCount()) == 0U){
 		RemoveConnection(connIndex);
+	} else {
+		connToSendTo->IncrementSendAck();
+		connToSendTo->MarkSendTime();
 	}
 }
 
@@ -431,7 +546,70 @@ bool TimeStampedPacketCompare(time_stamped_packet_t * leftHandSide, time_stamped
 
 bool OnHeartbeat(NetMessage msg, net_sender_t const & from)
 {
+	UNUSED(from);
 	//ConsolePrintf(RGBA::GREEN.GetColorWithAlpha(165), "Heartbeat from connection %s", from.m_connection->GetAddress().ToString().c_str()); 
+	return true;
+}
+
+bool OnPing( NetMessage msg, net_sender_t const &from ) 
+{
+	std::string str; 
+	msg.ReadString( str ); 
+
+	ConsolePrintf( "Received ping from %s: %s", 
+		from.m_connection->GetAddress().ToString().c_str(), 
+		str.c_str() ); 
+
+	// ping responds with pong
+	NetMessage* pong = new NetMessage( "pong" ); 
+	//pong->WriteData( str ); 
+	from.m_connection->m_owningSession->SendDirect(pong, from.m_connection);
+
+	// all messages serve double duty
+	// do some work, and also validate
+	// if a message ends up being malformed, we return false
+	// to notify the session we may want to kick this connection; 
+	return true; 
+}
+
+bool OnPong( NetMessage msg, net_sender_t const &from ) 
+{
+	//std::string str; 
+	//msg.ReadString( str ); 
+
+	ConsolePrintf( "Received pong from %s", 
+		from.m_connection->GetAddress().ToString().c_str()); 
+
+	// all messages serve double duty
+	// do some work, and also validate
+	// if a message ends up being malformed, we return false
+	// to notify the session we may want to kick this connection; 
+	return true; 
+}
+
+bool OnNetMsgUnreliableTest(NetMessage msg, net_sender_t const & from)
+{
+	UNUSED(from);
+	int numSent;
+	int numToSend;
+
+	if (!msg.Read(&numSent) || !msg.Read(&numToSend)){
+		return false;
+	}
+	ConsolePrintf("Received unreliable %i of %i from %s", numSent, numToSend, from.m_connection->GetAddress().ToString().c_str());
+	return true;
+}
+
+bool OnNetMsgReliableTest(NetMessage msg, net_sender_t const & from)
+{
+	UNUSED(from);
+	int numSent;
+	int numToSend;
+
+	if (!msg.Read(&numSent) || !msg.Read(&numToSend)){
+		return false;
+	}
+	ConsolePrintf("Received reliable %i of %i from %s", numSent, numToSend, from.m_connection->GetAddress().ToString().c_str());
 	return true;
 }
 
@@ -450,4 +628,9 @@ void time_stamped_packet_t::AddSimulatedLatency(IntRange simulatedLatencySeconds
 {
 	//increment time to process by random number of ms
 	m_timeToProcess += ((double) simulatedLatencySeconds.GetRandomInRange() * .001);
+}
+
+bool time_stamped_packet_t::IsValidConnection() const
+{
+	return m_fromConnection->IsValidConnection();
 }

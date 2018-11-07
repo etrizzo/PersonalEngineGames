@@ -26,6 +26,8 @@ public:
 	~StoryData();
 
 	void InitFromXML(tinyxml2::XMLElement* nodeElement);
+	void InitAsDetailNode(tinyxml2::XMLElement* nodeElement);
+	void InitAsPlotNode(tinyxml2::XMLElement* nodeElement);
 
 	std::string GetName() const;
 	std::string ToString() const;
@@ -42,22 +44,28 @@ public:
 	bool DoesCharacterMeetSlotRequirementsAtEdge(Character* character, unsigned int charSlot, StoryEdge* atEdge);
 	CharacterRequirementSet* GetRequirementsForCharacter(Character* character);
 
+	Character* GetCharacterFromDataString(std::string data);
+	std::string ReadCharacterNameFromDataString(std::string data);
+
 	void SetPosition(Vector2 pos);
 	Vector2 GetPosition() const;
 
 	bool operator==( const StoryData& compare ) const;
 	bool operator!=( const StoryData& compare ) const;
 
-	//test bits
-	std::string m_name;
-	float m_value;
 
 	//actual members
 	std::string m_id;
 	std::string m_action;
+	Strings m_actions;		//detail nodes 4 now
+	Strings m_actionsWithCharacters;	//detail nodes 4 now
 	std::vector<CharacterRequirementSet*> m_characterReqs;
 	StoryRequirements m_storyReqs;
 	EffectSet* m_effectSet;
+
+	//test bits
+	std::string m_name;
+	float m_value;
 
 	//generation info
 	mutable std::string m_actionWithCharacters;		//mutable to update in GetString

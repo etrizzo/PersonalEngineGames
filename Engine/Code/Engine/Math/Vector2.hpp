@@ -78,7 +78,7 @@ float GetDistanceSquared(const Vector2& a, const Vector2& b);
 //----------------------
 
 const Vector2 GetProjectedVector( const Vector2& vectorToProject, const Vector2& projectOnto);
-const Vector2 GetTransformedIntoBasis( const Vector2& originalVector, const Vector2& newBasisI, const Vector2& oldBasisJ);
+const Vector2 GetTransformedIntoBasis( const Vector2& originalVector, const Vector2& newBasisI, const Vector2& newBasisJ);
 const Vector2 GetTransformedOutOfBasis( const Vector2& vectorInBasis, const Vector2& oldBasisI, const Vector2& oldBasisJ);
 void DecomposeVectorIntoBasis( const Vector2& originalVector, const Vector2& newBasisI, const Vector2& newBasisJ, Vector2& out_vectorAlongI, Vector2& out_vectorAlongJ);
 const Vector2 Reflect(const Vector2& vectorToBounce, const Vector2& normal);

@@ -12,7 +12,8 @@ void Character::InitFromXML(tinyxml2::XMLElement * characterDefinition)
 	for (tinyxml2::XMLElement* tagElem = tagsElement->FirstChildElement("Tag"); tagElem != nullptr; tagElem = tagElem->NextSiblingElement("Tag")){
 		std::string tagName = ParseXmlAttribute(*tagElem, "tag", "NO_TAG");
 		std::string value = ParseXmlAttribute(*tagElem, "value", "true");
-		m_tags.SetTagWithValue(tagName, value);
+		std::string type = ParseXmlAttribute(*tagElem, "type", "boolean");
+		m_tags.SetTagWithValue(tagName, value, type);
 	}
 }
 

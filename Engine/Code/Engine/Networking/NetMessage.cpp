@@ -19,6 +19,16 @@ NetMessage::NetMessage(std::string msg)
 	MoveWriteHeadPastHeader();
 }
 
+bool NetMessage::RequiresConnection() const
+{
+	return !m_definition->IsConnectionless();
+}
+
+bool NetMessage::IsReliable() const
+{
+	return m_definition->IsReliable();
+}
+
 void NetMessage::IncrementMessageSize(uint16_t size)
 {
 	m_msgSize+=size;
@@ -26,8 +36,13 @@ void NetMessage::IncrementMessageSize(uint16_t size)
 
 void NetMessage::MoveWriteHeadPastHeader()
 {
+							//header size bytes		   [    "msg header"					]
+	//msg header looks like:  <2B msg and header size> <1B msgID> <optional 2B reliableID>
+
+							//bytes for size	//header bytes
+	uint16_t sizeOfHeader = sizeof(uint16_t) + GetHeaderSize();
 	if (m_writeHead == 0){
-		AdvanceWriteHead(sizeof(uint8_t) + sizeof(uint16_t));		//advance bytes for message ID & message size
+		AdvanceWriteHead((size_t) sizeOfHeader);		//advance bytes for message ID & message size
 	}
 }
 
@@ -36,9 +51,21 @@ void NetMessage::WriteHeader()
 	uint8_t id = m_definition->m_messageID;
 	unsigned int writeHead = GetWrittenByteCount();
 	SetWriteHead(0);
-	Write((uint16_t) (sizeof(uint8_t) + m_msgSize), false);
+	Write((uint16_t) (GetHeaderSize() + m_msgSize), false);
 	Write(id, false);
+	if (m_definition->IsReliable()){
+		Write(m_reliableID, false);
+	}
 	SetWriteHead(writeHead);
+}
+
+uint16_t NetMessage::GetHeaderSize()
+{
+	uint16_t msgSize = sizeof(m_definition->m_messageID);
+	if (m_definition->IsReliable()){
+		msgSize+= sizeof(m_reliableID);
+	}
+	return msgSize;
 }
 
 void NetMessage::WriteData(std::string data)
@@ -71,5 +98,23 @@ uint16_t NetMessage::GetIDFromDefinition()
 
 bool CompareDefinitionsByName(net_message_definition_t* a, net_message_definition_t* b)
 {
+	if (a->m_fixedIndex != -1){
+		return false;		//don't fuckin move it bicc
+	}
 	return a->m_messageName < b->m_messageName;
+}
+
+bool net_message_definition_t::IsConnectionless() const
+{
+	return AreBitsSet(m_messageOptions, NETMESSAGE_OPTION_CONNECTIONLESS);
+}
+
+bool net_message_definition_t::IsReliable() const
+{
+	return AreBitsSet(m_messageOptions, NETMESSAGE_OPTION_RELIABLE);
+}
+
+bool net_message_definition_t::IsInOrder() const
+{
+	return AreBitsSet(m_messageOptions, NETMESSAGE_OPTION_IN_ORDER);
 }

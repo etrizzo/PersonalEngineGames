@@ -141,7 +141,7 @@ void DevConsole::Close()
 {
 	g_Window->UnregisterHandler(DevConsoleHandler);
 	m_isOpen = false;
-	SetCursor(NULL);
+	//SetCursor(NULL);
 }
 
 bool DevConsole::IsOpen()

@@ -99,7 +99,7 @@ public:
 	RenderScene* GetScene();
 
 
-
+	Vector2 m_normalizedMousePos;
 
 	SoundID m_soundTrackID;
 	SoundPlaybackID m_soundtrackPlayback;

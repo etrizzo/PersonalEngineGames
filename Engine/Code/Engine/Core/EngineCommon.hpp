@@ -11,6 +11,7 @@
 
 #include "Engine/Math/AABB2.hpp"
 #include "Engine/Math/AABB3.hpp"
+#include "Engine/Math/OBB2.hpp"
 #include "Engine/Math/AreaMask.hpp"
 #include "Engine/Math/Disc2.hpp"
 #include "Engine/Math/Sphere.hpp"
@@ -64,6 +65,9 @@
 #define UNIMPLEMENTED()  TODO( "IMPLEMENT: " QUOTE(__FILE__) " (" QUOTE(__LINE__) ")" ); GUARANTEE_RECOVERABLE(0, "UNIMPLEMENTED");
 
 
+
+#define INVALID_PACKET_ACK (0xffff)
+#define INVALID_CONNECTION_INDEX (0xff)
 
 
 
@@ -258,6 +262,16 @@ void RemoveAtFast(std::vector<T*>& array, unsigned int index)
 		array[index] = array[array.size() - 1];
 	}
 	array.pop_back();
+}
+
+template <typename T>
+bool Contains(std::vector<T*>& array, T* obj){
+	for (T* element: array){
+		if (element == obj){
+			return true;
+		}
+	}
+	return false;
 }
 
 

@@ -21,6 +21,7 @@
 #include "Engine/Core/RGBA.hpp"
 #include "Engine/Core/Vertex.hpp"
 #include "Engine/Math/AABB2.hpp"
+#include "Engine/Math/OBB2.hpp"
 #include "Engine/Renderer/Texture.hpp"
 #include "Engine/Renderer/BitmapFont.hpp"
 #include "Engine/Renderer/RenderBuffer.hpp"
@@ -129,6 +130,7 @@ public:
 	
 	void DrawTriangle(const Vector2 vertices[], const RGBA& color);
 	void DrawAABB2(const AABB2& bounds, const RGBA& color,  const Vector2& uvMins = Vector2::ZERO, const Vector2& uvMaxs = Vector2::ONE);
+	void DrawOBB2(const OBB2& bounds, const RGBA& color, const Vector2& uvMins = Vector2::ZERO, const Vector2& uvMaxs = Vector2::ONE);
 	void DrawDisc2(const Vector2& center, const float& radius, const RGBA& color, int segments = 10);
 	void DrawBlendedAABB2(const AABB2& bounds, const RGBA& topLeftColor, const RGBA& bottomLeftColor, const RGBA& topRightColor, const RGBA& bottomRightColor);
 	void DrawAABB2Outline(const AABB2& bounds, const RGBA& color);

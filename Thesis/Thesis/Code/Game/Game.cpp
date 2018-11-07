@@ -138,14 +138,16 @@ void Game::Render()
 	PROFILE_PUSH_FUNCTION_SCOPE();
 	m_currentState->Render();
 	//RenderGame();
-	//RenderUI();
+	RenderUI();
 }
 
 void Game::HandleInput()
 {
 	PROFILE_PUSH_FUNCTION_SCOPE();
+	m_normalizedMousePos = g_theInput->GetMouseNormalizedScreenPosition(GetUIBounds());
 	//m_debugRenderSystem->HandleInput();
 	m_currentState->HandleInput();
+	m_graph.HandleInput();
 }
 
 void Game::RenderLoadScreen()
@@ -302,7 +304,12 @@ void Game::RenderGame()
 
 void Game::RenderUI()
 {
-	
+	//OBB2 box = OBB2 (Vector2::HALF, Vector2(.5f, -.2f), Vector2(.4f, .2f));
+	//RGBA boxColor = RGBA::DARKGRAY;
+	//if (box.IsPointInside(g_theGame->m_normalizedMousePos)){
+	//	boxColor = RGBA::CYAN;
+	//}
+	//g_theRenderer->DrawOBB2(box, boxColor);
 }
 
 void Game::GraphTests()

@@ -66,6 +66,8 @@ public:
 	void Render();
 	void HandleInput();
 
+
+
 	void RenderLoadScreen();
 
 	void TransitionToState(GameState* newState);
@@ -110,12 +112,28 @@ public:
 
 	unsigned int GetNumActiveLights() const;
 
+	//unreliable test junk
+	void StartUnreliableMsgTest(int connectionToSendTo, int numToSend);
+	StopWatch m_unreliableTestClock;
+	int m_numUnreliablesToSend			= 0;
+	int m_numUnreliablesSent			= 0;
+	uint8_t m_unreliableConnectionIndex	= INVALID_CONNECTION_INDEX;
+
+	//reliable test junk
+	void StartReliableMsgTest(int connectionToSendTo, int numToSend);
+	StopWatch m_reliableTestClock;
+	int m_numReliablesToSend		= 0;
+	int m_numReliablesSent			= 0;
+	uint8_t m_reliableConnectionIndex	= INVALID_CONNECTION_INDEX;
+
 	SoundID m_soundTrackID;
 	SoundPlaybackID m_soundtrackPlayback;
 
 	bool m_godMode;
 
 private:
+	void RunNetSessionTests();
+
 	void LoadTileDefinitions();
 
 	void RenderGame();
@@ -140,8 +158,8 @@ private:
 extern Game* g_theGame;
 
 
-bool OnPing( NetMessage msg, net_sender_t const &from ) ;
-bool OnPong( NetMessage msg, net_sender_t const & from) ;
+
 bool OnAdd( NetMessage msg, net_sender_t const & from) ;
 bool OnAddResponse( NetMessage msg, net_sender_t const & from) ;
+
 

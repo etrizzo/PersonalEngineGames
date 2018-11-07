@@ -113,4 +113,6 @@ void CommandSetSimulatedLoss(Command& cmd);
 void CommandSetSimulatedLatency(Command& cmd);
 void CommandSetSessionSendRate(Command& cmd);
 void CommandSetConnectionSendRate(Command& cmd);
+void CommandStartUnreliableTest(Command& cmd);
+void CommandStartReliableTest(Command& cmd);
 

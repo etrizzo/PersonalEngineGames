@@ -59,6 +59,7 @@ Game::Game()
 
 	m_gameClock = new Clock(masterClock);
 
+	m_unreliableTestClock = StopWatch();
 
 	m_currentState = new GameState_Loading();
 	//m_udp = new UDPTest();
@@ -90,10 +91,10 @@ void Game::PostStartup()
 
 
 	// describe what this session can do; 
-	m_session->RegisterMessage( "ping", (NetSessionMessageCB) OnPing ); 
-	m_session->RegisterMessage( "pong", (NetSessionMessageCB) OnPong ); 
-	m_session->RegisterMessage( "add" , (NetSessionMessageCB) OnAdd  ); 
-	m_session->RegisterMessage( "add_response", (NetSessionMessageCB) OnAddResponse );
+
+	m_session->RegisterMessage( -1 , "add" , (NetSessionMessageCB) OnAdd, NETMESSAGE_OPTION_UNRELIABLE_REQUIRES_CONNECTION); 
+	m_session->RegisterMessage( -1 , "add_response", (NetSessionMessageCB) OnAddResponse, NETMESSAGE_OPTION_UNRELIABLE_REQUIRES_CONNECTION);
+	
 
 	m_session->SortMessageIDs();
 
@@ -112,10 +113,12 @@ void Game::Update()
 	//PROFILE_LOG_SCOPE_FUNCTION();
 	float ds = GetDeltaSeconds();
 	m_currentState->Update(ds);
-	
+
+	RunNetSessionTests();
 
 	//m_udp->Update();
 	m_session->Update();
+
 
 	PROFILE_POP();
 	
@@ -134,6 +137,22 @@ void Game::HandleInput()
 	PROFILE_PUSH_FUNCTION_SCOPE();
 	//m_debugRenderSystem->HandleInput();
 	m_currentState->HandleInput();
+}
+
+void Game::StartUnreliableMsgTest(int connectionToSendTo, int numToSend)
+{
+	m_unreliableTestClock.SetTimer(.03f);
+	m_numUnreliablesSent = 0;
+	m_numUnreliablesToSend = numToSend;
+	m_unreliableConnectionIndex = (uint8_t(connectionToSendTo));
+}
+
+void Game::StartReliableMsgTest(int connectionToSendTo, int numToSend)
+{
+	m_reliableTestClock.SetTimer(.03f);
+	m_numReliablesSent = 0;
+	m_numReliablesToSend = numToSend;
+	m_reliableConnectionIndex = (uint8_t(connectionToSendTo));
 }
 
 void Game::RenderLoadScreen()
@@ -361,6 +380,29 @@ unsigned int Game::GetNumActiveLights() const
 
 
 
+void Game::RunNetSessionTests()
+{
+	//unreliable test loop
+	if (m_numUnreliablesSent < m_numUnreliablesToSend && m_unreliableTestClock.CheckAndReset()){
+		NetMessage* unreliableTest = new NetMessage( "unreliable_test" ); 
+		unreliableTest->WriteBytes(sizeof(int), &m_numUnreliablesSent);
+		unreliableTest->WriteBytes(sizeof(int), &m_numUnreliablesToSend);
+		unreliableTest->WriteHeader();
+		m_session->GetConnection(m_unreliableConnectionIndex)->Send( unreliableTest ); 
+		m_numUnreliablesSent++;
+	}
+
+	//reliable test loop
+	if (m_numReliablesSent < m_numReliablesToSend && m_reliableTestClock.CheckAndReset()){
+		NetMessage* reliableTest = new NetMessage( "reliable_test" ); 
+		reliableTest->WriteBytes(sizeof(int), &m_numReliablesSent);
+		reliableTest->WriteBytes(sizeof(int), &m_numReliablesToSend);
+		reliableTest->WriteHeader();
+		m_session->GetConnection(m_reliableConnectionIndex)->Send( reliableTest ); 
+		m_numReliablesSent++;
+	}
+}
+
 void Game::LoadTileDefinitions()
 {
 	tinyxml2::XMLDocument tileDefDoc;
@@ -396,41 +438,7 @@ void Game::RenderUI()
 
 
 
-bool OnPing( NetMessage msg, net_sender_t const &from ) 
-{
-	std::string str; 
-	msg.ReadString( str ); 
 
-	ConsolePrintf( "Received ping from %s: %s", 
-		from.m_connection->GetAddress().ToString().c_str(), 
-		str.c_str() ); 
-
-	// ping responds with pong
-	NetMessage* pong = new NetMessage( "pong" ); 
-	//pong->WriteData( str ); 
-	from.m_connection->Send( pong ); 
-
-	// all messages serve double duty
-	// do some work, and also validate
-	// if a message ends up being malformed, we return false
-	// to notify the session we may want to kick this connection; 
-	return true; 
-}
-
-bool OnPong( NetMessage msg, net_sender_t const &from ) 
-{
-	//std::string str; 
-	//msg.ReadString( str ); 
-
-	ConsolePrintf( "Received pong from %s", 
-		from.m_connection->GetAddress().ToString().c_str()); 
-
-	// all messages serve double duty
-	// do some work, and also validate
-	// if a message ends up being malformed, we return false
-	// to notify the session we may want to kick this connection; 
-	return true; 
-}
 
 
 //------------------------------------------------------------------------
@@ -464,12 +472,13 @@ bool OnAdd( NetMessage msg, net_sender_t const &from )
 
 bool OnAddResponse(NetMessage msg, net_sender_t const & from)
 {
+	UNUSED(from);
 	float val0;
 	float val1; 
 	float sum;
 
 	if (!msg.Read( &val0 ) || !msg.Read( &val1 )) {
-		// this probalby isn't a real connection to send us a bad message
+		// this probably isn't a real connection to send us a bad message
 		return false; 
 	}
 
@@ -481,6 +490,8 @@ bool OnAddResponse(NetMessage msg, net_sender_t const & from)
 
 	return true; 
 }
+
+
 
 
 

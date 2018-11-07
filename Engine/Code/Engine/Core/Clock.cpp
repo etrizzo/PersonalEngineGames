@@ -172,3 +172,8 @@ double GetCurrentTimeSeconds()
 	double currentSeconds = static_cast< double >( elapsedCountsSinceInitialTime ) * secondsPerCount;
 	return currentSeconds;
 }
+
+unsigned int GetCurrentTimeMilliseconds()
+{
+	return (unsigned int)(GetCurrentTimeSeconds() * 1000.0);
+}

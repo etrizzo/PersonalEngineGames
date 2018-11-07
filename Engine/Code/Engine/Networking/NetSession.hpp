@@ -9,9 +9,22 @@ class Renderer;
 #define DEFAULT_HEARTBEAT (.33f)
 #define DEFAULT_SESSION_SEND_RATE_HZ (50.f)		//NOTE: Hz, not ms.
 
+//net session UI settings
 #define SESSION_FONT_HEADER_SIZE (.015f)
 #define SESSION_FONT_CONTENT_SIZE (.008f)
 #define SESSION_LINE_MULTIPLIER (1.04f)
+
+enum eNetCoreMessages : uint8_t{
+	NETMSG_PING = 0,			// unreliable, connectionless
+	NETMSG_PONG, 				// unreliable, connectionless
+	NETMSG_HEARTBEAT,			// unreliable
+
+	NETMSG_UNRELIABLE_TEST = 128,
+	NETMSG_RELIABLE_TEST = 129, // reliable
+
+
+	NETMSG_CORE_COUNT,
+};
 
 
 struct time_stamped_packet_t{
@@ -20,11 +33,11 @@ public:
 	~time_stamped_packet_t();
 
 	void AddSimulatedLatency(IntRange simulatedLatencySeconds);
+	bool IsValidConnection() const;
 
 	double m_timeToProcess;
 	NetPacket* m_packet;
 	NetConnection* m_fromConnection;
-	
 };
 
 
@@ -38,6 +51,8 @@ public:
 
 	void Update();
 	void RenderInfo(AABB2 screenBounds, Renderer* renderer);
+
+	void SendDirect(NetMessage* message, NetConnection* invalidConnection);
 
 	void SetHeartbeat(float hz);
 	void SetSessionSendRate(float hz);
@@ -69,7 +84,7 @@ public:
 	void SetSimulatedLatency(  int minAddedLatencyMS = 0, int maxAddedLatencyMS = 0 ); 
 
 	//adds the callback to the map of possible messages this session can handle
-	void RegisterMessage(std::string name, NetSessionMessageCB messageCB);
+	void RegisterMessage(int msgIndex, std::string name, NetSessionMessageCB messageCB, eNetMessageOptions messageOptions);
 	void SortMessageIDs();
 	bool IsMessageRegistered(std::string name);
 	bool IsMessageRegistered(uint16_t id);
@@ -83,6 +98,8 @@ public:
 
 	void ProcessMessage(NetMessage message, NetConnection* from);
 
+	//NetPacket* AddTrackedPacket(const packet_header_t& header);
+
 	
 
 
@@ -94,6 +111,8 @@ protected:
 	
 	NetConnection* m_connections[MAX_CONNECTIONS] = {nullptr};
 	std::vector<net_message_definition_t*> m_registeredMessages;
+	std::vector<net_message_definition_t*> m_unassignedMessages;
+	std::vector<net_message_definition_t*> m_fixedIndexMessages;
 	UDPSocket* m_socket;		// your node in the graph? 
 
 	std::vector<time_stamped_packet_t*> m_timeStampedPackets = std::vector<time_stamped_packet_t*>();
@@ -109,3 +128,7 @@ bool TimeStampedPacketCompare(time_stamped_packet_t* leftHandSide, time_stamped_
 
 
 bool OnHeartbeat( NetMessage msg, net_sender_t const &from );
+bool OnPing( NetMessage msg, net_sender_t const &from ) ;
+bool OnPong( NetMessage msg, net_sender_t const & from) ;
+bool OnNetMsgUnreliableTest( NetMessage msg, net_sender_t const& from);
+bool OnNetMsgReliableTest( NetMessage msg, net_sender_t const& from) ;

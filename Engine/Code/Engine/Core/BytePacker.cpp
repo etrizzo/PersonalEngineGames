@@ -27,6 +27,7 @@ BytePacker::BytePacker(size_t buffer_size, void * buffer, eEndianness byte_order
 
 BytePacker::~BytePacker()
 {
+	//free(m_buffer);
 }
 
 void BytePacker::SetEndianness(eEndianness newEndianness)
@@ -101,6 +102,11 @@ size_t BytePacker::Read(uint8_t * outData, bool convertEndianness)
 size_t BytePacker::Read(float * outData, bool convertEndianness)
 {
 	return ReadBytes(outData, sizeof(float), convertEndianness);
+}
+
+size_t BytePacker::Read(int * outData, bool convertEndianness)
+{
+	return ReadBytes(outData, sizeof(int), convertEndianness);
 }
 
 bool BytePacker::WriteBytes(size_t byte_count, void const * data, bool convertEndianness)

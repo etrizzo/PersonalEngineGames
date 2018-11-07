@@ -312,12 +312,12 @@
     <ClCompile Include="Math\Disc2.cpp" />
     <ClCompile Include="Math\FloatRange.cpp" />
     <ClCompile Include="Math\AreaMask.cpp" />
-    <ClCompile Include="MATH\INTAREA2.CPP" />
     <ClCompile Include="Math\IntRange.cpp" />
     <ClCompile Include="Math\IntVector2.cpp" />
     <ClCompile Include="Math\IntVector3.cpp" />
     <ClCompile Include="Math\MathUtils.cpp" />
     <ClCompile Include="Math\Matrix44.cpp" />
+    <ClCompile Include="Math\OBB2.cpp" />
     <ClCompile Include="Math\RawNoise.cpp" />
     <ClCompile Include="Math\Ray.cpp" />
     <ClCompile Include="Math\Renderer.cpp" />
@@ -334,6 +334,7 @@
     <ClCompile Include="Networking\NetMessage.cpp" />
     <ClCompile Include="Networking\NetPacket.cpp" />
     <ClCompile Include="Networking\NetSession.cpp" />
+    <ClCompile Include="Networking\PacketTracker.cpp" />
     <ClCompile Include="Networking\RemoteCommandService.cpp" />
     <ClCompile Include="Networking\Socket.cpp" />
     <ClCompile Include="Networking\TCPSocket.cpp" />
@@ -434,6 +435,7 @@
     <ClInclude Include="Math\IntVector3.hpp" />
     <ClInclude Include="Math\MathUtils.hpp" />
     <ClInclude Include="Math\Matrix44.hpp" />
+    <ClInclude Include="Math\OBB2.hpp" />
     <ClInclude Include="Math\RawNoise.hpp" />
     <ClInclude Include="Math\Ray.hpp" />
     <ClInclude Include="Math\Renderer.hpp" />
@@ -450,6 +452,7 @@
     <ClInclude Include="Networking\NetMessage.hpp" />
     <ClInclude Include="Networking\NetPacket.hpp" />
     <ClInclude Include="Networking\NetSession.hpp" />
+    <ClInclude Include="Networking\PacketTracker.hpp" />
     <ClInclude Include="Networking\RemoteCommandService.hpp" />
     <ClInclude Include="Networking\Socket.hpp" />
     <ClInclude Include="Networking\TCPSocket.hpp" />

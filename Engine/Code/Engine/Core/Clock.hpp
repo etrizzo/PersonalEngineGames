@@ -98,6 +98,7 @@ void ClockSystemBeginFrame();
 // I now move this here - as this now refers to the master clock
 // who is keeping track of the starting reference point. 
 double GetCurrentTimeSeconds(); 
+unsigned int GetCurrentTimeMilliseconds();
 
 // I usually also add convenience functions so I'm not constantly fetching the master clock, like
 // float GetDeltaTime()

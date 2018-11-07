@@ -2,22 +2,31 @@
 #include "Game/GameCommon.hpp"
 #include "Game/Tags.hpp"
 
+
 class Character;
 class CharacterState;
+class StoryData;
 
 class CharacterRequirement{
 public:
-	CharacterRequirement(unsigned int charID, tinyxml2::XMLElement* element );
+	CharacterRequirement() {};
+	CharacterRequirement(unsigned int charID, StoryData* parentData, tinyxml2::XMLElement* element );
+
+	virtual CharacterRequirement* Clone() const = 0;
 	
 	virtual bool PassesRequirement(CharacterState* character) = 0;
 
 	unsigned int m_characterID = (unsigned int) -1;
+	StoryData* m_parentData;
 };
 
 
 class CharacterRequirement_Tag : public CharacterRequirement{
 public:
-	CharacterRequirement_Tag(unsigned int charID, tinyxml2::XMLElement* element);
+	CharacterRequirement_Tag(){};
+	CharacterRequirement_Tag(unsigned int charID, StoryData* parentData, tinyxml2::XMLElement* element);
+
+	CharacterRequirement* Clone() const;
 	
 	bool PassesRequirement(CharacterState* character) override;
 	
@@ -27,7 +36,10 @@ public:
 
 class CharacterRequirement_Trait : public CharacterRequirement{
 public:
-	CharacterRequirement_Trait(unsigned int charID, tinyxml2::XMLElement* element);
+	CharacterRequirement_Trait(){};
+	CharacterRequirement_Trait(unsigned int charID, StoryData* parentData, tinyxml2::XMLElement* element);
+
+	CharacterRequirement* Clone() const;
 
 	bool PassesRequirement(CharacterState* character) override;
 

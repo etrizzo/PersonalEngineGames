@@ -180,6 +180,7 @@ void App::RegisterCommands()
 	CommandRegister("find_path", CommandFindPath, "Finds the shortest path in the graph");
 	CommandRegister("print_story", CommandPrintStory, "Prints the current story to the screen");
 	CommandRegister("add_branches", CommandFindBranches, "Adds branches to the graph");
+	CommandRegister("set_branch_chance", CommandSetBranchChance, "Sets the chance to branch nodes on failure to place node.", "set_branch_chance <float 0-1>");
 
 }
 
@@ -189,11 +190,11 @@ void App::HandleInput()
 	if (g_theInput->WasKeyJustPressed(192)){		//the ` key
 		if (!DevConsoleIsOpen()){
 			g_devConsole->Open();
-			g_theInput->SetMouseLocked(false);
-			g_theInput->ShowCursor(true);
 		} else {
 			g_devConsole->Close();
 		}
+		g_theInput->SetMouseLocked(false);
+		g_theInput->ShowCursor(true);
 	}
 
 	if (g_theInput->WasKeyJustPressed(VK_F2)){
@@ -476,7 +477,7 @@ void CommandGenerateGraph(Command & cmd)
 void CommandFindPath(Command & cmd)
 {
 	UNUSED(cmd);
-	g_theGame->m_graph.FindPath(ShortestPathHeuristic);
+	g_theGame->m_graph.FindPath(RandomPathHeuristic);
 }
 
 
@@ -490,6 +491,13 @@ void CommandFindBranches(Command & cmd)
 {
 	UNUSED(cmd);
 	g_theGame->m_graph.IdentifyBranchesAndAdd();
+}
+
+void CommandSetBranchChance(Command & cmd)
+{
+	float chance = cmd.GetNextFloat();
+	g_theGame->m_graph.SetBranchChance(chance);
+	ConsolePrintf(RGBA::YELLOW, "Changed branch chance on generation to %.2f", chance);
 }
 
 void CommandGenerateSkeleton(Command & cmd)

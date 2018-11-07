@@ -50,12 +50,20 @@ float StoryState::GetCost() const
 
 std::string StoryState::ToString() const
 {
+	
+	//if (g_theGame->IsDevMode()){
+	//	return GetDevString();
+	//} 
 	std::string printStr = Stringf("%3.2f\n", GetCost());
-	if (g_theGame->IsDevMode()){
-		for(CharacterState* state : m_characterStates){
-			printStr+=state->ToString() + "\n";
-		}
-	} 
+	return printStr;
+}
+
+std::string StoryState::GetDevString() const
+{
+	std::string printStr = Stringf("Cost: %3.2f\n==========================\n", GetCost());
+	for(CharacterState* state : m_characterStates){
+		printStr+= (state->ToString() + "\n");
+	}
 	return printStr;
 }
 

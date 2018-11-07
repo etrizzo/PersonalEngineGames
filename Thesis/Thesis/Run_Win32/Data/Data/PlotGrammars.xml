@@ -4,12 +4,11 @@
 		<Action text="*0* fights *1*" />
 		<CharacterRequirements>
 			<Character index="0">
-				<Requirement trait="Social" value="60" compare="greater" />
 				<Requirement tag="isAlive" target="true"/>
-				<Requirement tag="isAngryAt" target="*1*"/>
+				<Requirement tag="isAngry" target="*1*" type="character"/>
 			</Character>
 			<Character index="1">
-				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="isAlive" target="true" type="bool"/>
 			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>
@@ -19,7 +18,9 @@
 			<EffectSet chance="default">
 				<TraitChange character="0" trait="Social" change="-10" />
 				<TraitChange character="1" trait="Social" change="-10" />
-				<TagChange character="0" hasTag = "isAngry" target="*1*" />
+				<TagChange character="1" hasTag = "isAngry" target="*0*" type="character"/>
+				<TagChange character="0" hasTag = "isFighting" target="*1*" type="character"/>
+				<TagChange character="1" hasTag = "isFighting" target="*0*" type="character"/>
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</StoryEffects>
@@ -43,13 +44,14 @@
 		</StoryRequirements>
 		<StoryEffects>
 			<EffectSet chance="default">
-				<TagChange character="1" hasTag = "isAngry" target="*0*" />
+				<TagChange character="1" hasTag = "isAngry" target="*0*" type="character"/>
 				<TagChange character="1" hasTag = "hasTreasure" target="false" />
 				<TagChange character="0" hasTag = "hasTreasure" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</StoryEffects>
 	</PlotGrammar>
+
 
 	<PlotGrammar>
 		<Action text="*0* goes on a quest to a cave" />
@@ -132,5 +134,4 @@
 			</EffectSet>
 		</StoryEffects>
 	</PlotGrammar>
-
 

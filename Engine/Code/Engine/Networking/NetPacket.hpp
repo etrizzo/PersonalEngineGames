@@ -1,25 +1,26 @@
+#pragma once
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Networking/NetMessage.hpp"
 #include "Engine/Networking/UDPSocket.hpp"
 
-struct packet_header_t{
-	uint8_t m_senderConnectionIndex;
-	uint8_t m_unreliableMessageCount;
-};
+//struct packet_header_t{
+//	uint8_t m_senderConnectionIndex;
+//	uint8_t m_unreliableMessageCount;
+//};
 
-//struct packet_header_t
-//{
-//	// old; 
-//	uint8_t m_senderConnectionIndex; 
-//
-//	// new
-//	uint16_t m_ack; 
-//	uint16_t m_lastReceivedAck; 
-//	uint16_t m_previousReceivedAckBitfield; 
-//
-//	// old
-//	uint8_t m_unreliableMessageCount; 
-//}; 
+struct packet_header_t
+{
+	// old; 
+	uint8_t m_senderConnectionIndex; 
+
+	// new
+	uint16_t m_ack; 
+	uint16_t m_lastReceivedAck; 
+	uint16_t m_previousReceivedAckBitfield; 
+
+	// old
+	uint8_t m_unreliableMessageCount; 
+}; 
 
 // A packet is a package sent over the network
 // It allows you to write/read data to it

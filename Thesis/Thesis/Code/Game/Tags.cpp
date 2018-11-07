@@ -9,7 +9,7 @@ Tags::Tags(const std::string & commaSeparatedTagNames)
 Tags::Tags(const Tags & copy)
 {
 	for (int i = 0; i < copy.m_tags.size(); i++){
-		TagPair tag = TagPair(copy.m_tags[i].GetName(), copy.m_tags[i].GetValue());
+		TagPair tag = TagPair(copy.m_tags[i].GetName(), copy.m_tags[i].GetValue(), copy.m_tags[i].GetType());
 		m_tags.push_back(tag);
 	}
 }
@@ -26,9 +26,12 @@ int Tags::GetNumTags() const
 
 std::string Tags::GetTagsAsString() const
 {
-	std::string tags = "";
+	std::string tags = Stringf("%-12s | %s\n", "Tag", "Value");
+	tags += "-------------|-----------\n";
 	for (TagPair tag : m_tags){
-		tags+= tag.GetName() + ":" + tag.GetValue() + ", ";
+		std::string tagStr = Stringf("%-12s | %s\n", tag.GetName().c_str(), tag.GetValue().c_str());
+		//tags+= tag.GetName() + ":" + tag.GetValue() + ", ";
+		tags += tagStr;
 	}
 	return tags;
 }
@@ -91,14 +94,14 @@ bool Tags::HasTags(const std::string & commaSeparatedTagNames)
 void Tags::SetTag(const std::string & tagName)
 {
 	if (!HasTag(tagName)){
-		m_tags.push_back(TagPair(tagName));
+		m_tags.push_back(TagPair(tagName, "true", "boolean"));
 	}
 }
 
-void Tags::SetTagWithValue(const std::string & tagName, const std::string & value)
+void Tags::SetTagWithValue(const std::string & tagName, const std::string & value, std::string type)
 {
 	if (!HasTag(tagName)){
-		TagPair tag = TagPair(tagName, value);
+		TagPair tag = TagPair(tagName, value, type);
 		m_tags.push_back(tag);
 	} else {
 		//set the existing value
@@ -157,4 +160,14 @@ bool Tags::HasTagWithValue(const std::string & tagName, const std::string & valu
 			return true;
 		}
 	}
+}
+
+bool Tags::ContainsTagWithAnyValue(const std::string & tagName, const std::string & type)
+{
+	for (TagPair tag : m_tags){
+		if (tag.HasName(tagName) && (tag.GetType() == type) ){
+			return true;
+		}
+	}
+	return false;
 }

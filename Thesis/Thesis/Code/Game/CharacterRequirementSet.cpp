@@ -1,7 +1,7 @@
 #include "CharacterRequirementSet.hpp"
 #pragma once
 
-void CharacterRequirementSet::InitFromXML(tinyxml2::XMLElement * setElement)
+void CharacterRequirementSet::InitFromXML(tinyxml2::XMLElement * setElement, StoryData* parent)
 {
 	m_characterIndex = (unsigned int) ParseXmlAttribute(*setElement, "index", (int) -1);
 
@@ -11,9 +11,9 @@ void CharacterRequirementSet::InitFromXML(tinyxml2::XMLElement * setElement)
 		std::string traitType = ParseXmlAttribute(*reqElement, "trait", "NO_TRAIT");
 		std::string tagName = ParseXmlAttribute(*reqElement, "tag", "NO_TAG");
 		if (traitType != "NO_TRAIT"){
-			newRequirement = (CharacterRequirement*) new CharacterRequirement_Trait(m_characterIndex, reqElement);
+			newRequirement = (CharacterRequirement*) new CharacterRequirement_Trait(m_characterIndex, parent, reqElement);
 		} else if (tagName != "NO_TAG"){
-			newRequirement = (CharacterRequirement*) new CharacterRequirement_Tag(m_characterIndex, reqElement);
+			newRequirement = (CharacterRequirement*) new CharacterRequirement_Tag(m_characterIndex, parent, reqElement);
 		}
 		if (newRequirement != nullptr){
 			m_requirements.push_back(newRequirement);
@@ -31,4 +31,22 @@ bool CharacterRequirementSet::DoesCharacterMeetRequirements(CharacterState* char
 		}
 	}
 	return true;
+}
+
+CharacterRequirementSet * CharacterRequirementSet::Clone()
+{
+	CharacterRequirementSet* newSet = new CharacterRequirementSet();
+	newSet->m_characterIndex = m_characterIndex;
+	newSet->m_requirements = std::vector<CharacterRequirement*>();
+	for (CharacterRequirement* localReq : m_requirements){
+		newSet->m_requirements.push_back(localReq->Clone());
+	}
+	return newSet;
+}
+
+void CharacterRequirementSet::SetAllRequirementsStoryData(StoryData * parentData)
+{
+	for (CharacterRequirement* req : m_requirements){
+		req->m_parentData = parentData;
+	}
 }

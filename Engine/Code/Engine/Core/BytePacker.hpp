@@ -47,6 +47,7 @@ public:
 	size_t Read(uint16_t*	outData, bool convertEndianness = true);
 	size_t Read(uint8_t*	outData, bool convertEndianness = true);
 	size_t Read(float*		outData, bool convertEndianness = true);
+	size_t Read(int*		outData, bool convertEndianness = true);
 
 	////.... Someday :(
 	//template <typename T>

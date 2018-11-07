@@ -14,22 +14,38 @@ Effect_TagChange::Effect_TagChange(tinyxml2::XMLElement * element, StoryData* pa
 {
 	std::string tag = ParseXmlAttribute(*element, "hasTag", "NO_TAG");
 	std::string value = ParseXmlAttribute(*element, "target", "true");
+	std::string type = ParseXmlAttribute(*element, "type", "boolean");
 
-	m_tag = TagPair(tag, value);
+	m_tag = TagPair(tag, value, type);
 }
 
 bool Effect_TagChange::ApplyToState(StoryState * state)
 {
 	Character* character = m_parentData->m_characters[m_characterID];
 	CharacterState* characterState = state->GetCharacterStateForCharacter(character);
-	characterState->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue());
+	characterState->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
+	if (m_tag.GetType() == "character"){
+		std::string charName = m_parentData->ReadCharacterNameFromDataString(m_tag.GetValue());
+		characterState->m_tags.SetTagWithValue(m_tag.GetName(), charName, m_tag.GetType());
+		return true;
+	} else {
+		characterState->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
+		return true;
+	}
 	return true;
 }
 
 bool Effect_TagChange::ApplyToCharacterState(CharacterState * state)
 {
-	state->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue());
-	return true;
+	//if the tag type must be read differently (i.e. for characters), do that now
+	if (m_tag.GetType() == "character"){
+		std::string charName = m_parentData->ReadCharacterNameFromDataString(m_tag.GetValue());
+		state->m_tags.SetTagWithValue(m_tag.GetName(), charName, m_tag.GetType());
+		return true;
+	} else {
+		state->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
+		return true;
+	}
 }
 
 Effect * Effect_TagChange::Clone()
@@ -37,7 +53,7 @@ Effect * Effect_TagChange::Clone()
 	Effect_TagChange* newTag = new Effect_TagChange();
 	newTag->m_characterID = m_characterID;
 	newTag->m_parentData = m_parentData;
-	newTag->m_tag = TagPair(m_tag.GetName(), m_tag.GetValue());
+	newTag->m_tag = TagPair(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
 	return (Effect*) newTag;
 }
 

@@ -1,16 +1,29 @@
-find_path
+set_branch_chance .5
 quit
-generate_details 1
-generate_skeleton
 generate_details
+generate_skeleton
+find_path
+set_branch_chance .2
+add_branches .2
+generate_details 3
+generate_details 5
+generate_skeleton 10
+generate_details 10
+set_branch_chance 0
+set_branch_chance -
+generate_graph
+set_branch_chance .3
+generate_skeleton 8
+print_story
+generate_skeleton 15
+generate_skeleton 50
 generate_details 2
+generate_skeleton 6
+generate_skeleton 12
+generate_details 1
 generate_details 1\
 generate_skeleton 5
 generate_skeleton 3
-generate_graph
 generate_skeleton 7
-generate_skeleton 10
-generate_skeleton 6
 generate_details 8
 add_branches
-print_story

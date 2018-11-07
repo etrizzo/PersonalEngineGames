@@ -1,10 +1,13 @@
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Networking/UDPSocket.hpp"
+#include "Engine/Networking/NetPacket.hpp"
 
-#define INVALID_PACKET_ACK (0xffff)
 
 class NetMessage;
 class NetSession;
+class PacketTracker;
+
+#define NUM_ACKS_TRACKED (sizeof(uint16_t))
 
 class NetConnection 
 {
@@ -18,7 +21,20 @@ public:
 	void SetSendRate(float hz = 0.f);
 	NetAddress GetAddress() const;
 
+	bool IsValidConnection() const;
+
 	bool CanSendToConnection();
+
+	void IncrementSendAck();
+	void MarkSendTime();
+	PacketTracker* AddTrackedPacketOnSend(const packet_header_t& header);
+
+	void MarkReceiveTime();
+	void UpdateReceivedAcks(uint16_t newReceivedAck);
+	//returns true if the packet was tracked and unconfirmed
+	bool ConfirmPacketReceived(uint16_t newReceivedAck);
+
+	void UpdateRTT(unsigned int RTTforConfirmedPacketMS);
 
 	//Accessors
 	uint16_t		GetNextSentAck()		const;
@@ -32,22 +48,28 @@ public:
 	float	GetLastSendTimeSeconds()		const;
 	float	GetLastReceivedTimeSeconds()	const;
 
-	std::vector<NetMessage*> m_messagesToSend;
+	std::vector<NetMessage*> m_unsentUnreliableMessages = std::vector<NetMessage*>();
 	NetAddress m_address;
 	uint8_t m_indexInSession;
 	NetSession *m_owningSession; 
 	StopWatch m_heartbeatTimer;
 	StopWatch m_sendRateTimer;
 	float m_connectionSendRateHZ = 0;
+	unsigned int m_lostPackets = 0;
+	unsigned int m_recievedPackets = 0;
+
+	std::vector<NetMessage*> m_unsentReliableMessages = std::vector<NetMessage*>();
+	std::vector<NetMessage*> m_sentReliableMessages = std::vector<NetMessage*>();
 
 	bool m_isLocal = false;
 
 protected:
+	PacketTracker* m_trackedSentPackets[NUM_ACKS_TRACKED];
 	// sending - updated during a send/flush
 	uint16_t m_nextSentACK                  = 0U; 
 
 	// receiving - updated during a process_packet
-	uint16_t m_lastReceivedACK               = INVALID_PACKET_ACK; 
+	uint16_t m_highestReceivedACK               = INVALID_PACKET_ACK; 
 	uint16_t m_previousReceivedACKBitfield   = 0U; 
 
 	// Analytics

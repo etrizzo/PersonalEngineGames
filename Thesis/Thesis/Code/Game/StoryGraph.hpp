@@ -5,17 +5,20 @@
 class Character;
 
 
-#define START_NODE_POSITION (Vector2(.15f, .5f))
-#define END_NODE_POSITION (Vector2(1.25f, .5f))
+#define START_NODE_POSITION (Vector2(.1f, .5f))
+#define END_NODE_POSITION (Vector2(1.4f, .5f))
 #define NODE_SIZE (.04f)
 #define NODE_FONT_SIZE (.0083f)
 #define EDGE_FONT_SIZE (.01f)
+#define EDGE_ARROW_SIZE (.02f)
 #define PULL_WEIGHT (0.1f)
 #define PUSH_WEIGHT (.99f)
-#define MIN_NODE_DISTANCE (.25f)
+#define MIN_NODE_DISTANCE (.175f)
 #define MAX_NODE_DISTANCE (.4f)
 #define NUM_NODE_ITERATIONS (2000)
 #define MIN_DISTANCE_TO_MOVE (.06f)
+#define REROLL_REPEAT_PLOT_NODE_CHANCE (.9f)
+#define REROLL_REPEAT_DETAIL_NODE_CHANCE (.7f)
 
 //comparison for 
 typedef StoryState* (*StoryHeuristicCB) (StoryEdge* edge, StoryStructure* currentStructure);
@@ -44,9 +47,20 @@ public:
 	*/
 
 	void RenderGraph() const;
+	void RenderDebugInfo() const;
 	void UpdateNodePositions();
 	void RunNodeAdjustments();
 	void RenderPath() const;
+	Disc2 GetNodeBounds(StoryNode* node) const;
+	OBB2 GetEdgeBounds(StoryEdge* edge) const;
+
+	/*
+	=====================
+	Input
+	=====================
+	*/
+
+	void HandleInput();
 
 	/*
 	=====================
@@ -71,6 +85,7 @@ public:
 	//adds a new node on the edge between two existing nodes (insert between nodes)
 	void AddNodeAtEdge(StoryNode* newNode, StoryEdge* existingEdge);
 
+	void SetBranchChance(float branchChance = DEFAULT_BRANCH_CHANCE_ON_FAIL);
 
 	void FindPath( StoryHeuristicCB heuristic );
 	void PrintPath() ;
@@ -81,6 +96,7 @@ public:
 	=========
 	*/
 	Character* GetCharacter(unsigned int index) const;
+	Character* GetCharacterByName(std::string name) const;
 	unsigned int GetNumCharacters() const;
 
 
@@ -125,7 +141,8 @@ public:
 
 protected:
 	StoryNode* m_startNode							= nullptr;
-	StoryNode* m_endNode							= nullptr;;
+	StoryNode* m_endNode							= nullptr;
+
 	DirectedGraph<StoryData*, StoryState*> m_graph	= DirectedGraph<StoryData*, StoryState*>();
 	std::vector<Character*> m_characters			= std::vector<Character*>();
 	StoryStructure m_targetStructure				= StoryStructure();
@@ -133,24 +150,50 @@ protected:
 	std::vector<StoryNode*> m_pathFound				= std::vector<StoryNode*>();
 	std::string m_pathString						= "";
 
-	//float m_nodeSize						= .05f;
+	//float m_nodeSize							= .05f;
+	StoryNode* m_hoveredNode					= nullptr;
+	StoryEdge* m_hoveredEdge					= nullptr;
+	StoryEdge* m_selectedEdge					= nullptr;
+
+	float m_branchChance						= DEFAULT_BRANCH_CHANCE_ON_FAIL;
 	
 	
 	Vector2 CalculateNodeForces(StoryNode* node) const;
-	Vector2 CalculateNodePosition(StoryNode* node);
 	Vector2 CalculateNodePull(StoryNode* node) const;
 	Vector2 CalculateNodePush(StoryNode* node) const;
 	void RenderNode(StoryNode* node, Vector2 position, RGBA color = RGBA::BLANCHEDALMOND) const;
 	void RenderEdge(StoryEdge* edge, RGBA color = RGBA::WHITE) const;
 
+
+
+
+	/*
+	==============
+	Visual Tweaks
+	==============
+	*/
+	RGBA m_edgeDefaultColor = RGBA::DARKGRAY;
+	RGBA m_edgeHoverColor = RGBA::CYAN;
+	RGBA m_edgeSelectColor = RGBA::BLUE;
+
+	RGBA m_nodeDefaultColor = RGBA::BLANCHEDALMOND;
+	RGBA m_nodeHoverColor = RGBA::MAGENTA;
+
+	RGBA m_nodeTextColor = RGBA::RED;
+	RGBA m_edgeTextColor = RGBA::YELLOW;
+
+	RGBA m_pathColor = RGBA::GREEN;
+
+	std::vector<StoryNode*> m_usedPlotNodes;
+	std::vector<StoryNode*> m_usedDetailNodes;
 public:
 	static std::vector<StoryNode*> s_plotNodes;
 	static std::vector<StoryNode*> s_detailNodes;
 	static StoryNode* GetRandomPlotNode();
 	static StoryNode* GetRandomDetailNode();
-
-
 };
 
 
 StoryState* ShortestPathHeuristic(StoryEdge* edge,  StoryStructure* currentStructure);
+
+StoryState* RandomPathHeuristic(StoryEdge* edge,  StoryStructure* currentStructure);

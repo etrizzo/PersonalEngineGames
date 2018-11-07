@@ -38,9 +38,9 @@ StoryData::StoryData(StoryData * clone)
 	m_type = clone->m_type;
 	for (unsigned int i = 0; i < m_numCharacters; i++){
 		m_characters.push_back(nullptr);
-		m_characterReqs.push_back(clone->m_characterReqs[i]);
+		m_characterReqs.push_back(clone->m_characterReqs[i]->Clone());
+		m_characterReqs[i]->SetAllRequirementsStoryData(this);
 	}
-
 	m_graphPosition =  Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f));
 }
 
@@ -49,6 +49,51 @@ StoryData::~StoryData()
 }
 
 void StoryData::InitFromXML(tinyxml2::XMLElement* nodeElement)
+{
+	if (m_type == DETAIL_NODE){
+		InitAsPlotNode(nodeElement);
+		//InitAsDetailNode(nodeElement);
+	} else if (m_type == PLOT_NODE){
+		InitAsPlotNode(nodeElement);
+	} else {
+		ERROR_AND_DIE("Node initialized without type.");
+	}
+}
+
+void StoryData::InitAsDetailNode(tinyxml2::XMLElement * nodeElement)
+{
+	m_characters = std::vector<Character*>();
+	m_characterReqs=std::vector<CharacterRequirementSet*>();
+	m_numCharacters = 0;
+
+	//parse characters
+	tinyxml2::XMLElement* charactersElement = nodeElement->FirstChildElement("Characters");
+	for (tinyxml2::XMLElement* charElement = charactersElement->FirstChildElement("Character"); charElement != nullptr; charElement = charElement->NextSiblingElement("Character")){
+		m_numCharacters++;
+	}
+
+	//fill data with empty stuff
+	for (int i= 0; i < m_numCharacters; i++){
+		m_characters.push_back(nullptr);
+		m_characterReqs.push_back(new CharacterRequirementSet());
+	}
+
+	//fill character requirements with actual data that's available
+	tinyxml2::XMLElement* charReqElement = nodeElement->FirstChildElement("CharacterRequirements");
+	for (tinyxml2::XMLElement* reqElement = charReqElement->FirstChildElement("Character"); reqElement != nullptr; reqElement = reqElement->NextSiblingElement("Character")){
+		int charIndex = (unsigned int) ParseXmlAttribute(*reqElement, "index", (int) -1);
+		if (charIndex >= 0 && charIndex < m_characterReqs.size()){
+			m_characterReqs[charIndex]->InitFromXML(reqElement, this);
+		}
+	}
+
+	tinyxml2::XMLElement* actionsElement = nodeElement->FirstChildElement("Actions");
+	for (tinyxml2::XMLElement* actionElement = actionsElement->FirstChildElement("Action"); actionElement != nullptr; actionElement = actionsElement->NextSiblingElement("Action")){
+		
+	}
+}
+
+void StoryData::InitAsPlotNode(tinyxml2::XMLElement * nodeElement)
 {
 	tinyxml2::XMLElement* actionElement = nodeElement->FirstChildElement("Action");
 	m_action = ParseXmlAttribute(*actionElement, "text", "NO_ACTION");
@@ -79,7 +124,7 @@ void StoryData::InitFromXML(tinyxml2::XMLElement* nodeElement)
 	for (tinyxml2::XMLElement* reqElement = charReqElement->FirstChildElement("Character"); reqElement != nullptr; reqElement = reqElement->NextSiblingElement("Character")){
 		int charIndex = (unsigned int) ParseXmlAttribute(*reqElement, "index", (int) -1);
 		if (charIndex >= 0 && charIndex < m_characterReqs.size()){
-			m_characterReqs[charIndex]->InitFromXML(reqElement);
+			m_characterReqs[charIndex]->InitFromXML(reqElement, this);
 		}
 	}
 
@@ -204,6 +249,27 @@ CharacterRequirementSet* StoryData::GetRequirementsForCharacter(Character * char
 	}
 	return nullptr;
 	
+}
+
+Character* StoryData::GetCharacterFromDataString(std::string data)
+{
+	 Strip(data, '*');
+	 int i = atoi(data.c_str());
+	 if (i >= 0 && i < m_characters.size()){
+		 return m_characters[i];
+	 } else {
+		 return nullptr;
+	 }
+}
+
+std::string StoryData::ReadCharacterNameFromDataString(std::string data)
+{
+	Character* character = GetCharacterFromDataString(data);
+	if (character != nullptr){
+		return character->GetName();
+	} else {
+		return "NO_CHARACTER_FOUND";
+	}
 }
 
 void StoryData::SetPosition(Vector2 pos)
