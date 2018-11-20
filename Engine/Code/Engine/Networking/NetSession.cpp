@@ -69,7 +69,7 @@ void NetSession::RenderInfo(AABB2 screenBounds, Renderer* renderer)
 	renderer->DrawTextInBox2D("Connections...", textBox, Vector2::TOP_LEFT, headerFontHeight, TEXT_DRAW_SHRINK_TO_FIT);
 	textBox.Translate(newLine);
 	textBox.Translate(tab);
-	std::string header = Stringf( "%-3s %-5s %-20s %-9s %-7s %-12s %-12s %-8s %-10s %-30s", 
+	std::string header = Stringf( "%-3s %-5s %-20s %-9s %-7s %-12s %-12s %-11s %-8s %-10s %-30s", 
 		"--",			//3
 		"idx",			//5
 		"address",		//20(?)
@@ -77,6 +77,7 @@ void NetSession::RenderInfo(AABB2 screenBounds, Renderer* renderer)
 		"loss%",		//7
 		"lastrcv(s)",	//12
 		"lastsnt(s)",	//12
+		"storedREL",	//11
 		"sntack",		//8
 		"rcvdack",		//9
 		"rcvbits");		//30
@@ -92,7 +93,7 @@ void NetSession::RenderInfo(AABB2 screenBounds, Renderer* renderer)
 				localString = "L";
 			}
 
-			std::string connectionText = Stringf( "%-3s %-5i %-20s %-9.3f %-7.3f %-12.3f %-12.3f %-8i %-10i %-30s", 
+			std::string connectionText = Stringf( "%-3s %-5i %-20s %-9.3f %-7.3f %-12.3f %-12.3f %-11i %-8i %-10i %-30s", 
 				localString.c_str(),								//3
 				i,													//5
 				connection->GetAddress().ToString().c_str(),		//20(?)
@@ -100,6 +101,7 @@ void NetSession::RenderInfo(AABB2 screenBounds, Renderer* renderer)
 				connection->GetLossRate(),							//7 (4.3)
 				connection->GetLastReceivedTimeSeconds(),			//12 (9.3)
 				connection->GetLastSendTimeSeconds(),				//12 (9.3)
+				(int) connection->m_unconfirmedReliableMessages.size(),	//11
 				connection->GetNextSentAck(),						//8 (8)
 				connection->GetLastReceivedAck(),					//10 (10)
 				ToBitString(connection->GetAckBitfield()).c_str());	//30 
@@ -124,7 +126,7 @@ void NetSession::SendDirect(NetMessage * message, NetConnection * invalidConnect
 	}
 	//send packet to connection
 	packet_header_t packetHeader;
-	packetHeader.m_unreliableMessageCount = 1U;
+	packetHeader.m_messageCount = 1U;
 	packetHeader.m_senderConnectionIndex = (uint8_t) GetLocalConnectionIndex();
 	packetHeader.m_ack = invalidConnection->GetNextSentAck();
 	packetHeader.m_lastReceivedAck = invalidConnection->GetLastReceivedAck();
@@ -419,6 +421,7 @@ void NetSession::ProcessMessage(NetMessage message, NetConnection* from)
 	// seems like the name is encoded as the first string?
 	uint8_t messageType;
 	message.Read(&messageType, false);
+	
 
 	//get the appropriate callback from the map of registered callbacks
 	if (IsMessageRegistered(messageType)){
@@ -433,6 +436,14 @@ void NetSession::ProcessMessage(NetMessage message, NetConnection* from)
 			LogTaggedPrintf("net", "No connection found for incoming message that requires connection. (%s)", message.m_definition->m_messageName.c_str());
 		} else {
 			//process as usual
+			if (definition->IsReliable()){
+				uint16_t reliableID;
+				message.Read(&reliableID);
+				if (from->CheckConnectionForReliable(reliableID)){
+					//you have already processed this message - do nothing
+					return;
+				}
+			} 
 			((definition->m_messageCB))( message, net_sender_t(from));
 		}
 
@@ -450,25 +461,101 @@ void NetSession::SendPacketsForConnection(unsigned int connectionIndex)
 	NetPacket* packet = new NetPacket();
 	packet->AdvanceWriteHead(sizeof(packet_header_t));
 	uint8_t messagesSent = 0;
-	for (int msgNum = 0; msgNum < m_connections[connectionIndex]->m_unsentUnreliableMessages.size(); msgNum++){
-		NetMessage* msg = m_connections[connectionIndex]->m_unsentUnreliableMessages[msgNum];
+	NetConnection* connection = m_connections[connectionIndex];
 
-		// write the message to the netpacket
-		// if you dont' have the space to write a packet, send existing packet,
-		// and start writing a new packet
-		if (!packet->WriteMessage(*msg)){
-			SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent);
+	std::vector<NetMessage*> reliablesInPacket = std::vector<NetMessage*>();
+
+	//send unconfirmed reliable messages
+	for (NetMessage* msg : connection->m_unconfirmedReliableMessages){
+		if (connection->ShouldSendReliableMessage(msg)){
+			if (reliablesInPacket.size() < MAX_RELIABLES_PER_PACKET){
+				if (packet->WriteMessage(*msg)){
+					messagesSent++;
+					msg->ResetAge();
+					reliablesInPacket.push_back(msg);
+				} else {
+					SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
+					messagesSent = 0;
+					delete packet;
+					std::vector<NetMessage*> reliablesInPacket = { msg };
+					packet = new NetPacket();
+					packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
+				}
+			} else {
+				SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
+				messagesSent = 0;
+				delete packet;
+				std::vector<NetMessage*> reliablesInPacket = { msg };
+				packet = new NetPacket();
+				packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
+			}
+		}
+	}
+
+	//write unsent reliables
+	for (NetMessage* msg : connection->m_unsentReliableMessages)
+	{
+		if (msg != nullptr){
+			if (packet->HasRoomForMessage(msg)){
+				if (reliablesInPacket.size() < MAX_RELIABLES_PER_PACKET){
+					msg->m_reliableID = connection->GetAndIncrementNextReliableID();
+					msg->WriteHeader();
+					ASSERT_OR_DIE(packet->WriteMessage(*msg), "Packet ran out of space after check for space??");
+					messagesSent++;
+					//move from unsent list to unconfirmed list
+					connection->MarkMessageAsSentForFirstTime(msg);
+					reliablesInPacket.push_back(msg);
+				} else {
+					SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
+					messagesSent = 0;
+					delete packet;
+					std::vector<NetMessage*> reliablesInPacket = { msg };
+					packet = new NetPacket();
+					packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
+				}
+			} else {
+				SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
+				messagesSent = 0;
+				delete packet;
+				std::vector<NetMessage*> reliablesInPacket = { msg };
+				packet = new NetPacket();
+				packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
+			}
+		}
+	}
+
+	for(NetMessage* msg : connection->m_unsentUnreliableMessages){
+		if (packet->WriteMessage(*msg)){
+			messagesSent++;
+		} else {
+			SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
 			messagesSent = 0;
 			delete packet;
+			std::vector<NetMessage*> reliablesInPacket = { msg };
 			packet = new NetPacket();
 			packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
 		}
-		messagesSent++;
-		//m_socket->SendTo(connection->GetAddress(), msg->GetBuffer(), msg->GetWrittenByteCount());
 	}
+
+	// ooold
+	//for (int msgNum = 0; msgNum < m_connections[connectionIndex]->m_unsentUnreliableMessages.size(); msgNum++){
+	//	NetMessage* msg = m_connections[connectionIndex]->m_unsentUnreliableMessages[msgNum];
+
+	//	// write the message to the net packet
+	//	// if you don't have the space to write a packet, send existing packet,
+	//	// and start writing a new packet
+	//	if (!packet->WriteMessage(*msg)){
+	//		SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent);
+	//		messagesSent = 0;
+	//		delete packet;
+	//		packet = new NetPacket();
+	//		packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
+	//	}
+	//	messagesSent++;
+	//	//m_socket->SendTo(connection->GetAddress(), msg->GetBuffer(), msg->GetWrittenByteCount());
+	//}
 	if (messagesSent > 0){
-		SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent);
-		
+		SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
 	}
 	delete packet;
 	//if we didn't remove the connection after a disconnect, clear the connection's message queue
@@ -492,7 +579,7 @@ void NetSession::ProcessPackets()
 				tsPacket->m_fromConnection->UpdateReceivedAcks(packetHeader.m_ack);
 				wasTrackedAndUnconfirmed = tsPacket->m_fromConnection->ConfirmPacketReceived(packetHeader.m_ack);
 			}
-			for (unsigned int j = 0; j < packetHeader.m_unreliableMessageCount; j++){
+			for (unsigned int j = 0; j < packetHeader.m_messageCount; j++){
 				NetMessage message;
 				tsPacket->m_packet->ReadMessage(&message);
 				ProcessMessage(message, tsPacket->m_fromConnection);
@@ -513,11 +600,11 @@ void NetSession::ProcessPackets()
 	}
 }
 
-void NetSession::SendPacketToConnection(uint8_t connIndex, NetPacket * packet, uint8_t numMessages)
+void NetSession::SendPacketToConnection(uint8_t connIndex, NetPacket * packet, uint8_t numMessages, std::vector<NetMessage*> reliablesInPacket)
 {
 	NetConnection* connToSendTo = m_connections[connIndex];
 	packet_header_t packetHeader;
-	packetHeader.m_unreliableMessageCount = numMessages;
+	packetHeader.m_messageCount = numMessages;
 	packetHeader.m_senderConnectionIndex = (uint8_t) GetLocalConnectionIndex();
 	packetHeader.m_ack = connToSendTo->GetNextSentAck();
 	packetHeader.m_lastReceivedAck = connToSendTo->GetLastReceivedAck();
@@ -527,7 +614,9 @@ void NetSession::SendPacketToConnection(uint8_t connIndex, NetPacket * packet, u
 	//TrackedPacket *tracker = AddTrackedPacket( header.m_ack );
 	//tracker;  // unused for now - will track reliables soon; 
 	PacketTracker* tracker = connToSendTo->AddTrackedPacketOnSend(packetHeader);
-	tracker;
+	for (NetMessage* reliable : reliablesInPacket){
+		tracker->AddTrackedReliable(reliable);
+	}
 	//
 	packet->WriteHeader(packetHeader);
 

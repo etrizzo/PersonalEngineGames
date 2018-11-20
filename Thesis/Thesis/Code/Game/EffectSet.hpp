@@ -2,15 +2,15 @@
 #include "Game/GameCommon.hpp"
 #include "Game/Effect.hpp"
 
-class StoryData;
+class StoryDataDefinition;
 
 class EffectSet{
 public:
 	EffectSet(){};
-	EffectSet(tinyxml2::XMLElement* effectsElement, StoryData* parent);
-	EffectSet(EffectSet* clone, StoryData* newParent);
+	EffectSet(tinyxml2::XMLElement* effectsElement, StoryDataDefinition* parent);
+	EffectSet(EffectSet* clone, StoryDataDefinition* newParent);
 
-	std::vector<Effect*> m_effects;
+	std::vector<Effect*> m_effects = std::vector<Effect*>();
 
-	StoryData* m_parentData;
+	StoryDataDefinition* m_parentData = nullptr;
 };

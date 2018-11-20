@@ -411,6 +411,7 @@ DirectedEdge<T, C>* DirectedGraph<T, C>::RemoveEdge(DirectedEdge<T, C>* edge)
 	return nullptr;
 }
 
+
 template<typename T, typename C>
 inline void DirectedGraph<T, C>::Clear()
 {

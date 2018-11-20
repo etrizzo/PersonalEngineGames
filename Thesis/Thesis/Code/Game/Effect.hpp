@@ -4,28 +4,29 @@
 
 class StoryState;
 class StoryData;
+class StoryDataDefinition;
 class CharacterState;
 
 class Effect{
 public:
 	Effect(){};
-	Effect( tinyxml2::XMLElement* element, StoryData* parentData);
+	Effect( tinyxml2::XMLElement* element, StoryDataDefinition* parentData);
 
-	virtual bool ApplyToState(StoryState* state) = 0;
+	virtual bool ApplyToState(StoryState* state, StoryData* instancedData) = 0;
 	virtual bool ApplyToCharacterState(CharacterState* state) = 0;
 	virtual Effect* Clone() = 0;
 
 	unsigned int m_characterID = (unsigned int) -1;
-	StoryData* m_parentData = nullptr;
+	StoryDataDefinition* m_parentData = nullptr;
 };
 
 
 class Effect_TagChange : public Effect{
 public:
 	Effect_TagChange(){};
-	Effect_TagChange(tinyxml2::XMLElement* element, StoryData* parentData);
+	Effect_TagChange(tinyxml2::XMLElement* element, StoryDataDefinition* parentData);
 
-	bool ApplyToState(StoryState* state) override;
+	bool ApplyToState(StoryState* state, StoryData* instancedData) override;
 	bool ApplyToCharacterState(CharacterState* state) override;
 	Effect* Clone() override;
 
@@ -36,10 +37,10 @@ public:
 class Effect_TraitChange : public Effect{
 public:
 	Effect_TraitChange(){};
-	Effect_TraitChange(tinyxml2::XMLElement* element, StoryData* parentData);
+	Effect_TraitChange(tinyxml2::XMLElement* element, StoryDataDefinition* parentData);
 
 
-	bool ApplyToState(StoryState* state) override;
+	bool ApplyToState(StoryState* state, StoryData* instancedData) override;
 	bool ApplyToCharacterState(CharacterState* state) override;
 	Effect* Clone() override;
 

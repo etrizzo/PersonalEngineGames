@@ -18,7 +18,8 @@ class Character;
 #define NUM_NODE_ITERATIONS (2000)
 #define MIN_DISTANCE_TO_MOVE (.06f)
 #define REROLL_REPEAT_PLOT_NODE_CHANCE (.9f)
-#define REROLL_REPEAT_DETAIL_NODE_CHANCE (.7f)
+#define REROLL_REPEAT_DETAIL_NODE_CHANCE (.85f)
+#define MAX_REPEAT_REROLLS (20)
 
 //comparison for 
 typedef StoryState* (*StoryHeuristicCB) (StoryEdge* edge, StoryStructure* currentStructure);
@@ -70,11 +71,16 @@ public:
 	void RunGeneration(int numPlotNodes = 3, int desiredSize = 10);
 
 	void GenerateSkeleton(int numPlotNodes);
+	void AddPlotNodes(int numPlotNodes);
+	StoryNode* AddSinglePlotNode();
+	void AddOutcomeNodesToPlotNode(StoryNode* plotNode);
 	void AddDetailNodesToDesiredSize(int desiredSize = 10);
 	void GenerateStartAndEnd();
-	bool TryToAddDetailNode();
+	bool TryToAddDetailNodeAtEdge(StoryEdge* edge, int maxTries = 10);
 	bool AddPlotNode(StoryNode* newPlotNode);
 	bool AddDetailNode(StoryNode* newDetailNode);
+	bool AddDetailNode(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode);
+	bool AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToAdd, bool branchToFutureNodesIfNecessary);
 
 	//by default, adds 1/4 * (numNodes) branches
 	void IdentifyBranchesAndAdd(int numBranchesToAdd = -1);
@@ -138,6 +144,7 @@ public:
 	bool NodeRequirementsAreMet(StoryNode* node, StoryEdge* atEdge);
 	bool StoryRequirementsMet(StoryNode* node, StoryEdge* atEdge);
 	bool TryToSetCharactersForNode(StoryNode* node, StoryEdge* atEdge);
+	std::vector<Character*> GetCharactersForNode(StoryDataDefinition* nodeDefinition, StoryEdge* atEdge);
 
 protected:
 	StoryNode* m_startNode							= nullptr;
@@ -149,6 +156,9 @@ protected:
 
 	std::vector<StoryNode*> m_pathFound				= std::vector<StoryNode*>();
 	std::string m_pathString						= "";
+	
+	std::vector<StoryEdge*> m_edgesToVoid = std::vector<StoryEdge*>();
+
 
 	//float m_nodeSize							= .05f;
 	StoryNode* m_hoveredNode					= nullptr;
@@ -165,7 +175,8 @@ protected:
 	void RenderEdge(StoryEdge* edge, RGBA color = RGBA::WHITE) const;
 
 
-
+	std::vector<Character*> ClearCharacterArray(int numCharacters);
+	bool AreAllCharactersSet(const std::vector<Character*>& chars) const;
 
 	/*
 	==============
@@ -184,16 +195,17 @@ protected:
 
 	RGBA m_pathColor = RGBA::GREEN;
 
-	std::vector<StoryNode*> m_usedPlotNodes;
-	std::vector<StoryNode*> m_usedDetailNodes;
+	std::vector<StoryDataDefinition*> m_usedPlotNodes;
+	std::vector<StoryDataDefinition*> m_usedDetailNodes;
 public:
-	static std::vector<StoryNode*> s_plotNodes;
-	static std::vector<StoryNode*> s_detailNodes;
-	static StoryNode* GetRandomPlotNode();
-	static StoryNode* GetRandomDetailNode();
+	static std::vector<StoryDataDefinition*> s_plotNodes;
+	static std::vector<StoryDataDefinition*> s_detailNodes;
+	static StoryDataDefinition* GetRandomPlotNode();
+	static StoryDataDefinition* GetRandomDetailNode();
 };
 
 
 StoryState* ShortestPathHeuristic(StoryEdge* edge,  StoryStructure* currentStructure);
 
 StoryState* RandomPathHeuristic(StoryEdge* edge,  StoryStructure* currentStructure);
+StoryState* CalculateChanceHeuristic(StoryEdge* edge, StoryStructure* currentStructure);

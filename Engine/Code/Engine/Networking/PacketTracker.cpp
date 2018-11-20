@@ -4,6 +4,9 @@ PacketTracker::PacketTracker(uint16_t ack)
 {
 	m_ack = ack;
 	m_sentMS = GetCurrentTimeMilliseconds();
+	for (int i = 0; i < MAX_RELIABLES_PER_PACKET; i++){
+		m_sentReliableIDs[i] = INVALID_RELIABLE_ID;
+	}
 }
 
 void PacketTracker::SetAckAndTimestamp(uint16_t ack)
@@ -16,4 +19,22 @@ void PacketTracker::SetAckAndTimestamp(uint16_t ack)
 void PacketTracker::Invalidate()
 {
 	m_isValid = false;
+	Reset();
+}
+
+void PacketTracker::AddTrackedReliable(NetMessage * reliableMsg)
+{
+	if (m_numReliablesInPacket < MAX_RELIABLES_PER_PACKET){
+		m_sentReliableIDs[m_numReliablesInPacket] = reliableMsg->m_reliableID;
+		m_numReliablesInPacket++;
+	} else {
+		ConsolePrintf(RGBA::RED, "Too many reliables in packet.");
+	}
+}
+
+void PacketTracker::Reset()
+{
+	//m_isValid = false;
+	m_numReliablesInPacket = 0;
+
 }

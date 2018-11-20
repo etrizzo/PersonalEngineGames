@@ -18,9 +18,25 @@
 #define SMALL_VALUE .05f
 #define MAX_STEPS 16
 
+#define NUM_NODE_PAIRS_TO_GENERATE (5)
 #define NUM_PLOT_NODES_TO_GENERATE (6 + 2)
 #define NUM_DETAIL_NODES_TO_GENERATE (3)
 #define DEFAULT_BRANCH_CHANCE_ON_FAIL (0.0f)
+
+
+class Character;
+class StoryData;
+class StoryState;
+
+typedef Node<StoryData*, StoryState*> StoryNode ;
+typedef DirectedEdge<StoryData*, StoryState*> StoryEdge;
+
+enum eNodeType{
+	PLOT_NODE,
+	DETAIL_NODE,
+	DEFAULT_NODE,		//for start and end nodes
+	NUM_NODE_TYPES
+};
 
 
 const int TILE_WIDTH = 1;

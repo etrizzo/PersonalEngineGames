@@ -9,6 +9,7 @@ class PacketTracker;
 
 #define NUM_ACKS_TRACKED (sizeof(uint16_t))
 
+
 class NetConnection 
 {
 public:
@@ -48,6 +49,12 @@ public:
 	float	GetLastSendTimeSeconds()		const;
 	float	GetLastReceivedTimeSeconds()	const;
 
+	bool		ShouldSendReliableMessage(NetMessage* msg)		const;
+	uint16_t	GetAndIncrementNextReliableID();
+	void		MarkMessageAsSentForFirstTime(NetMessage* msg);
+
+	bool CheckConnectionForReliable(uint16_t reliableID);
+
 	std::vector<NetMessage*> m_unsentUnreliableMessages = std::vector<NetMessage*>();
 	NetAddress m_address;
 	uint8_t m_indexInSession;
@@ -58,8 +65,10 @@ public:
 	unsigned int m_lostPackets = 0;
 	unsigned int m_recievedPackets = 0;
 
+	std::vector<NetMessage*> m_unconfirmedReliableMessages = std::vector<NetMessage*>();
 	std::vector<NetMessage*> m_unsentReliableMessages = std::vector<NetMessage*>();
 	std::vector<NetMessage*> m_sentReliableMessages = std::vector<NetMessage*>();
+	std::vector<uint16_t> m_receivedReliableIDs = std::vector<uint16_t>();
 
 	bool m_isLocal = false;
 
@@ -81,5 +90,6 @@ protected:
 	float m_lossRate	= 0.0f;       // loss rate we perceive to this connection
 	float m_rtt			= 0.0f;       // latency perceived on this connection
 
+	uint16_t m_nextSentReliableID = 0;
 
 };

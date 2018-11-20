@@ -19,7 +19,7 @@ struct packet_header_t
 	uint16_t m_previousReceivedAckBitfield; 
 
 	// old
-	uint8_t m_unreliableMessageCount; 
+	uint8_t m_messageCount; 
 }; 
 
 // A packet is a package sent over the network
@@ -43,9 +43,11 @@ public:
 	bool WriteMessage( NetMessage const &msg ); 
 	bool ReadMessage( NetMessage *out_msg ); 
 
+	bool HasRoomForMessage( NetMessage* msg);
+
 public:
 
-	// informtaion so we know who it came from
+	// information so we know who it came from
 	// when receiving, and who we're sending to when sending
 	// ...
 };

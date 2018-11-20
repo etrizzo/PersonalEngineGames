@@ -37,3 +37,13 @@ bool NetPacket::ReadMessage(NetMessage * outMsg)
 	}
 	return read;
 }
+
+bool NetPacket::HasRoomForMessage(NetMessage * msg)
+{
+	unsigned int msgSize = msg->GetWrittenByteCount() + msg->GetHeaderSize();
+	if (msgSize + m_writeHead >= m_maxSize){
+		return false;
+	} else {
+		return true;
+	}
+}

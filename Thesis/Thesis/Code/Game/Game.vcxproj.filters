@@ -85,6 +85,18 @@
     <ClCompile Include="Effect.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="StoryDataDefinition.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Action.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionDefinition.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionModifier.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -160,6 +172,18 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="Effect.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="StoryDataDefinition.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Action.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionDefinition.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionModifier.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

@@ -135,3 +135,42 @@
 		</StoryEffects>
 	</PlotGrammar>
 
+
+<PlotGrammar>
+		<Action text="*0* fights a cave jelly" />
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inCave" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<StoryChange Action="+5" Tension="+10" /> 
+				<TagChange character="0" hasTag="isFighting" target="true" type="boolean"/>
+			</EffectSet>
+		</StoryEffects>
+	</PlotGrammar>
+
+
+	<PlotGrammar>
+		<Action text="*0* fights a dungeon monster" />
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inDungeon" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<StoryChange Action="+5" Tension="+10" /> 
+				<TagChange character="0" hasTag="isFighting" target="true" type="boolean"/>
+			</EffectSet>
+		</StoryEffects>
+	</PlotGrammar>

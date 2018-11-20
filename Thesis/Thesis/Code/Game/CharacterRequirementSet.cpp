@@ -1,7 +1,7 @@
 #include "CharacterRequirementSet.hpp"
 #pragma once
 
-void CharacterRequirementSet::InitFromXML(tinyxml2::XMLElement * setElement, StoryData* parent)
+void CharacterRequirementSet::InitFromXML(tinyxml2::XMLElement * setElement, StoryDataDefinition* parent)
 {
 	m_characterIndex = (unsigned int) ParseXmlAttribute(*setElement, "index", (int) -1);
 
@@ -44,7 +44,7 @@ CharacterRequirementSet * CharacterRequirementSet::Clone()
 	return newSet;
 }
 
-void CharacterRequirementSet::SetAllRequirementsStoryData(StoryData * parentData)
+void CharacterRequirementSet::SetAllRequirementsStoryDataDefinition(StoryDataDefinition * parentData)
 {
 	for (CharacterRequirement* req : m_requirements){
 		req->m_parentData = parentData;

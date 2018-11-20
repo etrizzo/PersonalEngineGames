@@ -88,6 +88,15 @@ int Max(const int& x, const int& y);
 float Max(const float& x, const float& y);
 
 
+
+template <typename T>
+bool CycleLess(T a, T b)
+{
+	T MAX_SIGNED = (~(T) 0) >> 1;		//make everything 1 and then shift it by 1 (this is half max if its unsigned)
+	T diff = b - a;
+	return ((diff > 0) && (diff <= MAX_SIGNED))		//to get LessThanEqual, just remove diff > 0
+};
+
 //---------------
 // INTERPOLATION
 //---------------

@@ -2,18 +2,41 @@
 #include "Game/Character.hpp"
 #include "Game/CharacterState.hpp"
 #include "Game/StoryState.hpp"
+#include "Game/Action.hpp"
 
-StoryData::StoryData(std::string name, float value)
+
+StoryData::StoryData(StoryDataDefinition * definition, int actionIndex)
+{
+	m_definition = definition;
+	m_numCharacters = m_definition->m_numCharacters;
+	for (unsigned int i = 0; i < m_definition->m_numCharacters; i++){
+		m_characters.push_back(nullptr);
+		//m_characterReqs.push_back(clone->m_characterReqs[i]->Clone());
+		//m_characterReqs[i]->SetAllRequirementsStoryData(this);
+	}
+	if (actionIndex == -1){
+		int actionsNum = m_definition->m_actions.size();
+		m_action = new Action(m_definition->m_actions[GetRandomIntLessThan(actionsNum)]);
+	} else {
+		m_action = new Action(m_definition->m_actions[actionIndex]);
+	}
+
+	//TBD stuff
+	m_name = m_definition->m_name;
+	m_id = m_definition->m_id;
+	m_type = m_definition->m_type;
+
+	m_graphPosition =  Vector2(GetRandomFloatInRange(.4f, .7f), GetRandomFloatInRange(.4f, .7f));
+}
+
+StoryData::StoryData(std::string name)
 {
 	m_name = name;
-	m_value = value;
-	m_action = name;
+	m_type = DEFAULT_NODE;
 }
 
 StoryData::StoryData( eNodeType type)
 {
-
-
 	m_type = type;
 }
 
@@ -22,24 +45,23 @@ StoryData::StoryData(StoryData * clone)
 
 	//test bits
 	m_name	= clone->m_name;
-	m_value		= clone->m_value;
 
 	//actual members
 	m_id						= clone->m_id;
 	m_action					= clone->m_action;
-	m_characterReqs	= clone->m_characterReqs;
-	m_storyReqs						= clone->m_storyReqs;
-	m_effectSet						= new EffectSet(clone->m_effectSet, this);
+	//m_characterReqs	= clone->m_characterReqs;
+	//m_storyReqs						= clone->m_storyReqs;
+	//m_effectSet						= new EffectSet(clone->m_effectSet, this);
 
 	m_numCharacters			= clone->m_numCharacters;
 	m_characters			= std::vector<Character*>();
-	m_characterReqs			= std::vector<CharacterRequirementSet*>();
+	//m_characterReqs			= std::vector<CharacterRequirementSet*>();
 
 	m_type = clone->m_type;
 	for (unsigned int i = 0; i < m_numCharacters; i++){
 		m_characters.push_back(nullptr);
-		m_characterReqs.push_back(clone->m_characterReqs[i]->Clone());
-		m_characterReqs[i]->SetAllRequirementsStoryData(this);
+		//m_characterReqs.push_back(clone->m_characterReqs[i]->Clone());
+		//m_characterReqs[i]->SetAllRequirementsStoryData(this);
 	}
 	m_graphPosition =  Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f));
 }
@@ -48,102 +70,20 @@ StoryData::~StoryData()
 {
 }
 
-void StoryData::InitFromXML(tinyxml2::XMLElement* nodeElement)
-{
-	if (m_type == DETAIL_NODE){
-		InitAsPlotNode(nodeElement);
-		//InitAsDetailNode(nodeElement);
-	} else if (m_type == PLOT_NODE){
-		InitAsPlotNode(nodeElement);
-	} else {
-		ERROR_AND_DIE("Node initialized without type.");
-	}
-}
-
-void StoryData::InitAsDetailNode(tinyxml2::XMLElement * nodeElement)
-{
-	m_characters = std::vector<Character*>();
-	m_characterReqs=std::vector<CharacterRequirementSet*>();
-	m_numCharacters = 0;
-
-	//parse characters
-	tinyxml2::XMLElement* charactersElement = nodeElement->FirstChildElement("Characters");
-	for (tinyxml2::XMLElement* charElement = charactersElement->FirstChildElement("Character"); charElement != nullptr; charElement = charElement->NextSiblingElement("Character")){
-		m_numCharacters++;
-	}
-
-	//fill data with empty stuff
-	for (int i= 0; i < m_numCharacters; i++){
-		m_characters.push_back(nullptr);
-		m_characterReqs.push_back(new CharacterRequirementSet());
-	}
-
-	//fill character requirements with actual data that's available
-	tinyxml2::XMLElement* charReqElement = nodeElement->FirstChildElement("CharacterRequirements");
-	for (tinyxml2::XMLElement* reqElement = charReqElement->FirstChildElement("Character"); reqElement != nullptr; reqElement = reqElement->NextSiblingElement("Character")){
-		int charIndex = (unsigned int) ParseXmlAttribute(*reqElement, "index", (int) -1);
-		if (charIndex >= 0 && charIndex < m_characterReqs.size()){
-			m_characterReqs[charIndex]->InitFromXML(reqElement, this);
-		}
-	}
-
-	tinyxml2::XMLElement* actionsElement = nodeElement->FirstChildElement("Actions");
-	for (tinyxml2::XMLElement* actionElement = actionsElement->FirstChildElement("Action"); actionElement != nullptr; actionElement = actionsElement->NextSiblingElement("Action")){
-		
-	}
-}
-
-void StoryData::InitAsPlotNode(tinyxml2::XMLElement * nodeElement)
-{
-	tinyxml2::XMLElement* actionElement = nodeElement->FirstChildElement("Action");
-	m_action = ParseXmlAttribute(*actionElement, "text", "NO_ACTION");
-	TODO("Change structure of action to incorporate characters");
-
-	m_characters = std::vector<Character*>();
-	m_characterReqs = std::vector<CharacterRequirementSet*>();
-	m_numCharacters = 0;
-	//find num characters
-	Strings splitString;
-	Split(m_action, '*', splitString);
-	if (splitString.size() > 1){
-		for (int i = 0; i < (int) splitString.size(); i++){
-			if (i % 2 == 0){
-				//if even index, you're inside a ** pair - parse to index
-				m_numCharacters++;
-			}
-		}
-	}
-	//fill data with empty stuff
-	for (int i= 0; i < m_numCharacters; i++){
-		m_characters.push_back(nullptr);
-		m_characterReqs.push_back(new CharacterRequirementSet());
-	}
-
-	//fill character requirements with actual data that's available
-	tinyxml2::XMLElement* charReqElement = nodeElement->FirstChildElement("CharacterRequirements");
-	for (tinyxml2::XMLElement* reqElement = charReqElement->FirstChildElement("Character"); reqElement != nullptr; reqElement = reqElement->NextSiblingElement("Character")){
-		int charIndex = (unsigned int) ParseXmlAttribute(*reqElement, "index", (int) -1);
-		if (charIndex >= 0 && charIndex < m_characterReqs.size()){
-			m_characterReqs[charIndex]->InitFromXML(reqElement, this);
-		}
-	}
-
-	//parse effects
-	tinyxml2::XMLElement* allEffects = nodeElement->FirstChildElement("StoryEffects");
-	m_effectSet = new EffectSet(allEffects->FirstChildElement("EffectSet"), this);
-
-}
-
 std::string StoryData::GetName() const
 {
+	if (m_type == DEFAULT_NODE){
+		return m_name;
+	}
 	if (AreAllCharactersSet()){
 		if (m_actionWithCharacters == ""){
 			//set the action string with the set characters
 			Strings splitString;
-			Split(m_action, '*', splitString);
+			Split(m_action->m_definition->m_baseText, '*', splitString);
 			if (splitString.size() == 1){
-				m_actionWithCharacters = m_action;
-				return m_actionWithCharacters;
+				return m_action->m_instancedText;
+				//m_actionWithCharacters = m_action->m_instancedText;
+				//return m_actionWithCharacters;
 			}
 			for (int i = 0; i < (int) splitString.size(); i++){
 				if (i % 2 != 0){
@@ -156,14 +96,18 @@ std::string StoryData::GetName() const
 				}
 			}
 		}
+		m_action->m_instancedText = m_actionWithCharacters;
 		return m_actionWithCharacters;
 	}
-	return m_action;
+	return m_action->m_instancedText;
 }
 
 std::string StoryData::ToString() const
 {
-	return m_action;
+	if (m_type == DEFAULT_NODE){
+		return m_name;
+	}
+	return m_action->m_instancedText;
 }
 
 //void StoryData::UpdateState(EffectSet * effects)
@@ -216,7 +160,7 @@ bool StoryData::DoesCharacterMeetSlotRequirementsAtEdge(Character * character, u
 	CharacterState* resultingState = resultState->GetCharacterStateForCharacter(character);
 	
 	//check if the change would fit on this edge
-	bool meetsExistingConditions = m_characterReqs[charSlot]->DoesCharacterMeetRequirements(charState);
+	bool meetsExistingConditions = m_definition->m_characterReqs[charSlot]->DoesCharacterMeetRequirements(charState);
 	if (meetsExistingConditions){
 		//check if the change would fuck up future nodes
 		StoryData* endData = atEdge->GetEnd()->m_data;
@@ -242,13 +186,39 @@ bool StoryData::DoesCharacterMeetSlotRequirementsAtEdge(Character * character, u
 
 CharacterRequirementSet* StoryData::GetRequirementsForCharacter(Character * character)
 {
-	for (int i = 0; i < m_characterReqs.size(); i++){
-		if (m_characters[i] == character){
-			return m_characterReqs[i];
+	if (m_definition != nullptr){
+		for (int i = 0; i < m_definition->m_characterReqs.size(); i++){
+			if (m_characters[i] == character){
+				return  m_definition->m_characterReqs[i];
+			}
 		}
 	}
 	return nullptr;
 	
+}
+
+void StoryData::SetCharacters(std::vector<Character*> characters)
+{
+	for (int i = 0; i < characters.size(); i++){
+		SetCharacter(i, characters[i]);
+	}
+}
+
+bool StoryData::IsCompatibleWithIncomingEdge(StoryState * edgeState)
+{
+	for (CharacterState* charState : edgeState->m_characterStates){
+		Character* character = charState->m_character;
+		CharacterRequirementSet* reqs = GetRequirementsForCharacter(character);
+		if (reqs != nullptr){
+			//if the edges' character has requirements already established in this node, check them.
+			if (!reqs->DoesCharacterMeetRequirements(charState)){
+				//if any character doesn't meet the requirements, return false.
+				return false;
+			}
+		}
+	}
+	//if no characters violated requirements, return true.
+	return true;
 }
 
 Character* StoryData::GetCharacterFromDataString(std::string data)
@@ -287,9 +257,7 @@ Vector2 StoryData::GetPosition() const
 bool StoryData::operator==(const StoryData & compare) const
 {
 	if (m_name == compare.m_name){
-		if (m_value == compare.m_value){
-			return true;
-		}
+		return true;
 	}
 	return false;
 }
@@ -297,9 +265,8 @@ bool StoryData::operator==(const StoryData & compare) const
 bool StoryData::operator!=(const StoryData & compare) const
 {
 	if (m_name == compare.m_name){
-		if (m_value == compare.m_value){
-			return false;
-		}
+		return false;
+		
 	}
 	return true;
 }

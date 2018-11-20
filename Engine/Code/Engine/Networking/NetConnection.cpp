@@ -20,10 +20,14 @@ NetConnection::NetConnection(NetSession * owningSession, uint8_t indexInSession,
 
 void NetConnection::Update()
 {
+	unsigned int deltasecondsMS = (unsigned int) (GetMasterClock()->GetDeltaSeconds() * 1000.f);
+	for (NetMessage* unconfirmed : m_unconfirmedReliableMessages){
+		unconfirmed->IncrementAge(deltasecondsMS);
+	}
 	if (m_heartbeatTimer.DecrementAll()){
 		//ConsolePrintf(RGBA::RED.GetColorWithAlpha(165), "Sending heartbeat.");
-		NetMessage* msg = new NetMessage("heartbeat"); 
-		Send(msg);
+		//NetMessage* msg = new NetMessage("heartbeat"); 
+		//Send(msg);
 	}
 	if (m_recievedPackets > 0){
 		m_lossRate = (float) m_lostPackets / (float) m_recievedPackets;
@@ -33,6 +37,7 @@ void NetConnection::Update()
 void NetConnection::ClearMessageQueue()
 {
 	m_unsentUnreliableMessages.clear();
+	m_unsentReliableMessages.clear();
 }
 
 void NetConnection::Send(NetMessage * msg)
@@ -104,6 +109,7 @@ PacketTracker * NetConnection::AddTrackedPacketOnSend(const packet_header_t & he
 	if (tracker->m_isValid){
 		//give up on this packet :(
 		m_lostPackets++;
+		tracker->Reset();
 	}
 	tracker->SetAckAndTimestamp(header.m_ack);
 	return tracker;
@@ -137,7 +143,7 @@ void NetConnection::UpdateReceivedAcks(uint16_t newReceivedAck)
 		//got an older ACK than highest received ack. Which bit do we set in history?
 		distance = m_highestReceivedACK - newReceivedAck; 	//distance from highest
 		m_previousReceivedACKBitfield |= (1 << (distance - 1)); 	//set bit in history
-		//may want to chedk that bit WAS zero, otherwise you double processed a packet, which is bad.
+		//may want to check that bit WAS zero, otherwise you double processed a packet, which is bad.
 	}
 }
 
@@ -148,8 +154,21 @@ bool NetConnection::ConfirmPacketReceived(uint16_t newReceivedAck)
 			if (tracker->m_isValid){
 				unsigned int currentMS = GetCurrentTimeMilliseconds();
 				UpdateRTT(currentMS - tracker->m_sentMS );
-				tracker->Invalidate();
 				m_recievedPackets++;
+				if (m_unconfirmedReliableMessages.size() > 0){
+					//update received reliables
+					for (unsigned int i = 0; i < tracker->m_numReliablesInPacket; i++){
+						uint16_t reliableID = tracker->m_sentReliableIDs[i];
+						for (int unconfirmedIdx = m_unconfirmedReliableMessages.size() - 1; unconfirmedIdx >= 0; unconfirmedIdx--){
+							NetMessage* unconfirmed = m_unconfirmedReliableMessages[unconfirmedIdx];
+							if (unconfirmed->m_reliableID == reliableID){
+								RemoveAtFast(m_unconfirmedReliableMessages, unconfirmedIdx);
+							}
+						}
+						
+					}
+				}
+				tracker->Invalidate();
 				return true;
 			} else {
 				return false;
@@ -210,4 +229,48 @@ float NetConnection::GetLastSendTimeSeconds() const
 float NetConnection::GetLastReceivedTimeSeconds() const
 {
 	return  (float) GetLastReceivedTimeMS() * .001f;
+}
+
+bool NetConnection::ShouldSendReliableMessage(NetMessage * msg) const
+{
+	for (NetMessage* unconfirmed : m_unconfirmedReliableMessages){
+		if (unconfirmed == msg ){
+			if (msg->IsOldEnoughToResend()){
+				return true;
+			}
+		}
+	} 
+	return false;
+}
+
+uint16_t NetConnection::GetAndIncrementNextReliableID()
+{
+	uint16_t next = m_nextSentReliableID;
+	m_nextSentReliableID++;
+	return next;
+}
+
+void NetConnection::MarkMessageAsSentForFirstTime(NetMessage * msg)
+{
+	for (int i = 0; i < m_unsentReliableMessages.size(); i++){
+		if (m_unsentReliableMessages[i] == msg){
+			m_unsentReliableMessages[i] = nullptr;	//remove from unsent list
+		}
+	}
+	m_unconfirmedReliableMessages.push_back(msg);
+	msg->ResetAge();
+}
+
+bool NetConnection::CheckConnectionForReliable(uint16_t reliableID)
+{
+	if (reliableID == INVALID_RELIABLE_ID){
+		return false;
+	}
+	for (unsigned int i = 0; i < m_receivedReliableIDs.size(); i++){
+		if (m_receivedReliableIDs[i] == reliableID){
+			return true;
+		}
+	}
+	m_receivedReliableIDs.push_back(reliableID);
+	return false;
 }

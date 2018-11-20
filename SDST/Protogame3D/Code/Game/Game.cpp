@@ -385,8 +385,10 @@ void Game::RunNetSessionTests()
 	//unreliable test loop
 	if (m_numUnreliablesSent < m_numUnreliablesToSend && m_unreliableTestClock.CheckAndReset()){
 		NetMessage* unreliableTest = new NetMessage( "unreliable_test" ); 
+		unreliableTest->SetDefinitionFromSession(g_theGame->m_session);
 		unreliableTest->WriteBytes(sizeof(int), &m_numUnreliablesSent);
 		unreliableTest->WriteBytes(sizeof(int), &m_numUnreliablesToSend);
+		unreliableTest->IncrementMessageSize(sizeof(int) + sizeof(int));
 		unreliableTest->WriteHeader();
 		m_session->GetConnection(m_unreliableConnectionIndex)->Send( unreliableTest ); 
 		m_numUnreliablesSent++;
@@ -395,9 +397,11 @@ void Game::RunNetSessionTests()
 	//reliable test loop
 	if (m_numReliablesSent < m_numReliablesToSend && m_reliableTestClock.CheckAndReset()){
 		NetMessage* reliableTest = new NetMessage( "reliable_test" ); 
-		reliableTest->WriteBytes(sizeof(int), &m_numReliablesSent);
-		reliableTest->WriteBytes(sizeof(int), &m_numReliablesToSend);
-		reliableTest->WriteHeader();
+		reliableTest->SetDefinitionFromSession(g_theGame->m_session);
+		reliableTest->Write(m_numReliablesSent);
+		reliableTest->Write(m_numReliablesToSend);
+		reliableTest->IncrementMessageSize(sizeof(int) + sizeof(int));
+		//reliableTest->WriteHeader();
 		m_session->GetConnection(m_reliableConnectionIndex)->Send( reliableTest ); 
 		m_numReliablesSent++;
 	}

@@ -1,7 +1,8 @@
 <!--
 	Sample new format:
 -->
-	<DetailGrammer>
+
+	<DetailGrammar>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -11,35 +12,109 @@
 				<Requirement tag="isFighting" target="true" type="boolean" required ="1.0"/>
 			</Character>
 		</CharacterRequirements>
-		<!--
-		<Trigger character="*0*" hasTag="isFighting" target="true" required="1.0" />
-	-->
+
+		<Guaranteed>
+			<EffectSet>
+				<TagChange character="*0*" hasTag="isFighting" target="false" />
+			</EffectSet>
+		</Guaranteed>
+
 		<Actions>
 			<Action text="*0* wins the fight." chance=".6">
-				<Modifier trait="Bravery" minValue="70" multiplier="1.5"/>
-				<Modifier tag="isWounded" value="true" multiplier=".9" />
-				<TagChange character="*0*" hasTag="isFighting" target="false" />
+				<Modifier character = "0" multiplier = "1.5"> 
+					<CharacterRequirements>
+						<Requirement trait="Bravery" minValue="70"/>
+					</CharacterRequirements>
+				</Modifier>
+				<Modifier character="0" multiplier="1.5">\
+					<CharacterRequirements>
+						<Requirement tag="isWounded" value="true" multiplier=".9" />
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<!--<TagChange character="*0*" hasTag="isFighting" target="false" />-->
+				</EffectSet>
 			</Action>
 
 			<Action text="*0* loses the fight and flees." chance=".3">
-				<Modifier trait="Bravery" maxValue="30" modifierMultiplier="1.5"/>
-				<Modifier tag="isWounded" value="true" multiplier="1.5" />
-				<TagChange character="*0*" hasTag="isFighting" target="false" />
-				<TagChange character="*0*" hasTag="onQuest" target="false" />
-				<TagChange character="*0*" hasTag="inCave" target="false" />
-				<TagChange character="*0*" hasTag="inDungeon" target="false" />
-				<TagChange character="*0*" hasTag="isWounded" target="true" expiration="3~5"/>
+				<Modifier character = "0" multiplier = "1.5"> 
+					<CharacterRequirements>
+						<Requirement trait="Bravery" maxValue="30"/>
+					</CharacterRequirements>
+				</Modifier>
+				<Modifier character="0" multiplier="1.5">
+					<CharacterRequirements>
+						<Requirement tag="isWounded" value="true" multiplier="1.5" />
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<!--<TagChange character="*0*" hasTag="isFighting" target="false" />-->
+					<TagChange character="*0*" hasTag="onQuest" target="false" />
+					<TagChange character="*0*" hasTag="inCave" target="false" />
+					<TagChange character="*0*" hasTag="inDungeon" target="false" />
+					<TagChange character="*0*" hasTag="isWounded" target="true" expiration="3~5"/>
+				</EffectSet>
 			</Action>
 
 			<Action text="*0* loses the fight and dies." chance=".1">
-				<Modifier trait="Bravery" maxValue="30" modifierMultiplier="1.5"/>
-				<Modifier tag="isWounded" value="true" multiplier="1.5" />
-				<TagChange character="*0*" hasTag="isFighting" target="false" />
-				<TagChange character="*0*" hasTag="onQuest" target="false" />
-				<TagChange character="*0*" hasTag="isAlive" target="false" />
+				<Modifier character = "0" multiplier = "1.5"> 
+					<CharacterRequirements>
+						<Requirement trait="Bravery" maxValue="30"/>
+					</CharacterRequirements>
+				</Modifier>
+				<Modifier character="0" multiplier="1.5">
+					<CharacterRequirements>
+						<Requirement tag="isWounded" value="true" multiplier="1.5" />
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<!--<TagChange character="*0*" hasTag="isFighting" target="false" />-->
+					<TagChange character="*0*" hasTag="onQuest" target="false" />
+					<TagChange character="*0*" hasTag="isAlive" target="false" />
+				</EffectSet>
 			</Action>
 		</Actions>
-	</DetailGrammer>
+	</DetailGrammar>
+
+
+	<DetailGrammar>
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+		<Actions>
+			<Action text="*0* gets lost." chanceToPlace=".1"/>
+		</Actions>
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inDungeon" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+		</StoryRequirements>
+		<StoryEffects>
+		</StoryEffects>
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+		<Actions>
+			<Action text="*0* gets lost." />
+		</Actions>
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inCave" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+		</StoryRequirements>
+		<StoryEffects>
+		</StoryEffects>
+	</DetailGrammar>
+
 
 <!--
 
@@ -92,6 +167,7 @@
 	</DetailGrammar>
 -->
 
+<!--
 	<DetailGrammar>
 		<Action text="*0* fights a cave jelly" />
 		<CharacterRequirements>
@@ -112,6 +188,7 @@
 	</DetailGrammar>
 
 
+
 	<DetailGrammar>
 		<Action text="*0* fights a dungeon monster" />
 		<CharacterRequirements>
@@ -130,36 +207,11 @@
 			</EffectSet>
 		</StoryEffects>
 	</DetailGrammar>
+-->
 
-	<DetailGrammer>
-		<Action text="*0* gets lost." />
-		<CharacterRequirements>
-			<Character index="0">
-				<Requirement tag="isAlive" target="true" />
-				<Requirement tag="inDungeon" target="true" />
-			</Character>
-		</CharacterRequirements>
-		<StoryRequirements>
-		</StoryRequirements>
-		<StoryEffects>
-		</StoryEffects>
-	</DetailGrammer>
-
-	<DetailGrammer>
-		<Action text="*0* gets lost." />
-		<CharacterRequirements>
-			<Character index="0">
-				<Requirement tag="isAlive" target="true" />
-				<Requirement tag="inCave" target="true" />
-			</Character>
-		</CharacterRequirements>
-		<StoryRequirements>
-		</StoryRequirements>
-		<StoryEffects>
-		</StoryEffects>
-	</DetailGrammer>
 
 	<!-- fighting a thing? -->
+	<!--
 	<DetailGrammar>
 		<Action text="*0* wins the fight." chance=".5"/>
 		<CharacterRequirements>
@@ -179,7 +231,7 @@
 		</StoryEffects>
 	</DetailGrammar>
 
-	<!-- fighting a person? -->
+
 	<DetailGrammar>
 		<Action text="*0* wins the fight with *1*." />
 		<CharacterRequirements>
@@ -199,7 +251,7 @@
 			</EffectSet>
 		</StoryEffects>
 	</DetailGrammar>
-
+-->
 
 				<!--
 			<EffectSet chance="*B_INVERSE_TRAIT1"/>

@@ -5,26 +5,26 @@
 
 class Character;
 class CharacterState;
-class StoryData;
+class StoryDataDefinition;
 
 class CharacterRequirement{
 public:
 	CharacterRequirement() {};
-	CharacterRequirement(unsigned int charID, StoryData* parentData, tinyxml2::XMLElement* element );
+	CharacterRequirement(unsigned int charID, StoryDataDefinition* parentData, tinyxml2::XMLElement* element );
 
 	virtual CharacterRequirement* Clone() const = 0;
 	
 	virtual bool PassesRequirement(CharacterState* character) = 0;
 
 	unsigned int m_characterID = (unsigned int) -1;
-	StoryData* m_parentData;
+	StoryDataDefinition* m_parentData;
 };
 
 
 class CharacterRequirement_Tag : public CharacterRequirement{
 public:
 	CharacterRequirement_Tag(){};
-	CharacterRequirement_Tag(unsigned int charID, StoryData* parentData, tinyxml2::XMLElement* element);
+	CharacterRequirement_Tag(unsigned int charID, StoryDataDefinition* parentData, tinyxml2::XMLElement* element);
 
 	CharacterRequirement* Clone() const;
 	
@@ -37,7 +37,7 @@ public:
 class CharacterRequirement_Trait : public CharacterRequirement{
 public:
 	CharacterRequirement_Trait(){};
-	CharacterRequirement_Trait(unsigned int charID, StoryData* parentData, tinyxml2::XMLElement* element);
+	CharacterRequirement_Trait(unsigned int charID, StoryDataDefinition* parentData, tinyxml2::XMLElement* element);
 
 	CharacterRequirement* Clone() const;
 

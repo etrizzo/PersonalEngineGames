@@ -1,10 +1,8 @@
 
 	<Character name="Abby">
 		<Traits>
-			<Trait name="Social"  		value = "20" />
-			<Trait name="Information"   value = "90" />
-			<Trait name="Decisions"  	value = "70" />
-			<Trait name="Structure"  	value = "90" />
+			<Trait name="Bravery"  		value = "80" />
+			<Trait name="Cleverness"   value = "30" />
 		</Traits>
 
 		<Tags>
@@ -21,10 +19,8 @@
 
 	<Character name="Bob">
 		<Traits>
-			<Trait name="Social"  		value = "60" />
-			<Trait name="Information"   value = "20" />
-			<Trait name="Decisions"  	value = "10" />
-			<Trait name="Structure"  	value = "70" />
+			<Trait name="Bravery"  		value = "20" />
+			<Trait name="Cleverness"   value = "90" />
 		</Traits>
 
 		<Tags>

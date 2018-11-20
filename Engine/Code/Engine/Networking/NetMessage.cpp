@@ -1,4 +1,5 @@
 #include "NetMessage.hpp"
+#include "Engine/Networking/NetSession.hpp"
 
 net_sender_t::net_sender_t(NetConnection * connection)
 {
@@ -19,6 +20,12 @@ NetMessage::NetMessage(std::string msg)
 	MoveWriteHeadPastHeader();
 }
 
+void NetMessage::SetDefinitionFromSession(NetSession * session)
+{
+	m_definition = session->GetRegisteredMessageByName(m_msgName);
+	MoveWriteHeadPastHeader();
+}
+
 bool NetMessage::RequiresConnection() const
 {
 	return !m_definition->IsConnectionless();
@@ -27,6 +34,21 @@ bool NetMessage::RequiresConnection() const
 bool NetMessage::IsReliable() const
 {
 	return m_definition->IsReliable();
+}
+
+void NetMessage::ResetAge()
+{
+	m_timeSinceLastSentMS = 0;
+}
+
+void NetMessage::IncrementAge(unsigned int deltaSecondsMS)
+{
+	m_timeSinceLastSentMS+= deltaSecondsMS;
+}
+
+bool NetMessage::IsOldEnoughToResend() const
+{
+	return m_timeSinceLastSentMS > TIME_BETWEEN_RELIABLE_RESENDS_MS;
 }
 
 void NetMessage::IncrementMessageSize(uint16_t size)
@@ -41,8 +63,9 @@ void NetMessage::MoveWriteHeadPastHeader()
 
 							//bytes for size	//header bytes
 	uint16_t sizeOfHeader = sizeof(uint16_t) + GetHeaderSize();
-	if (m_writeHead == 0){
-		AdvanceWriteHead((size_t) sizeOfHeader);		//advance bytes for message ID & message size
+	if (m_writeHead < sizeOfHeader){
+		uint16_t diff = sizeOfHeader - m_writeHead;
+		AdvanceWriteHead((size_t) diff);		//advance bytes for message ID & message size
 	}
 }
 
@@ -61,9 +84,9 @@ void NetMessage::WriteHeader()
 
 uint16_t NetMessage::GetHeaderSize()
 {
-	uint16_t msgSize = sizeof(m_definition->m_messageID);
+	uint16_t msgSize = sizeof(m_definition->m_messageID);		//1 byte
 	if (m_definition->IsReliable()){
-		msgSize+= sizeof(m_reliableID);
+		msgSize+= sizeof(m_reliableID);				//2 bytes
 	}
 	return msgSize;
 }

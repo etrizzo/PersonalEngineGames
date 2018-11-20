@@ -2,6 +2,7 @@
 #include "Engine/Core/EngineCommon.hpp"
 
 class NetConnection;
+class NetSession;
 struct net_message_definition_t;
 
 enum eNetMessageOptionBit : unsigned int 
@@ -19,6 +20,8 @@ typedef unsigned int eNetMessageOptions;
 #define MESSAGE_MTU (1 * KB)
 #define INVALID_MESSAGE_ID ((uint8_t) -1)
 
+#define TIME_BETWEEN_RELIABLE_RESENDS_MS (100)
+
 struct net_sender_t
 {
 	net_sender_t(NetConnection* connection);
@@ -33,8 +36,14 @@ public:
 	NetMessage();		//should probably only be used when getting data, not sending?
 	NetMessage(std::string msg);	//constructs with initial string - signifies what kind of message?
 
+	void SetDefinitionFromSession(NetSession* session);
+
 	bool RequiresConnection() const;
 	bool IsReliable() const;
+
+	void ResetAge();
+	void IncrementAge(unsigned int deltaSecondsMS);
+	bool IsOldEnoughToResend() const;
 
 	//template this however you do that
 	//void Write(float val);
@@ -57,7 +66,7 @@ public:
 	uint16_t m_msgSize;
 	uint16_t m_reliableID = 0;
 
-	int m_lastSentTimeMS = 0;
+	unsigned int m_timeSinceLastSentMS = 0;
 
 	net_message_definition_t* m_definition;
 

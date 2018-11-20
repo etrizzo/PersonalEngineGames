@@ -3,9 +3,10 @@
 #include "Game/Character.hpp"
 #include "Game/StoryState.hpp"
 #include "Game/CharacterRequirementSet.hpp"
+#include "Game/ActionDefinition.hpp"
 
-std::vector<StoryNode*> StoryGraph::s_plotNodes = std::vector<StoryNode*>();
-std::vector<StoryNode*> StoryGraph::s_detailNodes = std::vector<StoryNode*>();
+std::vector<StoryDataDefinition*> StoryGraph::s_plotNodes = std::vector<StoryDataDefinition*>();
+std::vector<StoryDataDefinition*> StoryGraph::s_detailNodes = std::vector<StoryDataDefinition*>();
 
 StoryGraph::StoryGraph()
 {
@@ -18,9 +19,9 @@ void StoryGraph::ReadPlotNodesFromXML(std::string filePath)
 //	std::string filePath = "Data/Data/" + fileName;
 	nodeDoc.LoadFile(filePath.c_str());
 	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("PlotGrammar"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("PlotGrammar")){
-		StoryData* data = new StoryData( PLOT_NODE);
+		StoryDataDefinition* data = new StoryDataDefinition( PLOT_NODE);
 		data->InitFromXML(nodeElement);
-		s_plotNodes.push_back(new StoryNode(data));
+		s_plotNodes.push_back(data);
 	}
 	
 }
@@ -31,9 +32,9 @@ void StoryGraph::ReadDetailNodesFromXML(std::string filePath)
 	//	std::string filePath = "Data/Data/" + fileName;
 	nodeDoc.LoadFile(filePath.c_str());
 	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("DetailGrammar"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("DetailGrammar")){
-		StoryData* data = new StoryData( DETAIL_NODE);
+		StoryDataDefinition* data = new StoryDataDefinition( DETAIL_NODE);
 		data->InitFromXML(nodeElement);
-		s_detailNodes.push_back(new StoryNode(data));
+		s_detailNodes.push_back(data);
 	}
 }
 
@@ -127,8 +128,8 @@ void StoryGraph::GenerateSkeleton(int numPlotNodes)
 	StoryNode* addNode = nullptr;
 	StoryData* newData = nullptr;
 	while(GetNumNodes() < numPlotNodes){
-		//reroll if you get a duplicate node.
-		StoryNode* sourceNode = StoryGraph::GetRandomPlotNode();
+		//re-roll if you get a duplicate node.
+		StoryDataDefinition* sourceNode = StoryGraph::GetRandomPlotNode();
 		bool alreadyUsed = false;
 		if (Contains(m_usedPlotNodes, sourceNode)){
 			alreadyUsed = true;
@@ -138,7 +139,7 @@ void StoryGraph::GenerateSkeleton(int numPlotNodes)
 		}
 
 		//clone data
-		newData = new StoryData(StoryGraph::GetRandomPlotNode()->m_data);
+		newData = new StoryData(sourceNode);
 		addNode = new StoryNode(newData);
 		//try to add the cloned data, if it doesn't work, clean up
 		if (!AddPlotNode(addNode)){
@@ -157,59 +158,200 @@ void StoryGraph::GenerateSkeleton(int numPlotNodes)
 	//IdentifyBranchesAndAdd(2);
 }
 
-void StoryGraph::AddDetailNodesToDesiredSize(int desiredSize)
+//void StoryGraph::AddPlotNodes(int numPlotNodes)
+//{
+//	int numAdded = 0;
+//	StoryNode* addNode = nullptr;
+//	StoryData* newData = nullptr;
+//	while(numAdded < numPlotNodes){
+//		//re-roll if you get a duplicate node.
+//		StoryDataDefinition* sourceNode = StoryGraph::GetRandomPlotNode();
+//		bool alreadyUsed = false;
+//		if (Contains(m_usedPlotNodes, sourceNode)){
+//			alreadyUsed = true;
+//			if (CheckRandomChance(REROLL_REPEAT_PLOT_NODE_CHANCE)){
+//				sourceNode =  StoryGraph::GetRandomPlotNode();
+//			}
+//		}
+//
+//		//clone data
+//		newData = new StoryData(sourceNode);
+//		addNode = new StoryNode(newData);
+//		//try to add the cloned data, if it doesn't work, clean up
+//		if (!AddPlotNode(addNode)){
+//			delete newData;
+//			delete addNode;
+//			newData = nullptr;
+//			addNode = nullptr;
+//		} else {
+//			if (!alreadyUsed){
+//				//add node to used plot node list
+//				m_usedPlotNodes.push_back(sourceNode);
+//			}
+//		}
+//	}
+//}
+
+StoryNode * StoryGraph::AddSinglePlotNode()
 {
 	m_pathFound.clear();
-	bool canAdd = true;
-	while(m_graph.GetNumNodes() < desiredSize && canAdd){
-		canAdd = TryToAddDetailNode();
-	}
-}
-
-void StoryGraph::GenerateStartAndEnd()
-{
-	TODO("figure out how this should work.");
-	AddStart(new StoryNode(new StoryData("START", 1.f)));
-	AddEnd(new StoryNode(new StoryData("END", 1.f)));
-	AddEdge(m_startNode, m_endNode, new StoryState(1.f, m_characters.size()));
-}
-
-bool StoryGraph::TryToAddDetailNode()
-{
+	bool added = false;
 	StoryNode* addNode = nullptr;
 	StoryData* newData = nullptr;
-	int tries = 0;
-	bool added = false;
-	while(tries < 100 && !added){
-		//reroll if you get a duplicate node.
-		StoryNode* sourceNode = StoryGraph::GetRandomDetailNode();
+	while(!added){
+		//re-roll if you get a duplicate node.
+		StoryDataDefinition* sourceNode = StoryGraph::GetRandomPlotNode();
 		bool alreadyUsed = false;
-		if (Contains(m_usedDetailNodes, sourceNode)){
+		if (Contains(m_usedPlotNodes, sourceNode)){
 			alreadyUsed = true;
-			if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
-				sourceNode =  StoryGraph::GetRandomDetailNode();
+			if (CheckRandomChance(REROLL_REPEAT_PLOT_NODE_CHANCE)){
+				sourceNode =  StoryGraph::GetRandomPlotNode();
 			}
 		}
 
 		//clone data
-		newData = new StoryData(sourceNode->m_data);
+		newData = new StoryData(sourceNode);
 		addNode = new StoryNode(newData);
 		//try to add the cloned data, if it doesn't work, clean up
-		added = AddDetailNode(addNode);
-		if (!added){
+		if (!AddPlotNode(addNode)){
 			delete newData;
 			delete addNode;
 			newData = nullptr;
 			addNode = nullptr;
 		} else {
-			//add node to used detail node list
+			added = true;
 			if (!alreadyUsed){
-				m_usedDetailNodes.push_back(sourceNode);
+				//add node to used plot node list
+				m_usedPlotNodes.push_back(sourceNode);
 			}
 		}
-		tries++;
 	}
-	return added;	
+	return addNode;
+}
+
+void StoryGraph::AddOutcomeNodesToPlotNode(StoryNode * plotNode)
+{
+	m_pathFound.clear();
+	std::vector<StoryEdge*> edges = plotNode->m_outboundEdges;
+	int startingSize = edges.size();
+	for (int i = 0; i < startingSize; i++){
+		StoryEdge* edge = edges[i];
+		if (!edge->GetCost()->m_isVoid){
+			TryToAddDetailNodeAtEdge(edge, 10);
+		}
+	}
+}
+
+
+void StoryGraph::AddDetailNodesToDesiredSize(int desiredSize)
+{
+	std::vector<StoryEdge*> skeletonEdges = std::vector<StoryEdge*>();
+	for (StoryEdge* edge : m_graph.m_edges){
+		skeletonEdges.push_back(edge);
+	}
+	m_pathFound.clear();
+	bool canAdd = true;
+	//go through EVERY edge and try to place a detail node until there are no edges that can add OR you have too many nodes
+	canAdd = false;
+	int startingSize = skeletonEdges.size();
+	for (int i = 0; i < startingSize; i++){
+		StoryEdge* edge = skeletonEdges[i];
+		if (!edge->GetCost()->m_isVoid){
+			if (TryToAddDetailNodeAtEdge(edge, 10)){
+				canAdd = true;
+			}
+		}
+	}
+
+}
+
+void StoryGraph::GenerateStartAndEnd()
+{
+	if (m_startNode == nullptr && m_endNode == nullptr){
+		AddStart(new StoryNode(new StoryData("START")));
+		AddEnd(new StoryNode(new StoryData("END")));
+		AddEdge(m_startNode, m_endNode, new StoryState(1.f, m_characters.size()));
+	}
+	
+}
+
+bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
+{
+	bool added = false;
+	int tries = 0;
+	while (tries < maxTries && !added){
+		//reroll if you get a duplicate node.
+		StoryDataDefinition* sourceNode = StoryGraph::GetRandomDetailNode();
+		bool alreadyUsed = true;
+		int rerollRepeatTries = 0;
+		while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
+			if (Contains(m_usedDetailNodes, sourceNode)){
+				alreadyUsed = true;
+				if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
+					sourceNode =  StoryGraph::GetRandomDetailNode();
+				} else {
+					alreadyUsed = false;		//let it slide based on chance
+				}
+			} else {
+				alreadyUsed = false;
+			}
+		}
+		
+		//try to add the node
+		std::vector<Character*> charsForNode = GetCharactersForNode(sourceNode, edge);
+		//if you found characters for the node, add the node.
+		if (charsForNode.size() != 0){
+			if (AddDetailNode(sourceNode, edge, charsForNode)){
+				added = true;
+			} else {
+				tries++;
+			}
+		} else {
+			tries++;
+		}
+	}
+
+	return added;
+	//StoryNode* addNode = nullptr;
+	//StoryData* newData = nullptr;
+	//int tries = 0;
+	//bool added = false;
+	//while(tries < 100 && !added){
+	//	//reroll if you get a duplicate node.
+	//	StoryDataDefinition* sourceNode = StoryGraph::GetRandomDetailNode();
+	//	bool alreadyUsed = false;
+	//	if (Contains(m_usedDetailNodes, sourceNode)){
+	//		alreadyUsed = true;
+	//		if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
+	//			sourceNode =  StoryGraph::GetRandomDetailNode();
+	//		}
+	//	}
+
+	//	//clone data
+	//	newData = new StoryData(sourceNode, 0);
+	//	addNode = new StoryNode(newData);
+	//	//try to add the cloned data, if it doesn't work, clean up
+	//	added = AddDetailNode(addNode);
+	//	if (!added){
+	//		delete newData;
+	//		delete addNode;
+	//		newData = nullptr;
+	//		addNode = nullptr;
+	//	} else {
+	//		//add node to used detail node list
+	//		if (!alreadyUsed){
+	//			m_usedDetailNodes.push_back(sourceNode);
+	//		}
+	//		//add all actions to this branch
+	//		for (int i = 1; i < sourceNode->m_actions.size(); i++){
+	//			StoryData* branchData = new StoryData(sourceNode, i);
+	//			StoryNode* branchNode = new StoryNode(branchData);
+	//			AddBranchAroundNode(addNode, branchNode, true);
+	//		}
+	//	}
+	//	tries++;
+	//}
+	//return added;	
 }
 
 bool StoryGraph::AddPlotNode(StoryNode* newPlotNode)
@@ -244,7 +386,7 @@ bool StoryGraph::AddPlotNode(StoryNode* newPlotNode)
 				}
 
 			}
-			//if you didn't branch and find a spot, add all your outbout edges to the open edges list
+			//if you didn't branch and find a spot, add all your outbound edges to the open edges list
 			if (!foundSpot){
 				for (StoryEdge* edge : edgeToAddAt->GetEnd()->m_outboundEdges){
 					openEdges.push(edge);
@@ -271,6 +413,7 @@ bool StoryGraph::AddDetailNode(StoryNode * newDetailNode)
 	//walk along story until you can place the node
 	std::queue<StoryEdge*> openEdges;
 	openEdges.push(m_graph.m_edges[GetRandomIntLessThan(m_graph.GetNumEdges())]);
+	//openEdges.push(m_startNode->m_outboundEdges[0]);
 	StoryNode* nodeToAddAfter; 
 	StoryEdge* edgeToAddAt = nullptr;
 	bool foundSpot = false;
@@ -299,10 +442,126 @@ bool StoryGraph::AddDetailNode(StoryNode * newDetailNode)
 	return foundSpot;
 }
 
+bool StoryGraph::AddDetailNode(StoryDataDefinition * dataDefinition, StoryEdge * edgeToAddAt, std::vector<Character*> charactersForNode)
+{
+	//at this point, we need to know what characters will be set for this node set.
+	StoryNode* startNode = edgeToAddAt->GetStart();
+	StoryNode* endNode = edgeToAddAt->GetEnd();
+	bool addedAnyNodes = false;
+	for (int i = 0; i < dataDefinition->m_actions.size(); i++){
+		//check random chance to just ignore this action
+		if (!CheckRandomChance(dataDefinition->m_actions[i]->m_chanceToPlaceAction)){
+			continue;
+		} else {
+			//add a node for this action
+			StoryNode* possibleEnd = endNode;
+			StoryData* newData = new StoryData(dataDefinition, i);
+			newData->SetCharacters(charactersForNode);
+			StoryNode* newNode = new StoryNode(newData);
+			//add the action at this edge.
+
+			//not sure what to do with cost...
+			StoryState* incomingCost = new StoryState(*edgeToAddAt->GetCost());
+			StoryState* outgoingCost = new StoryState(*edgeToAddAt->GetCost());
+			outgoingCost->UpdateFromNode(newNode->m_data);
+			//verify that the node doesn't break at this edge.
+					// (check that all characters meet the requirements for the end node)
+			// get all reachable nodes
+			// check reachable nodes for a suitable end node		
+			std::vector<StoryNode*> possibleEndNodes = possibleEnd->GetReachableNodes();
+			bool atEnd = false;
+			int reachableIndex = 1;
+			while (!(possibleEnd->m_data->IsCompatibleWithIncomingEdge(outgoingCost)) && !atEnd){
+				if (reachableIndex < possibleEndNodes.size()){
+					possibleEnd = possibleEndNodes[reachableIndex];
+					reachableIndex++;
+				} else {
+					atEnd = true;
+				}
+			}
+
+			if (!atEnd){
+				addedAnyNodes = true;
+				//add the node here
+				AddEdge(startNode, newNode, incomingCost);
+				AddEdge(newNode, possibleEnd, outgoingCost);
+
+				//update all reachable nodes w/ this data
+				std::vector<StoryNode*> reachableNodes = newNode->GetReachableNodes();
+
+				for (StoryNode* reachable : reachableNodes){
+					//edge->UpdateDataFromNode(data);
+					reachable->UpdateData(newNode->m_data);
+					for (StoryEdge* edge : reachable->m_outboundEdges){
+						edge->GetCost()->UpdateFromNode(newNode->m_data);
+					}
+				}
+			}
+		}
+	}
+
+	if (addedAnyNodes){
+		//delete the old edge, w/o removing the nodes on the edge
+		//edgeToAddAt->GetCost()->SetAsVoid();
+		//m_edgesToVoid.push_back(edgeToAddAt);
+		m_graph.RemoveEdge(edgeToAddAt);
+		delete edgeToAddAt;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+
+bool StoryGraph::AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToAdd, bool branchToFutureNodesIfNecessary)
+{
+	StoryNode* start = existingNode->m_inboundEdges[0]->GetStart();
+	StoryNode* end = existingNode->m_outboundEdges[0]->GetEnd();
+	StoryState* incomingCost = new StoryState(*existingNode->m_inboundEdges[0]->GetCost());
+	StoryState* outGoingCost = new StoryState(*existingNode->m_inboundEdges[0]->GetCost());
+
+	StoryEdge* pretendEdge;
+	//pretendEdge->GetCost()->UpdateFromNode(start->m_data);
+	bool added = false;
+	bool atEnd = false;
+	std::vector<StoryNode*> reachableNodes = end->GetReachableNodes();
+	int reachableIndex = 0;
+	while (!added && !atEnd){
+		incomingCost->UpdateFromNode(start->m_data);
+		outGoingCost->UpdateFromNode(start->m_data);
+
+		pretendEdge = new StoryEdge(start, end, incomingCost);
+		//if you meet the node requirements, add edge here
+		if (NodeRequirementsAreMet(nodeToAdd, pretendEdge)){
+			outGoingCost->UpdateFromNode(nodeToAdd->m_data);
+			StoryEdge* inEdge = AddEdge(start, nodeToAdd, incomingCost);
+			StoryEdge* outEdge = AddEdge(nodeToAdd, end, outGoingCost);
+			outEdge->GetCost()->UpdateFromNode(nodeToAdd->m_data);
+			added = true;
+			delete pretendEdge;
+		} else {
+			//if there are still reachable nodes, search the next reachable node.
+			if (reachableIndex < reachableNodes.size()){
+				//update end node (searched node)
+				end = reachableNodes[reachableIndex];
+				delete pretendEdge;
+				incomingCost = new StoryState(*existingNode->m_inboundEdges[0]->GetCost());
+				outGoingCost = new StoryState(*existingNode->m_inboundEdges[0]->GetCost());
+				//pretendEdge = new StoryEdge(start, end, incomingCost);
+				reachableIndex++;
+			} else {
+				atEnd = true;
+			}
+		}
+	}
+	return added;
+}
+
 void StoryGraph::IdentifyBranchesAndAdd(int numBranchesToAdd)
 {
 	if (numBranchesToAdd < 0){
-		numBranchesToAdd = (int) GetNumNodes() * .25;
+		numBranchesToAdd = (int) (GetNumNodes() * .25f);
 	}
 
 	int branchesAdded = 0;
@@ -360,23 +619,7 @@ bool StoryGraph::AttemptToAddBranchAfterFail(StoryNode * startingNode, StoryEdge
 		return true;
 	};
 	return false;
-	//StoryState* incomingCost = new StoryState(*fakeEdge->GetCost());
-	//StoryState* outgoingCost = new StoryState(*fakeEdge->GetCost());
-	//outgoingCost->PredictUpdateOnCharacter(newNode->m_data);
-	//m_graph.AddEdge(existingEdge->GetStart(), newNode, incomingCost);
-	//m_graph.AddEdge(newNode, existingEdge->GetEnd(), outgoingCost);
-	//delete existingEdge;
 
-	////newNode->UpdateState(newNode->m_data->m_effects);
-	//std::vector<StoryNode*> reachableNodes = newNode->GetReachableNodes();
-
-	//for (StoryNode* reachable : reachableNodes){
-	//	//edge->UpdateDataFromNode(data);
-	//	reachable->UpdateData(newNode->m_data);
-	//	for (StoryEdge* edge : reachable->m_outboundEdges){
-	//		edge->GetCost()->UpdateFromNode(newNode->m_data);
-	//	}
-	//}
 
 	//return false;
 }
@@ -407,8 +650,8 @@ void StoryGraph::AddNodeAtEdge(StoryNode * newNode, StoryEdge * existingEdge)
 	StoryState* incomingCost = new StoryState(*existingEdge->GetCost());
 	StoryState* outgoingCost = new StoryState(*existingEdge->GetCost());
 	outgoingCost->UpdateFromNode(newNode->m_data);
-	m_graph.AddEdge(existingEdge->GetStart(), newNode, incomingCost);
-	m_graph.AddEdge(newNode, existingEdge->GetEnd(), outgoingCost);
+	AddEdge(existingEdge->GetStart(), newNode, incomingCost);
+	AddEdge(newNode, existingEdge->GetEnd(), outgoingCost);
 	delete existingEdge;
 
 	//newNode->UpdateState(newNode->m_data->m_effects);
@@ -478,18 +721,22 @@ void StoryGraph::FindPath(StoryHeuristicCB heuristic)
 	m_pathFound = std::vector<StoryNode*>();
 	currentNode = m_startNode;
 	while (currentNode != m_endNode){
-		if (currentNode == nullptr){
-			ConsolePrintf(RGBA::RED, "path could not be found");
-			return;
-		}
 		m_pathFound.push_back(currentNode);
 		StoryNode* minNode = nullptr;
 		float minCost = 9999.f;
+		if (currentNode->m_outboundEdges.size() == 0){
+			ConsolePrintf("Node with no outbound edges?");
+		}
 		for(StoryEdge* edge : currentNode->m_outboundEdges){
 			if (edge->GetEnd()->GetShortestDistance() < minCost){
 				minNode = edge->GetEnd();
 				minCost = minNode->GetShortestDistance();
 			}
+		}
+		
+		if (minNode == nullptr){
+			ConsolePrintf(RGBA::RED, "path could not be found");
+			return;
 		}
 		currentNode = minNode;
 	}
@@ -738,12 +985,18 @@ StoryNode * StoryGraph::AddNode(StoryNode * newNode)
 
 StoryEdge * StoryGraph::AddEdge(StoryNode * start, StoryNode * end)
 {
-	return m_graph.AddEdge(start, end);
+	StoryEdge* edge =  m_graph.AddEdge(start, end);
+	edge->GetCost()->m_enddata = end->m_data;
+	edge->GetCost()->m_startData  = start->m_data;
+	return edge;
 }
 
 StoryEdge * StoryGraph::AddEdge(StoryNode * start, StoryNode * end, StoryState* cost)
 {
-	return m_graph.AddEdge(start, end, cost);
+	StoryEdge* edge =  m_graph.AddEdge(start, end, cost);
+	edge->GetCost()->m_enddata = end->m_data;
+	edge->GetCost()->m_startData  = start->m_data;
+	return edge;
 }
 
 void StoryGraph::RemoveAndDeleteNode(StoryData* data)
@@ -828,6 +1081,8 @@ void StoryGraph::Clear()
 
 	m_usedPlotNodes.clear();
 	m_usedDetailNodes.clear();
+	m_startNode = nullptr;
+	m_endNode = nullptr;
 }
 
 StoryEdge * StoryGraph::GetEdge(StoryNode * start, StoryNode * end) const
@@ -895,19 +1150,31 @@ bool StoryGraph::StoryRequirementsMet(StoryNode * node, StoryEdge * atEdge)
 
 bool StoryGraph::TryToSetCharactersForNode(StoryNode * node, StoryEdge * atEdge)
 {
+	std::vector<Character*> charsInOrder = GetCharactersForNode(node->m_data->m_definition, atEdge);
+	if (charsInOrder.size() == 0){
+		// no characters fit on the node :(
+		return false;
+	} else {
+		node->m_data->SetCharacters(charsInOrder);
+		return true;
+	}
+}
+
+std::vector<Character*> StoryGraph::GetCharactersForNode(StoryDataDefinition* nodeDefinition, StoryEdge * atEdge)
+{
 	//checks all characters and sees if they meet the requirements of the node.
 	// for now, just take the first characters that fit w/o duplicates.
-	StoryData* data = node->m_data;
+	//StoryData* data = node->m_data;
 	//CharacterRequirementSet reqs = node->m_data->m_characterReqs;
 
 	// keep track of which characters meet requirements in which story node slots 
 	//	- may want to change this to a score not a bool later.
 	/* EX:
-		character	|	0	|	1	|	2		<-- character slot on story node
-		=================================
-		Debbie		|	N	|	Y	|	Y
-		Jerry		|	Y	|	N	|	Y
-		Andy		|	N	|	N	|	Y
+	character	|	0	|	1	|	2		<-- character slot on story node
+	=================================
+	Debbie		|	N	|	Y	|	Y
+	Jerry		|	Y	|	N	|	Y
+	Andy		|	N	|	N	|	Y
 	*/
 	std::vector<std::vector<bool>> charMeetsRequirementsArray;
 
@@ -919,25 +1186,29 @@ bool StoryGraph::TryToSetCharactersForNode(StoryNode * node, StoryEdge * atEdge)
 
 		//create character requirement array
 		std::vector<bool> characterRequirementList;
-		for (unsigned int nodeSlot = 0; nodeSlot < data->GetNumCharacters(); nodeSlot++){
-			characterRequirementList.push_back(data->DoesCharacterMeetSlotRequirementsAtEdge(m_characters[i], nodeSlot, atEdge));	
+		for (unsigned int nodeSlot = 0; nodeSlot < nodeDefinition->GetNumCharacters(); nodeSlot++){
+			characterRequirementList.push_back(nodeDefinition->DoesCharacterMeetSlotRequirementsAtEdge(m_characters[i], nodeSlot, atEdge));	
 		}
 		charMeetsRequirementsArray.push_back(characterRequirementList);
 	}
 
+	//make an empty array
+	std::vector<Character*> charsInOrder = ClearCharacterArray(nodeDefinition->GetNumCharacters());
+
 	//try to assign characters to each character
 	//try every possible permutation for now... we don't have that many characters :/
-	for (unsigned int permutation = 0; permutation < data->GetNumCharacters(); permutation++){
+	for (unsigned int permutation = 0; permutation < nodeDefinition->GetNumCharacters(); permutation++){
 		//for every character we have to assign, check every character in the story to see if they meet the reqs
-		for (unsigned int nodeSlot = 0; nodeSlot < data->GetNumCharacters(); nodeSlot++){
+		for (unsigned int nodeSlot = 0; nodeSlot < nodeDefinition->GetNumCharacters(); nodeSlot++){
 			bool charSet = false;
 			for (unsigned int storyChar = 0; storyChar < m_characters.size(); storyChar++ ){
 				if (!charSet && !usedChars[storyChar]){
 					//if the character hasn't already been used, see if it meets requirements.
-					int nodeSlotIndex = (nodeSlot + permutation) % data->GetNumCharacters();
+					int nodeSlotIndex = (nodeSlot + permutation) % nodeDefinition->GetNumCharacters();
 					if (charMeetsRequirementsArray[storyChar][nodeSlotIndex]){
 						//this character meets the requirement for this permutation, mark it.
-						node->m_data->SetCharacter(nodeSlotIndex, m_characters[storyChar]);
+						charsInOrder[nodeSlotIndex] = m_characters[storyChar];
+						//node->m_data->SetCharacter(nodeSlotIndex, m_characters[storyChar]);
 						usedChars[storyChar] = true;
 						charSet = true;
 					}
@@ -947,19 +1218,19 @@ bool StoryGraph::TryToSetCharactersForNode(StoryNode * node, StoryEdge * atEdge)
 
 		//if you reach the end of a permutation and not all node characters are set, 
 		// wipe and start over.
-		if (!node->m_data->AreAllCharactersSet()){
-			node->m_data->ClearCharacters();
+		if (!AreAllCharactersSet(charsInOrder)){
+			charsInOrder = ClearCharacterArray(nodeDefinition->GetNumCharacters());
 			for (int i = 0; i < (int) m_characters.size(); i++){
 				usedChars[i] = false;
 			}
 		} else {
 			//otherwise, the node's characters are set! yeaaaaaay
-			return true;
+			return charsInOrder;
 		}
 	}
 
-	//if you reach this point, there's no permutation of characters that satisfy the node rightnow.
-	return false;
+	//if you reach this point, there's no permutation of characters that satisfy the node right now.
+	return std::vector<Character*>();
 }
 
 
@@ -1044,13 +1315,32 @@ void StoryGraph::RenderEdge(StoryEdge * edge, RGBA color) const
 	//g_theRenderer->DrawText2D(cost, halfPoint - Vector2(.002f, 0.f), EDGE_FONT_SIZE, RGBA::YELLOW);
 }
 
-StoryNode * StoryGraph::GetRandomPlotNode()
+std::vector<Character*> StoryGraph::ClearCharacterArray(int numCharacters)
+{
+	std::vector<Character*> chars = std::vector<Character*>();
+	for (int i = 0; i < numCharacters; i++){
+		chars.push_back(nullptr);
+	}
+	return chars;
+}
+
+bool StoryGraph::AreAllCharactersSet(const std::vector<Character*>& chars) const
+{
+	for (Character* character : chars){
+		if (character == nullptr){
+			return false;
+		}
+	}
+	return true;
+}
+
+StoryDataDefinition * StoryGraph::GetRandomPlotNode()
 {
 	int i = GetRandomIntLessThan(StoryGraph::s_plotNodes.size());
 	return StoryGraph::s_plotNodes[i];
 }
 
-StoryNode * StoryGraph::GetRandomDetailNode()
+StoryDataDefinition * StoryGraph::GetRandomDetailNode()
 {
 	int i = GetRandomIntLessThan(StoryGraph::s_detailNodes.size());
 	return StoryGraph::s_detailNodes[i];
@@ -1064,4 +1354,20 @@ StoryState* ShortestPathHeuristic(StoryEdge * edge, StoryStructure * currentStru
 StoryState * RandomPathHeuristic(StoryEdge * edge, StoryStructure * currentStructure)
 {
 	return new StoryState(GetRandomFloatInRange(0.f, 10.f), 1);
+}
+
+StoryState * CalculateChanceHeuristic(StoryEdge * edge, StoryStructure * currentStructure)
+{
+	float baseChance = edge->GetCost()->GetBaseChance();
+	float cost = 2000.f;
+	if (CheckRandomChance(baseChance)){
+		cost = 1;
+	} else {
+		cost = 100 * baseChance;
+	}
+	if (cost >= 9000.f){
+		ConsolePrintf("BigBoy");
+	}
+	//edge->GetCost()->m_characterStates.size();
+	return new StoryState(cost, edge->GetCost()->m_characterStates.size());
 }

@@ -182,6 +182,8 @@ void App::RegisterCommands()
 	CommandRegister("add_branches", CommandFindBranches, "Adds branches to the graph");
 	CommandRegister("set_branch_chance", CommandSetBranchChance, "Sets the chance to branch nodes on failure to place node.", "set_branch_chance <float 0-1>");
 
+	CommandRegister("generate_pairs", CommandGeneratePairs, "Generates a plot node and outcome node as a pair", "generate_pairs <numPairs>");
+	CommandRegister("reset_graph", CommandResetGraph, "resets the graph to start->end");
 }
 
 void App::HandleInput()
@@ -477,7 +479,8 @@ void CommandGenerateGraph(Command & cmd)
 void CommandFindPath(Command & cmd)
 {
 	UNUSED(cmd);
-	g_theGame->m_graph.FindPath(RandomPathHeuristic);
+	//g_theGame->m_graph.FindPath(RandomPathHeuristic);
+	g_theGame->m_graph.FindPath(CalculateChanceHeuristic);
 }
 
 
@@ -500,6 +503,12 @@ void CommandSetBranchChance(Command & cmd)
 	ConsolePrintf(RGBA::YELLOW, "Changed branch chance on generation to %.2f", chance);
 }
 
+void CommandResetGraph(Command & cmd)
+{
+	g_theGame->ClearGraph();
+	g_theGame->m_graph.GenerateStartAndEnd();
+}
+
 void CommandGenerateSkeleton(Command & cmd)
 {
 	g_theGame->ClearGraph();
@@ -518,4 +527,13 @@ void CommandAddDetails(Command & cmd)
 		numToGenerate = NUM_DETAIL_NODES_TO_GENERATE;
 	}
 	g_theGame->GenerateDetailNodes(numToGenerate);
+}
+
+void CommandGeneratePairs(Command & cmd)
+{
+	int numToGenerate = cmd.GetNextInt();
+	if (numToGenerate == 0){
+		numToGenerate = NUM_NODE_PAIRS_TO_GENERATE;
+	}
+	g_theGame->GenerateNodePairs(numToGenerate);
 }

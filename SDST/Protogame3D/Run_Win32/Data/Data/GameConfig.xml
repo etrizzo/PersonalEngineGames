@@ -1,7 +1,7 @@
 <GameConfig
 	
   appName="Protogame3D"
-	windowAspect="1.5"
+	windowAspect="1.7"
   width="10"
 	isFullscreen="false"
   startLevel="WizardTower3"

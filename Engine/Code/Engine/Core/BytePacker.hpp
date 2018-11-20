@@ -43,6 +43,7 @@ public:
 	bool Write(uint16_t data, bool convertEndianness = true);
 	bool Write(uint8_t	data, bool convertEndianness = true);
 	bool Write(float	data, bool convertEndianness = true);
+	bool Write(int		data, bool convertEndianness = true);
 
 	size_t Read(uint16_t*	outData, bool convertEndianness = true);
 	size_t Read(uint8_t*	outData, bool convertEndianness = true);

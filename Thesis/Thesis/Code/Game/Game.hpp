@@ -65,6 +65,9 @@ public:
 	void GeneratePlotNodes(int numToGenerate = NUM_PLOT_NODES_TO_GENERATE);
 	void GenerateDetailNodes(int numToGenerate = NUM_DETAIL_NODES_TO_GENERATE);
 
+	void GenerateNodePairs(int numToGenerate = NUM_NODE_PAIRS_TO_GENERATE);
+	void AddPlotAndOutcomeNodeInPair();
+
 	void Update();
 	void Render();
 	void HandleInput();

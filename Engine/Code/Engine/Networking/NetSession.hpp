@@ -11,16 +11,18 @@ class Renderer;
 
 //net session UI settings
 #define SESSION_FONT_HEADER_SIZE (.015f)
-#define SESSION_FONT_CONTENT_SIZE (.008f)
+#define SESSION_FONT_CONTENT_SIZE (.0074f)
 #define SESSION_LINE_MULTIPLIER (1.04f)
+
+#define RELIABLE_WINDOW (32)
 
 enum eNetCoreMessages : uint8_t{
 	NETMSG_PING = 0,			// unreliable, connectionless
 	NETMSG_PONG, 				// unreliable, connectionless
 	NETMSG_HEARTBEAT,			// unreliable
 
-	NETMSG_UNRELIABLE_TEST = 128,
-	NETMSG_RELIABLE_TEST = 129, // reliable
+	NETMSG_UNRELIABLE_TEST,
+	NETMSG_RELIABLE_TEST, // reliable
 
 
 	NETMSG_CORE_COUNT,
@@ -106,7 +108,7 @@ public:
 protected:
 	void SendPacketsForConnection(unsigned int connectionIndex);
 	void ProcessPackets();
-	void SendPacketToConnection(uint8_t connIndex, NetPacket* packet, uint8_t numMessages);
+	void SendPacketToConnection(uint8_t connIndex, NetPacket* packet, uint8_t numMessages, std::vector<NetMessage*> reliablesInPacket);
 
 	
 	NetConnection* m_connections[MAX_CONNECTIONS] = {nullptr};

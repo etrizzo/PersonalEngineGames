@@ -1,15 +1,16 @@
 #include "Effect.hpp"
 #include "Game/StoryState.hpp"
+#include "Game/StoryDataDefinition.hpp"
 #include "Game/StoryData.hpp"
 
 
-Effect::Effect(tinyxml2::XMLElement * element, StoryData* parentData)
+Effect::Effect(tinyxml2::XMLElement * element, StoryDataDefinition* parentData)
 {
 	m_characterID = (unsigned int) ParseXmlAttribute(*element, "character", -1);
 	m_parentData = parentData;
 }
 
-Effect_TagChange::Effect_TagChange(tinyxml2::XMLElement * element, StoryData* parentData)
+Effect_TagChange::Effect_TagChange(tinyxml2::XMLElement * element, StoryDataDefinition* parentData)
 	:Effect(element, parentData)
 {
 	std::string tag = ParseXmlAttribute(*element, "hasTag", "NO_TAG");
@@ -19,13 +20,13 @@ Effect_TagChange::Effect_TagChange(tinyxml2::XMLElement * element, StoryData* pa
 	m_tag = TagPair(tag, value, type);
 }
 
-bool Effect_TagChange::ApplyToState(StoryState * state)
+bool Effect_TagChange::ApplyToState(StoryState * state, StoryData* instancedData)
 {
-	Character* character = m_parentData->m_characters[m_characterID];
+	Character* character = instancedData->m_characters[m_characterID];
 	CharacterState* characterState = state->GetCharacterStateForCharacter(character);
 	characterState->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
 	if (m_tag.GetType() == "character"){
-		std::string charName = m_parentData->ReadCharacterNameFromDataString(m_tag.GetValue());
+		std::string charName = instancedData->ReadCharacterNameFromDataString(m_tag.GetValue());
 		characterState->m_tags.SetTagWithValue(m_tag.GetName(), charName, m_tag.GetType());
 		return true;
 	} else {
@@ -57,13 +58,13 @@ Effect * Effect_TagChange::Clone()
 	return (Effect*) newTag;
 }
 
-Effect_TraitChange::Effect_TraitChange(tinyxml2::XMLElement * element, StoryData* parentData)
+Effect_TraitChange::Effect_TraitChange(tinyxml2::XMLElement * element, StoryDataDefinition* parentData)
 	:Effect(element, parentData)
 {
 	TODO("Implement trait change effect");
 }
 
-bool Effect_TraitChange::ApplyToState(StoryState * state)
+bool Effect_TraitChange::ApplyToState(StoryState * state, StoryData* instancedData)
 {
 	TODO("Implement trait change effect");
 	return true;

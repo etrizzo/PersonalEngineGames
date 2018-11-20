@@ -89,6 +89,11 @@ bool BytePacker::Write(float data, bool convertEndianness)
 	return WriteBytes(sizeof(float), &data, convertEndianness);
 }
 
+bool BytePacker::Write(int data, bool convertEndianness)
+{
+	return WriteBytes(sizeof(int), &data, convertEndianness);
+}
+
 size_t BytePacker::Read(uint16_t * outData, bool convertEndianness)
 {
 	return ReadBytes(outData, sizeof(uint16_t), convertEndianness);

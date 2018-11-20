@@ -1,15 +1,15 @@
 #include "CharacterRequirement.hpp"
 #include "Game/Character.hpp"
 #include "Game/CharacterState.hpp"
-#include "Game/StoryData.hpp"
+#include "Game/StoryDataDefinition.hpp"
 
-CharacterRequirement::CharacterRequirement(unsigned int charID, StoryData* parentData, tinyxml2::XMLElement * element)
+CharacterRequirement::CharacterRequirement(unsigned int charID, StoryDataDefinition* parentData, tinyxml2::XMLElement * element)
 {
 	m_characterID = charID;
 	m_parentData = parentData;
 }
 
-CharacterRequirement_Tag::CharacterRequirement_Tag(unsigned int charID, StoryData* parentData, tinyxml2::XMLElement * element)
+CharacterRequirement_Tag::CharacterRequirement_Tag(unsigned int charID, StoryDataDefinition* parentData, tinyxml2::XMLElement * element)
 	:CharacterRequirement(charID, parentData, element)
 {
 	std::string tagName = ParseXmlAttribute(*element, "tag", "NO_TAG");
@@ -40,7 +40,7 @@ bool CharacterRequirement_Tag::PassesRequirement(CharacterState * character)
 	}
 }
 
-CharacterRequirement_Trait::CharacterRequirement_Trait(unsigned int charID, StoryData* parentData, tinyxml2::XMLElement * element)
+CharacterRequirement_Trait::CharacterRequirement_Trait(unsigned int charID, StoryDataDefinition* parentData, tinyxml2::XMLElement * element)
 	:CharacterRequirement(charID, parentData, element)
 {
 	std::string traitString = ParseXmlAttribute(*element, "trait", "NO_TRAIT");

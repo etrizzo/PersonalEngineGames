@@ -79,5 +79,7 @@ void CommandPrintStory(Command& cmd);
 void CommandFindBranches(Command& cmd);
 void CommandSetBranchChance(Command& cmd);
 
+void CommandResetGraph(Command& cmd);
 void CommandGenerateSkeleton(Command& cmd);
 void CommandAddDetails(Command& cmd);
+void CommandGeneratePairs(Command& cmd);
