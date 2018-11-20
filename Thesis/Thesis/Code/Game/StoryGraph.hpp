@@ -6,7 +6,7 @@ class Character;
 
 
 #define START_NODE_POSITION (Vector2(.1f, .5f))
-#define END_NODE_POSITION (Vector2(1.4f, .5f))
+#define END_NODE_POSITION (Vector2(1.66f, .5f))
 #define NODE_SIZE (.04f)
 #define NODE_FONT_SIZE (.0083f)
 #define EDGE_FONT_SIZE (.01f)
@@ -202,6 +202,9 @@ public:
 	static std::vector<StoryDataDefinition*> s_detailNodes;
 	static StoryDataDefinition* GetRandomPlotNode();
 	static StoryDataDefinition* GetRandomDetailNode();
+
+	static StoryDataDefinition* GetDetailNodeWithWeights(StoryState* edge, float minFitness = 2.f);
+	static float CalculateEdgeFitnessForData(StoryState* edge, StoryDataDefinition* data);
 };
 
 

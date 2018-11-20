@@ -32,7 +32,7 @@
 					</CharacterRequirements>
 				</Modifier>
 				<EffectSet>
-					<!--<TagChange character="*0*" hasTag="isFighting" target="false" />-->
+					<TagChange character="*0*" hasTag="isFighting" target="false" />
 				</EffectSet>
 			</Action>
 

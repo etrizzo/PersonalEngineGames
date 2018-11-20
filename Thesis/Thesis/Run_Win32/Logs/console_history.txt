@@ -1,9 +1,9 @@
 set_branch_chance .5
 quit
+generate_pairs 1
+reset_graph
 find_path
 generate_pairs 7
-reset_graph
-generate_pairs 1
 generate_details
 generate_skeleton
 generate_details 

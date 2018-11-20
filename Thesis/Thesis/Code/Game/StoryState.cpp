@@ -26,9 +26,14 @@ void StoryState::UpdateFromNode(StoryData * data)
 {
 	TODO("update effect nodes");
 	//if (data->AreAllCharactersSet()){
-		for(Effect* effect :data->m_action->m_definition->m_effects->m_effects){
-			effect->ApplyToState(this, data);
-		}
+	// apply specific data effects
+	for(Effect* effect :data->m_action->m_definition->m_effects->m_effects){
+		effect->ApplyToState(this, data);
+	}
+	//apply the definitions default effects
+	for (Effect* effect : data->m_definition->m_guaranteedEffects->m_effects){
+		effect->ApplyToState(this, data);
+	}
 	//}
 	//if (m_cost > 0.f){
 	//	m_cost = -1.f;

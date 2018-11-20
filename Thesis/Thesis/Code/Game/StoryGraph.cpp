@@ -281,14 +281,18 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 	int tries = 0;
 	while (tries < maxTries && !added){
 		//reroll if you get a duplicate node.
-		StoryDataDefinition* sourceNode = StoryGraph::GetRandomDetailNode();
+		StoryDataDefinition* sourceNode = StoryGraph::GetDetailNodeWithWeights(edge->GetCost(), 3.f);
 		bool alreadyUsed = true;
 		int rerollRepeatTries = 0;
 		while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
 			if (Contains(m_usedDetailNodes, sourceNode)){
 				alreadyUsed = true;
 				if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
-					sourceNode =  StoryGraph::GetRandomDetailNode();
+					if (rerollRepeatTries < (float) MAX_REPEAT_REROLLS * .5f){
+						sourceNode = StoryGraph::GetDetailNodeWithWeights(edge->GetCost(), 3.f);
+					} else {
+						sourceNode = StoryGraph::GetDetailNodeWithWeights(edge->GetCost(), 1.f);
+					}
 				} else {
 					alreadyUsed = false;		//let it slide based on chance
 				}
@@ -688,8 +692,13 @@ void StoryGraph::FindPath(StoryHeuristicCB heuristic)
 
 		//break if the end node is found
 		if (currentNode == m_endNode){
-			//return the path
-			break;
+			if (openNodes.empty()){
+				//return the path
+				break;
+			} else {
+				continue;
+			}
+			
 		} else {
 			//otherwise, get all out-bound neighbors.
 			//std::vector<StoryNode*> outboundNeighbors;
@@ -700,6 +709,9 @@ void StoryGraph::FindPath(StoryHeuristicCB heuristic)
 				//if the new path is faster than the old path, update cost
 				StoryState* edgeState = heuristic(edge, &m_targetStructure);
 				float newCost = cost + (float) (edgeState->GetCost());
+				if (newCost > 9000.f){
+					ConsolePrintf("Big Cost :(");
+				}
 				if (neighbor->GetShortestDistance() > newCost){
 					neighbor->SetShortestDistance(newCost);
 					// if the neighbor isn't in your list of open nodes, add it
@@ -712,6 +724,8 @@ void StoryGraph::FindPath(StoryHeuristicCB heuristic)
 					if (!contains){
 						openNodes.insert(openNodes.begin(), neighbor);
 					}
+				} else if (neighbor->GetShortestDistance() > 9000.f){
+					ConsolePrintf("Big Distance :(");
 				}
 			}
 		}
@@ -1346,6 +1360,51 @@ StoryDataDefinition * StoryGraph::GetRandomDetailNode()
 	return StoryGraph::s_detailNodes[i];
 }
 
+StoryDataDefinition * StoryGraph::GetDetailNodeWithWeights(StoryState * edge, float minFitness)
+{
+	std::vector<StoryDataDefinition*> fitNodes = std::vector<StoryDataDefinition*>();
+	std::vector<StoryDataDefinition*> defaultNodes = std::vector<StoryDataDefinition*>();
+	for(StoryDataDefinition* data : StoryGraph::s_detailNodes){
+		float fitness = CalculateEdgeFitnessForData(edge, data);
+		if (fitness >= minFitness){
+			fitNodes.push_back(data);
+		} else {
+			defaultNodes.push_back(data);
+		}
+	}
+
+	if (fitNodes.size() > 0){
+		int i = GetRandomIntLessThan(fitNodes.size());
+		return fitNodes[i];
+	} else {
+		int i = GetRandomIntLessThan(defaultNodes.size());
+		return defaultNodes[i];
+	}
+}
+
+float StoryGraph::CalculateEdgeFitnessForData(StoryState * edge, StoryDataDefinition * data)
+{
+	float fitness = 0.f;
+	for (CharacterState* charState : edge->m_characterStates){
+		Character* character = charState->m_character;
+		CharacterRequirementSet* reqs = data->GetRequirementsForCharacter(character);
+		if (reqs != nullptr){
+			//if the edges' character has requirements already established in this node, check them.
+			if (reqs->DoesCharacterMeetRequirements(charState)){
+				//if any character doesn't meet the requirements, return false.
+				fitness+= 1.f;
+			} else {
+				fitness-= 1.f;
+			}
+		} else {
+			//it technically works so like +1 i guess
+			fitness+=1.f;
+		}
+	}
+	//if no characters violated requirements, return true.
+	return fitness;
+}
+
 StoryState* ShortestPathHeuristic(StoryEdge * edge, StoryStructure * currentStructure)
 {
 	return edge->GetCost();
@@ -1368,6 +1427,7 @@ StoryState * CalculateChanceHeuristic(StoryEdge * edge, StoryStructure * current
 	if (cost >= 9000.f){
 		ConsolePrintf("BigBoy");
 	}
+	edge->GetCost()->m_cost = cost;
 	//edge->GetCost()->m_characterStates.size();
 	return new StoryState(cost, edge->GetCost()->m_characterStates.size());
 }
