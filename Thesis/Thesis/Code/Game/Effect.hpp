@@ -7,6 +7,12 @@ class StoryData;
 class StoryDataDefinition;
 class CharacterState;
 
+enum eEffectType{
+	EFFECT_TYPE_CHARACTER,
+	EFFECT_TYPE_STORY,
+	NUM_EFFECT_TYPES
+};
+
 class Effect{
 public:
 	Effect(){};
@@ -16,6 +22,7 @@ public:
 	virtual bool ApplyToCharacterState(CharacterState* state) = 0;
 	virtual Effect* Clone() = 0;
 
+	eEffectType m_type = EFFECT_TYPE_CHARACTER;
 	unsigned int m_characterID = (unsigned int) -1;
 	StoryDataDefinition* m_parentData = nullptr;
 };

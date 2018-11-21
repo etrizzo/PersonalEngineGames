@@ -3,6 +3,7 @@
 #include "Game/StoryRequirement.hpp"
 #include "Game/StoryState.hpp"
 
+//requirements for the overall story state. lives on StoryDataDefinition
 class StoryRequirementSet{
 public:
 	StoryRequirementSet(){};

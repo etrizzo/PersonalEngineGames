@@ -201,11 +201,18 @@ StoryNode * StoryGraph::AddSinglePlotNode()
 	while(!added){
 		//re-roll if you get a duplicate node.
 		StoryDataDefinition* sourceNode = StoryGraph::GetRandomPlotNode();
-		bool alreadyUsed = false;
-		if (Contains(m_usedPlotNodes, sourceNode)){
-			alreadyUsed = true;
-			if (CheckRandomChance(REROLL_REPEAT_PLOT_NODE_CHANCE)){
-				sourceNode =  StoryGraph::GetRandomPlotNode();
+		bool alreadyUsed = true;
+		int rerollRepeatTries = 0;
+		while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
+			if (Contains(m_usedPlotNodes, sourceNode)){
+				alreadyUsed = true;
+				if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
+					sourceNode = StoryGraph::GetRandomPlotNode();
+				} else {
+					alreadyUsed = false;		//let it slide based on chance
+				}
+			} else {
+				alreadyUsed = false;
 			}
 		}
 
@@ -393,11 +400,11 @@ bool StoryGraph::AddPlotNode(StoryNode* newPlotNode)
 
 			}
 			//if you didn't branch and find a spot, add all your outbound edges to the open edges list
-			if (!foundSpot){
+			/*if (!foundSpot){
 				for (StoryEdge* edge : edgeToAddAt->GetEnd()->m_outboundEdges){
 					openEdges.push(edge);
 				}
-			}
+			}*/
 		} else {
 			foundSpot = true;
 			break;
@@ -1383,9 +1390,27 @@ StoryDataDefinition * StoryGraph::GetDetailNodeWithWeights(StoryState * edge, fl
 	for(StoryDataDefinition* data : StoryGraph::s_detailNodes){
 		float fitness = CalculateEdgeFitnessForData(edge, data);
 		if (fitness >= minFitness){
-			fitNodes.push_back(data);
+			if (fitness >= 1.f){
+				//try to populate the array with the most fit nodes being more likely
+				int intFitness = (int) fitness;
+				for (int i = 0; i < intFitness; i++){
+					fitNodes.push_back(data);
+				}
+			} else {
+				//by default the node is added once to the array
+				fitNodes.push_back(data);
+			}
 		} else {
-			defaultNodes.push_back(data);
+			if (fitness >= 1.f){
+				//try to populate the array with the most fit nodes being more likely
+				int intFitness = (int) fitness;
+				for (int i = 0; i < intFitness; i++){
+					defaultNodes.push_back(data);
+				}
+			} else {
+				//by default the node is added once to the array
+				defaultNodes.push_back(data);
+			}
 		}
 	}
 
@@ -1446,7 +1471,7 @@ StoryState * CalculateChanceHeuristic(StoryEdge * edge)
 	if (CheckRandomChance(baseChance)){
 		cost = 1;
 	} else {
-		cost = 100 * baseChance;
+		cost = 100 * (1 - baseChance);
 	}
 	if (cost >= 9000.f){
 		ConsolePrintf("BigBoy");

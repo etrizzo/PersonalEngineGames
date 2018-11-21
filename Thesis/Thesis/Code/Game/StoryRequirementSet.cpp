@@ -18,7 +18,7 @@ void StoryRequirementSet::InitFromXML(tinyxml2::XMLElement * setElement, StoryDa
 		if (newRequirement != nullptr){
 			m_requirements.push_back(newRequirement);
 		} else {
-			ConsolePrintf(RGBA::RED, "Error parsing character requirements - no identified requirement type");
+			ConsolePrintf(RGBA::RED, "Error parsing story requirements - no identified requirement type");
 		}
 	}
 }

@@ -104,6 +104,13 @@ void StoryDataDefinition::InitAsDetailNode(tinyxml2::XMLElement * nodeElement)
 		ActionDefinition* actionDef = new ActionDefinition(actionElement, this);
 		m_actions.push_back(actionDef);
 	}
+
+	tinyxml2::XMLElement* storyEffects = nodeElement->FirstChildElement("StoryEffects");
+	if (storyEffects != nullptr){
+		m_storyEffects = new EffectSet(storyEffects->FirstChildElement("EffectSet"), this);
+	} else {
+		m_storyEffects = new EffectSet((tinyxml2::XMLElement*) nullptr, this);
+	}
 }
 
 void StoryDataDefinition::InitAsPlotNode(tinyxml2::XMLElement * nodeElement)
@@ -146,12 +153,20 @@ void StoryDataDefinition::InitAsPlotNode(tinyxml2::XMLElement * nodeElement)
 
 
 	//parse effects
-	tinyxml2::XMLElement* allEffects = nodeElement->FirstChildElement("StoryEffects");
-	ActionDefinition* actionDef = new ActionDefinition(actionText, allEffects, this);
+	tinyxml2::XMLElement* allCharacterEffects = nodeElement->FirstChildElement("CharacterEffects");
+	ActionDefinition* actionDef = new ActionDefinition(actionText, allCharacterEffects, this);
 	m_actions.push_back(actionDef);
 	//m_effectSet = new EffectSet(allEffects->FirstChildElement("EffectSet"), this);
 	
-	m_guaranteedEffects = new EffectSet(allEffects, this);
+	m_guaranteedEffects = new EffectSet(allCharacterEffects, this);
+
+	tinyxml2::XMLElement* storyEffects = nodeElement->FirstChildElement("StoryEffects");
+	if (storyEffects != nullptr){
+		m_storyEffects = new EffectSet(storyEffects->FirstChildElement("EffectSet"), this);
+	} else {
+		m_storyEffects = new EffectSet((tinyxml2::XMLElement*) nullptr, this);
+	}
+	
 }
 
 std::string StoryDataDefinition::GetName() const

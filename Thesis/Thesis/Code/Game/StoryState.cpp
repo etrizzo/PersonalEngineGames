@@ -34,6 +34,11 @@ void StoryState::UpdateFromNode(StoryData * data)
 	for (Effect* effect : data->m_definition->m_guaranteedEffects->m_effects){
 		effect->ApplyToState(this, data);
 	}
+
+	//apply the story effects
+	for (Effect* effect : data->m_definition->m_storyEffects->m_effects){
+		effect->ApplyToState(this, data);
+	}
 	//}
 	//if (m_cost > 0.f){
 	//	m_cost = -1.f;

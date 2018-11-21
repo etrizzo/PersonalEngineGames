@@ -58,6 +58,7 @@ public:
 
 
 
+
 	//Strings m_actions;		//detail nodes 4 now
 	//Strings m_actionsWithCharacters;	//detail nodes 4 now
 	//std::vector<CharacterRequirementSet*> m_characterReqs;

@@ -23,18 +23,21 @@
 			<EffectSet chance="default">
 				<TagChange character="0" hasTag = "isKiller" target="true"/>
 				<TagChange character="1" hasTag = "isMurderWeapon" target="true"/>
+				<StoryTagChange hasTag="murderOcurred" target="true" />
 			</EffectSet>
 		</StoryEffects>
 	</PlotGrammar>
 
 
 
-	<PlotGrammar>
-		<Action text="*0* investigates *1*" />
+	<PlotGrammar name="InvestigateRoom">
+		<Action text="*0* investigates *1*" />	
+		<Characters>
 			<Character id = "*0*" title="investigator"/>
 			<Character id = "*1*" title="room" />
-			<Character id = "*2*" title="murderroom" />
-		<Characters>
-
 		</Characters>
+
+		<StoryRequirements>
+			<Requirement tag="murderOcurred" target="true" />
+		</StoryRequirements>
 	</PlotGrammar>

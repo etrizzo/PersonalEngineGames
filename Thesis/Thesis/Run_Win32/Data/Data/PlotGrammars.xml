@@ -14,7 +14,7 @@
 		<StoryRequirements>
 			<StoryRequirement feeling="tension" value="15" compare="greater" />
 		</StoryRequirements>
-		<StoryEffects>
+		<CharacterEffects>
 			<EffectSet chance="default">
 				<TraitChange character="0" trait="Social" change="-10" />
 				<TraitChange character="1" trait="Social" change="-10" />
@@ -23,7 +23,7 @@
 				<TagChange character="1" hasTag = "isFighting" target="*0*" type="character"/>
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
-		</StoryEffects>
+		</CharacterEffects>
 	</PlotGrammar>
 
 
@@ -42,14 +42,14 @@
 		<StoryRequirements>
 			<StoryRequirement feeling="tension" value="15" compare="greater" />
 		</StoryRequirements>
-		<StoryEffects>
+		<CharacterEffects>
 			<EffectSet chance="default">
 				<TagChange character="1" hasTag = "isAngry" target="*0*" type="character"/>
 				<TagChange character="1" hasTag = "hasTreasure" target="false" />
 				<TagChange character="0" hasTag = "hasTreasure" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
-		</StoryEffects>
+		</CharacterEffects>
 	</PlotGrammar>
 
 
@@ -64,14 +64,14 @@
 		<StoryRequirements>
 			<StoryRequirement feeling="tension" value="15" compare="greater" />
 		</StoryRequirements>
-		<StoryEffects>
+		<CharacterEffects>
 			<EffectSet chance="default">
 				<TraitChange character="0" trait="Social" change="-10" />
 				<TagChange character="0" hasTag = "onQuest" target="true" />
 				<TagChange character="0" hasTag = "inCave" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
-		</StoryEffects>
+		</CharacterEffects>
 	</PlotGrammar>
 
 	<PlotGrammar>
@@ -85,14 +85,14 @@
 		<StoryRequirements>
 			<StoryRequirement feeling="tension" value="15" compare="greater" />
 		</StoryRequirements>
-		<StoryEffects>
+		<CharacterEffects>
 			<EffectSet chance="default">
 				<TraitChange character="0" trait="Social" change="-10" />
 				<TagChange character="0" hasTag = "onQuest" target="true" />
 				<TagChange character="0" hasTag = "inDungeon" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
-		</StoryEffects>
+		</CharacterEffects>
 	</PlotGrammar>
 
 	<PlotGrammar>
@@ -107,12 +107,12 @@
 		<StoryRequirements>
 			<StoryRequirement feeling="tension" value="15" compare="greater" />
 		</StoryRequirements>
-		<StoryEffects>
+		<CharacterEffects>
 			<EffectSet chance="default">
 				<TagChange character="0" hasTag = "hasTreasure" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
-		</StoryEffects>
+		</CharacterEffects>
 	</PlotGrammar>
 
 	<PlotGrammar>
@@ -127,12 +127,12 @@
 		<StoryRequirements>
 			<StoryRequirement feeling="tension" value="15" compare="greater" />
 		</StoryRequirements>
-		<StoryEffects>
+		<CharacterEffects>
 			<EffectSet chance="default">
 				<TagChange character="0" hasTag = "hasTreasure" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
-		</StoryEffects>
+		</CharacterEffects>
 	</PlotGrammar>
 
 
@@ -147,12 +147,12 @@
 		<StoryRequirements>
 			<StoryRequirement feeling="tension" value="15" compare="greater" />
 		</StoryRequirements>
-		<StoryEffects>
+		<CharacterEffects>
 			<EffectSet chance="default">
 				<TagChange character="0" hasTag = "hasTreasure" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
-		</StoryEffects>
+		</CharacterEffects>
 	</PlotGrammar>
 
 	<PlotGrammar>
@@ -167,12 +167,12 @@
 		<StoryRequirements>
 			<StoryRequirement feeling="tension" value="15" compare="greater" />
 		</StoryRequirements>
-		<StoryEffects>
+		<CharacterEffects>
 			<EffectSet chance="default">
 				<TagChange character="0" hasTag = "hasTreasure" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
-		</StoryEffects>
+		</CharacterEffects>
 	</PlotGrammar>
 
 
@@ -187,12 +187,12 @@
 		<StoryRequirements>
 			<StoryRequirement feeling="tension" value="15" compare="greater" />
 		</StoryRequirements>
-		<StoryEffects>
+		<CharacterEffects>
 			<EffectSet chance="default">
 				<StoryChange Action="+5" Tension="+10" /> 
 				<TagChange character="0" hasTag="isFighting" target="true" type="boolean"/>
 			</EffectSet>
-		</StoryEffects>
+		</CharacterEffects>
 	</PlotGrammar>
 
 
@@ -207,10 +207,10 @@
 		<StoryRequirements>
 			<StoryRequirement feeling="tension" value="15" compare="greater" />
 		</StoryRequirements>
-		<StoryEffects>
+		<CharacterEffects>
 			<EffectSet chance="default">
 				<StoryChange Action="+5" Tension="+10" /> 
 				<TagChange character="0" hasTag="isFighting" target="true" type="boolean"/>
 			</EffectSet>
-		</StoryEffects>
+		</CharacterEffects>
 	</PlotGrammar>

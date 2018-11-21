@@ -57,6 +57,7 @@ public:
 	//StoryRequirements m_storyReqs;
 	//EffectSet* m_effectSet;
 	EffectSet* m_guaranteedEffects = nullptr;
+	EffectSet* m_storyEffects	= nullptr;
 	std::vector<ActionDefinition*> m_actions;
 
 	float m_chanceToPlaceData = 1.f;

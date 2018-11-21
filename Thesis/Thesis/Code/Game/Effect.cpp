@@ -6,6 +6,7 @@
 
 Effect::Effect(tinyxml2::XMLElement * element, StoryDataDefinition* parentData)
 {
+	m_type = (eEffectType) ParseXmlAttribute(*element, "type", (int) EFFECT_TYPE_CHARACTER);
 	m_characterID = (unsigned int) ParseXmlAttribute(*element, "character", -1);
 	m_parentData = parentData;
 }
@@ -22,18 +23,30 @@ Effect_TagChange::Effect_TagChange(tinyxml2::XMLElement * element, StoryDataDefi
 
 bool Effect_TagChange::ApplyToState(StoryState * state, StoryData* instancedData)
 {
-	Character* character = instancedData->m_characters[m_characterID];
-	CharacterState* characterState = state->GetCharacterStateForCharacter(character);
-	characterState->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
-	if (m_tag.GetType() == "character"){
-		std::string charName = instancedData->ReadCharacterNameFromDataString(m_tag.GetValue());
-		characterState->m_tags.SetTagWithValue(m_tag.GetName(), charName, m_tag.GetType());
-		return true;
-	} else {
+	if (m_type == EFFECT_TYPE_CHARACTER){
+		Character* character = instancedData->m_characters[m_characterID];
+		CharacterState* characterState = state->GetCharacterStateForCharacter(character);
 		characterState->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
+		if (m_tag.GetType() == "character"){
+			std::string charName = instancedData->ReadCharacterNameFromDataString(m_tag.GetValue());
+			characterState->m_tags.SetTagWithValue(m_tag.GetName(), charName, m_tag.GetType());
+			return true;
+		} else {
+			characterState->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
+			return true;
+		}
 		return true;
+	} else if (m_type == EFFECT_TYPE_STORY){
+		if (m_tag.GetType() == "character"){
+			std::string charName = instancedData->ReadCharacterNameFromDataString(m_tag.GetValue());
+			state->m_storyTags.SetTagWithValue(m_tag.GetName(), charName, m_tag.GetType());
+			return true;
+		} else {
+			state->m_storyTags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
+			return true;
+		}
 	}
-	return true;
+	return false;
 }
 
 bool Effect_TagChange::ApplyToCharacterState(CharacterState * state)

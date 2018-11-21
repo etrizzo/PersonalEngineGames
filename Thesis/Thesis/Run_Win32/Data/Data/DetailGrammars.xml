@@ -86,6 +86,7 @@
 			<Character index="0">
 				<Requirement tag="isAlive" target="true" />
 				<Requirement tag="inDungeon" target="true" />
+				<Requirement tag="isFighting" target="false" />
 			</Character>
 		</CharacterRequirements>
 		<Actions>
@@ -114,6 +115,15 @@
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inCave" target="true" />
+				<Requirement tag="isFighting" target="false" />
+			</Character>
+		</CharacterRequirements>
+
 		<Actions>
 			<Action text="*0* gets lost." >
 				<EffectSet>
@@ -132,12 +142,7 @@
 				</EffectSet>
 			</Action>
 		</Actions>
-		<CharacterRequirements>
-			<Character index="0">
-				<Requirement tag="isAlive" target="true" />
-				<Requirement tag="inCave" target="true" />
-			</Character>
-		</CharacterRequirements>
+
 		<StoryRequirements>
 		</StoryRequirements>
 		<StoryEffects>
