@@ -185,6 +185,17 @@ Vector3 Vector2::GetVector3() const
 	return Vector3(x,y,0);
 }
 
+Vector2 Vector2::RotateDegrees(float degrees)
+{
+	//rotate using rotation matrix math
+	float cosTheta = CosDegreesf(degrees);
+	float sinTheta = SinDegreesf(degrees);
+
+	float newX = (cosTheta * x) - (sinTheta * y);
+	float newY = (sinTheta * x) + (cosTheta * y);
+	return Vector2(newX, newY);
+}
+
 void Vector2::SetFromText(const char * text)
 {
 	std::string stringText = (std::string) text;

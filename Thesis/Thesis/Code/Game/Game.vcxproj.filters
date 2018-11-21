@@ -52,12 +52,6 @@
     <ClCompile Include="StoryGraph.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="StoryStructure.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="StoryRequirements.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
     <ClCompile Include="EffectSet.cpp">
       <Filter>General</Filter>
     </ClCompile>
@@ -95,6 +89,12 @@
       <Filter>General</Filter>
     </ClCompile>
     <ClCompile Include="ActionModifier.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="StoryRequirementSet.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="StoryRequirement.cpp">
       <Filter>General</Filter>
     </ClCompile>
   </ItemGroup>
@@ -141,12 +141,6 @@
     <ClInclude Include="Character.hpp">
       <Filter>General</Filter>
     </ClInclude>
-    <ClInclude Include="StoryStructure.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="StoryRequirements.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
     <ClInclude Include="EffectSet.hpp">
       <Filter>General</Filter>
     </ClInclude>
@@ -184,6 +178,12 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="ActionModifier.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="StoryRequirementSet.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="StoryRequirement.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

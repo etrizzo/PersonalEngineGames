@@ -100,7 +100,9 @@ void Game::GenerateGraph()
 {
 	m_graph.Clear();
 
-	m_graph.RunGeneration(NUM_PLOT_NODES_TO_GENERATE,NUM_DETAIL_NODES_TO_GENERATE + NUM_PLOT_NODES_TO_GENERATE);
+	//m_graph.RunGeneration(NUM_PLOT_NODES_TO_GENERATE,NUM_DETAIL_NODES_TO_GENERATE + NUM_PLOT_NODES_TO_GENERATE);
+	m_graph.GenerateStartAndEnd();
+	GenerateNodePairs(NUM_NODE_PAIRS_TO_GENERATE);
 	m_graph.RunNodeAdjustments();
 }
 

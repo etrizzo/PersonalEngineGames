@@ -15,4 +15,6 @@ public:
 
 	StoryDataDefinition* m_parentData;
 
+	bool PassesForEdge(StoryData* parentData, StoryState* edge);
+
 };

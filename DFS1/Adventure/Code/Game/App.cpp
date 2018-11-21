@@ -4,6 +4,7 @@
 #include "Engine/Renderer/Camera.hpp"
 #include "Game/Map.hpp"
 #include "Game/Party.hpp"
+#include "Engine/Networking/RemoteCommandService.hpp"
 using namespace std;
 
 App::~App()
@@ -59,6 +60,8 @@ App::App(HINSTANCE applicationInstanceHandle)
 	RegisterCommands();
 	CommandStartup();
 	g_theRenderer->SetCamera(g_theGame->m_camera);
+
+	RemoteCommandService::GetInstance()->Startup();
 }
 
 

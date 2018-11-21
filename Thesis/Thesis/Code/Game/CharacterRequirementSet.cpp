@@ -23,7 +23,20 @@ void CharacterRequirementSet::InitFromXML(tinyxml2::XMLElement * setElement, Sto
 	}
 }
 
-bool CharacterRequirementSet::DoesCharacterMeetRequirements(CharacterState* character)
+float CharacterRequirementSet::GetCharacterFitness(CharacterState * character)
+{
+	float baseFitness = 0.f;
+	for (CharacterRequirement* req : m_requirements){
+		if (req->PassesRequirement(character)){
+			baseFitness += req->m_fitnessWeight;
+		} else {
+			baseFitness -= req->m_fitnessWeight;
+		}
+	}
+	return baseFitness;
+}
+
+bool CharacterRequirementSet::DoesCharacterMeetAllRequirements(CharacterState* character)
 {
 	for (CharacterRequirement* req : m_requirements){
 		if (!req->PassesRequirement(character)){

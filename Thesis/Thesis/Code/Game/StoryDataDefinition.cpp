@@ -67,6 +67,8 @@ void StoryDataDefinition::InitAsDetailNode(tinyxml2::XMLElement * nodeElement)
 	//m_characterReqs=std::vector<CharacterRequirementSet*>();
 	m_numCharacters = 0;
 
+	m_chanceToPlaceData = ParseXmlAttribute(*nodeElement, "chanceToPlace", 1.f);
+
 	//parse characters
 	tinyxml2::XMLElement* charactersElement = nodeElement->FirstChildElement("Characters");
 	for (tinyxml2::XMLElement* charElement = charactersElement->FirstChildElement("Character"); charElement != nullptr; charElement = charElement->NextSiblingElement("Character")){
@@ -108,6 +110,8 @@ void StoryDataDefinition::InitAsPlotNode(tinyxml2::XMLElement * nodeElement)
 {
 	tinyxml2::XMLElement* actionElement = nodeElement->FirstChildElement("Action");
 	std::string actionText = ParseXmlAttribute(*actionElement, "text", "NO_ACTION");
+
+	m_chanceToPlaceData = ParseXmlAttribute(*nodeElement, "chanceToPlace", 1.f);
 
 	TODO("Pull num characters from character table in data")
 	m_characters = std::vector<Character*>();
@@ -216,7 +220,7 @@ bool StoryDataDefinition::DoesCharacterMeetSlotRequirementsAtEdge(Character * ch
 	CharacterState* resultingState = resultState->GetCharacterStateForCharacter(character);
 
 	//check if the change would fit on this edge
-	bool meetsExistingConditions = m_characterReqs[charSlot]->DoesCharacterMeetRequirements(charState);
+	bool meetsExistingConditions = m_characterReqs[charSlot]->DoesCharacterMeetAllRequirements(charState);
 	if (meetsExistingConditions){
 		//check if the change would fuck up future nodes
 		StoryData* endData = atEdge->GetEnd()->m_data;
@@ -224,7 +228,7 @@ bool StoryDataDefinition::DoesCharacterMeetSlotRequirementsAtEdge(Character * ch
 		//NOTE: this should maybe be a recursive call to DoesCharacterMeetSlotRequirements?
 		CharacterRequirementSet* charReqs = endData->GetRequirementsForCharacter(character);
 		if (charReqs != nullptr){
-			bool meetsFutureConditions = charReqs->DoesCharacterMeetRequirements(resultingState);
+			bool meetsFutureConditions = charReqs->DoesCharacterMeetAllRequirements(resultingState);
 			if (meetsFutureConditions){
 				delete resultingState;
 				return true;
@@ -291,6 +295,16 @@ CharacterRequirementSet* StoryDataDefinition::GetRequirementsForCharacter(Charac
 	}
 	return nullptr;
 
+}
+
+float StoryDataDefinition::GetEdgeFitness(StoryState * edgeState)
+{
+	return m_storyReqs->GetEdgeFitness(edgeState);
+}
+
+bool StoryDataDefinition::DoesEdgeMeetStoryRequirements(StoryState * edgeState)
+{
+	return m_storyReqs->DoesEdgeMeetAllRequirements(edgeState);
 }
 
 Character* StoryDataDefinition::GetCharacterFromDataString(std::string data)

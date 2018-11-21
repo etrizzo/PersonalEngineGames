@@ -1,6 +1,6 @@
 #pragma once
 #include "Game/GameCommon.hpp"
-#include "Game/StoryRequirements.hpp"
+#include "Game/StoryRequirementSet.hpp"
 #include "Game/CharacterRequirementSet.hpp"
 #include "Game/EffectSet.hpp"
 #include "Game/StoryDataDefinition.hpp"
@@ -21,6 +21,8 @@ public:
 
 	std::string GetName() const;
 	std::string ToString() const;
+
+	float UpdateAndGetChance(StoryState* incomingEdge);
 
 	//state utilities
 	//updates node's story state w/ outbound edges with the effects set

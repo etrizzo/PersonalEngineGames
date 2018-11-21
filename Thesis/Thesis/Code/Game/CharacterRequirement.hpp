@@ -18,6 +18,7 @@ public:
 
 	unsigned int m_characterID = (unsigned int) -1;
 	StoryDataDefinition* m_parentData;
+	float m_fitnessWeight = 1.f;
 };
 
 

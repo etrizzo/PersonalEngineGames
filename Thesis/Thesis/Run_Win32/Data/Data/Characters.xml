@@ -7,6 +7,7 @@
 
 		<Tags>
 			<Tag tag="isAlive" value="true" type="bool"/>
+			<Tag tag="hasNightVision" value="true" type="bool" />
 		</Tags>
 
 		<!--

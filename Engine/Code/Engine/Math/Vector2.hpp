@@ -36,6 +36,8 @@ public:
 	static Vector2 MakeDirectionAtDegrees( float degrees);			//Creates a vector at angle specified
 	Vector3 GetVector3() const;
 
+	Vector2 RotateDegrees(float degrees);
+
 	void SetFromText(const char* text);
 
 

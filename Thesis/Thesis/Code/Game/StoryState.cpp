@@ -107,12 +107,18 @@ CharacterState * StoryState::GetCharacterStateForCharacterIndex(int charIndex)
 	return nullptr;
 }
 
-float StoryState::GetBaseChance() const
+void StoryState::SetStartAndEnd(StoryNode * start, StoryNode * end)
+{
+	m_startData = start->m_data;
+	m_enddata = end->m_data;
+}
+
+float StoryState::UpdateAndGetChance()
 {
 	if (m_enddata->m_type == DEFAULT_NODE){
 		return 1.f;
 	}
-	return m_enddata->m_action->m_instancedChance;
+	return m_enddata->UpdateAndGetChance(this);
 }
 
 void StoryState::SetAsVoid()

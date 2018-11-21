@@ -24,8 +24,11 @@ public:
 	CharacterState* GetCharacterStateAtIndex(int index);
 	CharacterState* GetCharacterStateForCharacterIndex(int charIndex);
 
-	float GetBaseChance() const;
+	void SetStartAndEnd(StoryNode* start, StoryNode* end);
+	float UpdateAndGetChance();
 	void SetAsVoid();
+
+	Tags m_storyTags = Tags();
 
 	StoryData* m_startData = nullptr;
 	StoryData* m_enddata = nullptr;

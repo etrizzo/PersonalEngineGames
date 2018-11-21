@@ -7,6 +7,7 @@ CharacterRequirement::CharacterRequirement(unsigned int charID, StoryDataDefinit
 {
 	m_characterID = charID;
 	m_parentData = parentData;
+	m_fitnessWeight = ParseXmlAttribute(*element, "weight", m_fitnessWeight);
 }
 
 CharacterRequirement_Tag::CharacterRequirement_Tag(unsigned int charID, StoryDataDefinition* parentData, tinyxml2::XMLElement * element)

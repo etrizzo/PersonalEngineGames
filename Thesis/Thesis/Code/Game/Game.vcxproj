@@ -310,9 +310,9 @@
     <ClCompile Include="StoryData.cpp" />
     <ClCompile Include="StoryDataDefinition.cpp" />
     <ClCompile Include="StoryGraph.cpp" />
-    <ClCompile Include="StoryRequirements.cpp" />
+    <ClCompile Include="StoryRequirementSet.cpp" />
     <ClCompile Include="StoryState.cpp" />
-    <ClCompile Include="StoryStructure.cpp" />
+    <ClCompile Include="StoryRequirement.cpp" />
     <ClCompile Include="TagPair.cpp" />
     <ClCompile Include="Tags.cpp" />
   </ItemGroup>
@@ -346,9 +346,9 @@
     <ClInclude Include="StoryData.hpp" />
     <ClInclude Include="StoryDataDefinition.hpp" />
     <ClInclude Include="StoryGraph.hpp" />
-    <ClInclude Include="StoryRequirements.hpp" />
+    <ClInclude Include="StoryRequirementSet.hpp" />
     <ClInclude Include="StoryState.hpp" />
-    <ClInclude Include="StoryStructure.hpp" />
+    <ClInclude Include="StoryRequirement.hpp" />
     <ClInclude Include="TagPair.hpp" />
     <ClInclude Include="Tags.hpp" />
   </ItemGroup>

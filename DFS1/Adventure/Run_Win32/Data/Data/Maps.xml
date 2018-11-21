@@ -178,7 +178,7 @@
     </GenerationSteps>
   </MapDefinition>
 
-  <MapDefinition name="Cellar" defaultTile="StoneBrick" width="10~15" height="10~15" soundtrack="Dark Descent.mp3">
+  <MapDefinition name="Cellar" defaultTile="StoneBrick" width="20~25" height="20~25" soundtrack="Dark Descent.mp3">
     <GenerationSteps>
       <Mutate ifType="StoneBrick" toType="MossyStoneBrick" chanceToMutate=".4"/>
       <Mutate ifType="MossyStoneBrick" toType="CrackedStoneBrick" chanceToMutate=".4"/>
@@ -212,6 +212,11 @@
       <CellularAutomata iterations="3" ifType="Dirt" ifNeighborType="Grass" changeToType="Grass" ifNeighborCount="5~8"/>
       <CellularAutomata iterations="3" ifType="DarkDirt" ifNeighborType="Grass" changeToType="Grass" ifNeighborCount="5~8"/>
 
+      <!--
+      <CellularAutomata iterations="3" ifType="Grass" ifNeighborType="Water" changeToType="Sand" ifNeighborCount="2~8" />
+      <CellularAutomata iterations="3" ifType="Flowers" ifNeighborType="Water" changeToType="Sand" ifNeighborCount="2~8" />
+      <CellularAutomata iterations="3" ifType="LightFlowers" ifNeighborType="Water" changeToType="Sand" ifNeighborCount="2~8" />
+    -->
     </GenerationSteps>
 </MapDefinition>
 

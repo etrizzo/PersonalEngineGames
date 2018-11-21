@@ -123,7 +123,7 @@ void StoryGraph::RunGeneration(int numPlotNodes, int desiredSize)
 
 void StoryGraph::GenerateSkeleton(int numPlotNodes)
 {
-	m_pathFound.clear();
+	ClearSavedState();
 	GenerateStartAndEnd();
 	StoryNode* addNode = nullptr;
 	StoryData* newData = nullptr;
@@ -194,7 +194,7 @@ void StoryGraph::GenerateSkeleton(int numPlotNodes)
 
 StoryNode * StoryGraph::AddSinglePlotNode()
 {
-	m_pathFound.clear();
+	
 	bool added = false;
 	StoryNode* addNode = nullptr;
 	StoryData* newData = nullptr;
@@ -231,7 +231,7 @@ StoryNode * StoryGraph::AddSinglePlotNode()
 
 void StoryGraph::AddOutcomeNodesToPlotNode(StoryNode * plotNode)
 {
-	m_pathFound.clear();
+	ClearSavedState();
 	std::vector<StoryEdge*> edges = plotNode->m_outboundEdges;
 	int startingSize = edges.size();
 	for (int i = 0; i < startingSize; i++){
@@ -249,7 +249,7 @@ void StoryGraph::AddDetailNodesToDesiredSize(int desiredSize)
 	for (StoryEdge* edge : m_graph.m_edges){
 		skeletonEdges.push_back(edge);
 	}
-	m_pathFound.clear();
+	ClearSavedState();
 	bool canAdd = true;
 	//go through EVERY edge and try to place a detail node until there are no edges that can add OR you have too many nodes
 	canAdd = false;
@@ -363,7 +363,9 @@ bool StoryGraph::AddPlotNode(StoryNode* newPlotNode)
 
 	//walk along story until you can place the node
 	std::queue<StoryEdge*> openEdges;
-	openEdges.push(m_startNode->m_outboundEdges[0]);
+	//openEdges.push(m_startNode->m_outboundEdges[0]);
+	StoryEdge* startEdge = m_graph.m_edges[GetRandomIntLessThan(m_graph.m_edges.size())];
+	openEdges.push(startEdge);
 	StoryNode* nodeToAddAfter; 
 	StoryEdge* edgeToAddAt = nullptr;
 	bool foundSpot = false;
@@ -707,7 +709,7 @@ void StoryGraph::FindPath(StoryHeuristicCB heuristic)
 				//outboundNeighbors.push_back(edge->GetEnd());
 				StoryNode* neighbor = edge->GetEnd();
 				//if the new path is faster than the old path, update cost
-				StoryState* edgeState = heuristic(edge, &m_targetStructure);
+				StoryState* edgeState = heuristic(edge);
 				float newCost = cost + (float) (edgeState->GetCost());
 				if (newCost > 9000.f){
 					ConsolePrintf("Big Cost :(");
@@ -771,6 +773,13 @@ void StoryGraph::PrintPath()
 		ConsolePrintf(node->GetName().c_str());
 	}
 
+}
+
+void StoryGraph::ClearSavedState()
+{
+	m_pathFound.clear();
+	m_hoveredEdge = nullptr;
+	m_hoveredNode = nullptr;
 }
 
 Character * StoryGraph::GetCharacter(unsigned int index) const
@@ -1206,44 +1215,51 @@ std::vector<Character*> StoryGraph::GetCharactersForNode(StoryDataDefinition* no
 		charMeetsRequirementsArray.push_back(characterRequirementList);
 	}
 
+	std::vector<std::vector<Character*>> possiblePermutations;
 	//make an empty array
 	std::vector<Character*> charsInOrder = ClearCharacterArray(nodeDefinition->GetNumCharacters());
 
 	//try to assign characters to each character
 	//try every possible permutation for now... we don't have that many characters :/
-	for (unsigned int permutation = 0; permutation < nodeDefinition->GetNumCharacters(); permutation++){
+	//for (unsigned int permutation = 0; permutation < nodeDefinition->GetNumCharacters(); permutation++){
+	for (unsigned int permutation = 0; permutation < m_characters.size(); permutation++){
 		//for every character we have to assign, check every character in the story to see if they meet the reqs
 		for (unsigned int nodeSlot = 0; nodeSlot < nodeDefinition->GetNumCharacters(); nodeSlot++){
 			bool charSet = false;
 			for (unsigned int storyChar = 0; storyChar < m_characters.size(); storyChar++ ){
 				if (!charSet && !usedChars[storyChar]){
 					//if the character hasn't already been used, see if it meets requirements.
-					int nodeSlotIndex = (nodeSlot + permutation) % nodeDefinition->GetNumCharacters();
-					if (charMeetsRequirementsArray[storyChar][nodeSlotIndex]){
+					//int nodeSlotIndex = (nodeSlot + permutation) % nodeDefinition->GetNumCharacters();
+					int nodeSlotIndex = nodeSlot;
+					int charSlotIndex = (storyChar + permutation) % m_characters.size();
+					if (charMeetsRequirementsArray[charSlotIndex][nodeSlotIndex]){
 						//this character meets the requirement for this permutation, mark it.
-						charsInOrder[nodeSlotIndex] = m_characters[storyChar];
+						charsInOrder[nodeSlotIndex] = m_characters[charSlotIndex];
 						//node->m_data->SetCharacter(nodeSlotIndex, m_characters[storyChar]);
-						usedChars[storyChar] = true;
+						usedChars[charSlotIndex] = true;
 						charSet = true;
 					}
 				}
 			}
 		}
 
-		//if you reach the end of a permutation and not all node characters are set, 
-		// wipe and start over.
-		if (!AreAllCharactersSet(charsInOrder)){
-			charsInOrder = ClearCharacterArray(nodeDefinition->GetNumCharacters());
-			for (int i = 0; i < (int) m_characters.size(); i++){
-				usedChars[i] = false;
-			}
-		} else {
-			//otherwise, the node's characters are set! yeaaaaaay
-			return charsInOrder;
+
+		//if you reach the end of a permutation and all characters are set, cache it off.
+		// then wipe and start over.
+		if (AreAllCharactersSet(charsInOrder)){
+			possiblePermutations.push_back(charsInOrder);
+		}
+		charsInOrder = ClearCharacterArray(nodeDefinition->GetNumCharacters());
+		for (int i = 0; i < (int) m_characters.size(); i++){
+			usedChars[i] = false;
 		}
 	}
-
-	//if you reach this point, there's no permutation of characters that satisfy the node right now.
+	
+	//if we've saved any permutations that work, choose a random one.
+	if (possiblePermutations.size() > 0){
+		return possiblePermutations[GetRandomIntLessThan(possiblePermutations.size())];
+	}
+	//if not, there's no permutation of characters that satisfy the node right now.
 	return std::vector<Character*>();
 }
 
@@ -1373,13 +1389,18 @@ StoryDataDefinition * StoryGraph::GetDetailNodeWithWeights(StoryState * edge, fl
 		}
 	}
 
-	if (fitNodes.size() > 0){
-		int i = GetRandomIntLessThan(fitNodes.size());
-		return fitNodes[i];
-	} else {
-		int i = GetRandomIntLessThan(defaultNodes.size());
-		return defaultNodes[i];
-	}
+	StoryDataDefinition* chosenNode = nullptr;
+	do 
+	{
+		if (fitNodes.size() > 0){
+			int i = GetRandomIntLessThan(fitNodes.size());
+			chosenNode = fitNodes[i];
+		} else {
+			int i = GetRandomIntLessThan(defaultNodes.size());
+			chosenNode = defaultNodes[i];
+		}
+	} while (!CheckRandomChance(chosenNode->m_chanceToPlaceData));
+	return chosenNode;
 }
 
 float StoryGraph::CalculateEdgeFitnessForData(StoryState * edge, StoryDataDefinition * data)
@@ -1390,12 +1411,14 @@ float StoryGraph::CalculateEdgeFitnessForData(StoryState * edge, StoryDataDefini
 		CharacterRequirementSet* reqs = data->GetRequirementsForCharacter(character);
 		if (reqs != nullptr){
 			//if the edges' character has requirements already established in this node, check them.
-			if (reqs->DoesCharacterMeetRequirements(charState)){
-				//if any character doesn't meet the requirements, return false.
-				fitness+= 1.f;
-			} else {
-				fitness-= 1.f;
-			}
+			float charFitnessForRequirements = reqs->GetCharacterFitness(charState);
+			fitness+=charFitnessForRequirements;
+			//if (reqs->DoesCharacterMeetRequirements(charState)){
+			//	//if any character doesn't meet the requirements, return false.
+			//	fitness+= 1.f;
+			//} else {
+			//	fitness-= 1.f;
+			//}
 		} else {
 			//it technically works so like +1 i guess
 			fitness+=1.f;
@@ -1405,19 +1428,20 @@ float StoryGraph::CalculateEdgeFitnessForData(StoryState * edge, StoryDataDefini
 	return fitness;
 }
 
-StoryState* ShortestPathHeuristic(StoryEdge * edge, StoryStructure * currentStructure)
+StoryState* ShortestPathHeuristic(StoryEdge * edge)
 {
 	return edge->GetCost();
 }
 
-StoryState * RandomPathHeuristic(StoryEdge * edge, StoryStructure * currentStructure)
+StoryState * RandomPathHeuristic(StoryEdge * edge)
 {
 	return new StoryState(GetRandomFloatInRange(0.f, 10.f), 1);
 }
 
-StoryState * CalculateChanceHeuristic(StoryEdge * edge, StoryStructure * currentStructure)
+StoryState * CalculateChanceHeuristic(StoryEdge * edge)
 {
-	float baseChance = edge->GetCost()->GetBaseChance();
+	edge->GetCost()->SetStartAndEnd(edge->GetStart(), edge->GetEnd());
+	float baseChance = edge->GetCost()->UpdateAndGetChance();
 	float cost = 2000.f;
 	if (CheckRandomChance(baseChance)){
 		cost = 1;

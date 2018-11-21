@@ -9,7 +9,8 @@ public:
 
 	void InitFromXML(tinyxml2::XMLElement* setElement, StoryDataDefinition* parent);
 
-	bool DoesCharacterMeetRequirements(CharacterState* character);
+	float GetCharacterFitness(CharacterState* character);
+	bool DoesCharacterMeetAllRequirements(CharacterState* character);
 
 	CharacterRequirementSet* Clone();
 	void SetAllRequirementsStoryDataDefinition(StoryDataDefinition* parentData);

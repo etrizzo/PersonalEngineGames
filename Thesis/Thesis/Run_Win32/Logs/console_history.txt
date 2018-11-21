@@ -1,8 +1,10 @@
 set_branch_chance .5
 quit
+print_story
+find_path
+generate_graph
 generate_pairs 1
 reset_graph
-find_path
 generate_pairs 7
 generate_details
 generate_skeleton
@@ -16,10 +18,8 @@ generate_details 5
 generate_skeleton 10
 set_branch_chance 0
 set_branch_chance -
-generate_graph
 set_branch_chance .3
 generate_skeleton 8
-print_story
 generate_skeleton 15
 generate_skeleton 50
 generate_details 2

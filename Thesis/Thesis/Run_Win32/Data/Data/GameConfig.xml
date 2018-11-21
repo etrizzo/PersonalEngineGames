@@ -2,6 +2,7 @@
 	
   appName="Protogame3D"
 	windowAspect="1.77"
+  numCharacters="2~4"
   width="10"
 	isFullscreen="false"
   startLevel="WizardTower3"

@@ -14,6 +14,20 @@ RemoteCommandService::~RemoteCommandService()
 	delete m_listenSocket;
 }
 
+RemoteCommandService * RemoteCommandService::GetInstance()
+{
+	if (g_remoteCommandService == nullptr){
+		g_remoteCommandService = new RemoteCommandService();
+		if (!g_remoteCommandService->Startup()){
+			LogErrorf("RemoteCommandService startup failed");
+			delete g_remoteCommandService;
+			g_remoteCommandService = nullptr;
+		}
+	}
+	return g_remoteCommandService;
+}
+
+#if defined(RCS_ENABLED)
 bool RemoteCommandService::Startup()
 {
 	m_isRunning = true;
@@ -327,18 +341,7 @@ void RemoteCommandService::SetShouldEcho(bool shouldEcho)
 	m_shouldEcho = shouldEcho;
 }
 
-RemoteCommandService * RemoteCommandService::GetInstance()
-{
-	if (g_remoteCommandService == nullptr){
-		g_remoteCommandService = new RemoteCommandService();
-		if (!g_remoteCommandService->Startup()){
-			LogErrorf("RemoteCommandService startup failed");
-			delete g_remoteCommandService;
-			g_remoteCommandService = nullptr;
-		}
-	}
-	return g_remoteCommandService;
-}
+
 
 void RemoteCommandService::UpdateInitial()
 {
@@ -373,6 +376,74 @@ void RemoteCommandService::UpdateHost()
 	//Cleanup Disconnects
 	CleanupDisconnects();
 }
+
+#else
+bool RemoteCommandService::Startup()
+{
+	return true;
+}
+
+void RemoteCommandService::Shutdown()
+{
+
+}
+
+void RemoteCommandService::Update()
+{
+
+}
+
+void RemoteCommandService::Render(Renderer* r, AABB2 screenBounds)
+{
+
+}
+
+bool RemoteCommandService::JoinRCS(std::string addr)
+{
+	UNUSED(addr);
+	return true;
+}
+
+bool RemoteCommandService::HostRCS(std::string port)
+{
+	UNUSED(port);
+	return true;
+}
+
+void RemoteCommandService::SetShouldEcho(bool shouldEcho)
+{
+	UNUSED(shouldEcho);
+}
+
+void RemoteCommandService::SendMessageAll(std::string msgString, bool isEcho)
+{
+	UNUSED(msgString);
+	UNUSED(isEcho);
+}
+
+void RemoteCommandService::SendMessageBroadcast(std::string msgString, bool isEcho)
+{
+	UNUSED(msgString);
+	UNUSED(isEcho);
+}
+
+void RemoteCommandService::SendAMessageToAHotSingleClientInYourArea(unsigned int connectionIndex, std::string msgString, bool isEcho)
+{
+	UNUSED(connectionIndex);
+	UNUSED(msgString);
+	UNUSED(isEcho);
+}
+
+void RemoteCommandService::ProcessNewConnections()
+{
+}
+
+void RemoteCommandService::SendEchoMessage(std::string msgString)
+{
+	UNUSED(msgString);
+}
+
+#endif
 
 void RemoteCommandServiceListen()
 {

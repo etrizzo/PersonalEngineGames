@@ -115,6 +115,26 @@
 		</StoryEffects>
 	</PlotGrammar>
 
+	<PlotGrammar>
+		<Action text="*0* finds a rare cave treasure" />
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inCave" target="true" />
+				<Requirement tag="inDarkArea" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange character="0" hasTag = "hasTreasure" target="true" />
+				<StoryChange Action="+5" Tension="+10" /> 
+			</EffectSet>
+		</StoryEffects>
+	</PlotGrammar>
+
 
 	<PlotGrammar>
 		<Action text="*0* finds a dungeon treasure" />
@@ -122,6 +142,26 @@
 			<Character index="0">
 				<Requirement tag="isAlive" target="true" />
 				<Requirement tag="inDungeon" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange character="0" hasTag = "hasTreasure" target="true" />
+				<StoryChange Action="+5" Tension="+10" /> 
+			</EffectSet>
+		</StoryEffects>
+	</PlotGrammar>
+
+	<PlotGrammar>
+		<Action text="*0* finds a rare dungeon treasure" />
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inDungeon" target="true" />
+				<Requirement tag="inDarkArea" target="true" />
 			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>

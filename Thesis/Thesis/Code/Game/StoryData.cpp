@@ -3,6 +3,7 @@
 #include "Game/CharacterState.hpp"
 #include "Game/StoryState.hpp"
 #include "Game/Action.hpp"
+#include "Game/ActionModifier.hpp"
 
 
 StoryData::StoryData(StoryDataDefinition * definition, int actionIndex)
@@ -110,6 +111,12 @@ std::string StoryData::ToString() const
 	return m_action->m_instancedText;
 }
 
+float StoryData::UpdateAndGetChance(StoryState * incomingEdge)
+{
+	m_action->SetChanceFromEdge(this, incomingEdge);
+	return m_action->m_instancedChance;
+}
+
 //void StoryData::UpdateState(EffectSet * effects)
 //{
 //	for (StoryEdge* edge 
@@ -160,7 +167,7 @@ bool StoryData::DoesCharacterMeetSlotRequirementsAtEdge(Character * character, u
 	CharacterState* resultingState = resultState->GetCharacterStateForCharacter(character);
 	
 	//check if the change would fit on this edge
-	bool meetsExistingConditions = m_definition->m_characterReqs[charSlot]->DoesCharacterMeetRequirements(charState);
+	bool meetsExistingConditions = m_definition->m_characterReqs[charSlot]->DoesCharacterMeetAllRequirements(charState);
 	if (meetsExistingConditions){
 		//check if the change would fuck up future nodes
 		StoryData* endData = atEdge->GetEnd()->m_data;
@@ -168,7 +175,7 @@ bool StoryData::DoesCharacterMeetSlotRequirementsAtEdge(Character * character, u
 		//NOTE: this should maybe be a recursive call to DoesCharacterMeetSlotRequirements?
 		CharacterRequirementSet* charReqs = endData->GetRequirementsForCharacter(character);
 		if (charReqs != nullptr){
-			bool meetsFutureConditions = charReqs->DoesCharacterMeetRequirements(resultingState);
+			bool meetsFutureConditions = charReqs->DoesCharacterMeetAllRequirements(resultingState);
 			if (meetsFutureConditions){
 				delete resultingState;
 				return true;
@@ -211,7 +218,7 @@ bool StoryData::IsCompatibleWithIncomingEdge(StoryState * edgeState)
 		CharacterRequirementSet* reqs = GetRequirementsForCharacter(character);
 		if (reqs != nullptr){
 			//if the edges' character has requirements already established in this node, check them.
-			if (!reqs->DoesCharacterMeetRequirements(charState)){
+			if (!reqs->DoesCharacterMeetAllRequirements(charState)){
 				//if any character doesn't meet the requirements, return false.
 				return false;
 			}

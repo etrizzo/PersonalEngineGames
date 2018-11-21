@@ -1,6 +1,5 @@
 #pragma once;
 #include "Game/StoryData.hpp"
-#include "Game/StoryStructure.hpp"
 
 class Character;
 
@@ -22,7 +21,7 @@ class Character;
 #define MAX_REPEAT_REROLLS (20)
 
 //comparison for 
-typedef StoryState* (*StoryHeuristicCB) (StoryEdge* edge, StoryStructure* currentStructure);
+typedef StoryState* (*StoryHeuristicCB) (StoryEdge* edge);
 
 // wrapper for DirectedGraph which stores all project-specific information
 // such as characters, story structure, etc.
@@ -96,6 +95,8 @@ public:
 	void FindPath( StoryHeuristicCB heuristic );
 	void PrintPath() ;
 
+	void ClearSavedState();
+
 	/*
 	=========
 	Accessors
@@ -152,7 +153,6 @@ protected:
 
 	DirectedGraph<StoryData*, StoryState*> m_graph	= DirectedGraph<StoryData*, StoryState*>();
 	std::vector<Character*> m_characters			= std::vector<Character*>();
-	StoryStructure m_targetStructure				= StoryStructure();
 
 	std::vector<StoryNode*> m_pathFound				= std::vector<StoryNode*>();
 	std::string m_pathString						= "";
@@ -208,7 +208,7 @@ public:
 };
 
 
-StoryState* ShortestPathHeuristic(StoryEdge* edge,  StoryStructure* currentStructure);
+StoryState* ShortestPathHeuristic(StoryEdge* edge);
 
-StoryState* RandomPathHeuristic(StoryEdge* edge,  StoryStructure* currentStructure);
-StoryState* CalculateChanceHeuristic(StoryEdge* edge, StoryStructure* currentStructure);
+StoryState* RandomPathHeuristic(StoryEdge* edge);
+StoryState* CalculateChanceHeuristic(StoryEdge* edge);

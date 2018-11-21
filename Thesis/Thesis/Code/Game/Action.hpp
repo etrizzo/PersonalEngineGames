@@ -2,6 +2,9 @@
 #include "Game/GameCommon.hpp"
 #include "Game/ActionDefinition.hpp"
 
+class StoryData;
+class StoryState;
+
 class Action{
 public:
 	Action(ActionDefinition* def);
@@ -9,4 +12,6 @@ public:
 	std::string m_instancedText;
 	float m_instancedChance;
 	ActionDefinition* m_definition;
+
+	void SetChanceFromEdge(StoryData* parentData, StoryState* edge);
 };

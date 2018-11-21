@@ -1,6 +1,6 @@
 #pragma once
 #include "Game/GameCommon.hpp"
-#include "Game/StoryRequirements.hpp"
+#include "Game/StoryRequirementSet.hpp"
 #include "Game/CharacterRequirementSet.hpp"
 #include "Game/EffectSet.hpp"
 
@@ -35,6 +35,10 @@ public:
 	//bool DoesCharacterMeetSlotRequirementsAtEdge(Character* character, unsigned int charSlot, StoryEdge* atEdge);
 	CharacterRequirementSet* GetRequirementsForCharacter(Character* character);
 
+	//story utilities
+	float GetEdgeFitness(StoryState* edgeState);
+	bool DoesEdgeMeetStoryRequirements(StoryState* edgeState);
+
 	Character* GetCharacterFromDataString(std::string data);
 	std::string ReadCharacterNameFromDataString(std::string data);
 
@@ -47,14 +51,15 @@ public:
 
 	//actual members
 	std::string m_id;
-	//std::string m_action;
-	//Strings m_actions;		//detail nodes 4 now
-	//Strings m_actionsWithCharacters;	//detail nodes 4 now
+	//vector of character requirements - 1 set for each character on the node.
 	std::vector<CharacterRequirementSet*> m_characterReqs;
+	StoryRequirementSet* m_storyReqs;
 	//StoryRequirements m_storyReqs;
 	//EffectSet* m_effectSet;
 	EffectSet* m_guaranteedEffects = nullptr;
 	std::vector<ActionDefinition*> m_actions;
+
+	float m_chanceToPlaceData = 1.f;
 
 
 
