@@ -58,6 +58,8 @@ void StoryDataDefinition::InitFromXML(tinyxml2::XMLElement* nodeElement)
 	} else {
 		ERROR_AND_DIE("Node initialized without type.");
 	}
+
+	m_shouldLockIncomingEdge = ParseXmlAttribute(*nodeElement, "lockIncoming", false);
 }
 
 void StoryDataDefinition::InitAsDetailNode(tinyxml2::XMLElement * nodeElement)
@@ -110,6 +112,12 @@ void StoryDataDefinition::InitAsDetailNode(tinyxml2::XMLElement * nodeElement)
 		m_storyEffects = new EffectSet(storyEffects->FirstChildElement("EffectSet"), this);
 	} else {
 		m_storyEffects = new EffectSet((tinyxml2::XMLElement*) nullptr, this);
+	}
+
+	m_storyReqs = new StoryRequirementSet();
+	tinyxml2::XMLElement* storyReqElement = nodeElement->FirstChildElement("StoryRequirements");
+	if (storyReqElement != nullptr){
+		m_storyReqs->InitFromXML(storyReqElement, this);
 	}
 }
 
@@ -165,6 +173,12 @@ void StoryDataDefinition::InitAsPlotNode(tinyxml2::XMLElement * nodeElement)
 		m_storyEffects = new EffectSet(storyEffects->FirstChildElement("EffectSet"), this);
 	} else {
 		m_storyEffects = new EffectSet((tinyxml2::XMLElement*) nullptr, this);
+	}
+
+	m_storyReqs = new StoryRequirementSet();
+	tinyxml2::XMLElement* storyReqElement = nodeElement->FirstChildElement("StoryRequirements");
+	if (storyReqElement != nullptr){
+		m_storyReqs->InitFromXML(storyReqElement, this);
 	}
 	
 }
@@ -319,6 +333,9 @@ float StoryDataDefinition::GetEdgeFitness(StoryState * edgeState)
 
 bool StoryDataDefinition::DoesEdgeMeetStoryRequirements(StoryState * edgeState)
 {
+	if (m_storyReqs == nullptr){
+		return true;
+	}
 	return m_storyReqs->DoesEdgeMeetAllRequirements(edgeState);
 }
 

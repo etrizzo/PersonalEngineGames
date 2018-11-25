@@ -111,7 +111,7 @@
 		</StoryEffects>
 	</DetailGrammar>
 
-	<DetailGrammar name="GetLostCave" chanceToPlace=".1">>
+	<DetailGrammar name="GetLostCave" chanceToPlace=".2">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -131,7 +131,7 @@
 				</EffectSet>
 			</Action>
 
-			<Action text="*0* enters the darkest part of the cave" chanceToPlace=".7">
+			<Action text="*0* enters the darkest part of the cave" >
 				<Modifier character="0" multiplier = "0">
 					<CharacterRequirements>
 						<Requirement tag="hasNightVision" target="false" />

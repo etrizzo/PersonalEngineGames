@@ -20,6 +20,8 @@ StoryState::StoryState(const StoryState & copy)
 		CharacterState* newState = new CharacterState(charState);
 		m_characterStates.push_back(newState);
 	}
+
+	m_storyTags = copy.m_storyTags;
 }
 
 void StoryState::UpdateFromNode(StoryData * data)
@@ -39,6 +41,7 @@ void StoryState::UpdateFromNode(StoryData * data)
 	for (Effect* effect : data->m_definition->m_storyEffects->m_effects){
 		effect->ApplyToState(this, data);
 	}
+
 	//}
 	//if (m_cost > 0.f){
 	//	m_cost = -1.f;
@@ -82,9 +85,9 @@ std::string StoryState::GetDevString() const
 {
 	std::string printStr;
 	if (m_enddata != nullptr && m_enddata->m_type != DEFAULT_NODE){
-		printStr = Stringf("Cost: %3.2f\nChance: %3.2f\n==========================\n", GetCost(), m_enddata->m_action->m_instancedChance);
+		printStr = Stringf("Tags:\n%s\nCost: %3.2f\nChance: %3.2f\n==========================\n", m_storyTags.GetTagsAsString().c_str(), GetCost(), m_enddata->m_action->m_instancedChance);
 	} else {
-		printStr = Stringf("Cost: %3.2f\n==========================\n", GetCost());
+		printStr = Stringf("Tags:\n%sCost: %3.2f\n==========================\n", m_storyTags.GetTagsAsString().c_str(), GetCost());
 	}
 	for(CharacterState* state : m_characterStates){
 		printStr+= (state->ToString() + "\n");

@@ -60,6 +60,14 @@ public:
 	DebugRenderSystem* m_debugRenderSystem;
 	void PostStartup();
 
+	void InitGraphDefault();
+	void InitGraphMurder();
+	void ReadPlotNodes(std::string filePath);
+	void ReadOutcomeNodes(std::string filePath);
+	void ReadCharacters(std::string filePath);
+	void InitCharacterArray();
+	void ResetGraphData();
+
 	void GenerateGraph();
 	void ClearGraph();
 	void GeneratePlotNodes(int numToGenerate = NUM_PLOT_NODES_TO_GENERATE);

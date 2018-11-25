@@ -9,7 +9,11 @@ ActionDefinition::ActionDefinition(std::string text, tinyxml2::XMLElement* effec
 	m_chanceToPlaceAction = 1.f;
 	m_parentData = parent;
 	m_modifiers = std::vector<ActionModifier*>();
-	m_effects = new EffectSet(effectsElement->FirstChildElement("EffectSet"), parent);
+	if (effectsElement != nullptr){
+		m_effects = new EffectSet(effectsElement->FirstChildElement("EffectSet"), parent);
+	} else {
+		m_effects = new EffectSet((tinyxml2::XMLElement*) nullptr, parent);
+	}
 }
 
 ActionDefinition::ActionDefinition(tinyxml2::XMLElement * actionElement, StoryDataDefinition* parent)

@@ -67,6 +67,7 @@
 
 
 #define INVALID_PACKET_ACK (0xffff)
+#define INVALID_RELIABLE_ID (0xffffffff)
 #define INVALID_CONNECTION_INDEX (0xff)
 
 

@@ -184,6 +184,9 @@ void App::RegisterCommands()
 
 	CommandRegister("generate_pairs", CommandGeneratePairs, "Generates a plot node and outcome node as a pair", "generate_pairs <numPairs>");
 	CommandRegister("reset_graph", CommandResetGraph, "resets the graph to start->end");
+
+	CommandRegister("read_default_data", CommandReadDefaultData, "reads the default data set into the graph and resets it.");
+	CommandRegister("read_murder_data", CommandReadMurderData, "reads the murder mystery data set into the graph and resets it.");
 }
 
 void App::HandleInput()
@@ -536,4 +539,34 @@ void CommandGeneratePairs(Command & cmd)
 		numToGenerate = NUM_NODE_PAIRS_TO_GENERATE;
 	}
 	g_theGame->GenerateNodePairs(numToGenerate);
+}
+
+void CommandReadDefaultData(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->ClearGraph();
+
+	g_theGame->ResetGraphData();
+	g_theGame->ReadPlotNodes("Data/Data/PlotGrammars.xml");
+	g_theGame->ReadOutcomeNodes("Data/Data/DetailGrammars.xml");
+	g_theGame->ReadCharacters("Data/Data/Characters.xml");
+	g_theGame->InitCharacterArray();
+
+	g_theGame->m_graph.GenerateStartAndEnd();
+	ConsolePrintf("Default data loaded.");
+}
+
+void CommandReadMurderData(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->ClearGraph();
+
+	g_theGame->ResetGraphData();
+	g_theGame->ReadPlotNodes("Data/Data/MurderMystery_PlotGrammars.xml");
+	g_theGame->ReadOutcomeNodes("Data/Data/MurderMystery_OutcomeGrammars.xml");
+	g_theGame->ReadCharacters("Data/Data/MurderMystery_Characters.xml");
+	g_theGame->InitCharacterArray();
+
+	g_theGame->m_graph.GenerateStartAndEnd();
+	ConsolePrintf("Murder mystery data loaded.");
 }

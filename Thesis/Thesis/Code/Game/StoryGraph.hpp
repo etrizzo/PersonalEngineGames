@@ -35,9 +35,12 @@ public:
 	Initialization Functions
 	===========================
 	*/
+	void ClearGraphData();
 	void ReadPlotNodesFromXML(std::string filePath);
 	void ReadDetailNodesFromXML(std::string filePath);
 	void ReadCharactersFromXML(std::string filePath);
+
+	void SelectCharactersForGraph();
 
 	
 	/*
@@ -143,7 +146,7 @@ public:
 	bool ContainsEdge(StoryNode* start, StoryNode* end)	const;
 
 	bool NodeRequirementsAreMet(StoryNode* node, StoryEdge* atEdge);
-	bool StoryRequirementsMet(StoryNode* node, StoryEdge* atEdge);
+	bool StoryRequirementsMet(StoryDataDefinition* node, StoryEdge* atEdge);
 	bool TryToSetCharactersForNode(StoryNode* node, StoryEdge* atEdge);
 	std::vector<Character*> GetCharactersForNode(StoryDataDefinition* nodeDefinition, StoryEdge* atEdge);
 
@@ -152,6 +155,7 @@ protected:
 	StoryNode* m_endNode							= nullptr;
 
 	DirectedGraph<StoryData*, StoryState*> m_graph	= DirectedGraph<StoryData*, StoryState*>();
+	std::vector<Character*> m_allCharacters			= std::vector<Character*>();
 	std::vector<Character*> m_characters			= std::vector<Character*>();
 
 	std::vector<StoryNode*> m_pathFound				= std::vector<StoryNode*>();

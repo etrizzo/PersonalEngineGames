@@ -7,7 +7,7 @@ class NetMessage;
 class NetSession;
 class PacketTracker;
 
-#define NUM_ACKS_TRACKED (sizeof(uint16_t))
+#define NUM_ACKS_TRACKED (16)
 
 
 class NetConnection 
@@ -51,9 +51,13 @@ public:
 
 	bool		ShouldSendReliableMessage(NetMessage* msg)		const;
 	uint16_t	GetAndIncrementNextReliableID();
+	uint16_t	GetOldestUnconfirmedReliable() const;
+	bool		CanSendNewReliable() const;
 	void		MarkMessageAsSentForFirstTime(NetMessage* msg);
 
-	bool CheckConnectionForReliable(uint16_t reliableID);
+	void AddReceivedReliable(uint16_t newReliableID);
+
+	bool HasReceivedReliable(uint16_t reliableID);
 
 	std::vector<NetMessage*> m_unsentUnreliableMessages = std::vector<NetMessage*>();
 	NetAddress m_address;
@@ -91,5 +95,6 @@ protected:
 	float m_rtt			= 0.0f;       // latency perceived on this connection
 
 	uint16_t m_nextSentReliableID = 0;
+	uint16_t m_highestReceivedReliableID = 0U;
 
 };

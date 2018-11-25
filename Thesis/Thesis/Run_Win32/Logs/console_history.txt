@@ -1,12 +1,20 @@
 set_branch_chance .5
-quit
+generate_pairs 1
+read_murder_data
+reset_graph
 print_story
 find_path
-generate_pairs 2
-generate_pairs 1
-reset_graph
 generate_graph
+read_default_data
+generate_pairs 3
+quit
+generate_pairs
+generate_pairs 5
 generate_pairs 7
+generate_details 5
+generate_details 1
+generate_details 2
+generate_pairs 2
 generate_details
 generate_skeleton
 generate_details 
@@ -15,7 +23,6 @@ set_branch_chance .8
 set_branch_chance .2
 add_branches .2
 generate_details 3
-generate_details 5
 generate_skeleton 10
 set_branch_chance 0
 set_branch_chance -
@@ -23,10 +30,8 @@ set_branch_chance .3
 generate_skeleton 8
 generate_skeleton 15
 generate_skeleton 50
-generate_details 2
 generate_skeleton 6
 generate_skeleton 12
-generate_details 1
 generate_details 1\
 generate_skeleton 5
 generate_skeleton 3

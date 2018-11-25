@@ -6,7 +6,12 @@
 
 Effect::Effect(tinyxml2::XMLElement * element, StoryDataDefinition* parentData)
 {
-	m_type = (eEffectType) ParseXmlAttribute(*element, "type", (int) EFFECT_TYPE_CHARACTER);
+	std::string type = ParseXmlAttribute(*element, "effectType", "character");
+	if (type == "character"){
+		m_type = EFFECT_TYPE_CHARACTER;
+	} else if (type == "story"){
+		m_type = EFFECT_TYPE_STORY;
+	}
 	m_characterID = (unsigned int) ParseXmlAttribute(*element, "character", -1);
 	m_parentData = parentData;
 }

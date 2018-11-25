@@ -1,0 +1,96 @@
+	
+	<DetailGrammar name="GeneratesSuspicion" chanceToPlace=".3">
+		<Characters>
+			<Character id = "*0*" />
+			<Character id = "*1*" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isInvestigating" target="true" />
+				<Requirement tag="investigationTarget" target="*1*" type="character"/>
+			</Character>
+			<Character index="1">
+				<Requirement tag="isAlive" target="true" type="bool"/>
+			</Character>
+		</CharacterRequirements>
+
+		<Actions>
+			<Action text="*0* is suspicious of *1*" chance=".5">
+				<EffectSet>
+					<TagChange character="*0*" hasTag="isSuspiciousOf" target="*1*" type="character" />
+					<TagChange character="*1*" hasTag="isSuspicious" target="true" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*0* thinks *1* is innocent" chance=".5">
+				<EffectSet>
+					<TagChange character="*0*" hasTag="thinksIsInnocent" target="*1*" type="character" />
+					<TagChange character="*1*" hasTag="isSuspicious" target="false" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+	</DetailGrammar>
+
+
+	<DetailGrammar name="Accusation" chanceToPlace=".3">
+		<Characters>
+			<Character id = "*0*" />
+			<Character id = "*1*" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isSuspiciousOf" target="*1*" type="character" />
+			</Character>
+			<Character index="1">
+				<Requirement tag="isAlive" target="true" type="bool"/>
+				<Requirement tag="isSuspicious" target="true" type="bool" weight="5"/>
+			</Character>
+		</CharacterRequirements>
+		<Actions>
+			<Action text="*0* rightfully accuses *1* of being the killer." chance = ".3">
+				<Modifier character = "0" multiplier = "1.75"> 
+					<CharacterRequirements>
+						<Requirement tag="isEnlightened" target="true"/>
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*1*" hasTag="isKiller" target="true" />
+					<TagChange character="*1*" hasTag="isAccused" target="true" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*0* wrongfully accuses *1* of being the killer." chance = ".7">
+				<EffectSet>
+					<TagChange character="*1*" hasTag="isKiller" target="false" />
+					<TagChange character="*1*" hasTag="isAccused" target="true" />
+				</EffectSet>
+			</Action>
+		</Actions>
+	</DetailGrammar>
+
+
+	<DetailGrammar name="LearnsSomething" chanceToPlace=".3">
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isInvestigating" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<Actions>
+			<Action text="*0* learns some valuable information while investigating.">
+				<EffectSet>
+					<TagChange character="*0*" hasTag="isInvestigating" target="false" />
+					<TagChange character="*0*" hasTag="isEnlightened" target="true" />
+				</EffectSet>
+			</Action>
+		</Actions>
+	</DetailGrammar>

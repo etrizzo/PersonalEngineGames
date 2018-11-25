@@ -37,4 +37,5 @@ public:
 	std::vector<CharacterState*> m_characterStates;
 
 	bool m_isVoid = false;
+	bool m_isLocked = false;
 };

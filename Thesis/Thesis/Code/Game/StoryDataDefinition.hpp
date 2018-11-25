@@ -61,6 +61,7 @@ public:
 	std::vector<ActionDefinition*> m_actions;
 
 	float m_chanceToPlaceData = 1.f;
+	bool m_shouldLockIncomingEdge = false;
 
 
 

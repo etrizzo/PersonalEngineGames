@@ -156,6 +156,7 @@ bool NetConnection::ConfirmPacketReceived(uint16_t newReceivedAck)
 				UpdateRTT(currentMS - tracker->m_sentMS );
 				m_recievedPackets++;
 				if (m_unconfirmedReliableMessages.size() > 0){
+					
 					//update received reliables
 					for (unsigned int i = 0; i < tracker->m_numReliablesInPacket; i++){
 						uint16_t reliableID = tracker->m_sentReliableIDs[i];
@@ -250,6 +251,38 @@ uint16_t NetConnection::GetAndIncrementNextReliableID()
 	return next;
 }
 
+uint16_t NetConnection::GetOldestUnconfirmedReliable() const
+{
+	NetMessage* oldest = nullptr;
+	if (m_unconfirmedReliableMessages.size() > 0){
+		oldest = m_unconfirmedReliableMessages[0];
+	}
+	for (NetMessage* msg : m_unconfirmedReliableMessages){
+		if (oldest->m_timeSinceLastSentMS <  msg->m_timeSinceLastSentMS){
+			oldest = msg;
+		}
+	}
+	uint16_t id; 
+	if (oldest == nullptr){
+		id = INVALID_RELIABLE_ID;
+	} else {
+		id = oldest->m_reliableID;
+	}
+	return id;
+}
+
+bool NetConnection::CanSendNewReliable() const
+{
+	uint16_t nextID = m_nextSentReliableID;
+	uint16_t oldestUnconfirmedID = GetOldestUnconfirmedReliable(); // probably just element [0]; 
+	if (oldestUnconfirmedID = INVALID_RELIABLE_ID){
+		oldestUnconfirmedID = nextID;
+	}
+
+	uint16_t diff = nextID - oldestUnconfirmedID; 
+	return (diff < RELIABLE_WINDOW); 
+}
+
 void NetConnection::MarkMessageAsSentForFirstTime(NetMessage * msg)
 {
 	for (int i = 0; i < m_unsentReliableMessages.size(); i++){
@@ -261,16 +294,55 @@ void NetConnection::MarkMessageAsSentForFirstTime(NetMessage * msg)
 	msg->ResetAge();
 }
 
-bool NetConnection::CheckConnectionForReliable(uint16_t reliableID)
+void NetConnection::AddReceivedReliable(uint16_t newReliableID)
 {
-	if (reliableID == INVALID_RELIABLE_ID){
-		return false;
+	m_receivedReliableIDs.push_back(newReliableID);
+
+	//if this is the first reliable you've received, set it here
+	if (m_highestReceivedReliableID == INVALID_RELIABLE_ID){
+		m_highestReceivedReliableID = newReliableID;
+	} else {
+		m_highestReceivedReliableID = Max(newReliableID, m_highestReceivedReliableID);
 	}
-	for (unsigned int i = 0; i < m_receivedReliableIDs.size(); i++){
-		if (m_receivedReliableIDs[i] == reliableID){
-			return true;
+	//hat problem - counting on the other person to only send you a reliable id if they've received everything before your reliable window
+	uint16_t minimum_id = newReliableID - RELIABLE_WINDOW + 1;
+
+	int backIndex = m_receivedReliableIDs.size() - 1;
+	int numRemoved = 0;
+	for(int i = backIndex; i >=0; i--){
+		uint16_t oldID = m_receivedReliableIDs[i];
+		if (CycleLess(oldID, minimum_id)) {
+			//remove the reliable id from the received list
+			m_receivedReliableIDs[i] = m_receivedReliableIDs[backIndex];
+			backIndex--;
+			numRemoved++;
 		}
 	}
-	m_receivedReliableIDs.push_back(reliableID);
-	return false;
+
+	//purge the removed reliable ids
+	for (int i = 0; i < numRemoved; i++){
+		m_receivedReliableIDs.pop_back();
+	}
+}
+
+bool NetConnection::HasReceivedReliable(uint16_t reliableID)
+{
+	uint16_t maxWindowVal = m_highestReceivedReliableID;
+	uint16_t minWindowVal = maxWindowVal - RELIABLE_WINDOW;
+
+	if (CycleLess(reliableID, minWindowVal))
+	{
+		//if it's less than your window, it's so old you DEFINITELY received it.
+		return true;
+	} else {
+		// if it's within the reliable window, we just have to check if 
+		// our list of received reliables already contains it
+		for (unsigned int i = 0; i < m_receivedReliableIDs.size(); i++){
+			if (m_receivedReliableIDs[i] == reliableID){
+				return true;
+			}
+		}
+		//we haven't received it yet!
+		return false;
+	}
 }

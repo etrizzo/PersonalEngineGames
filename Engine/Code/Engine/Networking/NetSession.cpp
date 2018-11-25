@@ -439,12 +439,18 @@ void NetSession::ProcessMessage(NetMessage message, NetConnection* from)
 			if (definition->IsReliable()){
 				uint16_t reliableID;
 				message.Read(&reliableID);
-				if (from->CheckConnectionForReliable(reliableID)){
+				if (from->HasReceivedReliable(reliableID)){
 					//you have already processed this message - do nothing
 					return;
+				} else {
+					//process the message and then add received reliable to the connection
+					((definition->m_messageCB))( message, net_sender_t(from));
+					from->AddReceivedReliable(reliableID);
 				}
-			} 
-			((definition->m_messageCB))( message, net_sender_t(from));
+			} else {
+				//process unreliable message as usual
+				((definition->m_messageCB))( message, net_sender_t(from));
+			}
 		}
 
 		if (!from->IsValidConnection()){
@@ -496,15 +502,24 @@ void NetSession::SendPacketsForConnection(unsigned int connectionIndex)
 	for (NetMessage* msg : connection->m_unsentReliableMessages)
 	{
 		if (msg != nullptr){
-			if (packet->HasRoomForMessage(msg)){
-				if (reliablesInPacket.size() < MAX_RELIABLES_PER_PACKET){
-					msg->m_reliableID = connection->GetAndIncrementNextReliableID();
-					msg->WriteHeader();
-					ASSERT_OR_DIE(packet->WriteMessage(*msg), "Packet ran out of space after check for space??");
-					messagesSent++;
-					//move from unsent list to unconfirmed list
-					connection->MarkMessageAsSentForFirstTime(msg);
-					reliablesInPacket.push_back(msg);
+			if (connection->CanSendNewReliable()){
+				if (packet->HasRoomForMessage(msg)){
+					if (reliablesInPacket.size() < MAX_RELIABLES_PER_PACKET){
+						msg->m_reliableID = connection->GetAndIncrementNextReliableID();
+						msg->WriteHeader();
+						ASSERT_OR_DIE(packet->WriteMessage(*msg), "Packet ran out of space after check for space??");
+						messagesSent++;
+						//move from unsent list to unconfirmed list
+						connection->MarkMessageAsSentForFirstTime(msg);
+						reliablesInPacket.push_back(msg);
+					} else {
+						SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
+						messagesSent = 0;
+						delete packet;
+						std::vector<NetMessage*> reliablesInPacket = { msg };
+						packet = new NetPacket();
+						packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
+					}
 				} else {
 					SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
 					messagesSent = 0;
@@ -513,13 +528,6 @@ void NetSession::SendPacketsForConnection(unsigned int connectionIndex)
 					packet = new NetPacket();
 					packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
 				}
-			} else {
-				SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
-				messagesSent = 0;
-				delete packet;
-				std::vector<NetMessage*> reliablesInPacket = { msg };
-				packet = new NetPacket();
-				packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
 			}
 		}
 	}
@@ -573,12 +581,14 @@ void NetSession::ProcessPackets()
 			packet_header_t packetHeader;
 
 			bool wasTrackedAndUnconfirmed = false;
+			//confirm packet received on the net connection
 			tsPacket->m_packet->ReadHeader(packetHeader);
 			if (tsPacket->m_fromConnection != nullptr){
 				tsPacket->m_fromConnection->MarkReceiveTime();
 				tsPacket->m_fromConnection->UpdateReceivedAcks(packetHeader.m_ack);
 				wasTrackedAndUnconfirmed = tsPacket->m_fromConnection->ConfirmPacketReceived(packetHeader.m_ack);
 			}
+			//go through the packet and process each message
 			for (unsigned int j = 0; j < packetHeader.m_messageCount; j++){
 				NetMessage message;
 				tsPacket->m_packet->ReadMessage(&message);

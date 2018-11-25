@@ -13,6 +13,14 @@ StoryGraph::StoryGraph()
 
 }
 
+void StoryGraph::ClearGraphData()
+{
+	s_plotNodes.clear();
+	s_detailNodes.clear();
+	m_characters.clear();
+	m_allCharacters.clear();
+}
+
 void StoryGraph::ReadPlotNodesFromXML(std::string filePath)
 {
 	tinyxml2::XMLDocument nodeDoc;
@@ -46,7 +54,27 @@ void StoryGraph::ReadCharactersFromXML(std::string filePath)
 	for (tinyxml2::XMLElement* charElement = charDoc.FirstChildElement("Character"); charElement != NULL; charElement = charElement->NextSiblingElement("Character")){
 		Character* newChar = new Character();
 		newChar->InitFromXML(charElement);
-		m_characters.push_back(newChar);
+		m_allCharacters.push_back(newChar);
+	}
+}
+
+void StoryGraph::SelectCharactersForGraph()
+{
+	int numChars = g_gameConfigBlackboard.GetValue("numCharacters", (int) m_characters.size());
+	if (numChars >= m_allCharacters.size()){
+		for(Character* character : m_allCharacters){
+			m_characters.push_back(character);
+		}
+	} else {
+		//select randomly
+		int numSelected = 0;
+		while (numSelected < numChars){
+			int idx = GetRandomIntLessThan(m_allCharacters.size());
+			if (!Contains(m_characters, m_allCharacters[idx])){
+				m_characters.push_back(m_allCharacters[idx]);
+				numSelected++;
+			}
+		}
 	}
 }
 
@@ -307,13 +335,18 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 				alreadyUsed = false;
 			}
 		}
-		
+
 		//try to add the node
-		std::vector<Character*> charsForNode = GetCharactersForNode(sourceNode, edge);
-		//if you found characters for the node, add the node.
-		if (charsForNode.size() != 0){
-			if (AddDetailNode(sourceNode, edge, charsForNode)){
-				added = true;
+		if (StoryRequirementsMet(sourceNode, edge)){
+			//if the story requirements are met, check character requirements
+			std::vector<Character*> charsForNode = GetCharactersForNode(sourceNode, edge);
+			//if you found characters for the node, add the node.
+			if (charsForNode.size() != 0){
+				if (AddDetailNode(sourceNode, edge, charsForNode)){
+					added = true;
+				} else {
+					tries++;
+				}
 			} else {
 				tries++;
 			}
@@ -372,6 +405,9 @@ bool StoryGraph::AddPlotNode(StoryNode* newPlotNode)
 	std::queue<StoryEdge*> openEdges;
 	//openEdges.push(m_startNode->m_outboundEdges[0]);
 	StoryEdge* startEdge = m_graph.m_edges[GetRandomIntLessThan(m_graph.m_edges.size())];
+	if (startEdge->GetCost()->m_isLocked){
+		return false;
+	}
 	openEdges.push(startEdge);
 	StoryNode* nodeToAddAfter; 
 	StoryEdge* edgeToAddAt = nullptr;
@@ -662,6 +698,9 @@ void StoryGraph::AddNodeAtEdge(StoryNode * newNode, StoryEdge * existingEdge)
 	//not sure what to do with cost...
 	StoryState* incomingCost = new StoryState(*existingEdge->GetCost());
 	StoryState* outgoingCost = new StoryState(*existingEdge->GetCost());
+	if (newNode->m_data->m_definition->m_shouldLockIncomingEdge){
+		incomingCost->m_isLocked = true;
+	}
 	outgoingCost->UpdateFromNode(newNode->m_data);
 	AddEdge(existingEdge->GetStart(), newNode, incomingCost);
 	AddEdge(newNode, existingEdge->GetEnd(), outgoingCost);
@@ -1164,7 +1203,7 @@ bool StoryGraph::NodeRequirementsAreMet(StoryNode * node, StoryEdge* atEdge)
 {
 	int tries = 0;
 	//keep trying to match valid characters with 
-	if (StoryRequirementsMet(node, atEdge)){
+	if (StoryRequirementsMet(node->m_data->m_definition, atEdge)){
 		if (TryToSetCharactersForNode(node, atEdge)){
 			return true;
 		}	
@@ -1172,16 +1211,18 @@ bool StoryGraph::NodeRequirementsAreMet(StoryNode * node, StoryEdge* atEdge)
 	return false;
 }
 
-bool StoryGraph::StoryRequirementsMet(StoryNode * node, StoryEdge * atEdge)
+bool StoryGraph::StoryRequirementsMet(StoryDataDefinition * node, StoryEdge * atEdge)
 {
-	TODO("Check node's story requirements against edge's storystate");
-	return true;
+	if (node->DoesEdgeMeetStoryRequirements(atEdge->GetCost())){
+		return true;
+	}
+	return false;
 }
 
 bool StoryGraph::TryToSetCharactersForNode(StoryNode * node, StoryEdge * atEdge)
 {
 	std::vector<Character*> charsInOrder = GetCharactersForNode(node->m_data->m_definition, atEdge);
-	if (charsInOrder.size() == 0){
+	if (charsInOrder.size() < node->m_data->m_definition->m_numCharacters){
 		// no characters fit on the node :(
 		return false;
 	} else {
@@ -1311,6 +1352,7 @@ void StoryGraph::RenderNode(StoryNode * node, Vector2 position, RGBA color) cons
 
 void StoryGraph::RenderEdge(StoryEdge * edge, RGBA color) const
 {
+	
 	Vector2 startPos = edge->GetStart()->m_data->GetPosition();
 	Vector2 endPos = edge->GetEnd()->m_data->GetPosition();
 	Vector2 direction = endPos - startPos;
@@ -1336,6 +1378,9 @@ void StoryGraph::RenderEdge(StoryEdge * edge, RGBA color) const
 		boxColor = m_edgeHoverColor;
 	} else if (edge == m_selectedEdge){
 		boxColor = m_edgeSelectColor;
+	}
+	if (edge->GetCost()->m_isLocked){
+		boxColor = boxColor.GetColorWithAlpha(.5f);
 	}
 	g_theRenderer->DrawOBB2(box, boxColor);
 

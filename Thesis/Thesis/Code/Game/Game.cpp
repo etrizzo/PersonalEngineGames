@@ -82,18 +82,70 @@ void Game::PostStartup()
 
 	//m_soundtrackPlayback = g_theAudio->PlaySound(m_soundTrackID, true, .5f);
 
-
 	m_graph = StoryGraph();
 
-	m_graph.ReadPlotNodesFromXML("Data/Data/PlotGrammars.xml");
-	m_graph.ReadDetailNodesFromXML("Data/Data/DetailGrammars.xml");
-	m_graph.ReadCharactersFromXML("Data/Data/Characters.xml");
+	InitGraphDefault();
+
 
 	GenerateGraph();
 
 	//GraphTests();
 	//StoryGraphTests();
 
+}
+
+void Game::InitGraphDefault()
+{
+
+	ClearGraph();
+
+	ResetGraphData();
+	ReadPlotNodes("Data/Data/PlotGrammars.xml");
+	ReadOutcomeNodes("Data/Data/DetailGrammars.xml");
+	ReadCharacters("Data/Data/Characters.xml");
+	InitCharacterArray();
+
+	m_graph.GenerateStartAndEnd();
+	ConsolePrintf("Default data loaded.");
+}
+
+void Game::InitGraphMurder()
+{
+	ClearGraph();
+
+	ResetGraphData();
+	ReadPlotNodes("Data/Data/MurderMystery_PlotGrammars.xml");
+	ReadOutcomeNodes("Data/Data/MurderMystery_OutcomeGrammars.xml");
+	ReadCharacters("Data/Data/MurderMystery_Characters.xml");
+	InitCharacterArray();
+
+	m_graph.GenerateStartAndEnd();
+	ConsolePrintf("Murder mystery data loaded.");
+}
+
+void Game::ReadPlotNodes(std::string filePath)
+{
+	m_graph.ReadPlotNodesFromXML(filePath);
+}
+
+void Game::ReadOutcomeNodes(std::string filePath)
+{
+	m_graph.ReadDetailNodesFromXML(filePath);
+}
+
+void Game::ReadCharacters(std::string filePath)
+{
+	m_graph.ReadCharactersFromXML(filePath);
+}
+
+void Game::InitCharacterArray()
+{
+	m_graph.SelectCharactersForGraph();
+}
+
+void Game::ResetGraphData()
+{
+	m_graph.ClearGraphData();
 }
 
 void Game::GenerateGraph()
