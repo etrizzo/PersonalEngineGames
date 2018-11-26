@@ -6,7 +6,7 @@ class NetPacket;
 class NetConnection;
 class Renderer;
 #define MAX_CONNECTIONS (16)
-#define DEFAULT_HEARTBEAT (.33f)
+#define DEFAULT_HEARTBEAT (2.f)
 #define DEFAULT_SESSION_SEND_RATE_HZ (50.f)		//NOTE: Hz, not ms.
 
 //net session UI settings

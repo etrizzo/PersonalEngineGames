@@ -26,8 +26,8 @@ void NetConnection::Update()
 	}
 	if (m_heartbeatTimer.DecrementAll()){
 		//ConsolePrintf(RGBA::RED.GetColorWithAlpha(165), "Sending heartbeat.");
-		//NetMessage* msg = new NetMessage("heartbeat"); 
-		//Send(msg);
+		NetMessage* msg = new NetMessage("heartbeat"); 
+		Send(msg);
 	}
 	if (m_recievedPackets > 0){
 		m_lossRate = (float) m_lostPackets / (float) m_recievedPackets;
@@ -176,6 +176,7 @@ bool NetConnection::ConfirmPacketReceived(uint16_t newReceivedAck)
 			}
 		}
 	}
+	return false;
 }
 
 void NetConnection::UpdateRTT(unsigned int RTTforConfirmedPacketMS)

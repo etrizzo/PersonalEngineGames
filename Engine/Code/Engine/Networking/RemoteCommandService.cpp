@@ -2,6 +2,8 @@
 #include "Engine/Math/Renderer.hpp"
 #include "Engine/Core/DevConsole.hpp"
 
+#include "Game/EngineBuildPreferences.hpp"
+
 RemoteCommandService* RemoteCommandService::g_remoteCommandService = nullptr;
 
 

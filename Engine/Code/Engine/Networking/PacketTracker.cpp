@@ -36,5 +36,8 @@ void PacketTracker::Reset()
 {
 	//m_isValid = false;
 	m_numReliablesInPacket = 0;
+	for (int i = 0; i < MAX_RELIABLES_PER_PACKET; i++){
+		m_sentReliableIDs[i] = INVALID_RELIABLE_ID;
+	}
 
 }

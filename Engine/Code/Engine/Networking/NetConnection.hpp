@@ -7,7 +7,7 @@ class NetMessage;
 class NetSession;
 class PacketTracker;
 
-#define NUM_ACKS_TRACKED (16)
+#define NUM_ACKS_TRACKED (128)
 
 
 class NetConnection 

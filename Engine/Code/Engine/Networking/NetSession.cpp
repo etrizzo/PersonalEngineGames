@@ -586,7 +586,7 @@ void NetSession::ProcessPackets()
 			if (tsPacket->m_fromConnection != nullptr){
 				tsPacket->m_fromConnection->MarkReceiveTime();
 				tsPacket->m_fromConnection->UpdateReceivedAcks(packetHeader.m_ack);
-				wasTrackedAndUnconfirmed = tsPacket->m_fromConnection->ConfirmPacketReceived(packetHeader.m_ack);
+				wasTrackedAndUnconfirmed = tsPacket->m_fromConnection->ConfirmPacketReceived(packetHeader.m_lastReceivedAck);
 			}
 			//go through the packet and process each message
 			for (unsigned int j = 0; j < packetHeader.m_messageCount; j++){

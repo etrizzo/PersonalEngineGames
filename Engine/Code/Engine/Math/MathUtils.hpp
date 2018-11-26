@@ -92,7 +92,7 @@ float Max(const float& x, const float& y);
 template <typename T>
 bool CycleLess(T a, T b)
 {
-	T MAX_VAL = (~(T) 0);
+	T MAX_VAL = (T) (~(T) 0);
 	T MAX_SIGNED = MAX_VAL >> 1;		//make everything 1 and then shift it by 1 (this is half max if its unsigned)
 	T diff = b - a;
 	return ((diff > 0) && (diff <= MAX_SIGNED));		//to get LessThanEqual, just remove diff > 0
