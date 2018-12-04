@@ -6,6 +6,7 @@
 class Character;
 class CharacterState;
 class StoryDataDefinition;
+class StoryState;
 
 class CharacterRequirement{
 public:
@@ -14,7 +15,7 @@ public:
 
 	virtual CharacterRequirement* Clone() const = 0;
 	
-	virtual bool PassesRequirement(CharacterState* character) = 0;
+	virtual bool PassesRequirement(Character* character, StoryState* edgeState) = 0;
 
 	unsigned int m_characterID = (unsigned int) -1;
 	StoryDataDefinition* m_parentData;
@@ -22,6 +23,7 @@ public:
 };
 
 
+//a tag on the character state
 class CharacterRequirement_Tag : public CharacterRequirement{
 public:
 	CharacterRequirement_Tag(){};
@@ -29,10 +31,23 @@ public:
 
 	CharacterRequirement* Clone() const;
 	
-	bool PassesRequirement(CharacterState* character) override;
+	bool PassesRequirement(Character* character, StoryState* edgeState) override;
 	
 	TagPair m_tag;
 
+};
+
+//character matches a tag on the story state
+class CharacterRequirement_StoryTag : public CharacterRequirement{
+public:
+	CharacterRequirement_StoryTag(){};
+	CharacterRequirement_StoryTag(unsigned int charID, StoryDataDefinition* parentData, tinyxml2::XMLElement* element);
+
+	CharacterRequirement* Clone() const;
+
+	bool PassesRequirement(Character* character, StoryState* edgeState) override;
+
+	std::string m_tagName = "NONE";
 };
 
 class CharacterRequirement_Trait : public CharacterRequirement{
@@ -42,7 +57,7 @@ public:
 
 	CharacterRequirement* Clone() const;
 
-	bool PassesRequirement(CharacterState* character) override;
+	bool PassesRequirement(Character* character, StoryState* edgeState) override;
 
 	eCharacterTrait m_trait		= NUM_CHARACTER_TRAITS;
 	FloatRange m_traitRange		= FloatRange(0.f);

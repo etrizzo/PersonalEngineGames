@@ -126,6 +126,13 @@ public:
 	int m_numReliablesSent			= 0;
 	uint8_t m_reliableConnectionIndex	= INVALID_CONNECTION_INDEX;
 
+	//reliable test junk
+	void StartSequenceMsgTest(int connectionToSendTo, int numToSend);
+	StopWatch m_sequenceTestClock;
+	int m_numSequenceMsgsToSend		= 0;
+	int m_numSequenceMsgsSent			= 0;
+	uint8_t m_sequenceConnectionIndex	= INVALID_CONNECTION_INDEX;
+
 	SoundID m_soundTrackID;
 	SoundPlaybackID m_soundtrackPlayback;
 

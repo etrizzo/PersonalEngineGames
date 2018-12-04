@@ -12,7 +12,11 @@ Effect::Effect(tinyxml2::XMLElement * element, StoryDataDefinition* parentData)
 	} else if (type == "story"){
 		m_type = EFFECT_TYPE_STORY;
 	}
-	m_characterID = (unsigned int) ParseXmlAttribute(*element, "character", -1);
+	m_characterIndexString = ParseXmlAttribute(*element, "character", "NO_CHARACTER");
+	std::string stripped = m_characterIndexString;
+	Strip(stripped, '*');
+	m_characterID = atoi(stripped.c_str());
+	//m_characterID = (unsigned int) ParseXmlAttribute(*element, "character", -1);
 	m_parentData = parentData;
 }
 
@@ -22,6 +26,7 @@ Effect_TagChange::Effect_TagChange(tinyxml2::XMLElement * element, StoryDataDefi
 	std::string tag = ParseXmlAttribute(*element, "hasTag", "NO_TAG");
 	std::string value = ParseXmlAttribute(*element, "target", "true");
 	std::string type = ParseXmlAttribute(*element, "type", "boolean");
+	
 
 	m_tag = TagPair(tag, value, type);
 }
@@ -29,11 +34,13 @@ Effect_TagChange::Effect_TagChange(tinyxml2::XMLElement * element, StoryDataDefi
 bool Effect_TagChange::ApplyToState(StoryState * state, StoryData* instancedData)
 {
 	if (m_type == EFFECT_TYPE_CHARACTER){
+
 		Character* character = instancedData->m_characters[m_characterID];
 		CharacterState* characterState = state->GetCharacterStateForCharacter(character);
 		characterState->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
 		if (m_tag.GetType() == "character"){
-			std::string charName = instancedData->ReadCharacterNameFromDataString(m_tag.GetValue());
+			//if you're setting a character name in the story state, read the actual name of that specific character on the node
+			std::string charName = instancedData->ReadCharacterNameFromDataString(m_characterIndexString);
 			characterState->m_tags.SetTagWithValue(m_tag.GetName(), charName, m_tag.GetType());
 			return true;
 		} else {

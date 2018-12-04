@@ -330,6 +330,7 @@
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Networking\Net.cpp" />
     <ClCompile Include="Networking\NetAddress.cpp" />
+    <ClCompile Include="Networking\NetChannel.cpp" />
     <ClCompile Include="Networking\NetConnection.cpp" />
     <ClCompile Include="Networking\NetMessage.cpp" />
     <ClCompile Include="Networking\NetPacket.cpp" />
@@ -448,6 +449,7 @@
     <ClInclude Include="Math\Vector3.hpp" />
     <ClInclude Include="Networking\Net.hpp" />
     <ClInclude Include="Networking\NetAddress.hpp" />
+    <ClInclude Include="Networking\NetChannel.hpp" />
     <ClInclude Include="Networking\NetConnection.hpp" />
     <ClInclude Include="Networking\NetMessage.hpp" />
     <ClInclude Include="Networking\NetPacket.hpp" />

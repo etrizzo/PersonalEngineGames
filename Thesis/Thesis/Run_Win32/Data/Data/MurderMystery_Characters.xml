@@ -17,7 +17,7 @@
 	</Tags>
 </Character>
 
-<!--
+
 <Character name="Mrs. White">
 	<Tags>
 		<Tag tag="isAlive" value="true" type="bool"/>
@@ -35,9 +35,10 @@
 		<Tag tag="isAlive" value="true" type="bool"/>
 	</Tags>
 </Character>
+<!--
 -->
 
-
+<!--
 <Character name="Revolver">
 	<Tags>
 		<Tag tag="isWeapon" value="true" type="bool"/>
@@ -56,7 +57,8 @@
 	</Tags>
 </Character>
 
-<!--
+
+
 <Character name="Rope">
 	<Tags>
 		<Tag tag="isWeapon" value="true" type="bool"/>
@@ -94,7 +96,8 @@
 		<Tag tag="isRoom" value="true" type="bool"/>
 	</Tags>
 </Character>
--->
+
+
 
 <Character name="Library">
 	<Tags>
@@ -113,3 +116,4 @@
 		<Tag tag="isRoom" value="true" type="bool"/>
 	</Tags>
 </Character>
+-->

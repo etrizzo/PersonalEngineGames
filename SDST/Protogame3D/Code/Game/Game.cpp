@@ -155,6 +155,14 @@ void Game::StartReliableMsgTest(int connectionToSendTo, int numToSend)
 	m_reliableConnectionIndex = (uint8_t(connectionToSendTo));
 }
 
+void Game::StartSequenceMsgTest(int connectionToSendTo, int numToSend)
+{
+	m_sequenceTestClock.SetTimer(.03f);
+	m_numSequenceMsgsSent = 0;
+	m_numSequenceMsgsToSend = numToSend;
+	m_sequenceConnectionIndex = (uint8_t(connectionToSendTo));
+}
+
 void Game::RenderLoadScreen()
 {
 	AABB2 uiBounds = SetUICamera();
@@ -390,8 +398,14 @@ void Game::RunNetSessionTests()
 		unreliableTest->WriteBytes(sizeof(int), &m_numUnreliablesToSend);
 		unreliableTest->IncrementMessageSize(sizeof(int) + sizeof(int));
 		unreliableTest->WriteHeader();
-		m_session->GetConnection(m_unreliableConnectionIndex)->Send( unreliableTest ); 
-		m_numUnreliablesSent++;
+		NetConnection* conn = m_session->GetConnection(m_unreliableConnectionIndex);
+		if (conn == nullptr){
+			ConsolePrintf(RGBA::RED, "No connection at index %i. Canceling test.");
+			m_numUnreliablesSent = m_numUnreliablesToSend;
+		}  else {
+			conn->Send( unreliableTest ); 
+			m_numUnreliablesSent++;
+		}
 	}
 
 	//reliable test loop
@@ -402,8 +416,32 @@ void Game::RunNetSessionTests()
 		reliableTest->Write(m_numReliablesToSend);
 		reliableTest->IncrementMessageSize(sizeof(int) + sizeof(int));
 		//reliableTest->WriteHeader();
-		m_session->GetConnection(m_reliableConnectionIndex)->Send( reliableTest ); 
-		m_numReliablesSent++;
+		NetConnection* conn = m_session->GetConnection(m_reliableConnectionIndex);
+		if (conn == nullptr){
+			ConsolePrintf(RGBA::RED, "No connection at index %i. Canceling test.");
+			m_numReliablesSent = m_numReliablesToSend;
+		}  else {
+			conn->Send( reliableTest ); 
+			m_numReliablesSent++;
+		}
+	}
+
+	//inorder test loop
+	if (m_numSequenceMsgsSent < m_numSequenceMsgsToSend && m_sequenceTestClock.CheckAndReset()){
+		NetMessage* sequenceTest = new NetMessage( "sequence_test" ); 
+		sequenceTest->SetDefinitionFromSession(g_theGame->m_session);
+		sequenceTest->Write(m_numSequenceMsgsSent);
+		sequenceTest->Write(m_numSequenceMsgsToSend);
+		sequenceTest->IncrementMessageSize(sizeof(int) + sizeof(int));
+		//reliableTest->WriteHeader();
+		NetConnection* conn = m_session->GetConnection(m_sequenceConnectionIndex);
+		if (conn == nullptr){
+			ConsolePrintf(RGBA::RED, "No connection at index %i. Canceling test.");
+			m_numSequenceMsgsSent = m_numSequenceMsgsToSend;
+		} else {
+			conn->Send( sequenceTest ); 
+			m_numSequenceMsgsSent++;
+		}
 	}
 }
 

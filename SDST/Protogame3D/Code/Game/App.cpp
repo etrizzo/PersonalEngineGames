@@ -219,7 +219,7 @@ void App::RegisterCommands()
 	CommandRegister("net_set_connection_send_rate", CommandSetConnectionSendRate, "Sets send rate for net session", "net_set_connection_send_rate <connIndex> <sendRateMS>");
 	CommandRegister("net_unreliable_test", CommandStartUnreliableTest, "Starts sending x unreliable test messages to connection", "net_unreliable_test <connIndex> <numMessages>");
 	CommandRegister("net_reliable_test", CommandStartReliableTest, "Starts sending x reliable test messages to connection", "net_reliable_test <connIndex> <numMessages>");
-
+	CommandRegister("net_sequence_test", CommandStartInorderTest, "Starts sending x in-order messages to connection", "net_sequence_test <connIndex> <numMessages>");
 }
 
 void App::HandleInput()
@@ -892,6 +892,16 @@ void CommandStartReliableTest(Command & cmd)
 	int connIndex = cmd.GetNextInt();
 	int numToSend = cmd.GetNextInt();
 	g_theGame->StartReliableMsgTest(connIndex, numToSend);
+}
+
+void CommandStartInorderTest(Command & cmd)
+{
+	int connIndex = cmd.GetNextInt();
+	int numToSend = cmd.GetNextInt();
+	if (numToSend == 0){
+		numToSend = 10;		//default value
+	}
+	g_theGame->StartSequenceMsgTest(connIndex, numToSend);
 }
 
 

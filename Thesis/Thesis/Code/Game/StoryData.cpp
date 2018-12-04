@@ -167,7 +167,7 @@ bool StoryData::DoesCharacterMeetSlotRequirementsAtEdge(Character * character, u
 	CharacterState* resultingState = resultState->GetCharacterStateForCharacter(character);
 	
 	//check if the change would fit on this edge
-	bool meetsExistingConditions = m_definition->m_characterReqs[charSlot]->DoesCharacterMeetAllRequirements(charState);
+	bool meetsExistingConditions = m_definition->m_characterReqs[charSlot]->DoesCharacterMeetAllRequirements(character, edgeState);
 	if (meetsExistingConditions){
 		//check if the change would fuck up future nodes
 		StoryData* endData = atEdge->GetEnd()->m_data;
@@ -175,7 +175,7 @@ bool StoryData::DoesCharacterMeetSlotRequirementsAtEdge(Character * character, u
 		//NOTE: this should maybe be a recursive call to DoesCharacterMeetSlotRequirements?
 		CharacterRequirementSet* charReqs = endData->GetRequirementsForCharacter(character);
 		if (charReqs != nullptr){
-			bool meetsFutureConditions = charReqs->DoesCharacterMeetAllRequirements(resultingState);
+			bool meetsFutureConditions = charReqs->DoesCharacterMeetAllRequirements(character, resultState);
 			if (meetsFutureConditions){
 				delete resultingState;
 				return true;
@@ -218,7 +218,7 @@ bool StoryData::IsCompatibleWithIncomingEdge(StoryState * edgeState)
 		CharacterRequirementSet* reqs = GetRequirementsForCharacter(character);
 		if (reqs != nullptr){
 			//if the edges' character has requirements already established in this node, check them.
-			if (!reqs->DoesCharacterMeetAllRequirements(charState)){
+			if (!reqs->DoesCharacterMeetAllRequirements(character, edgeState)){
 				//if any character doesn't meet the requirements, return false.
 				return false;
 			}
@@ -232,6 +232,9 @@ Character* StoryData::GetCharacterFromDataString(std::string data)
 {
 	 Strip(data, '*');
 	 int i = atoi(data.c_str());
+	 if (i == 0 && (data != "0" && data != "0*")){
+		 return nullptr;
+	 }
 	 if (i >= 0 && i < m_characters.size()){
 		 return m_characters[i];
 	 } else {
@@ -241,6 +244,10 @@ Character* StoryData::GetCharacterFromDataString(std::string data)
 
 std::string StoryData::ReadCharacterNameFromDataString(std::string data)
 {
+	if (data == "none"){
+		return data;
+	}
+
 	Character* character = GetCharacterFromDataString(data);
 	if (character != nullptr){
 		return character->GetName();

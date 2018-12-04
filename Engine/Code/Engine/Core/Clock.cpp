@@ -62,9 +62,13 @@ void Clock::Advance( uint64_t delta )
 
 	// Step 1:  Scale/Modify the delta based on internal state
 	// ... 
-	delta=(uint64_t) (delta * m_time_scale);
+
 	if (m_paused){
 		delta = 0;
+	} else if (m_time_scale == 1.0){
+		//do nothing - don't want to lose that sweet sweet precision by casting to double
+	} else {
+		delta=(uint64_t) ((double) delta * m_time_scale);
 	}
 
 	// Step 2: Update frame and total variables.  

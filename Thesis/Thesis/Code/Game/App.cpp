@@ -475,13 +475,27 @@ void CommandPrintGraph(Command & cmd)
 
 void CommandGenerateGraph(Command & cmd)
 {
-	UNUSED(cmd);
+	int seed = cmd.GetNextInt();
+	if (seed != 0){
+		srand((unsigned int) seed);
+	} else {
+		unsigned int randoSeed = (unsigned int) time(0);
+		srand(randoSeed);
+		ConsolePrintf("Generating graph with seed %i", randoSeed);
+	}
 	g_theGame->GenerateGraph();
 }
 
 void CommandFindPath(Command & cmd)
 {
-	UNUSED(cmd);
+	int seed = cmd.GetNextInt();
+	if (seed != 0){
+		srand((unsigned int) seed);
+	} else {
+		unsigned int randoSeed = (unsigned int) time(0);
+		srand(randoSeed);
+		ConsolePrintf("Calculating path with seed %i", randoSeed);
+	}
 	//g_theGame->m_graph.FindPath(RandomPathHeuristic);
 	g_theGame->m_graph.FindPath(CalculateChanceHeuristic);
 }
@@ -537,6 +551,14 @@ void CommandGeneratePairs(Command & cmd)
 	int numToGenerate = cmd.GetNextInt();
 	if (numToGenerate == 0){
 		numToGenerate = NUM_NODE_PAIRS_TO_GENERATE;
+	}
+	int seed = cmd.GetNextInt();
+	if (seed > 0){
+		srand((unsigned int) seed);
+	} else if (seed == -1){
+		unsigned int randoSeed = (unsigned int) time(0);
+		srand(randoSeed);
+		ConsolePrintf("Generating pairs with seed %i", randoSeed);
 	}
 	g_theGame->GenerateNodePairs(numToGenerate);
 }

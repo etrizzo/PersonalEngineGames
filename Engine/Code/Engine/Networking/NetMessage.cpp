@@ -20,6 +20,20 @@ NetMessage::NetMessage(std::string msg)
 	MoveWriteHeadPastHeader();
 }
 
+NetMessage::NetMessage(NetMessage * copy)
+{
+	m_msgName = copy->m_msgName;
+	m_definition = copy->m_definition;
+	m_msgSize = copy->m_msgSize;
+	m_reliableID = copy->m_reliableID + 0;
+	m_sequenceID = copy->m_sequenceID  + 0;
+	m_timeSinceLastSentMS = copy->m_timeSinceLastSentMS;
+	m_writeHead = copy->m_writeHead;
+	m_readHead = copy->m_readHead;
+	m_maxSize = copy->m_maxSize;
+	memcpy(m_buffer, copy->m_buffer, m_writeHead);
+}
+
 void NetMessage::SetDefinitionFromSession(NetSession * session)
 {
 	m_definition = session->GetRegisteredMessageByName(m_msgName);
@@ -34,6 +48,11 @@ bool NetMessage::RequiresConnection() const
 bool NetMessage::IsReliable() const
 {
 	return m_definition->IsReliable();
+}
+
+bool NetMessage::IsInOrder() const
+{
+	return m_definition->IsInOrder();
 }
 
 void NetMessage::ResetAge()
@@ -79,6 +98,9 @@ void NetMessage::WriteHeader()
 	if (m_definition->IsReliable()){
 		Write(m_reliableID, false);
 	}
+	if (m_definition->IsInOrder()){
+		Write(m_sequenceID, false);
+	}
 	SetWriteHead(writeHead);
 }
 
@@ -87,6 +109,9 @@ uint16_t NetMessage::GetHeaderSize()
 	uint16_t msgSize = sizeof(m_definition->m_messageID);		//1 byte
 	if (m_definition->IsReliable()){
 		msgSize+= sizeof(m_reliableID);				//2 bytes
+	}
+	if(m_definition->IsInOrder()){
+		msgSize+= sizeof(m_sequenceID);
 	}
 	return msgSize;
 }

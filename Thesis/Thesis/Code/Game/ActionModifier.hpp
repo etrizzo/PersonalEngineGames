@@ -2,6 +2,7 @@
 #include "Game/GameCommon.hpp"
 
 class CharacterRequirementSet;
+class StoryRequirementSet;
 class ActionDefinition;
 class StoryDataDefinition;
 
@@ -9,7 +10,8 @@ class ActionModifier{
 public:
 	ActionModifier(tinyxml2::XMLElement* actionElement, StoryDataDefinition* parent);
 	int m_characterID;
-	CharacterRequirementSet* m_requirements;
+	CharacterRequirementSet* m_characterRequirements;
+	StoryRequirementSet* m_storyRequirements;
 	ActionDefinition* m_parentDefinition;
 	float m_multiplier;
 

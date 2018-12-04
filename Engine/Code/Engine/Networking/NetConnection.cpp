@@ -2,6 +2,7 @@
 #include "Engine/Networking/NetPacket.hpp"
 #include "Engine/Networking/NetSession.hpp"
 #include "Engine/Networking/PacketTracker.hpp"
+#include "Engine/Networking/NetChannel.hpp"
 
 
 
@@ -15,6 +16,18 @@ NetConnection::NetConnection(NetSession * owningSession, uint8_t indexInSession,
 	SetSendRate();
 	for (int i = 0; i < NUM_ACKS_TRACKED; i++){
 		m_trackedSentPackets[i] = new PacketTracker(INVALID_PACKET_ACK);
+	}
+	for (int i = 0; i < MAX_MESSAGE_CHANNELS; i++){
+		m_channels[i] = new NetChannel();
+	}
+}
+
+NetConnection::~NetConnection()
+{
+	for(NetChannel* channel : m_channels)
+	{
+		delete channel;
+
 	}
 }
 
@@ -45,6 +58,13 @@ void NetConnection::Send(NetMessage * msg)
 	msg->SetDefinition(m_owningSession->GetRegisteredMessageByName(msg->m_msgName));
 	msg->WriteHeader();
 	if (msg->IsReliable()) {
+
+
+		if (msg->IsInOrder()){
+			NetChannel* channel = GetChannelByIndex(msg->m_definition->m_channelID);
+			msg->m_sequenceID = channel->GetAndIncrementNextSentSequenceID();
+		}
+
 		//don't actually assign reliable id until it gets sent for Reasons
 		m_unsentReliableMessages.push_back(msg);
 	} else {
@@ -326,6 +346,24 @@ void NetConnection::AddReceivedReliable(uint16_t newReliableID)
 	}
 }
 
+void NetConnection::AddReceivedInOrderMessage(NetMessage * msg)
+{
+	NetChannel* channel = GetChannelByIndex(msg->m_definition->m_channelID);
+	if (channel != nullptr){
+		////check if the ID just processed was already in the out of order array
+		//for (int i = channel->m_outOfOrderMessages.size() - 1; i >= 0; i--){
+		//	if (channel->m_outOfOrderMessages[i]->m_sequenceID <= channel->m_nextExpectedSequenceID){
+		//		//messageToProcess = channel->m_outOfOrderMessages[i];
+		//		ConsolePrintf("just processed %i, removing dup from array", channel->m_outOfOrderMessages[i]->m_sequenceID);
+		//		RemoveAtFast(channel->m_outOfOrderMessages, i);
+		//		//break;
+		//	}
+		//}
+		channel->m_nextExpectedSequenceID++;
+		//ConsolePrintf(RGBA::GREEN, "Expected id is %i",channel->m_nextExpectedSequenceID);
+	}
+}
+
 bool NetConnection::HasReceivedReliable(uint16_t reliableID)
 {
 	uint16_t maxWindowVal = m_highestReceivedReliableID;
@@ -345,5 +383,102 @@ bool NetConnection::HasReceivedReliable(uint16_t reliableID)
 		}
 		//we haven't received it yet!
 		return false;
+	}
+}
+
+NetChannel * NetConnection::GetChannelByIndex(uint8_t channelIndex)
+{
+	if (channelIndex < MAX_MESSAGE_CHANNELS){
+		return m_channels[channelIndex];
+	}
+	return nullptr;
+}
+
+uint16_t NetConnection::GetNextExpectedIDForChannel(uint8_t channelIndex)
+{
+	NetChannel* channel = GetChannelByIndex(channelIndex);
+	if (channel != nullptr){
+		return channel->m_nextExpectedSequenceID;
+	} else {
+		return 0;
+	}
+}
+
+bool NetConnection::IsMessageNextExpectedInSequence(NetMessage * msg)
+{
+	NetChannel* channel = GetChannelByIndex(msg->m_definition->m_channelID);
+	if (channel != nullptr){
+		return msg->m_sequenceID == channel->m_nextExpectedSequenceID;
+	} else {
+		return false;
+	}
+}
+
+void NetConnection::ProcessOutOfOrderMessagesForChannel(uint8_t channelIndex)
+{
+	NetChannel* channel = GetChannelByIndex(channelIndex);
+	NetMessage* messageToProcess = nullptr;
+
+	//ConsolePrintf("Searching %i number of out of order messages for seqID %i on channel %i", channel->m_outOfOrderMessages.size(), channel->m_nextExpectedSequenceID, channelIndex);
+	do{
+		messageToProcess = nullptr;
+		//if the out of order messages list contains the next expected message, pull it out
+		for (int i = channel->m_outOfOrderMessages.size() - 1; i >= 0; i--){
+			if (channel->m_outOfOrderMessages[i]->m_sequenceID == channel->m_nextExpectedSequenceID){
+				messageToProcess = channel->m_outOfOrderMessages[i];
+				//ConsolePrintf("Removing message w/ sequence id %i from vector", channel->m_outOfOrderMessages[i]->m_sequenceID);
+				RemoveAtFast(channel->m_outOfOrderMessages, i);
+				break;
+			} 
+			else if (channel->m_outOfOrderMessages[i]->m_sequenceID < channel->m_nextExpectedSequenceID){
+				//ConsolePrintf("Removing already processed message %i from vector", channel->m_outOfOrderMessages[i]->m_sequenceID);
+				RemoveAtFast(channel->m_outOfOrderMessages, i);
+			}
+		}
+
+		//and process it, update next expected index
+		if (messageToProcess != nullptr){
+			//if (!HasReceivedReliable(messageToProcess->m_reliableID)){
+				if (messageToProcess->m_sequenceID == channel->m_nextExpectedSequenceID){
+					channel->m_nextExpectedSequenceID++;
+				}
+				net_message_definition_t* definition = messageToProcess->m_definition;
+				((definition->m_messageCB))( *messageToProcess, net_sender_t(this));
+				AddReceivedReliable(messageToProcess->m_reliableID);
+				//ConsolePrintf("Processing reliable %i from vector. Now expecting %i", messageToProcess->m_sequenceID, channel->m_nextExpectedSequenceID);
+			//}
+		}
+
+	} while (messageToProcess != nullptr);
+}
+
+void NetConnection::AddOutOfOrderMessage(NetMessage * msg)
+{
+	NetChannel* channel = GetChannelByIndex(msg->m_definition->m_channelID);
+	//for (int i = channel->m_outOfOrderMessages.size() - 1; i >= 0; i--){
+	//	if (channel->m_outOfOrderMessages[i]->m_sequenceID == msg->m_sequenceID){
+	//		//we've already got a copy of the out of order message
+	//		ConsolePrintf("attempting to add same message out of order vector %i", msg->m_sequenceID );
+	//		return;
+	//	}
+	//}
+	if (channel != nullptr){
+		NetMessage* copy = new NetMessage(msg);
+		//copy->WriteBytes(msg->GetWrittenByteCount(), msg->GetBuffer());
+		//uint8_t messageType;
+		//copy->Read(&messageType, false);
+		//copy->m_definition = msg->m_definition;
+		//uint16_t reliableID;
+		//copy->Read(&reliableID);
+		//copy->m_reliableID = reliableID;
+		//uint16_t seqID;
+		//copy->Read(&seqID);
+		//copy->m_sequenceID = seqID;
+
+
+		channel->m_outOfOrderMessages.push_back(msg);
+		//ConsolePrintf("Adding %i to out of order vector on channel %i", msg->m_sequenceID, msg->m_definition->m_channelID);
+	} else {
+		ConsolePrintf(RGBA::RED, "No channel (%i) for message.", msg->m_definition->m_channelID);
 	}
 }

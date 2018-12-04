@@ -3,22 +3,24 @@
 
 void StoryRequirementSet::InitFromXML(tinyxml2::XMLElement * setElement, StoryDataDefinition* parent)
 {
-	m_characterIndex = (unsigned int) ParseXmlAttribute(*setElement, "index", (int) -1);
+	if (setElement != nullptr){
+		m_characterIndex = (unsigned int) ParseXmlAttribute(*setElement, "index", (int) -1);
 
-	for (tinyxml2::XMLElement* reqElement = setElement->FirstChildElement("Requirement"); reqElement != nullptr; reqElement = reqElement->NextSiblingElement("Requirement")){
-		//create new character requirement
-		StoryRequirement* newRequirement = nullptr;
-		std::string traitType = ParseXmlAttribute(*reqElement, "trait", "NO_TRAIT");
-		std::string tagName = ParseXmlAttribute(*reqElement, "tag", "NO_TAG");
-		if (traitType != "NO_TRAIT"){
-			//newRequirement = (StoryRequirement*) new StoryRequirement_Trait(m_characterIndex, parent, reqElement);
-		} else if (tagName != "NO_TAG"){
-			newRequirement = (StoryRequirement*) new StoryRequirement_Tag(m_characterIndex, parent, reqElement);
-		}
-		if (newRequirement != nullptr){
-			m_requirements.push_back(newRequirement);
-		} else {
-			ConsolePrintf(RGBA::RED, "Error parsing story requirements - no identified requirement type");
+		for (tinyxml2::XMLElement* reqElement = setElement->FirstChildElement("Requirement"); reqElement != nullptr; reqElement = reqElement->NextSiblingElement("Requirement")){
+			//create new character requirement
+			StoryRequirement* newRequirement = nullptr;
+			std::string traitType = ParseXmlAttribute(*reqElement, "trait", "NO_TRAIT");
+			std::string tagName = ParseXmlAttribute(*reqElement, "tag", "NO_TAG");
+			if (traitType != "NO_TRAIT"){
+				//newRequirement = (StoryRequirement*) new StoryRequirement_Trait(m_characterIndex, parent, reqElement);
+			} else if (tagName != "NO_TAG"){
+				newRequirement = (StoryRequirement*) new StoryRequirement_Tag(m_characterIndex, parent, reqElement);
+			}
+			if (newRequirement != nullptr){
+				m_requirements.push_back(newRequirement);
+			} else {
+				ConsolePrintf(RGBA::RED, "Error parsing story requirements - no identified requirement type");
+			}
 		}
 	}
 }

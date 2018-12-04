@@ -39,15 +39,11 @@
 				<Requirement tag="hasTreasure" target="true" />
 			</Character>
 		</CharacterRequirements>
-		<StoryRequirements>
-			<StoryRequirement feeling="tension" value="15" compare="greater" />
-		</StoryRequirements>
 		<CharacterEffects>
 			<EffectSet chance="default">
 				<TagChange character="1" hasTag = "isAngry" target="*0*" type="character"/>
 				<TagChange character="1" hasTag = "hasTreasure" target="false" />
 				<TagChange character="0" hasTag = "hasTreasure" target="true" />
-				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</CharacterEffects>
 	</PlotGrammar>

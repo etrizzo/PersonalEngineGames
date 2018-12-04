@@ -12,8 +12,8 @@ enum eNetMessageOptionBit : unsigned int
 	NETMESSAGE_OPTION_RELIABLE							= BIT_FLAG(1), // task15
 	NETMESSAGE_OPTION_IN_ORDER							= BIT_FLAG(2), // task16
 
-	 // convenience
-	 NETMSSAGE_OPTION_RELIALBE_IN_ORDER	= NETMESSAGE_OPTION_RELIABLE | NETMESSAGE_OPTION_IN_ORDER, 
+	 // convenience							NETMESSAGE_FLAG_RELIABLE | NETMESSAGE_FLAG_IN_ORDER
+	 NETMSSAGE_OPTION_RELIABLE_IN_ORDER	= NETMESSAGE_OPTION_RELIABLE | NETMESSAGE_OPTION_IN_ORDER, 
 };
 typedef unsigned int eNetMessageOptions; 
 
@@ -35,11 +35,13 @@ class NetMessage : public BytePacker
 public:
 	NetMessage();		//should probably only be used when getting data, not sending?
 	NetMessage(std::string msg);	//constructs with initial string - signifies what kind of message?
+	NetMessage(NetMessage* copy);
 
 	void SetDefinitionFromSession(NetSession* session);
 
 	bool RequiresConnection() const;
 	bool IsReliable() const;
+	bool IsInOrder() const;
 
 	void ResetAge();
 	void IncrementAge(unsigned int deltaSecondsMS);
@@ -65,10 +67,12 @@ public:
 	uint16_t m_msgID;
 	uint16_t m_msgSize;
 	uint16_t m_reliableID = 0;
+	uint16_t m_sequenceID = 0;
 
 	unsigned int m_timeSinceLastSentMS = 0;
 
 	net_message_definition_t* m_definition;
+
 
 };
 
@@ -82,6 +86,7 @@ struct net_message_definition_t{
 	NetSessionMessageCB m_messageCB;
 	eNetMessageOptions m_messageOptions = NETMESSAGE_OPTION_UNRELIABLE_REQUIRES_CONNECTION;
 	int m_fixedIndex = -1;
+	uint8_t m_channelID = 0;
 
 	bool IsConnectionless() const;
 	bool IsReliable() const;

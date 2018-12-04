@@ -19,6 +19,7 @@ void NetSession::Startup()
 	RegisterMessage( NETMSG_HEARTBEAT, "heartbeat", (NetSessionMessageCB) OnHeartbeat, NETMESSAGE_OPTION_UNRELIABLE_REQUIRES_CONNECTION );
 	RegisterMessage( NETMSG_UNRELIABLE_TEST, "unreliable_test", (NetSessionMessageCB) OnNetMsgUnreliableTest, NETMESSAGE_OPTION_UNRELIABLE_REQUIRES_CONNECTION);
 	RegisterMessage( NETMSG_RELIABLE_TEST, "reliable_test", (NetSessionMessageCB) OnNetMsgReliableTest, NETMESSAGE_OPTION_RELIABLE );
+	RegisterMessage( NETMSG_SEQUENCE_TEST, "sequence_test", (NetSessionMessageCB) OnNetMsgSequenceTest, NETMSSAGE_OPTION_RELIABLE_IN_ORDER);
 
 	SetHeartbeat(DEFAULT_HEARTBEAT);
 }
@@ -268,13 +269,14 @@ void NetSession::SetSimulatedLatency(int minAddedLatencyMS, int maxAddedLatencyM
 	m_simulatedLatency = IntRange(minAddedLatencyMS, maxAddedLatencyMS);
 }
 
-void NetSession::RegisterMessage(int msgIndex, std::string name, NetSessionMessageCB messageCB, eNetMessageOptions messageOptions)
+void NetSession::RegisterMessage(int msgIndex, std::string name, NetSessionMessageCB messageCB, eNetMessageOptions messageOptions, uint8_t msgChannelIndex)
 {
 	net_message_definition_t* messageDef = new net_message_definition_t();
 	messageDef->m_messageCB = messageCB;
 	messageDef->m_messageName = name;
 	messageDef->m_messageOptions = messageOptions;
 	messageDef->m_fixedIndex = msgIndex;
+	messageDef->m_channelID = msgChannelIndex;
 	if (msgIndex == -1){
 		messageDef->m_messageID = (uint8_t) m_registeredMessages.size();
 		m_unassignedMessages.push_back(messageDef);
@@ -415,41 +417,66 @@ void NetSession::ProcessOutgoing()
 	}
 }
 
-void NetSession::ProcessMessage(NetMessage message, NetConnection* from)
+void NetSession::ProcessMessage(NetMessage* message, NetConnection* from)
 {
 	// figure out which kind of message it is
 	// seems like the name is encoded as the first string?
 	uint8_t messageType;
-	message.Read(&messageType, false);
+	message->Read(&messageType, false);
+	bool shouldDelete = true;
 	
 
 	//get the appropriate callback from the map of registered callbacks
 	if (IsMessageRegistered(messageType)){
 		net_message_definition_t* definition = GetRegisteredMessageByID(messageType);
 		if (definition== nullptr){
-			LogErrorf("No definition found for message index: %i", message.m_msgID);
+			LogErrorf("No definition found for message index: %i", message->m_msgID);
+		} else {
+			message->m_definition = definition;
 		}
 
 		//if the definition requires a connection and we don't have a valid connection, chuck it
 		if (!definition->IsConnectionless() && !from->IsValidConnection()){
 			//discard message and log warning
-			LogTaggedPrintf("net", "No connection found for incoming message that requires connection. (%s)", message.m_definition->m_messageName.c_str());
+			LogTaggedPrintf("net", "No connection found for incoming message that requires connection. (%s)", message->m_definition->m_messageName.c_str());
 		} else {
 			//process as usual
 			if (definition->IsReliable()){
 				uint16_t reliableID;
-				message.Read(&reliableID);
+				message->Read(&reliableID);
+				message->m_reliableID = reliableID;
 				if (from->HasReceivedReliable(reliableID)){
 					//you have already processed this message - do nothing
 					return;
 				} else {
-					//process the message and then add received reliable to the connection
-					((definition->m_messageCB))( message, net_sender_t(from));
-					from->AddReceivedReliable(reliableID);
+					if (definition->IsInOrder()){
+						uint16_t seqID;
+						message->Read(&seqID);
+						message->m_sequenceID = seqID;
+						if (from->IsMessageNextExpectedInSequence(message)){
+							//process the message and then add received reliable to the connection
+							((definition->m_messageCB))( *message, net_sender_t(from));
+							//ConsolePrintf(RGBA::YELLOW, "Processing message %i", message->m_sequenceID);
+							from->AddReceivedReliable(reliableID);
+							from->AddReceivedInOrderMessage(message);
+							from->ProcessOutOfOrderMessagesForChannel(definition->m_channelID);
+							//ConsolePrintf(RGBA::YELLOW, "Finished processing message %i", message->m_sequenceID);
+						} else {
+							//ConsolePrintf("Received out of order message %i", message->m_sequenceID);
+							from->AddOutOfOrderMessage(message);
+							shouldDelete = false;
+							//from->AddReceivedReliable(reliableID);
+						}
+					} else {
+						//process the message and then add received reliable to the connection
+						((definition->m_messageCB))( *message, net_sender_t(from));
+						from->AddReceivedReliable(reliableID);
+					}
+
 				}
 			} else {
 				//process unreliable message as usual
-				((definition->m_messageCB))( message, net_sender_t(from));
+				((definition->m_messageCB))( *message, net_sender_t(from));
 			}
 		}
 
@@ -457,6 +484,10 @@ void NetSession::ProcessMessage(NetMessage message, NetConnection* from)
 			//clean up "from" connection if it was made on the fly
 			delete from;
 		}
+		
+	}
+	if (shouldDelete){
+		delete (message);
 	}
 }
 
@@ -483,7 +514,7 @@ void NetSession::SendPacketsForConnection(unsigned int connectionIndex)
 					SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
 					messagesSent = 0;
 					delete packet;
-					std::vector<NetMessage*> reliablesInPacket = { msg };
+					reliablesInPacket = { msg };
 					packet = new NetPacket();
 					packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
 				}
@@ -491,7 +522,7 @@ void NetSession::SendPacketsForConnection(unsigned int connectionIndex)
 				SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
 				messagesSent = 0;
 				delete packet;
-				std::vector<NetMessage*> reliablesInPacket = { msg };
+				reliablesInPacket = { msg };
 				packet = new NetPacket();
 				packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
 			}
@@ -516,7 +547,7 @@ void NetSession::SendPacketsForConnection(unsigned int connectionIndex)
 						SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
 						messagesSent = 0;
 						delete packet;
-						std::vector<NetMessage*> reliablesInPacket = { msg };
+						reliablesInPacket = { msg };
 						packet = new NetPacket();
 						packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
 					}
@@ -524,7 +555,7 @@ void NetSession::SendPacketsForConnection(unsigned int connectionIndex)
 					SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
 					messagesSent = 0;
 					delete packet;
-					std::vector<NetMessage*> reliablesInPacket = { msg };
+					reliablesInPacket = { msg };
 					packet = new NetPacket();
 					packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
 				}
@@ -539,7 +570,7 @@ void NetSession::SendPacketsForConnection(unsigned int connectionIndex)
 			SendPacketToConnection((uint8_t) connectionIndex, packet, messagesSent, reliablesInPacket);
 			messagesSent = 0;
 			delete packet;
-			std::vector<NetMessage*> reliablesInPacket = { msg };
+			reliablesInPacket = { msg };
 			packet = new NetPacket();
 			packet->WriteMessage(*msg);		//this is always guaranteed to be smaller than net packet size
 		}
@@ -590,10 +621,10 @@ void NetSession::ProcessPackets()
 			}
 			//go through the packet and process each message
 			for (unsigned int j = 0; j < packetHeader.m_messageCount; j++){
-				NetMessage message;
-				tsPacket->m_packet->ReadMessage(&message);
+				NetMessage* message =  new NetMessage();
+				tsPacket->m_packet->ReadMessage(message);
 				ProcessMessage(message, tsPacket->m_fromConnection);
-				
+				//delete message;
 			}
 
 			m_timeStampedPackets[i] = nullptr;
@@ -709,6 +740,19 @@ bool OnNetMsgReliableTest(NetMessage msg, net_sender_t const & from)
 		return false;
 	}
 	ConsolePrintf("Received reliable %i of %i from %s", numSent, numToSend, from.m_connection->GetAddress().ToString().c_str());
+	return true;
+}
+
+bool OnNetMsgSequenceTest(NetMessage msg, net_sender_t const & from)
+{
+	UNUSED(from);
+	int numSent;
+	int numToSend;
+
+	if (!msg.Read(&numSent) || !msg.Read(&numToSend)){
+		return false;
+	}
+	ConsolePrintf("Received reliable in-order %i of %i from %s", numSent, numToSend, from.m_connection->GetAddress().ToString().c_str());
 	return true;
 }
 

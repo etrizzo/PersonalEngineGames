@@ -160,6 +160,7 @@ bool Tags::HasTagWithValue(const std::string & tagName, const std::string & valu
 			return true;
 		}
 	}
+	return false;
 }
 
 bool Tags::ContainsTagWithAnyValue(const std::string & tagName, const std::string & type)

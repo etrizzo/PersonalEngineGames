@@ -115,4 +115,5 @@ void CommandSetSessionSendRate(Command& cmd);
 void CommandSetConnectionSendRate(Command& cmd);
 void CommandStartUnreliableTest(Command& cmd);
 void CommandStartReliableTest(Command& cmd);
+void CommandStartInorderTest(Command& cmd);
 

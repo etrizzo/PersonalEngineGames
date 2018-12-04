@@ -107,6 +107,7 @@ void StoryDataDefinition::InitAsDetailNode(tinyxml2::XMLElement * nodeElement)
 		m_actions.push_back(actionDef);
 	}
 
+	//read story effects
 	tinyxml2::XMLElement* storyEffects = nodeElement->FirstChildElement("StoryEffects");
 	if (storyEffects != nullptr){
 		m_storyEffects = new EffectSet(storyEffects->FirstChildElement("EffectSet"), this);
@@ -114,6 +115,7 @@ void StoryDataDefinition::InitAsDetailNode(tinyxml2::XMLElement * nodeElement)
 		m_storyEffects = new EffectSet((tinyxml2::XMLElement*) nullptr, this);
 	}
 
+	//read story requirements
 	m_storyReqs = new StoryRequirementSet();
 	tinyxml2::XMLElement* storyReqElement = nodeElement->FirstChildElement("StoryRequirements");
 	if (storyReqElement != nullptr){
@@ -168,6 +170,7 @@ void StoryDataDefinition::InitAsPlotNode(tinyxml2::XMLElement * nodeElement)
 	
 	m_guaranteedEffects = new EffectSet(allCharacterEffects, this);
 
+	//read story effects
 	tinyxml2::XMLElement* storyEffects = nodeElement->FirstChildElement("StoryEffects");
 	if (storyEffects != nullptr){
 		m_storyEffects = new EffectSet(storyEffects->FirstChildElement("EffectSet"), this);
@@ -249,7 +252,7 @@ bool StoryDataDefinition::DoesCharacterMeetSlotRequirementsAtEdge(Character * ch
 	CharacterState* resultingState = resultState->GetCharacterStateForCharacter(character);
 
 	//check if the change would fit on this edge
-	bool meetsExistingConditions = m_characterReqs[charSlot]->DoesCharacterMeetAllRequirements(charState);
+	bool meetsExistingConditions = m_characterReqs[charSlot]->DoesCharacterMeetAllRequirements(character, edgeState);
 	if (meetsExistingConditions){
 		//check if the change would fuck up future nodes
 		StoryData* endData = atEdge->GetEnd()->m_data;
@@ -257,7 +260,7 @@ bool StoryDataDefinition::DoesCharacterMeetSlotRequirementsAtEdge(Character * ch
 		//NOTE: this should maybe be a recursive call to DoesCharacterMeetSlotRequirements?
 		CharacterRequirementSet* charReqs = endData->GetRequirementsForCharacter(character);
 		if (charReqs != nullptr){
-			bool meetsFutureConditions = charReqs->DoesCharacterMeetAllRequirements(resultingState);
+			bool meetsFutureConditions = charReqs->DoesCharacterMeetAllRequirements(character, resultState);
 			if (meetsFutureConditions){
 				delete resultingState;
 				return true;
@@ -356,7 +359,7 @@ std::string StoryDataDefinition::ReadCharacterNameFromDataString(std::string dat
 	if (character != nullptr){
 		return character->GetName();
 	} else {
-		return "NO_CHARACTER_FOUND";
+		return "none";
 	}
 }
 

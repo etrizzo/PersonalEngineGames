@@ -1275,11 +1275,11 @@ std::vector<Character*> StoryGraph::GetCharactersForNode(StoryDataDefinition* no
 		for (unsigned int nodeSlot = 0; nodeSlot < nodeDefinition->GetNumCharacters(); nodeSlot++){
 			bool charSet = false;
 			for (unsigned int storyChar = 0; storyChar < m_characters.size(); storyChar++ ){
-				if (!charSet && !usedChars[storyChar]){
+				int charSlotIndex = (storyChar + permutation) % m_characters.size();
+				if (!charSet && !usedChars[charSlotIndex]){
 					//if the character hasn't already been used, see if it meets requirements.
 					//int nodeSlotIndex = (nodeSlot + permutation) % nodeDefinition->GetNumCharacters();
 					int nodeSlotIndex = nodeSlot;
-					int charSlotIndex = (storyChar + permutation) % m_characters.size();
 					if (charMeetsRequirementsArray[charSlotIndex][nodeSlotIndex]){
 						//this character meets the requirement for this permutation, mark it.
 						charsInOrder[nodeSlotIndex] = m_characters[charSlotIndex];
@@ -1481,7 +1481,7 @@ float StoryGraph::CalculateEdgeFitnessForData(StoryState * edge, StoryDataDefini
 		CharacterRequirementSet* reqs = data->GetRequirementsForCharacter(character);
 		if (reqs != nullptr){
 			//if the edges' character has requirements already established in this node, check them.
-			float charFitnessForRequirements = reqs->GetCharacterFitness(charState);
+			float charFitnessForRequirements = reqs->GetCharacterFitness(character, edge);
 			fitness+=charFitnessForRequirements;
 			//if (reqs->DoesCharacterMeetRequirements(charState)){
 			//	//if any character doesn't meet the requirements, return false.

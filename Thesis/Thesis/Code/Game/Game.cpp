@@ -84,7 +84,7 @@ void Game::PostStartup()
 
 	m_graph = StoryGraph();
 
-	InitGraphDefault();
+	InitGraphMurder();
 
 
 	GenerateGraph();

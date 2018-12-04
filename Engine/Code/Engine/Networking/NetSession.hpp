@@ -23,6 +23,7 @@ enum eNetCoreMessages : uint8_t{
 
 	NETMSG_UNRELIABLE_TEST,
 	NETMSG_RELIABLE_TEST, // reliable
+	NETMSG_SEQUENCE_TEST,
 
 
 	NETMSG_CORE_COUNT,
@@ -86,7 +87,7 @@ public:
 	void SetSimulatedLatency(  int minAddedLatencyMS = 0, int maxAddedLatencyMS = 0 ); 
 
 	//adds the callback to the map of possible messages this session can handle
-	void RegisterMessage(int msgIndex, std::string name, NetSessionMessageCB messageCB, eNetMessageOptions messageOptions);
+	void RegisterMessage(int msgIndex, std::string name, NetSessionMessageCB messageCB, eNetMessageOptions messageOptions, uint8_t msgChannelIndex = (uint8_t) 0);
 	void SortMessageIDs();
 	bool IsMessageRegistered(std::string name);
 	bool IsMessageRegistered(uint16_t id);
@@ -98,7 +99,7 @@ public:
 	void ProcessIncoming();
 	void ProcessOutgoing();
 
-	void ProcessMessage(NetMessage message, NetConnection* from);
+	void ProcessMessage(NetMessage* message, NetConnection* from);
 
 	//NetPacket* AddTrackedPacket(const packet_header_t& header);
 
@@ -134,3 +135,4 @@ bool OnPing( NetMessage msg, net_sender_t const &from ) ;
 bool OnPong( NetMessage msg, net_sender_t const & from) ;
 bool OnNetMsgUnreliableTest( NetMessage msg, net_sender_t const& from);
 bool OnNetMsgReliableTest( NetMessage msg, net_sender_t const& from) ;
+bool OnNetMsgSequenceTest( NetMessage msg, net_sender_t const& from) ;

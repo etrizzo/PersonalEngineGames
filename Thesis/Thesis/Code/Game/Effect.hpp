@@ -23,6 +23,7 @@ public:
 	virtual Effect* Clone() = 0;
 
 	eEffectType m_type = EFFECT_TYPE_CHARACTER;
+	std::string m_characterIndexString;
 	unsigned int m_characterID = (unsigned int) -1;
 	StoryDataDefinition* m_parentData = nullptr;
 };
@@ -38,6 +39,7 @@ public:
 	Effect* Clone() override;
 
 	TagPair m_tag;
+	
 
 };
 

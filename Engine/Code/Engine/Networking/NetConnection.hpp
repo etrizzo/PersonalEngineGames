@@ -6,6 +6,7 @@
 class NetMessage;
 class NetSession;
 class PacketTracker;
+class NetChannel;
 
 #define NUM_ACKS_TRACKED (128)
 
@@ -14,6 +15,7 @@ class NetConnection
 {
 public:
 	NetConnection(NetSession* owningSession, uint8_t indexInSession, NetAddress addr);
+	~NetConnection();
 	
 	void Update();
 	void ClearMessageQueue();
@@ -56,8 +58,16 @@ public:
 	void		MarkMessageAsSentForFirstTime(NetMessage* msg);
 
 	void AddReceivedReliable(uint16_t newReliableID);
+	void AddReceivedInOrderMessage(NetMessage* msg);
 
 	bool HasReceivedReliable(uint16_t reliableID);
+
+	NetChannel* GetChannelByIndex(uint8_t channelIndex);
+	uint16_t	GetNextExpectedIDForChannel(uint8_t channelIndex);
+	bool		IsMessageNextExpectedInSequence(NetMessage* msg);
+
+	void		ProcessOutOfOrderMessagesForChannel(uint8_t channelIndex);
+	void		AddOutOfOrderMessage(NetMessage* msg);
 
 	std::vector<NetMessage*> m_unsentUnreliableMessages = std::vector<NetMessage*>();
 	NetAddress m_address;
@@ -73,6 +83,8 @@ public:
 	std::vector<NetMessage*> m_unsentReliableMessages = std::vector<NetMessage*>();
 	std::vector<NetMessage*> m_sentReliableMessages = std::vector<NetMessage*>();
 	std::vector<uint16_t> m_receivedReliableIDs = std::vector<uint16_t>();
+
+	NetChannel* m_channels[8];
 
 	bool m_isLocal = false;
 

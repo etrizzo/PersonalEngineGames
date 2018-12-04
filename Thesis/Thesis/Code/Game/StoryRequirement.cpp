@@ -31,8 +31,12 @@ bool StoryRequirement_Tag::PassesRequirement(StoryState * edge)
 {
 	if (m_tag.GetType() == "character"){
 		std::string characterName = m_parentData->ReadCharacterNameFromDataString(m_tag.GetValue());
-		if (characterName == "NO_CHARACTER_FOUND" ){
-			return edge->m_storyTags.ContainsTagWithAnyValue(m_tag.GetName(), m_tag.GetType());
+		if ( characterName == "none"){
+			//if the target value is none, then we want to return true if the story tags dont' contain that tag with a real value
+			// !(has  tag w/ any value && !(hasTagWithValue(none))
+			bool doesntHaveTag = !(edge->m_storyTags.ContainsTagWithAnyValue(m_tag.GetName(), m_tag.GetType()));
+			bool hasTagButItsNone = edge->m_storyTags.HasTagWithValue(m_tag.GetName(), m_tag.GetValue());
+			return doesntHaveTag || hasTagButItsNone;
 		} else {
 			return edge->m_storyTags.HasTag(TagPair(m_tag.GetName(), characterName, m_tag.GetType()));
 		}

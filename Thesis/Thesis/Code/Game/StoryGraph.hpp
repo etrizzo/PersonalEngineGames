@@ -16,9 +16,9 @@ class Character;
 #define MAX_NODE_DISTANCE (.4f)
 #define NUM_NODE_ITERATIONS (2000)
 #define MIN_DISTANCE_TO_MOVE (.06f)
-#define REROLL_REPEAT_PLOT_NODE_CHANCE (.9f)
-#define REROLL_REPEAT_DETAIL_NODE_CHANCE (.85f)
-#define MAX_REPEAT_REROLLS (20)
+#define REROLL_REPEAT_PLOT_NODE_CHANCE (.95f)
+#define REROLL_REPEAT_DETAIL_NODE_CHANCE (.95f)
+#define MAX_REPEAT_REROLLS (30)
 
 //comparison for 
 typedef StoryState* (*StoryHeuristicCB) (StoryEdge* edge);
