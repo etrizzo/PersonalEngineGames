@@ -28,7 +28,11 @@ bool NetPacket::ReadMessage(NetMessage * outMsg)
 {
 	//read message + header size
 	uint16_t msgSize;
-	Read(&msgSize, false);
+	
+	if (!Read(&msgSize, false)){
+		ConsolePrintf(RGBA::RED, "Invalid packet - expected another message");
+		return false;
+	}
 
 	//write message header and message
 	bool read = outMsg->WriteBytes(msgSize, GetReadHeadLocation(), false);

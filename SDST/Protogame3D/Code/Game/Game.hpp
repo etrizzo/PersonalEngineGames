@@ -16,6 +16,7 @@ class NetSession;
 
 class Map;
 
+//#define NET_OBJECT_SYNC_SIM_TIME (1.f / 5.f)			//20 Hz sync rate (for accurate RTT
 
 
 enum EntityTypes{
@@ -31,6 +32,7 @@ public:
 	NetSession* m_session = nullptr;
 	//UDPTest* m_udp = nullptr;
 
+	StopWatch m_objectSyncSimTimer;
 
 	bool m_isPaused;
 	bool m_devMode;
@@ -140,6 +142,7 @@ public:
 
 private:
 	void RunNetSessionTests();
+	void RunNetObjectSim();
 
 	void LoadTileDefinitions();
 
@@ -169,4 +172,6 @@ extern Game* g_theGame;
 bool OnAdd( NetMessage msg, net_sender_t const & from) ;
 bool OnAddResponse( NetMessage msg, net_sender_t const & from) ;
 
+//simulates the round trip time we would have with netobjects bc we're sending more often than heartbeat
+bool OnNetSyncSim( NetMessage msg, net_sender_t const& from);
 

@@ -36,7 +36,8 @@ App::App(HINSTANCE applicationInstanceHandle)
 	float screenWidth = g_gameConfigBlackboard.GetValue("width", 1000.f);
 	float screenHeight = screenWidth / aspect;
 	std::string name = g_gameConfigBlackboard.GetValue("appName", "Win32 OpenGL Test App");
-	g_Window = new Window(name.c_str(), aspect, applicationInstanceHandle);
+	float maxClientFraction = g_gameConfigBlackboard.GetValue("windowHeight", .9f);
+	g_Window = new Window(name.c_str(), aspect, applicationInstanceHandle, maxClientFraction);
 
 	m_appTime = 0.f;
 	m_farTopRight = m_nearBottomLeft + Vector3(screenWidth,screenHeight, 100.f);
@@ -203,12 +204,14 @@ void App::RegisterCommands()
 
 	CommandRegister("get_address", CommandGetAddress, "Gets machine address");
 
-	//CommandRegister("udp_test_start", CommandUDPTestStart, "Starts udp test system lol");
-	//CommandRegister("udp_test_stop", CommandUDPTestStop, "Stops udp test systemlol");
-	//CommandRegister("udp_test_send", CommandUDPTestSend, "Sends message through udp test system", "udp_test_send <ip:port> \"msg\"");
 
-	CommandRegister("add_connection", CommandAddConnection, "Adds connection to this session at specified index", "add_connection <conn_idx> \"ip:port\" ");
-	CommandRegister("add_connection_local", CommandAddLocalConnectionAtIndexWithOffset, "Adds a connection at the specified index with local port and port offset.", "add_connection_local <idx=0> <offset=0>" );
+	CommandRegister("host", CommandHost, "tries to host session", "host <port>");
+	CommandRegister("join", CommandJoin, "tries to join session", "join <ip:port>");
+	CommandRegister("join_local", CommandJoinLocal, "tries to join local session", "join <port=GAME_PORT>");
+	CommandRegister("disconnect", CommandDisconnect, "disconnects your connection.");
+
+	//CommandRegister("add_connection", CommandAddConnection, "Adds connection to this session at specified index", "add_connection <conn_idx> \"ip:port\" ");
+	//CommandRegister("add_connection_local", CommandAddLocalConnectionAtIndexWithOffset, "Adds a connection at the specified index with local port and port offset.", "add_connection_local <idx=0> <offset=0>" );
 	CommandRegister("send_ping", CommandSendPing, "Sends ping message to specified connection", "send_ping <conn_idx> \"msg\"" );
 	CommandRegister("send_add", CommandSendAdd, "Sends add message to specified connection", "send_add <conn_idx> <val1> <val2>" );
 	CommandRegister("net_set_heart_rate", CommandSetHeartbeat, "Sets the heartbeat rate for net session", "net_set_heart_rate <rateHZ>");
@@ -683,98 +686,135 @@ void CommandGetAddress(Command & cmd)
 	//GetAddressExample();
 }
 
-//void CommandUDPTestStart(Command & cmd)
-//{
-//	UNUSED(cmd);
-//	g_theGame->m_udp->Start();
-//}
-//
-//void CommandUDPTestStop(Command & cmd)
-//{
-//	UNUSED(cmd);
-//	g_theGame->m_udp->Stop();
-//}
-//
-//void CommandUDPTestSend(Command & cmd)
-//{
-//	NetAddress addr;
-//	std::string str = cmd.GetNextString();
-//	std::string msg = cmd.GetNextString();
-//	addr = NetAddress(str);
-//	if (!addr.IsValid()){
-//		ConsolePrintf(RGBA::RED, "Requires address.");
-//		return;
-//	}
-//	if (msg == ""){
-//		ConsolePrintf(RGBA::RED, "Requires message.");
-//		return;
-//	}
-//
-//	ConsolePrintf(RGBA::YELLOW, "Sending message \"%s\"...", msg.c_str());
-//	g_theGame->m_udp->SendTo(addr, msg.data(), (unsigned int) msg.size());
-//}
-
-void CommandAddConnection(Command & cmd)
+void CommandHost(Command & cmd)
 {
-	uint8_t idx;
-	NetAddress addr; 
-
-	idx = (uint8_t) cmd.GetNextInt();
-	std::string addrString = cmd.GetNextString();
-	addr = NetAddress(addrString);
-	if (!addr.IsValid()){
-		ConsolePrintf("could not connect to %s ", addrString.c_str());
-		return;
+	int port = cmd.GetNextInt();
+	if (port == 0){
+		port = atoi(GAME_PORT);
 	}
-
-	if (idx > MAX_CONNECTIONS){
-		ConsolePrintf(RGBA::RED, "%i is too big - max connections is %i", idx, MAX_CONNECTIONS);
-		return;
-	}
-
-
-	// notice this can't fail - we do no validation that that
-	// address is reachable.   UDP can't tell; 
-	NetSession *session = g_theGame->m_session;
-	NetConnection *cp = session->AddConnection( idx, addr ); 
-	if (cp == nullptr) {
-		ConsolePrintf(RGBA::RED, "Failed to add connection." ); 
-	} else {
-		ConsolePrintf(RGBA::YELLOW, "Connection added at index [%u]", idx ); 
-	}
-}
-
-void CommandAddLocalConnectionAtIndexWithOffset(Command & cmd)
-{
-	int index = cmd.GetNextInt();
-	int offset = cmd.GetNextInt();
-
-	int port = atoi(GAME_PORT);
-	port += offset;
+	//	port += offset;
 	std::string portString = std::to_string(port);
-
+	
 	NetAddress addr = NetAddress::GetLocal(portString.c_str());
+
 	if (!addr.IsValid()){
 		ConsolePrintf("could not connect to local port: %s ", portString.c_str());
 		return;
 	}
-
-	if (index > MAX_CONNECTIONS){
-		ConsolePrintf(RGBA::RED, "%i is too big - max connections is %i", index, MAX_CONNECTIONS);
-		return;
-	}
-
-
+		
+		
 	// notice this can't fail - we do no validation that that
 	// address is reachable.   UDP can't tell; 
-	NetSession *session = g_theGame->m_session;
-	NetConnection *cp = session->AddConnection( (uint8_t) index, addr ); 
-	if (cp == nullptr) {
-		ConsolePrintf(RGBA::RED, "Failed to add connection." ); 
-	} else {
-		ConsolePrintf(RGBA::YELLOW, "Connection added at index [%u]", index ); 
+	g_theGame->m_session->Host("Host", (uint16_t) port);
+	//NetConnection *cp = session->AddConnection( (uint8_t) index, addr ); 
+	//if (cp == nullptr) {
+	//	ConsolePrintf(RGBA::RED, "Failed to add connection." ); 
+	//} else {
+	//	ConsolePrintf(RGBA::YELLOW, "Connection added at index [%u]", index ); 
+	//}
+}
+
+void CommandJoin(Command & cmd)
+{
+	std::string addrString = cmd.GetNextString();
+	NetAddress addr = NetAddress(addrString);
+	net_connection_info_t hostInfo;
+	hostInfo.m_address = addr;
+	hostInfo.m_sessionIndex = 0;
+	g_theGame->m_session->Join("Joiner", hostInfo);
+
+}
+
+void CommandJoinLocal(Command & cmd)
+{
+	int port = cmd.GetNextInt();
+	if (port == 0){
+		port = atoi(GAME_PORT);
+	}
+	//	port += offset;
+	std::string portString = std::to_string(port);
+	NetAddress addr = NetAddress::GetLocal(portString.c_str());
+
+	net_connection_info_t hostInfo;
+	hostInfo.m_address = addr;
+	hostInfo.m_sessionIndex = 0;
+	g_theGame->m_session->Join("Joiner", hostInfo);
+}
+
+void CommandDisconnect(Command & cmd)
+{
+	UNUSED(cmd);
+	ConsolePrintf("Sending hangup message.");
+	for (NetConnection* conn : g_theGame->m_session->m_boundConnections){
+		if (!conn->IsMe()){
+			NetMessage* disconnect = new NetMessage("hangup");
+			conn->Send(disconnect);
+		}
 	}
 }
+
+
+//void CommandAddConnection(Command & cmd)
+//{
+//	uint8_t idx;
+//	NetAddress addr; 
+//
+//	idx = (uint8_t) cmd.GetNextInt();
+//	std::string addrString = cmd.GetNextString();
+//	addr = NetAddress(addrString);
+//	if (!addr.IsValid()){
+//		ConsolePrintf("could not connect to %s ", addrString.c_str());
+//		return;
+//	}
+//
+//	if (idx > MAX_CONNECTIONS){
+//		ConsolePrintf(RGBA::RED, "%i is too big - max connections is %i", idx, MAX_CONNECTIONS);
+//		return;
+//	}
+//
+//
+//	// notice this can't fail - we do no validation that that
+//	// address is reachable.   UDP can't tell; 
+//	NetSession *session = g_theGame->m_session;
+//	NetConnection *cp = session->AddConnection( idx, addr ); 
+//	if (cp == nullptr) {
+//		ConsolePrintf(RGBA::RED, "Failed to add connection." ); 
+//	} else {
+//		ConsolePrintf(RGBA::YELLOW, "Connection added at index [%u]", idx ); 
+//	}
+//}
+//
+//void CommandAddLocalConnectionAtIndexWithOffset(Command & cmd)
+//{
+//	int index = cmd.GetNextInt();
+//	int offset = cmd.GetNextInt();
+//
+//	int port = atoi(GAME_PORT);
+//	port += offset;
+//	std::string portString = std::to_string(port);
+//
+//	NetAddress addr = NetAddress::GetLocal(portString.c_str());
+//	if (!addr.IsValid()){
+//		ConsolePrintf("could not connect to local port: %s ", portString.c_str());
+//		return;
+//	}
+//
+//	if (index > MAX_CONNECTIONS){
+//		ConsolePrintf(RGBA::RED, "%i is too big - max connections is %i", index, MAX_CONNECTIONS);
+//		return;
+//	}
+//
+//
+//	// notice this can't fail - we do no validation that that
+//	// address is reachable.   UDP can't tell; 
+//	NetSession *session = g_theGame->m_session;
+//	NetConnection *cp = session->AddConnection( (uint8_t) index, addr ); 
+//	if (cp == nullptr) {
+//		ConsolePrintf(RGBA::RED, "Failed to add connection." ); 
+//	} else {
+//		ConsolePrintf(RGBA::YELLOW, "Connection added at index [%u]", index ); 
+//	}
+//}
 
 void CommandSendPing(Command & cmd)
 {

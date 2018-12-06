@@ -40,15 +40,17 @@ public:
 	void AdvanceWriteHead(size_t bytesToAdvance);
 	void AdvanceReadHead(size_t bytesToAdvance);
 
-	bool Write(uint16_t data, bool convertEndianness = true);
-	bool Write(uint8_t	data, bool convertEndianness = true);
-	bool Write(float	data, bool convertEndianness = true);
-	bool Write(int		data, bool convertEndianness = true);
+	bool Write(unsigned int data,	bool convertEndianness = true);
+	bool Write(uint16_t data,		bool convertEndianness = true);
+	bool Write(uint8_t	data,		bool convertEndianness = true);
+	bool Write(float	data,		bool convertEndianness = true);
+	bool Write(int		data,		bool convertEndianness = true);
 
-	size_t Read(uint16_t*	outData, bool convertEndianness = true);
-	size_t Read(uint8_t*	outData, bool convertEndianness = true);
-	size_t Read(float*		outData, bool convertEndianness = true);
-	size_t Read(int*		outData, bool convertEndianness = true);
+	size_t Read(unsigned int* outData,	bool convertEndianness = true);
+	size_t Read(uint16_t*	outData,	bool convertEndianness = true);
+	size_t Read(uint8_t*	outData,	bool convertEndianness = true);
+	size_t Read(float*		outData,	bool convertEndianness = true);
+	size_t Read(int*		outData,	bool convertEndianness = true);
 
 	////.... Someday :(
 	//template <typename T>

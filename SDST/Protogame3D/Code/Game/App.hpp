@@ -96,16 +96,14 @@ void CommandLogShowAll(Command& cmd);
 
 
 void CommandGetAddress(Command& cmd);
-//void CommandSendMessage(Command& cmd);
 
+void CommandHost(Command& cmd);
+void CommandJoin(Command& cmd);
+void CommandJoinLocal(Command& cmd);
+void CommandDisconnect(Command& cmd);
 
-//void CommandUDPTestStart(Command& cmd);
-//void CommandUDPTestStop(Command& cmd);
-//void CommandUDPTestSend(Command& cmd);
-
-
-void CommandAddConnection(Command& cmd);
-void CommandAddLocalConnectionAtIndexWithOffset(Command& cmd);
+//void CommandAddConnection(Command& cmd);
+//void CommandAddLocalConnectionAtIndexWithOffset(Command& cmd);
 void CommandSendPing(Command& cmd);
 void CommandSendAdd(Command& cmd);
 void CommandSetHeartbeat(Command& cmd);

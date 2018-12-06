@@ -11,7 +11,7 @@ class Window
 {
 public:
 	// Do all the window creation work is currently in App
-	Window( const char* name, const float aspectRatio, HINSTANCE applicationInstanceHandle); 
+	Window( const char* name, const float aspectRatio, HINSTANCE applicationInstanceHandle, float maxClientFraction); 
 	~Window();
 
 	// Register a function callback to the Window.  Any time Windows processing a 

@@ -54,7 +54,7 @@ std::string Socket::GetAddressAsString() const
 
 bool IsFatalSocketError(int errorCode)
 {
-	if (errorCode == WSAEWOULDBLOCK || errorCode == WSAEMSGSIZE || errorCode == 0){
+	if (errorCode == WSAEWOULDBLOCK || errorCode == WSAEMSGSIZE || errorCode == 0 || errorCode == WSAECONNRESET){
 		return false;
 	} else {
 		ConsolePrintf("Fatal error: [%i]", errorCode);

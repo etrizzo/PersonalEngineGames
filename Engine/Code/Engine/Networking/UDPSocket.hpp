@@ -11,6 +11,30 @@
 #define PACKET_MTU (ETHERNET_MTU - 40 - 8) 
 
 
+// class test
+#define GAME_PORT "10084"
+#define PORT_RANGE 16
+
+
+/*
+A connection info is everything I need to know to create a connection for someone.  For now, this is just the following; 
+*/
+#define MAX_CONN_ID_LENGTH 16
+
+struct net_connection_info_t
+{
+	NetAddress m_address; 
+	/*
+	`id` in this class will usually just be a unique user name.  
+	In practice this is usually some GUID assigned to the player from the platform (SteamID, LiveID, PSN ID, etc...).  
+	It is used to tell if someone is already in the session.
+	*/
+	char m_id[MAX_CONN_ID_LENGTH];
+	uint8_t m_sessionIndex; 
+};
+
+
+
 class UDPSocket : public Socket
 {
 public: 

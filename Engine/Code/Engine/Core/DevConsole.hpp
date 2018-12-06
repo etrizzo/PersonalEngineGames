@@ -102,9 +102,9 @@ private:
 	//config junk for the rendering
 	RGBA m_backgroundColor = RGBA(16, 0, 64, 200);		//bg color of the console
 	RGBA m_defaultTextColor = RGBA::WHITE;			//default text color
-	float m_maxLinesVisible = 50.f;
+	float m_maxLinesVisible = 25.f;
 	float m_consoleWidthRatio = 1.f;
-	float m_consoleHeightRatio = .75f;
+	float m_consoleHeightRatio = .6f;
 	float m_lineHeight;
 	float m_drawTextHeight;		//text height slightly smaller than line height for some sweet sweet padding
 	AABB2 m_consoleArea		= AABB2();

@@ -20,6 +20,14 @@ NetMessage::NetMessage(std::string msg)
 	MoveWriteHeadPastHeader();
 }
 
+NetMessage::NetMessage(std::string msg, NetSession * session)
+{
+	m_definition = new net_message_definition_t();
+	m_msgName = msg;
+	SetDefinitionFromSession(session);
+	MoveWriteHeadPastHeader();
+}
+
 NetMessage::NetMessage(NetMessage * copy)
 {
 	m_msgName = copy->m_msgName;

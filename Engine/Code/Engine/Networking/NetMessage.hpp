@@ -35,6 +35,7 @@ class NetMessage : public BytePacker
 public:
 	NetMessage();		//should probably only be used when getting data, not sending?
 	NetMessage(std::string msg);	//constructs with initial string - signifies what kind of message?
+	NetMessage(std::string msg, NetSession* session);		//sets the definition & moves header appropriately
 	NetMessage(NetMessage* copy);
 
 	void SetDefinitionFromSession(NetSession* session);

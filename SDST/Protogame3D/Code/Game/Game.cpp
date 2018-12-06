@@ -28,6 +28,8 @@ Game::Game()
 	m_devMode = false;
 	//m_gameTime = 0.f;
 
+
+
 	
 	m_mainCamera = new PerspectiveCamera();
 
@@ -94,15 +96,19 @@ void Game::PostStartup()
 
 	m_session->RegisterMessage( -1 , "add" , (NetSessionMessageCB) OnAdd, NETMESSAGE_OPTION_UNRELIABLE_REQUIRES_CONNECTION); 
 	m_session->RegisterMessage( -1 , "add_response", (NetSessionMessageCB) OnAddResponse, NETMESSAGE_OPTION_UNRELIABLE_REQUIRES_CONNECTION);
+	m_session->RegisterMessage( NETMSG_CORE_COUNT, "net_sync_sim", (NetSessionMessageCB) OnNetSyncSim, NETMESSAGE_OPTION_UNRELIABLE_REQUIRES_CONNECTION );
 	
 
 	m_session->SortMessageIDs();
+
+	//m_objectSyncSimTimer = StopWatch();
+	//m_objectSyncSimTimer.SetTimer(NET_OBJECT_SYNC_SIM_TIME);
 
 	// temp - eventually we either "host" or "join" a session
 	// bor now we'll just shortcut to the first
 	// state that is "bound"
 	// This creates the socket(s) we can communicate on; 
-	m_session->AddBinding( GAME_PORT ); 
+	//m_session->AddBinding( GAME_PORT ); 
 	
 
 }
@@ -115,6 +121,7 @@ void Game::Update()
 	m_currentState->Update(ds);
 
 	RunNetSessionTests();
+	//RunNetObjectSim();	
 
 	//m_udp->Update();
 	m_session->Update();
@@ -445,6 +452,18 @@ void Game::RunNetSessionTests()
 	}
 }
 
+void Game::RunNetObjectSim()
+{
+	if (m_objectSyncSimTimer.CheckAndReset()){
+		for(NetConnection* conn : m_session->m_boundConnections){
+			if (!conn->IsMe()){
+				NetMessage* syncMsg = new NetMessage("net_sync_sim");
+				conn->Send(syncMsg);
+			}
+		}
+	}
+}
+
 void Game::LoadTileDefinitions()
 {
 	tinyxml2::XMLDocument tileDefDoc;
@@ -531,6 +550,13 @@ bool OnAddResponse(NetMessage msg, net_sender_t const & from)
 
 
 	return true; 
+}
+
+bool OnNetSyncSim(NetMessage msg, net_sender_t const & from)
+{
+	UNUSED(msg);
+	UNUSED(from);
+	return true;
 }
 
 

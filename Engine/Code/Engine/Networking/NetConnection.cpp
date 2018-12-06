@@ -6,13 +6,34 @@
 
 
 
+
+
+NetConnection::NetConnection(NetSession * owningSession, net_connection_info_t info)
+{
+	m_info = info;
+	m_owningSession = owningSession;
+
+	m_heartbeatTimer = StopWatch(GetMasterClock());
+	m_sendRateTimer = StopWatch(GetMasterClock());
+	m_lastReceivedTimeMS = (unsigned int) (GetMasterClock()->GetCurrentSeconds() * 1000.f);
+	SetSendRate();
+	for (int i = 0; i < NUM_ACKS_TRACKED; i++){
+		m_trackedSentPackets[i] = new PacketTracker(INVALID_PACKET_ACK);
+	}
+	for (int i = 0; i < MAX_MESSAGE_CHANNELS; i++){
+		m_channels[i] = new NetChannel();
+	}
+}
+
 NetConnection::NetConnection(NetSession * owningSession, uint8_t indexInSession, NetAddress addr)
 {
 	m_owningSession = owningSession;
-	m_indexInSession = indexInSession;
-	m_address = addr;
+	m_info = net_connection_info_t();
+	m_info.m_sessionIndex = indexInSession;
+	m_info.m_address = addr;
 	m_heartbeatTimer = StopWatch(GetMasterClock());
 	m_sendRateTimer = StopWatch(GetMasterClock());
+	m_lastReceivedTimeMS = (unsigned int) (GetMasterClock()->GetCurrentSeconds() * 1000.f);
 	SetSendRate();
 	for (int i = 0; i < NUM_ACKS_TRACKED; i++){
 		m_trackedSentPackets[i] = new PacketTracker(INVALID_PACKET_ACK);
@@ -33,14 +54,44 @@ NetConnection::~NetConnection()
 
 void NetConnection::Update()
 {
+	//if haven't received a packet in a while, disconnect
+	if (!IsMe()){
+		float elapsedSeconds = (GetMasterClock()->GetCurrentSeconds() - ((float) m_lastReceivedTimeMS * .001f));
+		if ( elapsedSeconds > DEFAULT_CONNECTION_TIMEOUT){
+			ConsolePrintf(RGBA::RED, "Disconnecting connection %i after %f seconds", m_info.m_sessionIndex, elapsedSeconds);
+			Disconnect();
+		}
+	}
+
+	//if state has changed this frame, update it and send to everybody
+	if (m_previousState != m_state){
+		//set state & send update state msg
+		m_previousState = m_state;
+		for(NetConnection* conn : m_owningSession->m_boundConnections){
+			NetMessage* update = new NetMessage("update_connection_state", m_owningSession);
+			//update->SetDefinitionFromSession(m_owningSession);
+			update->Write(m_info.m_sessionIndex);
+			update->Write((uint8_t) m_state);
+			update->IncrementMessageSize(sizeof(uint8_t) + sizeof(uint8_t));
+			conn->Send(update);
+		}
+	}
+
+
 	unsigned int deltasecondsMS = (unsigned int) (GetMasterClock()->GetDeltaSeconds() * 1000.f);
 	for (NetMessage* unconfirmed : m_unconfirmedReliableMessages){
 		unconfirmed->IncrementAge(deltasecondsMS);
 	}
 	if (m_heartbeatTimer.DecrementAll()){
 		//ConsolePrintf(RGBA::RED.GetColorWithAlpha(165), "Sending heartbeat.");
-		NetMessage* msg = new NetMessage("heartbeat"); 
-		Send(msg);
+		for (NetConnection* conn : m_owningSession->m_boundConnections){
+			NetMessage* msg = new NetMessage("heartbeat"); 
+			//if (IsHost()){
+			//	//Send your current time
+			//	msg->Write(m_owningSession->m_currentClientTimeMS);
+			//}
+			Send(msg);
+		}
 	}
 	if (m_recievedPackets > 0){
 		m_lossRate = (float) m_lostPackets / (float) m_recievedPackets;
@@ -99,12 +150,37 @@ void NetConnection::SetSendRate(float hz)
 
 NetAddress NetConnection::GetAddress() const
 {
-	return m_address;
+	return m_info.m_address;
+}
+
+uint8_t NetConnection::GetConnectionIndex() const
+{
+	return m_info.m_sessionIndex;
+}
+
+std::string NetConnection::GetConnectionIDAsString() const
+{
+	return std::string(m_info.m_id);
+}
+
+bool NetConnection::IsMe() const
+{
+	return (m_owningSession->m_myConnection == this);
+}
+
+bool NetConnection::IsHost() const
+{
+	return (m_owningSession->m_hostConnection == this);
+}
+
+bool NetConnection::IsClient() const
+{
+	return !IsHost();
 }
 
 bool NetConnection::IsValidConnection() const
 {
-	return m_indexInSession != INVALID_CONNECTION_INDEX;
+	return m_info.m_sessionIndex != INVALID_CONNECTION_INDEX;
 }
 
 bool NetConnection::CanSendToConnection()

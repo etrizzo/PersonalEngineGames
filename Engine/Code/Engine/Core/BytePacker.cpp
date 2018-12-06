@@ -74,6 +74,11 @@ void BytePacker::AdvanceReadHead(size_t bytesToAdvance)
 	}
 }
 
+bool BytePacker::Write(unsigned int data, bool convertEndianness)
+{
+	return WriteBytes(sizeof(unsigned int), &data, convertEndianness);
+}
+
 bool BytePacker::Write(uint16_t data, bool convertEndianness)
 {
 	return WriteBytes(sizeof(uint16_t), &data, convertEndianness);
@@ -92,6 +97,11 @@ bool BytePacker::Write(float data, bool convertEndianness)
 bool BytePacker::Write(int data, bool convertEndianness)
 {
 	return WriteBytes(sizeof(int), &data, convertEndianness);
+}
+
+size_t BytePacker::Read(unsigned int * outData, bool convertEndianness)
+{
+	return ReadBytes(outData, sizeof(unsigned int), convertEndianness);
 }
 
 size_t BytePacker::Read(uint16_t * outData, bool convertEndianness)

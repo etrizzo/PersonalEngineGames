@@ -8,7 +8,7 @@ typedef void (*windows_message_handler_cb)( unsigned int msg, size_t wparam, siz
 
 
 
-Window::Window(const char * name, const float aspectRatio, HINSTANCE applicationInstanceHandle)
+Window::Window(const char * name, const float aspectRatio, HINSTANCE applicationInstanceHandle, float maxClientFraction)
 {
 	// Define a window style/class
 	WNDCLASSEX windowClassDescription;
@@ -35,7 +35,7 @@ Window::Window(const char * name, const float aspectRatio, HINSTANCE application
 	float desktopAspect = desktopWidth / desktopHeight;
 
 	// Calculate maximum client size (as some % of desktop size)
-	constexpr float maxClientFractionOfDesktop = 0.90f;
+	float maxClientFractionOfDesktop = maxClientFraction;
 	float clientWidth = desktopWidth * maxClientFractionOfDesktop;
 	float clientHeight = desktopHeight * maxClientFractionOfDesktop;
 	

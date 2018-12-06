@@ -1,7 +1,6 @@
 #include "Engine/Networking/UDPSocket.hpp"
 
-// class test
-#define GAME_PORT "10084"
+
 
 
 

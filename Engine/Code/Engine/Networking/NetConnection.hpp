@@ -9,11 +9,24 @@ class PacketTracker;
 class NetChannel;
 
 #define NUM_ACKS_TRACKED (128)
+#define DEFAULT_CONNECTION_TIMEOUT (10)
+
+enum eConnectionState{
+	CONNECTION_DISCONNECTED,
+	CONNECTION_READY,
+	CONNECTION_CONNECTED,
+
+
+	NUM_CONNECTION_STATES
+};
+
 
 
 class NetConnection 
 {
 public:
+	NetConnection(NetSession* owningSession, net_connection_info_t info);
+	//NOTE: THis might be deprecated vv
 	NetConnection(NetSession* owningSession, uint8_t indexInSession, NetAddress addr);
 	~NetConnection();
 	
@@ -23,6 +36,19 @@ public:
 	void SetHeartbeat(float hz);
 	void SetSendRate(float hz = 0.f);
 	NetAddress GetAddress() const;
+	uint8_t GetConnectionIndex() const;
+	std::string GetConnectionIDAsString() const;
+
+	inline bool IsConnected() const { return m_state >= CONNECTION_CONNECTED; };
+	inline bool IsDisconnected() const { return m_state == CONNECTION_DISCONNECTED; };
+	bool IsReady() const { return m_state == CONNECTION_READY; };
+
+	bool IsMe() const;
+	bool IsHost() const;
+	bool IsClient() const;
+
+	inline void Disconnect() { m_state = CONNECTION_DISCONNECTED; };
+
 
 	bool IsValidConnection() const;
 
@@ -69,9 +95,13 @@ public:
 	void		ProcessOutOfOrderMessagesForChannel(uint8_t channelIndex);
 	void		AddOutOfOrderMessage(NetMessage* msg);
 
+	net_connection_info_t m_info;	//netaddress, index in session, and id
+	eConnectionState m_state; 
+	eConnectionState m_previousState;
+
 	std::vector<NetMessage*> m_unsentUnreliableMessages = std::vector<NetMessage*>();
-	NetAddress m_address;
-	uint8_t m_indexInSession;
+	//NetAddress m_address;			//now in m_info
+	//uint8_t m_indexInSession;
 	NetSession *m_owningSession; 
 	StopWatch m_heartbeatTimer;
 	StopWatch m_sendRateTimer;
@@ -101,12 +131,14 @@ protected:
 	unsigned int m_lastSendTimeMS		= 0;
 	unsigned int m_lastReceivedTimeMS	= 0;
 
-	// note these variables are unrelated to the debug sim on the session
+	// note these variables are unrelated to the debug simulation on the session
 	// but will end up reflecting those numbers.
 	float m_lossRate	= 0.0f;       // loss rate we perceive to this connection
 	float m_rtt			= 0.0f;       // latency perceived on this connection
 
 	uint16_t m_nextSentReliableID = 0;
 	uint16_t m_highestReceivedReliableID = 0U;
+
+
 
 };
