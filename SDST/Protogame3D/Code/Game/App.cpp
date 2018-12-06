@@ -745,6 +745,7 @@ void CommandDisconnect(Command & cmd)
 {
 	UNUSED(cmd);
 	ConsolePrintf("Sending hangup message.");
+	g_theGame->m_session->m_myConnection->Disconnect();
 	for (NetConnection* conn : g_theGame->m_session->m_boundConnections){
 		if (!conn->IsMe()){
 			NetMessage* disconnect = new NetMessage("hangup");

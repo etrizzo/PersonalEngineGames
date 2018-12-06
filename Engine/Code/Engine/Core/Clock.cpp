@@ -128,6 +128,11 @@ float Clock::GetDeltaSeconds() const
 	return frame.seconds;
 }
 
+unsigned int Clock::GetCurrentMilliseconds() const
+{
+	return (unsigned int) (GetCurrentSeconds() * 1000.f);
+}
+
 uint64_t Clock::GetCurrentHPC() const
 {
 	return total.hpc - m_start_hpc;

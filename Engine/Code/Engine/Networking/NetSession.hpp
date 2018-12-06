@@ -6,7 +6,7 @@ class NetPacket;
 class NetConnection;
 class Renderer;
 #define MAX_CONNECTIONS (16)
-#define DEFAULT_HEARTBEAT (2.f)
+#define DEFAULT_HEARTBEAT (4.f)
 #define DEFAULT_SESSION_SEND_RATE_HZ (30.f)		//NOTE: Hz, not ms.
 
 #define MAX_NET_TIME_DILATION (0.1f)
@@ -19,7 +19,7 @@ class Renderer;
 #define SESSION_FONT_CONTENT_SIZE (.0074f)
 #define SESSION_LINE_MULTIPLIER (1.04f)
 
-#define RELIABLE_WINDOW (64)
+#define RELIABLE_WINDOW (128)
 
 enum eNetCoreMessages : uint8_t{
 	NETMSG_PING = 0,			// unreliable, connectionless
@@ -98,6 +98,8 @@ public:
 	eSessionError GetLastError( std::string *out_str = nullptr ); // get last error has an implicit clear in it
 
 
+	unsigned int GetNetTimeMS();
+
 	//Old
 	void Update();
 	void UpdateSession();		//updates the session state
@@ -136,6 +138,8 @@ public:
 	NetConnection* GetConnection(uint8_t idx) const;
 	NetConnection* GetConnectionByAddress(NetAddress addr) const;
 	NetConnection* GetLocalConnection() const;
+
+	void ProcessHostTime(unsigned int hostTimeMS);
 
 	unsigned int GetLocalConnectionIndex() const;
 	float GetSessionSendRateHZ() const;
@@ -188,6 +192,9 @@ public:
 	unsigned int m_lastReceivedHostTimeMS;	// this is the time we received from the host + (RTT / 2)
 	unsigned int m_desiredClientTimeMS;		// this is the time we want the client to eventually be
 	unsigned int m_currentClientTimeMS;		// what the client actually reports return 
+
+
+	//Clock m_networkClock;
 
 protected:
 	void SendPacketsForConnection(unsigned int connectionIndex);

@@ -86,10 +86,14 @@ void NetConnection::Update()
 		//ConsolePrintf(RGBA::RED.GetColorWithAlpha(165), "Sending heartbeat.");
 		for (NetConnection* conn : m_owningSession->m_boundConnections){
 			NetMessage* msg = new NetMessage("heartbeat"); 
-			//if (IsHost()){
-			//	//Send your current time
-			//	msg->Write(m_owningSession->m_currentClientTimeMS);
-			//}
+			if (IsHost()){
+				//Send your current time
+				msg->Write(m_owningSession->m_currentClientTimeMS);
+				msg->IncrementMessageSize(sizeof(unsigned int));
+			} else {
+				msg->Write(0U);
+				msg->IncrementMessageSize(sizeof(unsigned int));
+			}
 			Send(msg);
 		}
 	}
@@ -248,7 +252,7 @@ bool NetConnection::ConfirmPacketReceived(uint16_t newReceivedAck)
 	for (PacketTracker* tracker : m_trackedSentPackets){
 		if (tracker->m_ack == newReceivedAck){
 			if (tracker->m_isValid){
-				unsigned int currentMS = GetCurrentTimeMilliseconds();
+				unsigned int currentMS = GetMasterClock()->GetCurrentMilliseconds();
 				UpdateRTT(currentMS - tracker->m_sentMS );
 				m_recievedPackets++;
 				if (m_unconfirmedReliableMessages.size() > 0){
@@ -277,10 +281,10 @@ bool NetConnection::ConfirmPacketReceived(uint16_t newReceivedAck)
 
 void NetConnection::UpdateRTT(unsigned int RTTforConfirmedPacketMS)
 {
-	if (m_rtt == 0.f){
-		m_rtt = RTTforConfirmedPacketMS;
+	if (m_rttMS == 0.f){
+		m_rttMS = RTTforConfirmedPacketMS;
 	} else {
-		m_rtt = Interpolate(RTTforConfirmedPacketMS, m_rtt, .9f);
+		m_rttMS = (unsigned int) Interpolate((int) RTTforConfirmedPacketMS, (int)m_rttMS, .9f);
 	}
 }
 
@@ -314,9 +318,9 @@ float NetConnection::GetLossRate() const
 	return m_lossRate;
 }
 
-float NetConnection::GetRTT() const
+unsigned int NetConnection::GetRTT() const
 {
-	return m_rtt;
+	return m_rttMS;
 }
 
 float NetConnection::GetLastSendTimeSeconds() const

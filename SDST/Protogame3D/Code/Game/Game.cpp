@@ -101,8 +101,8 @@ void Game::PostStartup()
 
 	m_session->SortMessageIDs();
 
-	//m_objectSyncSimTimer = StopWatch();
-	//m_objectSyncSimTimer.SetTimer(NET_OBJECT_SYNC_SIM_TIME);
+	m_objectSyncSimTimer = StopWatch();
+	m_objectSyncSimTimer.SetTimer(NET_OBJECT_SYNC_SIM_TIME);
 
 	// temp - eventually we either "host" or "join" a session
 	// bor now we'll just shortcut to the first
@@ -121,7 +121,7 @@ void Game::Update()
 	m_currentState->Update(ds);
 
 	RunNetSessionTests();
-	//RunNetObjectSim();	
+	RunNetObjectSim();	
 
 	//m_udp->Update();
 	m_session->Update();

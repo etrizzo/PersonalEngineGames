@@ -72,7 +72,7 @@ public:
 	unsigned int	GetLastSendTimeMS()		const;
 	unsigned int	GetLastReceivedTimeMS()	const;
 	float			GetLossRate()			const;
-	float			GetRTT()				const;
+	unsigned int	GetRTT()				const;
 
 	float	GetLastSendTimeSeconds()		const;
 	float	GetLastReceivedTimeSeconds()	const;
@@ -134,7 +134,7 @@ protected:
 	// note these variables are unrelated to the debug simulation on the session
 	// but will end up reflecting those numbers.
 	float m_lossRate	= 0.0f;       // loss rate we perceive to this connection
-	float m_rtt			= 0.0f;       // latency perceived on this connection
+	unsigned int m_rttMS	= 0.0f;       // latency perceived on this connection
 
 	uint16_t m_nextSentReliableID = 0;
 	uint16_t m_highestReceivedReliableID = 0U;

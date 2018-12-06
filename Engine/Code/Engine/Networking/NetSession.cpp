@@ -129,9 +129,40 @@ eSessionError NetSession::GetLastError(std::string * out_str)
 	return lastError;
 }
 
+unsigned int NetSession::GetNetTimeMS()
+{
+	if (m_myConnection == m_hostConnection){
+		return (unsigned int) (GetMasterClock()->GetCurrentSeconds() * 1000.f);
+	} else {
+		return m_currentClientTimeMS;
+	}
+
+	return 0;
+}
+
 void NetSession::Update()
 {
 	if (m_socket != nullptr){
+		//do clock shit if you aren't the host
+		unsigned int dt = (unsigned int) (GetMasterClock()->GetDeltaSeconds() * 1000.f);
+		if (m_myConnection != m_hostConnection){
+			m_desiredClientTimeMS += dt;		//this is the host time adjusted for RTT
+			unsigned int dtp;
+			if (m_currentClientTimeMS + dt > m_desiredClientTimeMS){
+				//dtp is scaled down to 1 - MAX_NET_TIME_DILATION (.9)
+				dtp = (unsigned int) ((float) dt * (1.f - MAX_NET_TIME_DILATION));
+			} else if (m_currentClientTimeMS + dt < m_desiredClientTimeMS){
+				dtp = (unsigned int) ((float) dt * (1.f + MAX_NET_TIME_DILATION));
+			} else {
+				dtp = dt;
+			}
+
+			m_currentClientTimeMS += dtp;
+		} else {
+			m_currentClientTimeMS = GetMasterClock()->GetCurrentMilliseconds();
+		}
+
+
 		ProcessIncoming();
 		ProcessPackets();
 		UpdateSession();
@@ -223,9 +254,20 @@ void NetSession::DestroyConnection(NetConnection * cp)
 			RemoveAtFast(m_allConnections, i);
 		}
 	}
+	
+
+	//remove any timestamped packets from this connection
+	for (int i = m_timeStampedPackets.size() - 1; i >= 0; i--){
+		if (m_timeStampedPackets[i]->m_fromConnection == cp){
+			time_stamped_packet_t* packet = m_timeStampedPackets[i];
+			RemoveAtFast(m_timeStampedPackets, i);
+			delete packet;
+		}
+	}
 
 	//delete
 	delete cp;
+	cp = nullptr;
 }
 
 void NetSession::BindConnection(uint8_t idx, NetConnection * cp)
@@ -254,7 +296,7 @@ void NetSession::RenderInfo(AABB2 screenBounds, Renderer* renderer)
 	//renderer->DrawAABB2Outline(textBox, RGBA::RED);
 	textBox.Translate(newLine);
 	//Render net rate, Simulated latency, & simulated lag
-	std::string netInfo = Stringf("Rate: %.2fhz  sim lag: %sms  sim loss: %3.2f", m_sessionRateHz, m_simulatedLatency.ToString().c_str(), m_simulatedLoss);
+	std::string netInfo = Stringf("Rate: %.2fhz  sim lag: %sms  sim loss: %3.2f heartRate: %3.2f  NetTime (ms): %3.2f", m_sessionRateHz, m_simulatedLatency.ToString().c_str(),  m_simulatedLoss, m_sessionHeartbeat, ((float) GetNetTimeMS()) * .001f);
 	renderer->DrawTextInBox2D(netInfo, textBox, Vector2::TOP_LEFT, contentFontHeight, TEXT_DRAW_SHRINK_TO_FIT, RGBA::LIGHTGRAY);
 	textBox.Translate(newLine);
 
@@ -299,7 +341,7 @@ void NetSession::RenderInfo(AABB2 screenBounds, Renderer* renderer)
 				localString += "L";
 			}
 
-			std::string connectionText = Stringf( "%-4s %-5i %-20s %-9.3f %-7.3f %-12.3f %-12.3f %-11i %-8i %-10i %-30s", 
+			std::string connectionText = Stringf( "%-4s %-5i %-20s %-9i %-7.3f %-12.3f %-12.3f %-11i %-8i %-10i %-30s", 
 				localString.c_str(),								//3
 				connection->GetConnectionIndex(),													//5
 				connection->GetAddress().ToString().c_str(),		//20(?)
@@ -451,6 +493,19 @@ NetConnection * NetSession::GetLocalConnection() const
 		}
 	}
 	return nullptr;
+}
+
+void NetSession::ProcessHostTime(unsigned int hostTimeMS)
+{
+	if (!(hostTimeMS > m_lastReceivedHostTimeMS)){
+		//early out - don't process
+		return;
+	} else {
+		//if it is more recent than last time update, process it.
+		m_lastReceivedHostTimeMS = hostTimeMS + (m_myConnection->GetRTT() * .5f);
+		m_desiredClientTimeMS = m_lastReceivedHostTimeMS;
+		
+	}
 }
 
 unsigned int NetSession::GetLocalConnectionIndex() const
@@ -623,7 +678,7 @@ void NetSession::ProcessOutgoing()
 	// and send all messages queued during the frame using your socket
 	// basically queueing all messages for a frame and then sending it?
 	for (int i = 0; i < m_boundConnections.size(); i++){
-		if (m_boundConnections[i] != nullptr){
+		if (m_boundConnections[i] != nullptr && m_boundConnections[i]->IsConnected()){
 			if (m_boundConnections[i]->CanSendToConnection()){
 				SendPacketsForConnection(i);
 			}
@@ -920,8 +975,14 @@ bool TimeStampedPacketCompare(time_stamped_packet_t * leftHandSide, time_stamped
 
 bool OnHeartbeat(NetMessage msg, net_sender_t const & from)
 {
-	UNUSED(from);
+	//UNUSED(from);
 	//ConsolePrintf(RGBA::GREEN.GetColorWithAlpha(165), "Heartbeat from connection %s", from.m_connection->GetAddress().ToString().c_str()); 
+	NetSession* session = from.m_connection->m_owningSession;
+	if (!session->m_myConnection->IsHost()){
+		unsigned int hostTime;
+		msg.Read(&hostTime);
+		session->ProcessHostTime(hostTime);
+	}
 	return true;
 }
 
@@ -966,13 +1027,15 @@ bool OnJoinRequest(NetMessage msg, net_sender_t const & from)
 	NetSession* session = from.m_connection->m_owningSession;
 	bool deny = false;
 	bool ignore = false;
+	//deny if you aren't the host
 	if (!session->m_myConnection->IsHost()){
 		deny = true;
 	}
-
+	//deny if you don't have space
 	if (session->m_boundConnections.size() >= MAX_CONNECTIONS){
 		deny = true;
 	}
+	//ignore if you already have a join here
 	if (session->GetConnectionByAddress(from.m_connection->GetAddress()) != nullptr){
 		ignore = true;
 	}
@@ -988,6 +1051,7 @@ bool OnJoinRequest(NetMessage msg, net_sender_t const & from)
 				break;
 			}
 		}
+		//deny if you can't bind a connection
 		if (!assigned){
 			deny = true;
 			if (newConnection != nullptr){
@@ -1000,7 +1064,15 @@ bool OnJoinRequest(NetMessage msg, net_sender_t const & from)
 			//write accept data - the index they were assigned
 			acceptMessage->Write(newConnection->m_info.m_sessionIndex);
 			acceptMessage->IncrementMessageSize(sizeof(newConnection->m_info.m_sessionIndex));
+			acceptMessage->Write(session->m_currentClientTimeMS);
+			acceptMessage->IncrementMessageSize(sizeof(unsigned int));
 			newConnection->Send(acceptMessage);
+
+			//send a heartbeat with your current time
+			NetMessage* heartbeat = new NetMessage("heartbeat");
+			heartbeat->Write(session->m_currentClientTimeMS);
+			heartbeat->IncrementMessageSize(sizeof(unsigned int));
+			newConnection->Send(heartbeat);
 			//send join_finished (optional)
 		}
 	}
@@ -1029,6 +1101,12 @@ bool OnJoinAccept(NetMessage msg, net_sender_t const & from)
 	msg.Read(&sessionIndex);
 	ConsolePrintf(RGBA::GREEN, "Join accepted. Adding connection at index %i", sessionIndex);
 	session->BindConnection(sessionIndex, session->m_myConnection);
+	unsigned int hostMS;
+	msg.Read(&hostMS);
+	//session->ProcessHostTime(session->m_desiredClientTimeMS);
+	session->m_currentClientTimeMS = hostMS;
+	session->m_lastReceivedHostTimeMS = hostMS;
+	ConsolePrintf("Setting time to: %i", session->m_currentClientTimeMS);
 	return true;
 }
 
@@ -1050,13 +1128,13 @@ bool OnUpdateConnectionState(NetMessage msg, net_sender_t const & from)
 	msg.Read(&indx);
 	msg.Read(&stateUint);
 	NetConnection* conn = from.m_connection->m_owningSession->GetConnection(indx);
-	if (conn != nullptr){	
-		ConsolePrintf("Setting connection %i to state %i (from conn %i)", indx, stateUint, from.m_connection->m_info.m_sessionIndex );
-		from.m_connection->m_owningSession->GetConnection(indx)->m_state = (eConnectionState) stateUint;
-	} else {
-		ConsolePrintf("No connection at %i! I don't care about state change.", indx);
-	}
-	
+	//if (conn != nullptr){	
+	//	ConsolePrintf("Setting connection %i to state %i (from conn %i)", indx, stateUint, from.m_connection->m_info.m_sessionIndex );
+	//	from.m_connection->m_owningSession->GetConnection(indx)->m_state = (eConnectionState) stateUint;
+	//} else {
+	//	ConsolePrintf("No connection at %i! I don't care about state change.", indx);
+	//}
+	//
 	//from.m_connection->m_state = (eConnectionState) stateUint;
 	return true;
 }

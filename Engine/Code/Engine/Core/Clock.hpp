@@ -55,6 +55,7 @@ public:
 
 	float GetCurrentSeconds() const;
 	float GetDeltaSeconds() const;
+	unsigned int GetCurrentMilliseconds() const;
 	uint64_t GetCurrentHPC() const;
 
 	uint64_t GetFrameHPC() const { return m_last_frame_hpc; };
