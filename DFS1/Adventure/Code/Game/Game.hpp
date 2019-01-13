@@ -23,6 +23,7 @@ public:
 	bool m_devMode;
 	bool m_fullMapMode;
 	bool m_isMapViewerMode = false;
+	bool m_renderingEdges = true;
 	//float m_gameTime;
 	Clock* m_gameClock;
 	//Map* m_currentMap;

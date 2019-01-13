@@ -138,7 +138,72 @@ void CommandSaveLog(Command & cmd)
 	}
 }
 
+void CommandToggleProfiler(Command & cmd)
+{
+	UNUSED(cmd);
+	ProfilerVisualizer::GetInstance()->ToggleOpen();
+}
 
+void CommandPrintProfilerReport(Command & cmd)
+{
+	std::string type = cmd.GetNextString();
+	if (type == "flat"){
+		AddProfilerFrameAsFlatToConsole();
+	} else {
+		AddProfilerFrameAsTreeToConsole();
+	}
+}
+
+void CommandProfilePause(Command & cmd)
+{
+	Profiler::GetInstance()->Pause();
+}
+
+void CommandProfileResume(Command & cmd)
+{
+	Profiler::GetInstance()->Resume();
+}
+
+void AddProfilerFrameAsTreeToConsole()
+{
+	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
+
+	if (tree != nullptr){
+		ProfilerReport* report = new ProfilerReport();
+		report->GenerateReportTreeFromFrame(tree);
+		if (tree != nullptr){
+			PrintTree(report->m_root);
+		}
+	} else {
+		ConsolePrintf(RGBA::RED, "No profiler frame found - profiling may be disabled in EngineBuildPreferences.hpp");
+	}
+}
+
+void AddProfilerFrameAsFlatToConsole()
+{
+	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
+
+	if (tree != nullptr){
+		ProfilerReport* report = new ProfilerReport();
+		report->GenerateReportFlatFromFrame(tree);
+		if (tree != nullptr){
+			PrintTree(report->m_root);
+		}
+	} else {
+		ConsolePrintf(RGBA::RED, "No profiler frame found- profiling may be disabled in EngineBuildPreferences.hpp");
+	}
+}
+
+
+void PrintTree(ProfilerReportEntry * tree, int depth)
+{
+	//	ConsolePrintf("%.64s : %.8fms", tree->m_id, tree->GetTotalElapsedTime());
+	std::string text = FormatProfilerReport(tree, depth);
+	ConsolePrint(text.c_str());
+	for ( ProfilerReportEntry* child : tree->m_children){
+		PrintTree(child, depth + 1);
+	}
+}
 
 CommandDefinition* GetCommandDefinition(std::string name)
 {

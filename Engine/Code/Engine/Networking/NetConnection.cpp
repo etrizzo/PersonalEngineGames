@@ -18,7 +18,7 @@ NetConnection::NetConnection(NetSession * owningSession, net_connection_info_t i
 	m_lastReceivedTimeMS = (unsigned int) (GetMasterClock()->GetCurrentSeconds() * 1000.f);
 	SetSendRate();
 	for (int i = 0; i < NUM_ACKS_TRACKED; i++){
-		m_trackedSentPackets[i] = new PacketTracker(INVALID_PACKET_ACK);
+		m_trackedSentPackets[i] = new PacketTracker(INVALID_PACKET_ACK, 0U);
 	}
 	for (int i = 0; i < MAX_MESSAGE_CHANNELS; i++){
 		m_channels[i] = new NetChannel();
@@ -36,7 +36,7 @@ NetConnection::NetConnection(NetSession * owningSession, uint8_t indexInSession,
 	m_lastReceivedTimeMS = (unsigned int) (GetMasterClock()->GetCurrentSeconds() * 1000.f);
 	SetSendRate();
 	for (int i = 0; i < NUM_ACKS_TRACKED; i++){
-		m_trackedSentPackets[i] = new PacketTracker(INVALID_PACKET_ACK);
+		m_trackedSentPackets[i] = new PacketTracker(INVALID_PACKET_ACK, 0U);
 	}
 	for (int i = 0; i < MAX_MESSAGE_CHANNELS; i++){
 		m_channels[i] = new NetChannel();
@@ -94,7 +94,7 @@ void NetConnection::Update()
 				msg->Write(0U);
 				msg->IncrementMessageSize(sizeof(unsigned int));
 			}
-			Send(msg);
+			conn->Send(msg);
 		}
 	}
 	if (m_recievedPackets > 0){
@@ -211,7 +211,7 @@ PacketTracker * NetConnection::AddTrackedPacketOnSend(const packet_header_t & he
 		m_lostPackets++;
 		tracker->Reset();
 	}
-	tracker->SetAckAndTimestamp(header.m_ack);
+	tracker->SetAckAndTimestamp(header.m_ack, m_owningSession->GetNetTimeMS());
 	return tracker;
 }
 
@@ -252,7 +252,7 @@ bool NetConnection::ConfirmPacketReceived(uint16_t newReceivedAck)
 	for (PacketTracker* tracker : m_trackedSentPackets){
 		if (tracker->m_ack == newReceivedAck){
 			if (tracker->m_isValid){
-				unsigned int currentMS = GetMasterClock()->GetCurrentMilliseconds();
+				unsigned int currentMS = m_owningSession->GetNetTimeMS();
 				UpdateRTT(currentMS - tracker->m_sentMS );
 				m_recievedPackets++;
 				if (m_unconfirmedReliableMessages.size() > 0){

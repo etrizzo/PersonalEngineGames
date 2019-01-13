@@ -118,6 +118,7 @@ void Game::Update(float deltaSeconds)
 
 void Game::UpdateStars(float deltaSeconds)
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	for (unsigned int starIndex = 0; starIndex < m_stars.size(); starIndex++){
 		Star* star = m_stars[starIndex];
 		star->Update(deltaSeconds);
@@ -135,6 +136,7 @@ void Game::UpdateStars(float deltaSeconds)
 
 void Game::RenderBackground()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	float red = Compute2dPerlinNoise(m_gameTime, 0.f, 5.f, 2, .5f, 2.f, true, 0);
 	float green = Compute2dPerlinNoise(m_gameTime, 0.f, 7.f, 1, .5f, 2.f, true, 1);
 	float blue = Compute2dPerlinNoise(m_gameTime, 0.f, 4.f, 3, .5f, 2.f, true, 2);
@@ -166,6 +168,7 @@ void Game::RenderBackground()
 
 void Game::AddStars()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	//if long enough since last star spawn & not at max stars
 	if ((m_stars.size() <= MAX_STARS) && (m_gameTime > m_lastSpawnedStar + 0.3f)){
 		//check every "tile" on the screen for perlin noise value. This determines chance for star spawn, and star size/opacity
@@ -240,6 +243,7 @@ void Game::Render()
 
 void Game::CreateStarMesh()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	//old rendering :)
 	//for (unsigned int starIndex = 0; starIndex < m_stars.size(); starIndex++){
 	//	Star* star = m_stars[starIndex];
@@ -262,6 +266,7 @@ void Game::CreateStarMesh()
 
 void Game::RenderStars()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	//for (unsigned int starIndex = 0; starIndex < m_stars.size(); starIndex++){
 	//	Star* star = m_stars[starIndex];
 	//	star->Render();

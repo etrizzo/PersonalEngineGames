@@ -6,7 +6,7 @@ class NetPacket;
 class NetConnection;
 class Renderer;
 #define MAX_CONNECTIONS (16)
-#define DEFAULT_HEARTBEAT (4.f)
+#define DEFAULT_HEARTBEAT (0.5f)
 #define DEFAULT_SESSION_SEND_RATE_HZ (30.f)		//NOTE: Hz, not ms.
 
 #define MAX_NET_TIME_DILATION (0.1f)
@@ -132,7 +132,7 @@ private:		//DEPRECATED for host-join
 	StopWatch m_joinRequestTimer;
 	StopWatch m_joinTimeoutTimer;
 
-
+	std::string m_clockBehavior = "=";
 public:
 
 	NetConnection* GetConnection(uint8_t idx) const;

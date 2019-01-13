@@ -2,6 +2,13 @@
 #include "Game/GameCommon.hpp"
 #include "Game/TileEdgeDefinition.hpp"
 
+enum eTerrainTypes{
+	TERRAIN_GROUND,
+	TERRAIN_GRASS,
+	TERRAIN_WATER,
+	NUM_TERRAIN_TYPES
+};
+
 class TileDefinition{
 public:
 	TileDefinition() {};

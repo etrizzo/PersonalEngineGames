@@ -725,6 +725,13 @@ bool Map::IsDialogueOpen()
 	return m_activeDialogueSet != nullptr;
 }
 
+void Map::ReCreateRenderable(bool edge)
+{
+	m_scene->RemoveRenderable(m_tileRenderable);
+	delete m_tileRenderable;
+	CreateTileRenderable(edge);
+}
+
 
 
 RaycastResult2D Map::Raycast(const Vector2& startPos, const Vector2& direction, float maxDistance) 
@@ -1120,7 +1127,7 @@ void Map::InitializeTiles()
 	m_fullMap = (AreaMask*) new AreaMask_Rectangle(center, halfDims);	//should never change, just for resetting
 }
 
-void Map::CreateTileRenderable()
+void Map::CreateTileRenderable(bool edge)
 {
 	m_tileRenderable = new Renderable2D();
 	Material* tileMat = Material::GetMaterial("tile");
@@ -1148,15 +1155,17 @@ void Map::CreateTileRenderable()
 			AABB2 bounds = tileToRender->GetBounds();
 			RGBA color = tileToRender->m_tileDef->m_spriteTint;
 			AABB2 texCoords;
-			if (tileToRender->m_extraInfo->m_cosmeticBaseDef != nullptr){
+			if (edge && tileToRender->m_extraInfo->m_cosmeticBaseDef != nullptr){
 				texCoords = tileToRender->m_extraInfo->m_cosmeticBaseDef->GetTexCoords();
 			} else {
 				texCoords = tileToRender->m_tileDef->GetTexCoords(tileToRender->m_extraInfo->m_variant);
 			}
 			mb.AppendPlane2D(bounds, color, texCoords, .01f);
-			for (int i = 0; i < tileToRender->m_extraInfo->m_overlaySpriteCoords.size(); i++){
-				AABB2 overlayCoords = tileToRender->m_extraInfo->m_overlaySpriteCoords[i];
-				mb.AppendPlane2D(bounds, color, overlayCoords, .01f);
+			if (edge){
+				for (int i = 0; i < tileToRender->m_extraInfo->m_overlaySpriteCoords.size(); i++){
+					AABB2 overlayCoords = tileToRender->m_extraInfo->m_overlaySpriteCoords[i];
+					mb.AppendPlane2D(bounds, color, overlayCoords, .01f);
+				}
 			}
 			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.mins.x, bounds.mins.y), color, Vector2(texCoords.mins.x, texCoords.maxs.y)));
 			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.maxs.x, bounds.mins.y), color, Vector2(texCoords.maxs.x, texCoords.maxs.y)));
@@ -1183,11 +1192,31 @@ void Map::RunMapGeneration()
 
 void Map::EdgeTiles()
 {
+	//remove invalid tiles from the map
+	//we want them gone before we start edging things so that they don't interfere with the actuall edges
 	for (int i = 0; i < m_numTiles; i++){
 		Tile* tile = &m_tiles[i];
 		if (tile->m_tileDef->m_isTerrain){
 			TileNeighborSet* neighborSet = new TileNeighborSet(tile, this);
 			
+			TileDefinition* edgeTileDefinition = neighborSet->FindEdgeTileDefinition();
+			if (edgeTileDefinition != nullptr){
+				if (neighborSet->IsTileInvalid()){
+					//if the placement of the tile doesn't work with our spritesheet,
+					//replace it with the edgeTileDefinition
+					//tile->m_tileDef = edgeTileDefinition;
+					tile->SetType(edgeTileDefinition);
+				}
+			}
+		}
+	}
+
+	//actually do the edges now
+	for (int i = 0; i < m_numTiles; i++){
+		Tile* tile = &m_tiles[i];
+		if (tile->m_tileDef->m_isTerrain){
+			TileNeighborSet* neighborSet = new TileNeighborSet(tile, this);
+
 			TileDefinition* edgeTileDefinition = neighborSet->FindEdgeTileDefinition();
 			if (edgeTileDefinition != nullptr){
 				AABB2 overlayUVs = neighborSet->GetTileEdge(edgeTileDefinition);

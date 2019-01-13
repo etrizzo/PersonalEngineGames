@@ -2,7 +2,11 @@
 #include "Engine/Core/ProfilerReport.hpp"
 #include "Engine/Math/Renderer.hpp"
 #include "Engine/Core/Clock.hpp"
-#include "Engine/Input/InputSystem.hpp"
+#include "Engine/Input/InputSystem.hpp"\
+
+
+// global
+ProfilerVisualizer* ProfilerVisualizer::s_profilerVisualizerInstance;
 
 ProfilerVisualizer::ProfilerVisualizer(Renderer * renderer, InputSystem* input, AABB2 uiBounds)
 {
@@ -114,23 +118,36 @@ std::string ProfilerVisualizer::GetNodeString(ProfilerReportEntry * root, int de
 	return text;
 }
 
+ProfilerVisualizer * ProfilerVisualizer::GetInstance(Renderer * renderer, InputSystem * input, AABB2 uiBounds)
+{
+	if (ProfilerVisualizer::s_profilerVisualizerInstance == nullptr){
+		ASSERT_OR_DIE(renderer != nullptr, "No profiler visualizer initialized");
+		s_profilerVisualizerInstance = new ProfilerVisualizer(renderer, input, uiBounds);
+	}
+	return s_profilerVisualizerInstance;
+}
+
 void ProfilerVisualizer::RenderReport()
 {
-	if (m_selfSort){
-		m_currentReport->SortBySelfTime();
+	if (m_currentReport->m_root == nullptr){
+		m_renderer->DrawTextInBox2D("Loading report...", m_reportArea, Vector2::HALF, .1f * m_reportArea.GetHeight(), TEXT_DRAW_SHRINK_TO_FIT, m_outlineColor);
 	} else {
-		m_currentReport->SortByTotalTime();
-	}
-	std::string header = Stringf( "%-*s %-8s %8s %12s %8s %12s\n", 
-		64, "ID", 
-		"Calls",
-		"Total %",
-		"Total ms", 
-		"Self %", 
-		"Self ms");
-	std::string reportText = header + GetNodeString(m_currentReport->m_root);
+		if (m_selfSort){
+			m_currentReport->SortBySelfTime();
+		} else {
+			m_currentReport->SortByTotalTime();
+		}
+		std::string header = Stringf( "%-*s %-8s %8s %12s %8s %12s\n", 
+			64, "ID", 
+			"Calls",
+			"Total %",
+			"Total ms", 
+			"Self %", 
+			"Self ms");
+		std::string reportText = header + GetNodeString(m_currentReport->m_root);
 
-	m_renderer->DrawTextInBox2D(reportText, m_reportArea, Vector2(0.f,.92f), .05f, TEXT_DRAW_SHRINK_TO_FIT, m_outlineColor);
+		m_renderer->DrawTextInBox2D(reportText, m_reportArea, Vector2(0.f,.92f), .05f * m_reportArea.GetHeight(), TEXT_DRAW_SHRINK_TO_FIT, m_outlineColor);
+	}
 }
 
 void ProfilerVisualizer::RenderGraph()
@@ -150,8 +167,10 @@ void ProfilerVisualizer::RenderGraph()
 	float maxMS = 0.f;
 	for (int i = 0; i < PROFILER_MAX_FRAME_COUNT; i++){
 		profileMeasurement_t* frame = instance->ProfileGetPreviousFrame(PROFILER_MAX_FRAME_COUNT - i);
-		if (maxMS < frame->GetMilliseconds()){
-			maxMS = frame->GetMilliseconds();
+		if (frame != nullptr){
+			if (maxMS < frame->GetMilliseconds()){
+				maxMS = frame->GetMilliseconds();
+			}
 		}
 	}
 
@@ -159,37 +178,39 @@ void ProfilerVisualizer::RenderGraph()
 	maxMS +=5.f;
 
 	//draw ms marker at top and bottom of graph
-	m_renderer->DrawTextInBox2D(Stringf("%3.1fms", maxMS), m_graphArea, Vector2(-.08f, 1.f), .01f, TEXT_DRAW_OVERRUN);
-	m_renderer->DrawTextInBox2D(Stringf("%3.1fms", 0.f), m_graphArea, Vector2(-.08f, 0.f), .01f, TEXT_DRAW_OVERRUN);
+	m_renderer->DrawTextInBox2D(Stringf("%3.1fms", maxMS), m_graphArea, Vector2(-.08f, 1.f), .01f * m_bounds.GetHeight(), TEXT_DRAW_OVERRUN);
+	m_renderer->DrawTextInBox2D(Stringf("%3.1fms", 0.f), m_graphArea, Vector2(-.08f, 0.f), .01f * m_bounds.GetHeight(), TEXT_DRAW_OVERRUN);
 
 	//0 is the oldest frame, PROFILER_MAX_FRAME_COUNT is the newest frame
 	for (int i = 0; i < PROFILER_MAX_FRAME_COUNT; i++){
 		//for each frame
 		unsigned int frameOffset = PROFILER_MAX_FRAME_COUNT - i;
 		profileMeasurement_t* frame = instance->ProfileGetPreviousFrame(PROFILER_MAX_FRAME_COUNT - i);
-		float frameTime = frame->GetMilliseconds();
-		float percentageX = (float) i / (float) PROFILER_MAX_FRAME_COUNT;
-		float percentageY = frameTime / maxMS;
-		//add a quad to a mesh-builder
-		Vector2 height = m_graphArea.GetPointAtNormalizedCoord(percentageX, percentageY);
+		if (frame != nullptr){
+			float frameTime = frame->GetMilliseconds();
+			float percentageX = (float) i / (float) PROFILER_MAX_FRAME_COUNT;
+			float percentageY = frameTime / maxMS;
+			//add a quad to a mesh-builder
+			Vector2 height = m_graphArea.GetPointAtNormalizedCoord(percentageX, percentageY);
 
-		botLeft = Vector3(height.x, m_graphArea.mins.y, z);
-		botRight = Vector3(height.x + sliceWidth, m_graphArea.mins.y, z);
-		topLeft = Vector3(height.x, height.y, z);
-		topRight = Vector3(height.x + sliceWidth, height.y, z);
+			botLeft = Vector3(height.x, m_graphArea.mins.y, z);
+			botRight = Vector3(height.x + sliceWidth, m_graphArea.mins.y, z);
+			topLeft = Vector3(height.x, height.y, z);
+			topRight = Vector3(height.x + sliceWidth, height.y, z);
 
-		//get the lerped frame color
-		float t = RangeMapFloat(frameTime, m_bestMS, m_worstMS, 0.f, 1.f);
-		t = ClampFloatZeroToOne(t);
-		RGBA colorAtFrame = Interpolate(m_graphBestColor, m_graphWorstColor, t);
+			//get the lerped frame color
+			float t = RangeMapFloat(frameTime, m_bestMS, m_worstMS, 0.f, 1.f);
+			t = ClampFloatZeroToOne(t);
+			RGBA colorAtFrame = Interpolate(m_graphBestColor, m_graphWorstColor, t);
 
-		//append frame quad to graph (highlighting selected and hovered frames)
-		if (frameOffset == m_currentFrameHoverIndex){
-			mb.AppendQuad(botLeft,botRight,topLeft,topRight, RGBA::WHITE);
-		} else if ((int) frameOffset == m_currentFrameSelectionIndex) {
-			mb.AppendQuad(botLeft,botRight,topLeft,topRight, RGBA::CYAN);
-		} else{
-			mb.AppendQuad(botLeft,botRight,topLeft,topRight, colorAtFrame.GetColorWithAlpha(200));
+			//append frame quad to graph (highlighting selected and hovered frames)
+			if (frameOffset == m_currentFrameHoverIndex){
+				mb.AppendQuad(botLeft,botRight,topLeft,topRight, RGBA::WHITE);
+			} else if ((int) frameOffset == m_currentFrameSelectionIndex) {
+				mb.AppendQuad(botLeft,botRight,topLeft,topRight, RGBA::CYAN);
+			} else{
+				mb.AppendQuad(botLeft,botRight,topLeft,topRight, colorAtFrame.GetColorWithAlpha(200));
+			}
 		}
 	}
 	mb.End();
@@ -208,7 +229,7 @@ void ProfilerVisualizer::RenderInfo()
 	std::string frameTime = Stringf("Frame time: %.2f ms", ds * 1000.f);
 	std::string mousePos = Stringf("Mouse pos: (%.3f, %.3f)", m_mousePos.x, m_mousePos.y); 
 	std::string theThing = fpsText + "\n" + frameTime + "\n" +  mousePos;
-	m_renderer->DrawTextInBox2D(theThing, m_infoArea, Vector2(0.0f, .5f), .05f, TEXT_DRAW_SHRINK_TO_FIT);
+	m_renderer->DrawTextInBox2D(theThing, m_infoArea, Vector2(0.0f, .5f), .05f * m_bounds.GetHeight(), TEXT_DRAW_SHRINK_TO_FIT);
 }
 
 void ProfilerVisualizer::RenderHotkeys()
@@ -219,7 +240,7 @@ Hotkeys:
 'L' - Toggle Flat View Sorting
 'P' - Toggle Pause
 'M' - Enable mouse (disables game input) )";
-	m_renderer->DrawTextInBox2D(hotkeys, m_hotkeyArea, Vector2(0.0f, .5f), .05f, TEXT_DRAW_SHRINK_TO_FIT);
+	m_renderer->DrawTextInBox2D(hotkeys, m_hotkeyArea, Vector2(0.0f, .5f), .05f * m_bounds.GetHeight(), TEXT_DRAW_SHRINK_TO_FIT);
 }
 
 unsigned int ProfilerVisualizer::GetFrameIndexForMousePos()

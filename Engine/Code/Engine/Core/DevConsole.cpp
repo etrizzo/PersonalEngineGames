@@ -1,6 +1,7 @@
 #include "Engine/Core/DevConsole.hpp"
 #include "Engine/Math/Renderer.hpp"
 #include "Engine/Networking/RemoteCommandService.hpp"
+#include "Game/EngineBuildPreferences.hpp"
 
 
 DevConsole::DevConsole(AABB2 screenBounds)
@@ -422,11 +423,13 @@ void DevConsole::RegisterCommands()
 	CommandRegister("clear", CommandClear, "clears output of dev console");
 	CommandRegister("echo_with_color", CommandEchoWithColor, "prints <str> with color (<r>, <g>, <b>)", "echo_with_color (<r>, <g>, <b>, <optional a>) \"<string>\"");
 	CommandRegister("save_log", CommandSaveLog, "Saves log to Logs/<filename.txt>", "save_log <filename.txt>");
-	
+
+#ifdef RCS_ENABLED	
 	//networking
 	CommandRegister("net_send_message", CommandSendMessage, "Sends a message to forseth", "net_send_message \"ip:port\" \"msg\"");
 	CommandRegister("net_print_local_ip", CommandPrintLocalAddress, "prints local ip");
 	CommandRegister("net_host_server", CommandHostServer, "starts hosting a server i guess");
+
 
 	//RCS
 	CommandRegister("rc", CommandSendRemoteMessage, "Sends command to specified connections through remote command service", "rc <clientindex> \"message\"");
@@ -435,8 +438,17 @@ void DevConsole::RegisterCommands()
 	CommandRegister("rc_join", CommandRemoteJoin, "Tries to join RCS on specified address", "rc_join \"ip:port\"" );
 	CommandRegister("rc_host", CommandRemoteHost, "Tries to host RCS on specified port (blank for default port)", "rc_host \"port\"" );
 	CommandRegister("rc_echo", CommandRemoteSetEcho, "Sets echo functionality for RCS (default = true)", "rc_echo <enabled=true>");
+#endif
+
+#ifdef PROFILING_ENABLED
+	CommandRegister("profiler", CommandToggleProfiler, "Toggles profiler view");
+	CommandRegister("profiler_report", CommandPrintProfilerReport, "Prints a frame of the profiler to the console", "profiler_report <tree|flat>");
+	CommandRegister("profiler_pause", CommandProfilePause, "Pauses profiling");
+	CommandRegister("profiler_resume", CommandProfileResume, "Resumes profiling");
+#endif
 
 	CommandRegister("spawn_process", CommandSpawnProcess, "Spawns n new clone(s) of this process", "spawn_process <numToSpawn=1>");
+
 }
 
 
@@ -558,3 +570,5 @@ void RCSEchoHook(OutputLine hookLine)
 {
 	RemoteCommandService::GetInstance()->SendEchoMessage(hookLine.text);
 }
+
+

@@ -18,8 +18,10 @@ public:
 	TileDefinition* m_edgeToLookFor = nullptr;
 	Tile* m_center;
 
-	TileDefinition* FindEdgeTileDefinition() const;
+	TileDefinition* FindEdgeTileDefinition() ;
 	AABB2 GetTileEdge(TileDefinition * edgeTileDef);
+
+	bool IsTileInvalid() const;
 
 	bool MatchesEdgeDefinition(Tile* tile) const;
 

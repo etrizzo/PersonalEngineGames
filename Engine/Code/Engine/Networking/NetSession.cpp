@@ -151,10 +151,13 @@ void NetSession::Update()
 			if (m_currentClientTimeMS + dt > m_desiredClientTimeMS){
 				//dtp is scaled down to 1 - MAX_NET_TIME_DILATION (.9)
 				dtp = (unsigned int) ((float) dt * (1.f - MAX_NET_TIME_DILATION));
+				m_clockBehavior = "-";
 			} else if (m_currentClientTimeMS + dt < m_desiredClientTimeMS){
 				dtp = (unsigned int) ((float) dt * (1.f + MAX_NET_TIME_DILATION));
+				m_clockBehavior = "+";
 			} else {
 				dtp = dt;
+				m_clockBehavior = "=";
 			}
 
 			m_currentClientTimeMS += dtp;
@@ -296,7 +299,7 @@ void NetSession::RenderInfo(AABB2 screenBounds, Renderer* renderer)
 	//renderer->DrawAABB2Outline(textBox, RGBA::RED);
 	textBox.Translate(newLine);
 	//Render net rate, Simulated latency, & simulated lag
-	std::string netInfo = Stringf("Rate: %.2fhz  sim lag: %sms  sim loss: %3.2f heartRate: %3.2f  NetTime (ms): %3.2f", m_sessionRateHz, m_simulatedLatency.ToString().c_str(),  m_simulatedLoss, m_sessionHeartbeat, ((float) GetNetTimeMS()) * .001f);
+	std::string netInfo = Stringf("Rate: %.2fhz  sim lag: %sms  sim loss: %3.2f heartRate: %3.2f  NetTime (ms): %3.2f (%s)", m_sessionRateHz, m_simulatedLatency.ToString().c_str(),  m_simulatedLoss, m_sessionHeartbeat, ((float) GetNetTimeMS()) * .001f, m_clockBehavior.c_str());
 	renderer->DrawTextInBox2D(netInfo, textBox, Vector2::TOP_LEFT, contentFontHeight, TEXT_DRAW_SHRINK_TO_FIT, RGBA::LIGHTGRAY);
 	textBox.Translate(newLine);
 
@@ -497,12 +500,12 @@ NetConnection * NetSession::GetLocalConnection() const
 
 void NetSession::ProcessHostTime(unsigned int hostTimeMS)
 {
-	if (!(hostTimeMS > m_lastReceivedHostTimeMS)){
+	if ((hostTimeMS < m_lastReceivedHostTimeMS)){
 		//early out - don't process
 		return;
 	} else {
 		//if it is more recent than last time update, process it.
-		m_lastReceivedHostTimeMS = hostTimeMS + (m_myConnection->GetRTT() * .5f);
+		m_lastReceivedHostTimeMS = hostTimeMS + (m_hostConnection->GetRTT() * .5f);
 		m_desiredClientTimeMS = m_lastReceivedHostTimeMS;
 		
 	}
@@ -978,11 +981,12 @@ bool OnHeartbeat(NetMessage msg, net_sender_t const & from)
 	//UNUSED(from);
 	//ConsolePrintf(RGBA::GREEN.GetColorWithAlpha(165), "Heartbeat from connection %s", from.m_connection->GetAddress().ToString().c_str()); 
 	NetSession* session = from.m_connection->m_owningSession;
-	if (!session->m_myConnection->IsHost()){
+	//if (!session->m_myConnection->IsHost()){
 		unsigned int hostTime;
 		msg.Read(&hostTime);
+		//ConsolePrintf("Receiving host time: %i", hostTime);
 		session->ProcessHostTime(hostTime);
-	}
+	//}
 	return true;
 }
 

@@ -10,6 +10,5 @@
 
 //#define ENGINE_DISABLE_AUDIO	// (If uncommented) Disables AudioSystem code and fmod linkage.
 #define PROFILING_ENABLED		// (If uncommented) Enables profiling in game code
-//#define RCS_ENABLED			// (If uncommented) Enables remote command service
-
+//#define RCS_ENABLED				// (If uncommented) Enables RCS
 

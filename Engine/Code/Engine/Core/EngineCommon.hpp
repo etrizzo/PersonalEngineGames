@@ -83,7 +83,7 @@ extern Blackboard g_gameConfigBlackboard; // declared in EngineCommon.hpp, defin
 
 extern Window* g_Window;		//should maybe return this to singleton in window.cpp at some point
 extern DevConsole* g_devConsole;
-extern ProfilerVisualizer* g_profilerVisualizer;
+//extern ProfilerVisualizer* g_profilerVisualizer;
 
 
 

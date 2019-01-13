@@ -33,7 +33,7 @@ TileNeighborSet::TileNeighborSet(Tile * center, Map * map)
 }
 
 //find the most common tile type in your neighbors with a higher level than you (edges flow downward)
-TileDefinition * TileNeighborSet::FindEdgeTileDefinition() const
+TileDefinition * TileNeighborSet::FindEdgeTileDefinition()
 {
 	std::vector<TileDefinition*> defsHigherLevelThanMe;
 	std::vector<int> defCount;
@@ -67,6 +67,9 @@ TileDefinition * TileNeighborSet::FindEdgeTileDefinition() const
 			highestCountDef = defsHigherLevelThanMe[i];
 			highestCount = defCount[i];
 		}
+	}
+	if (highestCountDef != nullptr){
+		m_edgeToLookFor = highestCountDef;
 	}
 	return highestCountDef;
 }
@@ -163,7 +166,30 @@ AABB2 TileNeighborSet::GetTileEdge(TileDefinition * edgeTileDef)
 	}
 
 	//last resort :(
+	ConsolePrintf(RGBA::RED, "No suitable tile edge found.");
 	return def->GetTexCoordsForEdge(EDGE_SINGLE_SMALL);
+}
+
+bool TileNeighborSet::IsTileInvalid() const
+{
+	TileDefinition* centerDefinition = m_center->m_extraInfo->m_terrainDef;
+	int numMatchingCenter = 0;
+	int numHigherLevel = 0;
+	for(Tile* neighbor : m_neighbors){
+		if (neighbor != nullptr){
+			if (neighbor->HasTerrainDefinition(centerDefinition)){
+				numMatchingCenter++;
+			//} else if (neighbor->HasTerrainDefinition(m_edgeToLookFor)){
+			} else if (neighbor->GetTerrainLevel() < 0 || neighbor->GetTerrainLevel() > centerDefinition->m_terrainLevel){
+				numHigherLevel++;
+			}
+		}
+	}
+	if (numMatchingCenter <= 2 && numHigherLevel > 5){
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool TileNeighborSet::MatchesEdgeDefinition(Tile * tile) const
@@ -222,7 +248,10 @@ bool TileNeighborSet::CheckConvexTopLeft() const
 {
 	if (MatchesEdgeDefinition(GetBottomRight())){
 		if (!MatchesEdgeDefinition(GetRight()) && !MatchesEdgeDefinition(GetBottom())){
-			return true;
+			//ONLY MATCH the one
+			if (!MatchesEdgeDefinition(GetLeft()) && !MatchesEdgeDefinition(GetTop()) && !MatchesEdgeDefinition(GetTopRight()) && !MatchesEdgeDefinition(GetTopLeft())  && !MatchesEdgeDefinition(GetBottomLeft()) ) {
+				return true;
+			}
 		}
 	}
 	return false;
@@ -232,7 +261,10 @@ bool TileNeighborSet::CheckConvexTopRight() const
 {
 	if (MatchesEdgeDefinition(GetBottomLeft())){
 		if (!MatchesEdgeDefinition(GetLeft()) && !MatchesEdgeDefinition(GetBottom())){
-			return true;
+			//ONLY MATCH the one
+			if (!MatchesEdgeDefinition(GetRight()) && !MatchesEdgeDefinition(GetTop()) && !MatchesEdgeDefinition(GetTopRight()) && !MatchesEdgeDefinition(GetTopLeft())  && !MatchesEdgeDefinition(GetBottomRight()) ) {
+				return true;
+			}
 		}
 	}
 	return false;
@@ -242,7 +274,10 @@ bool TileNeighborSet::CheckConvexBottomLeft() const
 {
 	if (MatchesEdgeDefinition(GetTopRight())){
 		if (!MatchesEdgeDefinition(GetRight()) && !MatchesEdgeDefinition(GetTop())){
-			return true;
+			//ONLY MATCH the one
+			if (!MatchesEdgeDefinition(GetLeft()) && !MatchesEdgeDefinition(GetBottom()) && !MatchesEdgeDefinition(GetBottomRight()) && !MatchesEdgeDefinition(GetTopLeft())  && !MatchesEdgeDefinition(GetBottomLeft()) ) {
+				return true;
+			}
 		}
 	}
 	return false;
@@ -252,7 +287,10 @@ bool TileNeighborSet::CheckConvexBottomRight() const
 {
 	if (MatchesEdgeDefinition(GetTopLeft())){
 		if (!MatchesEdgeDefinition(GetLeft()) && !MatchesEdgeDefinition(GetTop())){
-			return true;
+			//ONLY MATCH the one
+			if (!MatchesEdgeDefinition(GetBottom()) && !MatchesEdgeDefinition(GetRight()) && !MatchesEdgeDefinition(GetTopRight()) && !MatchesEdgeDefinition(GetBottomRight())  && !MatchesEdgeDefinition(GetBottomLeft()) ) {
+				return true;
+			}
 		}
 	}
 	return false;
@@ -263,9 +301,12 @@ bool TileNeighborSet::CheckPureLeft() const
 	if (GetLeft() == nullptr || GetRight() == nullptr){
 		return false;
 	}
-	if (GetRight()->HasTerrainDefinition(m_edgeToLookFor) && !GetLeft()->HasTerrainDefinition(m_edgeToLookFor)){
+	if (MatchesEdgeDefinition(GetLeft()) && !MatchesEdgeDefinition(GetRight()) && !MatchesEdgeDefinition(GetTop()) && !MatchesEdgeDefinition(GetBottom())){
 		return true;
 	}
+	//if (GetRight()->HasTerrainDefinition(m_edgeToLookFor) && !GetLeft()->HasTerrainDefinition(m_edgeToLookFor)){
+	//	return true;
+	//}
 	return false;
 }
 
@@ -274,9 +315,12 @@ bool TileNeighborSet::CheckPureRight() const
 	if (GetLeft() == nullptr || GetRight() == nullptr){
 		return false;
 	}
-	if (GetLeft()->HasTerrainDefinition(m_edgeToLookFor) && !GetRight()->HasTerrainDefinition(m_edgeToLookFor)){
+	if (MatchesEdgeDefinition(GetRight()) && !MatchesEdgeDefinition(GetLeft()) && !MatchesEdgeDefinition(GetTop()) && !MatchesEdgeDefinition(GetBottom())){
 		return true;
 	}
+	/*if (GetLeft()->HasTerrainDefinition(m_edgeToLookFor) && !GetRight()->HasTerrainDefinition(m_edgeToLookFor)){
+		return true;
+	}*/
 	return false;
 }
 
@@ -285,9 +329,12 @@ bool TileNeighborSet::CheckPureTop() const
 	if (GetBottom() == nullptr || GetTop() == nullptr){
 		return false;
 	}
-	if (GetBottom()->HasTerrainDefinition(m_edgeToLookFor) && !GetTop()->HasTerrainDefinition(m_edgeToLookFor)){
+	if (MatchesEdgeDefinition(GetTop()) && !MatchesEdgeDefinition(GetBottom()) && !MatchesEdgeDefinition(GetLeft()) && !MatchesEdgeDefinition(GetRight())){
 		return true;
 	}
+	/*if (GetBottom()->HasTerrainDefinition(m_edgeToLookFor) && !GetTop()->HasTerrainDefinition(m_edgeToLookFor)){
+		return true;
+	}*/
 	return false;
 }
 
@@ -296,8 +343,11 @@ bool TileNeighborSet::CheckPureBottom() const
 	if (GetBottom() == nullptr || GetTop() == nullptr){
 		return false;
 	}
-	if (GetTop()->HasTerrainDefinition(m_edgeToLookFor) && !GetBottom()->HasTerrainDefinition(m_edgeToLookFor)){
+	if (MatchesEdgeDefinition(GetBottom()) && !MatchesEdgeDefinition(GetTop()) && !MatchesEdgeDefinition(GetLeft()) && !MatchesEdgeDefinition(GetRight())){
 		return true;
 	}
+	/*if (GetTop()->HasTerrainDefinition(m_edgeToLookFor) && !GetBottom()->HasTerrainDefinition(m_edgeToLookFor)){
+		return true;
+	}*/
 	return false;
 }

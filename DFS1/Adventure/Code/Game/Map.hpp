@@ -144,6 +144,8 @@ public:
 	bool ProgressDialogueAndCheckFinish();
 	bool IsDialogueOpen();
 
+	void ReCreateRenderable(bool edge);
+
 	DialogueSet* m_activeDialogueSet;
 
 
@@ -163,7 +165,7 @@ private:
 	void SetCamera();
 	void ClampCameraToMap();
 	void InitializeTiles();
-	void CreateTileRenderable();
+	void CreateTileRenderable(bool edge = true);
 	void RunMapGeneration();
 	void EdgeTiles();
 

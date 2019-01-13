@@ -102,7 +102,7 @@ private:
 	//config junk for the rendering
 	RGBA m_backgroundColor = RGBA(16, 0, 64, 200);		//bg color of the console
 	RGBA m_defaultTextColor = RGBA::WHITE;			//default text color
-	float m_maxLinesVisible = 25.f;
+	float m_maxLinesVisible = 40.f;
 	float m_consoleWidthRatio = 1.f;
 	float m_consoleHeightRatio = .6f;
 	float m_lineHeight;
@@ -150,3 +150,7 @@ void DevConsoleHandler(unsigned int msg, size_t wparam, size_t lparam);
 
 
 void RCSEchoHook(OutputLine hookLine);
+
+
+
+

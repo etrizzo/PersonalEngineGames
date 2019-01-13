@@ -26,7 +26,8 @@ App::App(HINSTANCE applicationInstanceHandle)
 	float screenWidth = g_gameConfigBlackboard.GetValue("width", 1000.f);
 	float screenHeight = screenWidth / aspect;
 	std::string name = g_gameConfigBlackboard.GetValue("appName", "Win32 OpenGL Test App");
-	g_Window = new Window(name.c_str(), aspect, applicationInstanceHandle);
+	float maxClientFraction = g_gameConfigBlackboard.GetValue("windowHeight", .9f);
+	g_Window = new Window(name.c_str(), aspect, applicationInstanceHandle, maxClientFraction);
 
 	m_appTime = 0.f;
 	m_bottomLeft = Vector2(SCREEN_MIN,SCREEN_MIN);
@@ -46,12 +47,16 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_devConsole = new DevConsole(UIBounds);
 	g_devConsole->PostStartup();
 	g_devConsole->SetRenderer(g_theRenderer);
+
+	ProfilerVisualizer::GetInstance(g_theRenderer, g_theInput, UIBounds);
+	//RegisterCommands();
 	CommandStartup();
 }
 
 
 void App::RunFrame()
 {
+	Profiler::GetInstance()->MarkFrame();
 	g_theRenderer->BeginFrame(m_bottomLeft, m_topRight, m_backgroundColor);
 	g_theInput->BeginFrame();
 	g_theAudio->BeginFrame();
@@ -65,6 +70,8 @@ void App::RunFrame()
 
 void App::Update()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
+	ProfilerVisualizer::GetInstance()->Update();
 	m_deltaTime = static_cast<float>(GetCurrentTimeSeconds() - m_appTime);
 
 	//check keys
@@ -76,12 +83,21 @@ void App::Update()
 	if (DevConsoleIsOpen()){
 		g_devConsole->Update(m_deltaTime);
 	}
+
 	m_appTime = GetCurrentTimeSeconds();
 }
 
 void App::Render()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	m_theGame->Render();
+
+
+
+	if (ProfilerVisualizer::GetInstance()->IsOpen()){
+		//m_theGame->Camera
+		ProfilerVisualizer::GetInstance()->Render();
+	}
 
 	if (DevConsoleIsOpen()){
 		g_devConsole->Render();
@@ -92,6 +108,7 @@ void App::Render()
 
 void App::CheckKeys()
 {
+	//g_profilerVisualizer;
 	if (g_theInput->WasKeyJustPressed(192)){		//the ` key
 		if (!DevConsoleIsOpen()){
 			g_devConsole->Open();
@@ -100,43 +117,53 @@ void App::CheckKeys()
 		}
 	}
 
+	if (ProfilerVisualizer::GetInstance()->IsOpen()){
+		ProfilerVisualizer::GetInstance()->HandleInput(g_theInput);
+	}
+
 	if (g_theInput->WasKeyJustPressed(VK_ESCAPE)){
 		m_isQuitting = true;
 	}
 
-	//I spawns asteroid
-	if (g_theInput->WasKeyJustPressed('I')){
-		m_theGame->AddAsteroid();
-	}
-	if (g_theInput->WasKeyJustPressed('O')){
-		m_theGame->DeleteAsteroid();
+	if (g_theInput->WasKeyJustPressed(VK_F2)){
+		ProfilerVisualizer::GetInstance()->ToggleOpen();
 	}
 
-	if (g_theInput->WasKeyJustPressed('P')){
-		m_theGame->TogglePause();
-	}
+	if (!DevConsoleIsOpen()){
+		//I spawns asteroid
+		if (g_theInput->WasKeyJustPressed('I')){
+			m_theGame->AddAsteroid();
+		}
+		if (g_theInput->WasKeyJustPressed('O')){
+			m_theGame->DeleteAsteroid();
+		}
 
-	if (g_theInput->WasKeyJustPressed('N')){
-		m_theGame->SpawnShip();
-	}
-	
-	if (g_theInput->WasKeyJustPressed(VK_F1)){
-		m_theGame->ToggleDevMode();
-	}
+		if (g_theInput->WasKeyJustPressed('P')){
+			m_theGame->TogglePause();
+		}
 
-	XboxController* c = g_theInput->GetController(m_theGame->m_ship->m_controllerID);
-	bool aButton = c->WasButtonJustPressed(XBOX_A);
+		if (g_theInput->WasKeyJustPressed('N')){
+			m_theGame->SpawnShip();
+		}
+		
+		if (g_theInput->WasKeyJustPressed(VK_F1)){
+			m_theGame->ToggleDevMode();
+		}
 
-	if (g_theInput->WasKeyJustPressed(VK_SPACE) || aButton || TestXboxVirtualButtons()){
-		m_theGame->FireBullet();
-	}
+		XboxController* c = g_theInput->GetController(m_theGame->m_ship->m_controllerID);
+		bool aButton = c->WasButtonJustPressed(XBOX_A);
 
-	if (g_theInput->WasKeyJustPressed('X') || g_theInput->GetController(m_theGame->m_ship->m_controllerID)->WasButtonJustPressed(XBOX_X)){
-		m_theGame->BeginStarburst();
-	}
+		if (g_theInput->WasKeyJustPressed(VK_SPACE) || aButton || TestXboxVirtualButtons()){
+			m_theGame->FireBullet();
+		}
 
-	if(g_theInput->WasKeyJustReleased('X') || g_theInput->GetController(m_theGame->m_ship->m_controllerID)->WasButtonJustReleased(XBOX_X)){
-		m_theGame->FireStarburst();
+		if (g_theInput->WasKeyJustPressed('X') || g_theInput->GetController(m_theGame->m_ship->m_controllerID)->WasButtonJustPressed(XBOX_X)){
+			m_theGame->BeginStarburst();
+		}
+
+		if(g_theInput->WasKeyJustReleased('X') || g_theInput->GetController(m_theGame->m_ship->m_controllerID)->WasButtonJustReleased(XBOX_X)){
+			m_theGame->FireStarburst();
+		}
 	}
 
 

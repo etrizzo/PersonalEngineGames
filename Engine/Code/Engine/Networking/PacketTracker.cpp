@@ -1,18 +1,18 @@
 #include "PacketTracker.hpp"
 
-PacketTracker::PacketTracker(uint16_t ack)
+PacketTracker::PacketTracker(uint16_t ack, unsigned int sendTimeMS)
 {
 	m_ack = ack;
-	m_sentMS = GetCurrentTimeMilliseconds();
+	m_sentMS = sendTimeMS;
 	for (int i = 0; i < MAX_RELIABLES_PER_PACKET; i++){
 		m_sentReliableIDs[i] = INVALID_RELIABLE_ID;
 	}
 }
 
-void PacketTracker::SetAckAndTimestamp(uint16_t ack)
+void PacketTracker::SetAckAndTimestamp(uint16_t ack, unsigned int sendTimeMS)
 {
 	m_ack = ack;
-	m_sentMS = GetCurrentTimeMilliseconds();
+	m_sentMS = sendTimeMS;
 	m_isValid = true;
 }
 

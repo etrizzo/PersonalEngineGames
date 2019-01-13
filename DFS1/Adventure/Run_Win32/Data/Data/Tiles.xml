@@ -8,7 +8,7 @@
 		  allowsFlying="true"
 		  allowsSwimming="false"
       isTerrain="true"
-      terrainLevel="2"
+      terrainLevel="4"
       edgeDefinition="Grass"
 	  />
   
@@ -21,7 +21,7 @@
 		  allowsFlying="true"
 		  allowsSwimming="false"
       isTerrain="true"
-      terrainLevel="2"
+      terrainLevel="4"
       terrainDefinition="Grass"
       edgeDefinition="Grass"
 	  />
@@ -35,7 +35,7 @@
 		  allowsFlying="true"
 		  allowsSwimming="false"
       isTerrain="true"
-      terrainLevel="2"
+      terrainLevel="4"
       terrainDefinition="Grass"
       edgeDefinition="Grass"
 	  />
@@ -49,22 +49,11 @@
     allowsFlying="true"
     allowsSwimming="false"
     isTerrain="true"
-    terrainLevel="1"
+    terrainLevel="3"
     edgeDefinition="Sand"
 	  />
   
-  <TileDefinition
-		  name="Stone"
-		  spriteCoords="9,31|10,31|11,31"
-		  spriteTint="128,128,128"
-      chromaKey ="128,128,128"
-		  allowsSight="false"
-		  allowsWalking="false"
-		  allowsFlying="false"
-		  allowsSwimming="false"
-      isTerrain="true"
-      terrainLevel="-1"
-	  />
+
 
   <TileDefinition
 		  name="Water"
@@ -91,6 +80,45 @@
       terrainLevel="0"
       edgeDefinition="Lava"
 	  />
+
+    <TileDefinition
+      name="Dirt"
+      spriteCoords="4,31|5,31"
+      chromaKey ="164,128,0"
+      allowsSight="true"
+      allowsWalking="true"
+      allowsFlying="true"
+      allowsSwimming="false"
+      isTerrain="true"
+      terrainLevel="2"
+      edgeDefinition="Dirt"
+   />
+
+  <TileDefinition
+    name="DarkDirt"
+    spriteCoords="27,31|28,31|28,31|28,31|28,31|29,31|29,31|29,31|29,31|29,31"
+    chromaKey ="100,64,0"
+    allowsSight="true"
+    allowsWalking="true"
+    allowsFlying="true"
+    allowsSwimming="false"
+    isTerrain="true"
+    terrainLevel="1"
+    edgeDefinition="DarkDirt"
+   />
+
+    <TileDefinition
+      name="Stone"
+      spriteCoords="9,31|10,31|11,31"
+      spriteTint="128,128,128"
+      chromaKey ="128,128,128"
+      allowsSight="false"
+      allowsWalking="false"
+      allowsFlying="false"
+      allowsSwimming="false"
+      isTerrain="true"
+      terrainLevel="-1"
+    />
   
   <TileDefinition 
       name="StoneBrick"
@@ -129,18 +157,7 @@
    />
 
 
-  <TileDefinition
-      name="Dirt"
-      spriteCoords="4,31|5,31"
-      chromaKey ="164,128,0"
-		  allowsSight="true"
-		  allowsWalking="true"
-		  allowsFlying="true"
-		  allowsSwimming="false"
-      isTerrain="true"
-      terrainLevel="0"
-      edgeDefinition="Dirt"
-   />
+
 
     <TileDefinition
       name="DirtPath"
@@ -154,18 +171,7 @@
       terrainLevel="-1"
    />
 
-  <TileDefinition
-    name="DarkDirt"
-    spriteCoords="27,31|28,31|28,31|28,31|28,31|29,31|29,31|29,31|29,31|29,31"
-    chromaKey ="100,64,0"
-    allowsSight="true"
-    allowsWalking="true"
-    allowsFlying="true"
-    allowsSwimming="false"
-    isTerrain="true"
-    terrainLevel="0"
-    edgeDefinition="DarkDirt"
-   />
+
 
   <TileDefinition
       name="Wood"

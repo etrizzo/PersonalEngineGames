@@ -16,7 +16,7 @@ class NetSession;
 
 class Map;
 
-#define NET_OBJECT_SYNC_SIM_TIME (1.f / 2.f)			//5 Hz sync rate (for accurate RTT
+#define NET_OBJECT_SYNC_SIM_TIME (1.f / 20.f)			//5 Hz sync rate (for accurate RTT
 
 
 enum EntityTypes{

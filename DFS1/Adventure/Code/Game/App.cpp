@@ -30,7 +30,8 @@ App::App(HINSTANCE applicationInstanceHandle)
 	float screenWidth = g_gameConfigBlackboard.GetValue("width", 1000.f);
 	float screenHeight = screenWidth / aspect;
 	std::string name = g_gameConfigBlackboard.GetValue("appName", "Win32 OpenGL Test App");
-	g_Window = new Window(name.c_str(), aspect, applicationInstanceHandle);
+	float maxClientFraction = g_gameConfigBlackboard.GetValue("windowHeight", .9f);
+	g_Window = new Window(name.c_str(), aspect, applicationInstanceHandle, maxClientFraction);
 
 	m_appTime = 0.f;
 	m_bottomLeft = Vector2(0.f,0.f);
@@ -56,7 +57,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_devConsole = new DevConsole(g_theGame->GetUIBounds());
 	g_devConsole->SetRenderer(g_theRenderer);
 
-	g_profilerVisualizer = new ProfilerVisualizer(g_theRenderer, g_theInput, g_theGame->GetUIBounds());
+	ProfilerVisualizer::GetInstance(g_theRenderer, g_theInput, g_theGame->GetUIBounds()); // = new ProfilerVisualizer(g_theRenderer, g_theInput, g_theGame->GetUIBounds());
 	RegisterCommands();
 	CommandStartup();
 	g_theRenderer->SetCamera(g_theGame->m_camera);
@@ -102,7 +103,7 @@ void App::Update()
 	if (DevConsoleIsOpen()){
 		g_devConsole->Update(ds);
 	}
-	g_profilerVisualizer->Update();
+	ProfilerVisualizer::GetInstance()->Update();
 	m_appTime = GetCurrentTimeSeconds();
 	HandleInput();
 	g_theRenderer->UpdateClock(ds, m_deltaTime);
@@ -114,9 +115,9 @@ void App::Render()
 	g_theGame->Render();
 
 	PROFILE_PUSH("RenderProfiler");
-	if (g_profilerVisualizer->IsOpen()){
+	if (ProfilerVisualizer::GetInstance()->IsOpen()){
 		g_theGame->SetUICamera();
-		g_profilerVisualizer->Render();
+		ProfilerVisualizer::GetInstance()->Render();
 	}
 	PROFILE_POP();
 
@@ -143,13 +144,13 @@ void App::RegisterCommands()
 	CommandRegister("set_speed", CommandSetSpeed, "Sets player walking speed", "set_speed <int>");
 	CommandRegister("spawn_actor", CommandSpawnActor, "Spawns an actor of the specified type near the player", "spawn_actor \"Actor Name\"");
 	CommandRegister("spawn_item", CommandSpawnItem, "Spawns an item of the specified type near the player", "spawn_item \"Item Name\"");
+	CommandRegister("toggle_edges", CommandToggleEdges, "Sets whether or not the map should render edge tiles", "toggle_edges <bool>");
 
 
-
-	CommandRegister("profiler", CommandToggleProfiler, "Toggles profiler view");
-	CommandRegister("profiler_report", CommandPrintProfilerReport, "Prints a frame of the profiler to the console", "profiler_report <tree|flat>");
-	CommandRegister("profiler_pause", CommandProfilePause, "Pauses profiling");
-	CommandRegister("profiler_resume", CommandProfileResume, "Resumes profiling");
+	//CommandRegister("profiler", CommandToggleProfiler, "Toggles profiler view");
+	//CommandRegister("profiler_report", CommandPrintProfilerReport, "Prints a frame of the profiler to the console", "profiler_report <tree|flat>");
+	//CommandRegister("profiler_pause", CommandProfilePause, "Pauses profiling");
+	//CommandRegister("profiler_resume", CommandProfileResume, "Resumes profiling");
 
 }
 void App::HandleInput()
@@ -162,7 +163,7 @@ void App::HandleInput()
 		}
 	}
 	if (g_theInput->WasKeyJustPressed(VK_F2)){
-		g_profilerVisualizer->ToggleOpen();
+		ProfilerVisualizer::GetInstance()->ToggleOpen();
 	}
 	if (!DevConsoleIsOpen()){
 		//universal keys
@@ -171,11 +172,11 @@ void App::HandleInput()
 		//}
 
 		//have game handle input
-		if (!g_profilerVisualizer->IsControllingInput()){
+		if (!ProfilerVisualizer::GetInstance()->IsControllingInput()){
 			g_theGame->HandleInput();
 		}
-		if (g_profilerVisualizer->IsOpen()){
-			g_profilerVisualizer->HandleInput(g_theInput);
+		if (ProfilerVisualizer::GetInstance()->IsOpen()){
+			ProfilerVisualizer::GetInstance()->HandleInput(g_theInput);
 		}
 
 	}
@@ -265,72 +266,80 @@ void CommandSpawnItem(Command & cmd)
 	g_theGame->DebugSpawnItem(actorName);
 }
 
-
-
-void CommandToggleProfiler(Command & cmd)
+void CommandToggleEdges(Command & cmd)
 {
-	UNUSED(cmd);
-	g_profilerVisualizer->ToggleOpen();
-}
+	bool shouldEdge = cmd.GetNextBool();
+	g_theGame->m_renderingEdges = (!g_theGame->m_renderingEdges);
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->ReCreateRenderable(g_theGame->m_renderingEdges);
 
-void CommandPrintProfilerReport(Command & cmd)
-{
-	std::string type = cmd.GetNextString();
-	if (type == "flat"){
-		AddProfilerFrameAsFlatToConsole();
-	} else {
-		AddProfilerFrameAsTreeToConsole();
-	}
-}
-
-void CommandProfilePause(Command & cmd)
-{
-	Profiler::GetInstance()->Pause();
-}
-
-void CommandProfileResume(Command & cmd)
-{
-	Profiler::GetInstance()->Resume();
-}
-
-void AddProfilerFrameAsTreeToConsole()
-{
-	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
-
-	if (tree != nullptr){
-		ProfilerReport* report = new ProfilerReport();
-		report->GenerateReportTreeFromFrame(tree);
-		if (tree != nullptr){
-			PrintTree(report->m_root);
-		}
-	} else {
-		ConsolePrintf(RGBA::RED, "No profiler frame found - profiling may be disabled in EngineBuildPreferences.hpp");
-	}
-}
-
-void AddProfilerFrameAsFlatToConsole()
-{
-	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
-
-	if (tree != nullptr){
-		ProfilerReport* report = new ProfilerReport();
-		report->GenerateReportFlatFromFrame(tree);
-		if (tree != nullptr){
-			PrintTree(report->m_root);
-		}
-	} else {
-		ConsolePrintf(RGBA::RED, "No profiler frame found- profiling may be disabled in EngineBuildPreferences.hpp");
-	}
 }
 
 
-void PrintTree(ProfilerReportEntry * tree, int depth)
-{
-	//	ConsolePrintf("%.64s : %.8fms", tree->m_id, tree->GetTotalElapsedTime());
-	std::string text = FormatProfilerReport(tree, depth);
-	ConsolePrint(text.c_str());
-	for ( ProfilerReportEntry* child : tree->m_children){
-		PrintTree(child, depth + 1);
-	}
-}
+
+//void CommandToggleProfiler(Command & cmd)
+//{
+//	UNUSED(cmd);
+//	ProfilerVisualizer::GetInstance()->ToggleOpen();
+//}
+//
+//void CommandPrintProfilerReport(Command & cmd)
+//{
+//	std::string type = cmd.GetNextString();
+//	if (type == "flat"){
+//		AddProfilerFrameAsFlatToConsole();
+//	} else {
+//		AddProfilerFrameAsTreeToConsole();
+//	}
+//}
+//
+//void CommandProfilePause(Command & cmd)
+//{
+//	Profiler::GetInstance()->Pause();
+//}
+//
+//void CommandProfileResume(Command & cmd)
+//{
+//	Profiler::GetInstance()->Resume();
+//}
+//
+//void AddProfilerFrameAsTreeToConsole()
+//{
+//	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
+//
+//	if (tree != nullptr){
+//		ProfilerReport* report = new ProfilerReport();
+//		report->GenerateReportTreeFromFrame(tree);
+//		if (tree != nullptr){
+//			PrintTree(report->m_root);
+//		}
+//	} else {
+//		ConsolePrintf(RGBA::RED, "No profiler frame found - profiling may be disabled in EngineBuildPreferences.hpp");
+//	}
+//}
+//
+//void AddProfilerFrameAsFlatToConsole()
+//{
+//	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
+//
+//	if (tree != nullptr){
+//		ProfilerReport* report = new ProfilerReport();
+//		report->GenerateReportFlatFromFrame(tree);
+//		if (tree != nullptr){
+//			PrintTree(report->m_root);
+//		}
+//	} else {
+//		ConsolePrintf(RGBA::RED, "No profiler frame found- profiling may be disabled in EngineBuildPreferences.hpp");
+//	}
+//}
+//
+//
+//void PrintTree(ProfilerReportEntry * tree, int depth)
+//{
+//	//	ConsolePrintf("%.64s : %.8fms", tree->m_id, tree->GetTotalElapsedTime());
+//	std::string text = FormatProfilerReport(tree, depth);
+//	ConsolePrint(text.c_str());
+//	for ( ProfilerReportEntry* child : tree->m_children){
+//		PrintTree(child, depth + 1);
+//	}
+//}
 

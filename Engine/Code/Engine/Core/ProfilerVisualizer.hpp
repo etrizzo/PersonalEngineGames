@@ -23,6 +23,9 @@ public:
 
 	std::string GetNodeString(ProfilerReportEntry* root, int depth=0);		//recursively gets string for a report entry
 
+	static ProfilerVisualizer* GetInstance(Renderer* renderer = nullptr, InputSystem* input = nullptr, AABB2 uiBounds = AABB2::ZERO_TO_ONE);
+	static ProfilerVisualizer* s_profilerVisualizerInstance;
+
 public:
 	bool m_isTree = true;
 	bool m_isOpen = false;

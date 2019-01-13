@@ -121,7 +121,7 @@ void Game::Update()
 	m_currentState->Update(ds);
 
 	RunNetSessionTests();
-	RunNetObjectSim();	
+	//RunNetObjectSim();	
 
 	//m_udp->Update();
 	m_session->Update();

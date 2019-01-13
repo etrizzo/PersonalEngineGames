@@ -5,9 +5,9 @@
 
 class PacketTracker{
 public:
-	PacketTracker(uint16_t ack);
+	PacketTracker(uint16_t ack, unsigned int sendTimeMS);
 
-	void SetAckAndTimestamp(uint16_t ack);
+	void SetAckAndTimestamp(uint16_t ack, unsigned int sendTimeMS);
 	void Invalidate();
 	void AddTrackedReliable(NetMessage* reliableMsg);
 	void Reset();
