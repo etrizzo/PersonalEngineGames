@@ -4,6 +4,15 @@
 
 class Map;
 
+enum eComparisonMode{
+	COMPARE_TERRAIN,
+	COMPARE_GROUND,
+	COMPARE_DEFINITION,
+	NUM_COMPARES
+};
+
+#define TUFT_CHANCE (.5)
+
 class TileNeighborSet{
 public:
 
@@ -19,9 +28,17 @@ public:
 	Tile* m_center;
 
 	TileDefinition* FindEdgeTileDefinition() ;
-	AABB2 GetTileEdge(TileDefinition * edgeTileDef);
+	TileDefinition* FindShoreEdge();
+	AABB2 GetDownflowingEdge(TileDefinition * upwardEdge);		//gets THEIR EDGE
+	AABB2 GetUpflowingEdge(TileDefinition* upwardEdge);		//gets YOUR EDGE
+
+	void SetCompareMode(eComparisonMode mode);
+	bool CheckForEdge(Tile* tileToCheck);	//compares to center tile to check if center tile shoudl have an edge based on current check.
+	eComparisonMode m_compareMode = COMPARE_DEFINITION;
 
 	bool IsTileInvalid() const;
+	bool IsTuft();
+	TileDefinition* FindMostSignificantNeighbor();
 
 	bool MatchesEdgeDefinition(Tile* tile) const;
 

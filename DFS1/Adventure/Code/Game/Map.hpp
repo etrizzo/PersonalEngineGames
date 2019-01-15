@@ -85,6 +85,14 @@ public:
 	void StartMusic();
 	void StopMusic();
 
+	void EdgeTilesThreeSteps();
+	void RemoveInvalidTiles();
+	void AddTufts();
+	void EdgeShoreline();
+	void EdgeGrassToDirt();
+	void EdgeLowPriority();
+
+
 	
 	std::string GetName() const;
 	int GetWidth() const;
@@ -168,6 +176,7 @@ private:
 	void CreateTileRenderable(bool edge = true);
 	void RunMapGeneration();
 	void EdgeTiles();
+
 
 	void ResetPortals();
 	

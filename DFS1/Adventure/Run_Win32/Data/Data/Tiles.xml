@@ -10,6 +10,8 @@
       isTerrain="true"
       terrainLevel="4"
       edgeDefinition="Grass"
+      terrainLayer="Ground"
+      groundLayer="Grass"
 	  />
   
   <TileDefinition
@@ -24,6 +26,8 @@
       terrainLevel="4"
       terrainDefinition="Grass"
       edgeDefinition="Grass"
+      terrainLayer="Ground"
+      groundLayer="Grass"
 	  />
   
   <TileDefinition
@@ -38,6 +42,8 @@
       terrainLevel="4"
       terrainDefinition="Grass"
       edgeDefinition="Grass"
+      terrainLayer="Ground"
+      groundLayer="Grass"
 	  />
 
   <TileDefinition
@@ -49,8 +55,10 @@
     allowsFlying="true"
     allowsSwimming="false"
     isTerrain="true"
-    terrainLevel="3"
+    terrainLevel="2"
     edgeDefinition="Sand"
+    terrainLayer="Ground"
+    groundLayer="Dirt"
 	  />
   
 
@@ -64,8 +72,9 @@
 		  allowsFlying="true"
 		  allowsSwimming="true"
       isTerrain="true"
-      terrainLevel="0"
+      terrainLevel="1"
       edgeDefinition="Water"
+      terrainLayer="Water"
 	  />
 
   <TileDefinition
@@ -79,6 +88,7 @@
       isTerrain="true"
       terrainLevel="0"
       edgeDefinition="Lava"
+      terrainLayer="Water"
 	  />
 
     <TileDefinition
@@ -90,8 +100,10 @@
       allowsFlying="true"
       allowsSwimming="false"
       isTerrain="true"
-      terrainLevel="2"
+      terrainLevel="3"
       edgeDefinition="Dirt"
+      terrainLayer="Ground"
+      groundLayer="Dirt"
    />
 
   <TileDefinition
@@ -105,6 +117,8 @@
     isTerrain="true"
     terrainLevel="1"
     edgeDefinition="DarkDirt"
+    terrainLayer="Ground"
+    groundLayer="Dirt"
    />
 
     <TileDefinition
@@ -116,7 +130,7 @@
       allowsWalking="false"
       allowsFlying="false"
       allowsSwimming="false"
-      isTerrain="true"
+      isTerrain="false"
       terrainLevel="-1"
     />
   
@@ -157,11 +171,13 @@
    />
 
 
-
-
+<!-- spriteCoords="4,31|5,31" -->
+<!-- spriteCoords="15,2|16,2|17,2|17,2|17,2|18,2|18,2|18,2|18,2" -->
+<!-- 3,9 overlay -->
     <TileDefinition
       name="DirtPath"
       spriteCoords="4,31|5,31"
+      overlayCoords="3,8"
       chromaKey ="204,148,0"
       allowsSight="true"
       allowsWalking="true"
@@ -188,6 +204,7 @@
   <TileDefinition
       name="WeatheredWood"
       spriteCoords="30,1"
+      overlayCoords="3,8"
       chromaKey ="205,220,128"
 		  allowsSight="true"
 		  allowsWalking="true"

@@ -49,6 +49,14 @@ void CommandSpawnActor(Command& cmd);
 void CommandSpawnItem(Command& cmd);
 void CommandToggleEdges(Command& cmd);
 
+void CommandRemoveInvalidTiles(Command& cmd);
+void CommandAddTufts(Command& cmd);
+void CommandEdgeShore(Command& cmd);
+void CommandEdgeHighPriority(Command& cmd);
+void CommandEdgeLowPriority(Command& cmd);
+
+void CommandEdgeTiles(Command& cmd);
+
 //void CommandToggleProfiler(Command& cmd);
 //void CommandPrintProfilerReport(Command& cmd);
 //void CommandProfilePause(Command& cmd);

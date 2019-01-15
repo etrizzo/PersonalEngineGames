@@ -9,6 +9,7 @@ TileDefinition::TileDefinition(tinyxml2::XMLElement* tileDefElement)
 	m_name					= ParseXmlAttribute(*tileDefElement, "name", "NO_NAME");	
 
 	ParseSpriteCoords(tileDefElement);
+	m_overlayCoords			= ParseXmlAttribute(*tileDefElement, "overlayCoords", IntVector2(0,0));
 	m_spriteTint			= ParseXmlAttribute(*tileDefElement, "spriteTint", RGBA::WHITE);
 	m_tileChromaKey			= ParseXmlAttribute(*tileDefElement, "chromaKey", RGBA::WHITE);
 	m_allowsWalking			= ParseXmlAttribute(*tileDefElement, "allowsWalking", false);
@@ -21,6 +22,32 @@ TileDefinition::TileDefinition(tinyxml2::XMLElement* tileDefElement)
 	m_terrainLevel			= ParseXmlAttribute(*tileDefElement, "terrainLevel", 0);
 	m_startingSpriteIndex	= GetIndexFromCoordinates(m_spriteCoords[0].x, m_spriteCoords[0].y, g_tileSpriteSheet->GetDimensions().x, g_tileSpriteSheet->GetDimensions().y);
 
+	//get the layer
+	std::string tileLayer	= ParseXmlAttribute(*tileDefElement, "terrainLayer", "NotTerrain");
+	if (tileLayer == "Ground")
+	{
+		m_terrainLayer = TERRAIN_GROUND;
+	} else if (tileLayer == "Water")
+	{
+		m_terrainLayer = TERRAIN_WATER;
+	} else {
+		m_terrainLayer = NOT_TERRAIN;
+	}
+
+	//get the ground layer
+	if (m_terrainLayer == TERRAIN_GROUND){
+		std::string groundLayer = ParseXmlAttribute(*tileDefElement, "groundLayer", "NotGround");
+		if (groundLayer == "Dirt"){
+			m_groundLayer = GROUND_DIRT;
+		} else if (groundLayer == "Grass"){
+			m_groundLayer = GROUND_GRASS;
+		} else {
+			m_groundLayer = NOT_GROUND;
+		}
+	} else {
+		m_groundLayer = NOT_GROUND;
+	}
+	
 	std::string edgeDef		= ParseXmlAttribute(*tileDefElement, "edgeDefinition", "NONE");
 	if (edgeDef != "NONE"){
 		m_edgeDefinition = TileEdgeDefinition::GetEdgeDefinition(edgeDef);
@@ -30,6 +57,17 @@ TileDefinition::TileDefinition(tinyxml2::XMLElement* tileDefElement)
 AABB2 TileDefinition::GetTexCoords(int index)
 {
 	return g_tileSpriteSheet->GetTexCoordsForSpriteCoords(m_spriteCoords[index]);
+}
+
+AABB2 TileDefinition::GetOverlayTexCoords()
+{
+	return g_tileSpriteSheet->GetTexCoordsForSpriteCoords(m_overlayCoords);
+}
+
+AABB2 TileDefinition::GetRandomTexCoords()
+{
+	int index = GetRandomIntLessThan( m_spriteCoords.size());
+	return GetTexCoords(index);
 }
 
 AABB2 TileDefinition::GetTexCoordsAtHealth(int health)

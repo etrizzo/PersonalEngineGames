@@ -208,7 +208,9 @@
       <CellularAutomata iterations="3" ifType="Sand" ifNeighborType="Lava" changeToType="Lava" ifNeighborCount="5~8"/>
       <CellularAutomata iterations="3" ifType="Dirt" ifNeighborType="Lava" changeToType="Lava" ifNeighborCount="5~8"/>
 
-      <CellularAutomata iterations="3" ifType="Lava" ifNeighborType="Water" changeToType="Water" ifNeighborCount="5~8"/>
+      <CellularAutomata iterations="3" ifType="Lava" ifNeighborType="Water" changeToType="DarkDirt" />
+      <CellularAutomata iterations="3" ifType="Lava" ifNeighborType="DarkDirt" changeToType="DarkDirt" ifNeighborCount="4~8"/>
+      <CellularAutomata iterations="3" ifType="Lava" ifNeighborType="Dirt" changeToType="Dirt" ifNeighborCount="4~8"/>
       <CellularAutomata iterations="3" ifType="Water" ifNeighborType="Grass" changeToType="Grass" ifNeighborCount="5~8"/>
       <CellularAutomata iterations="3" ifType="Sand" ifNeighborType="Grass" changeToType="Grass" ifNeighborCount="5~8"/>
       <CellularAutomata iterations="3" ifType="Dirt" ifNeighborType="Grass" changeToType="Grass" ifNeighborCount="5~8"/>

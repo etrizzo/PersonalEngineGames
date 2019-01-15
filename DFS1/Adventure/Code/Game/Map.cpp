@@ -1155,17 +1155,22 @@ void Map::CreateTileRenderable(bool edge)
 			AABB2 bounds = tileToRender->GetBounds();
 			RGBA color = tileToRender->m_tileDef->m_spriteTint;
 			AABB2 texCoords;
-			if (edge && tileToRender->m_extraInfo->m_cosmeticBaseDef != nullptr){
-				texCoords = tileToRender->m_extraInfo->m_cosmeticBaseDef->GetTexCoords();
+			//if (edge && tileToRender->m_extraInfo->m_cosmeticBaseDef != nullptr){
+			//	texCoords = tileToRender->m_extraInfo->m_cosmeticBaseDef->GetTexCoords();
+			//} else {
+			//	texCoords = tileToRender->m_tileDef->GetTexCoords(tileToRender->m_extraInfo->m_variant);
+			//}
+			
+			if (edge){
+				for (int i = 0; i < NUM_SPRITE_LAYERS; i++){
+					if (tileToRender->m_extraInfo->m_spriteCoords[i] != nullptr){
+						AABB2 overlayCoords = *tileToRender->m_extraInfo->m_spriteCoords[i];
+						mb.AppendPlane2D(bounds, color, overlayCoords, .01f);
+					}
+				}
 			} else {
 				texCoords = tileToRender->m_tileDef->GetTexCoords(tileToRender->m_extraInfo->m_variant);
-			}
-			mb.AppendPlane2D(bounds, color, texCoords, .01f);
-			if (edge){
-				for (int i = 0; i < tileToRender->m_extraInfo->m_overlaySpriteCoords.size(); i++){
-					AABB2 overlayCoords = tileToRender->m_extraInfo->m_overlaySpriteCoords[i];
-					mb.AppendPlane2D(bounds, color, overlayCoords, .01f);
-				}
+				mb.AppendPlane2D(bounds, color, texCoords, .01f);
 			}
 			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.mins.x, bounds.mins.y), color, Vector2(texCoords.mins.x, texCoords.maxs.y)));
 			//tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.maxs.x, bounds.mins.y), color, Vector2(texCoords.maxs.x, texCoords.maxs.y)));
@@ -1187,7 +1192,8 @@ void Map::RunMapGeneration()
 		genStep->RunIterations(*this);
 	}
 
-	EdgeTiles();
+	//EdgeTiles();
+	//EdgeTilesThreeSteps();
 }
 
 void Map::EdgeTiles()
@@ -1219,8 +1225,129 @@ void Map::EdgeTiles()
 
 			TileDefinition* edgeTileDefinition = neighborSet->FindEdgeTileDefinition();
 			if (edgeTileDefinition != nullptr){
-				AABB2 overlayUVs = neighborSet->GetTileEdge(edgeTileDefinition);
-				tile->AddOverlaySpriteFromTileSheet(overlayUVs);
+				AABB2 overlayUVs = neighborSet->GetDownflowingEdge(edgeTileDefinition);
+				tile->AddOverlaySpriteFromTileSheet(overlayUVs, SPRITE_LOW_PRIORITY_EDGE);
+			}
+		}
+	}
+}
+
+void Map::EdgeTilesThreeSteps()
+{
+	RemoveInvalidTiles();
+	RemoveInvalidTiles();
+
+	AddTufts();		//if a high-level edge is surrounded by lower-level edges, fuck it up
+	EdgeShoreline();
+	EdgeGrassToDirt();
+	EdgeLowPriority();
+
+	
+}
+
+void Map::RemoveInvalidTiles()
+{
+	//remove invalid tiles from the map
+	//we want them gone before we start edging things so that they don't interfere with the actuall edges
+	for (int i = 0; i < m_numTiles; i++){
+		Tile* tile = &m_tiles[i];
+		if (tile->m_tileDef->m_isTerrain){
+			TileNeighborSet* neighborSet = new TileNeighborSet(tile, this);
+
+			TileDefinition* edgeTileDefinition = neighborSet->FindEdgeTileDefinition();
+			if (edgeTileDefinition != nullptr){
+				if (neighborSet->IsTileInvalid()){
+					//if the placement of the tile doesn't work with our spritesheet,
+					//replace it with the edgeTileDefinition
+					//tile->m_tileDef = edgeTileDefinition;
+					tile->SetType(edgeTileDefinition);
+				}
+			}
+		}
+	}
+}
+
+void Map::AddTufts()
+{
+	for (int i = 0; i < m_numTiles; i++){
+		Tile* tile = &m_tiles[i];
+		if (tile->m_tileDef->m_isTerrain){
+			TileNeighborSet* neighborSet = new TileNeighborSet(tile, this);
+
+
+			if (neighborSet->IsTuft()){
+				TileDefinition* centerDef = tile->m_tileDef;
+				TileDefinition* edgeDef = neighborSet->FindMostSignificantNeighbor();
+				//if the placement of the tile doesn't work with our spritesheet,
+				//replace it with the edgeTileDefinition
+				//tile->m_tileDef = edgeTileDefinition;
+				tile->SetType(edgeDef);
+				if (CheckRandomChance(TUFT_CHANCE)){
+					if (CheckRandomChance(.7f)){
+						tile->AddOverlaySpriteFromTileSheet(centerDef->m_edgeDefinition->GetTexCoordsForEdge(EDGE_SINGLE_SMALL), SPRITE_HIGH_PRIORITY_EDGE);
+					} else {
+						tile->AddOverlaySpriteFromTileSheet(centerDef->m_edgeDefinition->GetTexCoordsForEdge(EDGE_SINGLE_LARGE), SPRITE_HIGH_PRIORITY_EDGE);
+					}
+				}
+			}
+			
+		}
+	}
+}
+
+void Map::EdgeShoreline()
+{
+	//Do shoreline edges now
+	for (int i = 0; i < m_numTiles; i++){
+		Tile* tile = &m_tiles[i];
+		if (tile->m_tileDef->m_isTerrain){
+			TileNeighborSet* neighborSet = new TileNeighborSet(tile, this);
+			neighborSet->SetCompareMode(COMPARE_TERRAIN);
+			TileDefinition* edgeTileDefinition = neighborSet->FindShoreEdge();
+			if (edgeTileDefinition != nullptr && edgeTileDefinition != tile->m_tileDef){
+				//set base
+				AABB2 baseUVs = edgeTileDefinition->GetRandomTexCoords();		//base is the shore's base
+				tile->AddOverlaySpriteFromTileSheet(baseUVs, SPRITE_COSMETIC_BASE);
+				tile->m_extraInfo->m_cosmeticBaseDefinition = edgeTileDefinition;
+				//set edge
+				AABB2 edgeUVs = neighborSet->GetUpflowingEdge(edgeTileDefinition);		//get the edge from the actual water 
+				tile->AddOverlaySpriteFromTileSheet(edgeUVs, SPRITE_SHORE_EDGE);
+			}
+		}
+	}
+}
+
+void Map::EdgeGrassToDirt()
+{
+	for (int i = 0; i < 2 ; i++){
+		//actually do the edges now
+		for (int i = 0; i < m_numTiles; i++){
+			Tile* tile = &m_tiles[i];
+			if (tile->m_tileDef->m_isTerrain){
+				TileNeighborSet* neighborSet = new TileNeighborSet(tile, this);
+				neighborSet->SetCompareMode(COMPARE_GROUND);
+				TileDefinition* edgeTileDefinition = neighborSet->FindEdgeTileDefinition();
+				if (edgeTileDefinition != nullptr){
+					AABB2 overlayUVs = neighborSet->GetDownflowingEdge(edgeTileDefinition);
+					tile->AddOverlaySpriteFromTileSheet(overlayUVs, SPRITE_HIGH_PRIORITY_EDGE);
+				}
+			}
+		}
+	}
+}
+
+void Map::EdgeLowPriority()
+{
+	//actually do the edges now
+	for (int i = 0; i < m_numTiles; i++){
+		Tile* tile = &m_tiles[i];
+		if (tile->m_tileDef->m_isTerrain){
+			TileNeighborSet* neighborSet = new TileNeighborSet(tile, this);
+			neighborSet->SetCompareMode(COMPARE_DEFINITION);
+			TileDefinition* edgeTileDefinition = neighborSet->FindEdgeTileDefinition();
+			if (edgeTileDefinition != nullptr){
+				AABB2 overlayUVs = neighborSet->GetDownflowingEdge(edgeTileDefinition);
+				tile->AddOverlaySpriteFromTileSheet(overlayUVs, SPRITE_LOW_PRIORITY_EDGE);
 			}
 		}
 	}

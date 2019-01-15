@@ -146,7 +146,12 @@ void App::RegisterCommands()
 	CommandRegister("spawn_item", CommandSpawnItem, "Spawns an item of the specified type near the player", "spawn_item \"Item Name\"");
 	CommandRegister("toggle_edges", CommandToggleEdges, "Sets whether or not the map should render edge tiles", "toggle_edges <bool>");
 
-
+	CommandRegister("edge_remove_invalid", CommandRemoveInvalidTiles, "Removes un-edgable tiles from the map");
+	CommandRegister("edge_tufts", CommandAddTufts, "Adds \"tufts\" on high level tiles surrounded by lower-level tiles");
+	CommandRegister("edge_shore", CommandEdgeShore, "Edges the shoreline");
+	CommandRegister("edge_high", CommandEdgeHighPriority, "Edges high-to-low ground levels");
+	CommandRegister("edge_low", CommandEdgeLowPriority, "Edges different tiles of the same ground level (dirt -> sand, eg.)");
+	CommandRegister("edge_map", CommandEdgeTiles, "Goes through the entire tile-edging process.");
 	//CommandRegister("profiler", CommandToggleProfiler, "Toggles profiler view");
 	//CommandRegister("profiler_report", CommandPrintProfilerReport, "Prints a frame of the profiler to the console", "profiler_report <tree|flat>");
 	//CommandRegister("profiler_pause", CommandProfilePause, "Pauses profiling");
@@ -272,6 +277,49 @@ void CommandToggleEdges(Command & cmd)
 	g_theGame->m_renderingEdges = (!g_theGame->m_renderingEdges);
 	g_theGame->m_currentState->m_currentAdventure->m_currentMap->ReCreateRenderable(g_theGame->m_renderingEdges);
 
+}
+
+void CommandRemoveInvalidTiles(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->RemoveInvalidTiles();
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->RemoveInvalidTiles();
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->ReCreateRenderable(g_theGame->m_renderingEdges);
+}
+
+void CommandAddTufts(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->AddTufts();
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->ReCreateRenderable(g_theGame->m_renderingEdges);
+}
+
+void CommandEdgeShore(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->EdgeShoreline();
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->ReCreateRenderable(g_theGame->m_renderingEdges);
+}
+
+void CommandEdgeHighPriority(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->EdgeGrassToDirt();
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->ReCreateRenderable(g_theGame->m_renderingEdges);
+}
+
+void CommandEdgeLowPriority(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->EdgeLowPriority();
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->ReCreateRenderable(g_theGame->m_renderingEdges);
+}
+
+void CommandEdgeTiles(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->EdgeTilesThreeSteps();
+	g_theGame->m_currentState->m_currentAdventure->m_currentMap->ReCreateRenderable(g_theGame->m_renderingEdges);
 }
 
 

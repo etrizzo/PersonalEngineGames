@@ -11,6 +11,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		DebugInline|x64 = DebugInline|x64
+		DebugInline|x86 = DebugInline|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
@@ -19,6 +21,10 @@ Global
 		{DB7187F5-45EC-48A3-B85D-258E522B0131}.Debug|x64.Build.0 = Debug|x64
 		{DB7187F5-45EC-48A3-B85D-258E522B0131}.Debug|x86.ActiveCfg = Debug|Win32
 		{DB7187F5-45EC-48A3-B85D-258E522B0131}.Debug|x86.Build.0 = Debug|Win32
+		{DB7187F5-45EC-48A3-B85D-258E522B0131}.DebugInline|x64.ActiveCfg = DebugInline|x64
+		{DB7187F5-45EC-48A3-B85D-258E522B0131}.DebugInline|x64.Build.0 = DebugInline|x64
+		{DB7187F5-45EC-48A3-B85D-258E522B0131}.DebugInline|x86.ActiveCfg = DebugInline|Win32
+		{DB7187F5-45EC-48A3-B85D-258E522B0131}.DebugInline|x86.Build.0 = DebugInline|Win32
 		{DB7187F5-45EC-48A3-B85D-258E522B0131}.Release|x64.ActiveCfg = Release|x64
 		{DB7187F5-45EC-48A3-B85D-258E522B0131}.Release|x64.Build.0 = Release|x64
 		{DB7187F5-45EC-48A3-B85D-258E522B0131}.Release|x86.ActiveCfg = Release|Win32
@@ -27,6 +33,12 @@ Global
 		{6CAF0905-CABD-45AB-BF13-5E7524700F3F}.Debug|x64.Build.0 = Debug|x64
 		{6CAF0905-CABD-45AB-BF13-5E7524700F3F}.Debug|x86.ActiveCfg = Debug|Win32
 		{6CAF0905-CABD-45AB-BF13-5E7524700F3F}.Debug|x86.Build.0 = Debug|Win32
+		{6CAF0905-CABD-45AB-BF13-5E7524700F3F}.DebugInline|x64.ActiveCfg = DebugInline|x64
+		{6CAF0905-CABD-45AB-BF13-5E7524700F3F}.DebugInline|x64.Build.0 = DebugInline|x64
+		{6CAF0905-CABD-45AB-BF13-5E7524700F3F}.DebugInline|x64.Deploy.0 = DebugInline|x64
+		{6CAF0905-CABD-45AB-BF13-5E7524700F3F}.DebugInline|x86.ActiveCfg = DebugInline|Win32
+		{6CAF0905-CABD-45AB-BF13-5E7524700F3F}.DebugInline|x86.Build.0 = DebugInline|Win32
+		{6CAF0905-CABD-45AB-BF13-5E7524700F3F}.DebugInline|x86.Deploy.0 = DebugInline|Win32
 		{6CAF0905-CABD-45AB-BF13-5E7524700F3F}.Release|x64.ActiveCfg = Release|x64
 		{6CAF0905-CABD-45AB-BF13-5E7524700F3F}.Release|x64.Build.0 = Release|x64
 		{6CAF0905-CABD-45AB-BF13-5E7524700F3F}.Release|x86.ActiveCfg = Release|Win32
