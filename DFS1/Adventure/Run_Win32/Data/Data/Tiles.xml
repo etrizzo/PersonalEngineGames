@@ -121,17 +121,19 @@
     groundLayer="Dirt"
    />
 
+<!--      spriteTint="128,128,128" -->
     <TileDefinition
       name="Stone"
-      spriteCoords="9,31|10,31|11,31"
-      spriteTint="128,128,128"
+      spriteCoords="18,31|19,31|20,31"
       chromaKey ="128,128,128"
       allowsSight="false"
       allowsWalking="false"
       allowsFlying="false"
       allowsSwimming="false"
-      isTerrain="false"
-      terrainLevel="-1"
+      isTerrain="true"
+      terrainLayer="Water"
+      edgeDefinition="Stone"
+      terrainLevel="1"
     />
   
   <TileDefinition 

@@ -33,6 +33,7 @@ public:
 
 	bool HasTerrainDefinition(TileDefinition* def) const;
 	int GetTerrainLevel() const;
+	int GetCosmeticTerrainLevel() const;
 	eTerrainLayer GetCosmeticTerrainLayer() const;
 	eTerrainLayer GetTerrainLayer() const;
 	eGroundLayer GetGroundLayer() const;

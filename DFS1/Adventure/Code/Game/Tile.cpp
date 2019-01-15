@@ -66,9 +66,21 @@ bool Tile::HasTerrainDefinition(TileDefinition * def) const
 
 int Tile::GetTerrainLevel() const
 {
-	//if (m_extrainfo->m_cosmeticbasedef != nullptr){
-	//	return m_extrainfo->m_cosmeticbasedef->m_terrainlevel;
+	//if (m_extraInfo->m_cosmeticBaseDefinition != nullptr){
+	//	return m_extraInfo->m_cosmeticBaseDefinition->m_terrainLevel;
 	//}
+	if (m_extraInfo->m_terrainDef != nullptr){
+		return m_extraInfo->m_terrainDef->m_terrainLevel;
+	} else {
+		return -1;
+	}
+}
+
+int Tile::GetCosmeticTerrainLevel() const
+{
+	if (m_extraInfo->m_cosmeticBaseDefinition != nullptr){
+		return m_extraInfo->m_cosmeticBaseDefinition->m_terrainLevel;
+	}
 	if (m_extraInfo->m_terrainDef != nullptr){
 		return m_extraInfo->m_terrainDef->m_terrainLevel;
 	} else {
@@ -189,13 +201,15 @@ void Tile::RenderTag()
 
 	if (m_extraInfo->m_terrainDef != nullptr){
 		std::string terrainstuff = "";
-		terrainstuff += ("Base:\n" + m_extraInfo->m_terrainDef->m_name + "\nCosmetic:\n" );
+		terrainstuff += ("Base:\n" + m_extraInfo->m_terrainDef->m_name + "\nCos:\n" );
 		if (m_extraInfo->m_cosmeticBaseDefinition != nullptr){
-			terrainstuff += ( m_extraInfo->m_cosmeticBaseDefinition->m_name);
+			terrainstuff += ( m_extraInfo->m_cosmeticBaseDefinition->m_name +  " " + std::to_string(m_extraInfo->m_cosmeticBaseDefinition->m_groundLayer));
 		}
+		terrainstuff+=("\nGLVL:\n" + std::to_string(GetGroundLayer()));
+		terrainstuff+=("\nTLVL:\n" + std::to_string(GetTerrainLevel()));
 		//terrainstuff += "\nDef: " + std::to_string(GetTerrainLevel());
 		g_theGame->m_debugRenderSystem->MakeDebugRender3DText(terrainstuff, 0.f, Vector3(GetCenter()), .1f);
-		g_theRenderer->DrawTextInBox2D(terrainstuff, GetBounds(), Vector2::HALF, .01f, TEXT_DRAW_WORD_WRAP);
+		//g_theRenderer->DrawTextInBox2D(terrainstuff, GetBounds(), Vector2::HALF, .01f, TEXT_DRAW_WORD_WRAP);
 	}
 }
 

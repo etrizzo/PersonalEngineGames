@@ -30,6 +30,10 @@
 		topLeftSpriteCoord="27,26">
 	</EdgeDefinition>
 
+	<EdgeDefinition
+		name="Stone"
+		topLeftSpriteCoord="18,26">
+	</EdgeDefinition>
 
 
 </EdgeDefinitions>

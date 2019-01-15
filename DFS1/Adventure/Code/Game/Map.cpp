@@ -1193,7 +1193,7 @@ void Map::RunMapGeneration()
 	}
 
 	//EdgeTiles();
-	//EdgeTilesThreeSteps();
+	EdgeTilesThreeSteps();
 }
 
 void Map::EdgeTiles()
@@ -1345,7 +1345,7 @@ void Map::EdgeLowPriority()
 			TileNeighborSet* neighborSet = new TileNeighborSet(tile, this);
 			neighborSet->SetCompareMode(COMPARE_DEFINITION);
 			TileDefinition* edgeTileDefinition = neighborSet->FindEdgeTileDefinition();
-			if (edgeTileDefinition != nullptr){
+			if (edgeTileDefinition != nullptr && edgeTileDefinition->m_terrainLayer > TERRAIN_WATER){
 				AABB2 overlayUVs = neighborSet->GetDownflowingEdge(edgeTileDefinition);
 				tile->AddOverlaySpriteFromTileSheet(overlayUVs, SPRITE_LOW_PRIORITY_EDGE);
 			}

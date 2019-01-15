@@ -98,6 +98,7 @@
 
       <SpawnActor type="Goblin" noNoZone="Village" iterations="30"/>      <!-- zac did this -->
       <SubMap map="SmoothTerrain" />
+      <FillAndEdge edgeTile="StoneBrickWall" edgeThickness="1"/> 
     </GenerationSteps>
   </MapDefinition>
 
@@ -189,8 +190,9 @@
   
   <MapDefinition name="Cave" defaultTile="DarkDirt" width="40~70" soundtrack="Mystical Theme.mp3">
     <GenerationSteps>
-      <Mutate ifType="DarkDirt" toType="Stone" chanceToMutate=".5"/>
-      <Conway iterations="2~3" liveTile="DarkDirt" deadTile="Stone" birthLimit="4" deathLimit="3" />
+      <Mutate ifType="DarkDirt" toType="Stone" chanceToMutate=".55"/>
+      <Conway iterations="3~4" liveTile="DarkDirt" deadTile="Stone" birthLimit="4" deathLimit="3" />
+      <CellularAutomata iterations="2" ifType="Stone" ifNeighborType="DarkDirt" changeToType="DarkDirt" ifNeighborCount="5~8"/>
       <SpawnActor type="Goblin" iterations="8~10"/>
       <SpawnItem type ="Platemail Helmet" iterations="1~2"/>
       <SpawnItem type="Crystal" iterations="4~6" onTile="DarkDirt" />

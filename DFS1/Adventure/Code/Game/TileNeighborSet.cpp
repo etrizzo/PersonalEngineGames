@@ -41,6 +41,9 @@ TileDefinition * TileNeighborSet::FindEdgeTileDefinition()
 		if (t != nullptr && t->m_tileDef->m_isTerrain){
 			if (CheckForEdge(t)){
 				TileDefinition* terrainDef = t->m_extraInfo->m_terrainDef;
+				if (m_compareMode > COMPARE_GROUND && t->m_extraInfo->m_cosmeticBaseDefinition != nullptr){
+					terrainDef = t->m_extraInfo->m_cosmeticBaseDefinition;
+				}
 				//Add the terrain def to the list, or increment existing value
 				bool containsDef = false;
 				for (int i = 0; i < defsHigherLevelThanMe.size(); i++){
@@ -302,16 +305,16 @@ bool TileNeighborSet::CheckForEdge(Tile * tileToCheck)
 			}
 			//return tileToCheck->GetGroundLayer() > m_center->GetGroundLayer();
 		} else {
-			if (m_center->m_extraInfo->m_cosmeticBaseDefinition != nullptr ){
-				if (m_center->m_extraInfo->m_cosmeticBaseDefinition->m_terrainLayer == tileToCheck->GetTerrainLayer()){
-					//if you're not on the same terrain layer but you have the same cosmetic def, still edge it
-					if (tileToCheck->GetGroundLayer() > m_center->GetGroundLayer()){
-						if (tileToCheck->m_tileDef != m_center->m_tileDef){
-							return true;
-						}
-					}
-				}
-			}
+			//if (m_center->m_extraInfo->m_cosmeticBaseDefinition != nullptr ){
+			//	if (m_center->m_extraInfo->m_cosmeticBaseDefinition->m_terrainLayer == tileToCheck->GetTerrainLayer()){
+			//		//if you're not on the same terrain layer but you have the same cosmetic def, still edge it
+			//		if (tileToCheck->GetGroundLayer() > m_center->GetGroundLayer()){
+			//			if (tileToCheck->m_tileDef != m_center->m_tileDef){
+			//				return true;
+			//			}
+			//		}
+			//	}
+			//}
 			return false;
 		}
 		break;
@@ -319,11 +322,30 @@ bool TileNeighborSet::CheckForEdge(Tile * tileToCheck)
 		return tileToCheck->GetTerrainLayer() > m_center->GetTerrainLayer();
 		break;
 	case (COMPARE_DEFINITION): //internal
-		if (tileToCheck->GetGroundLayer() == m_center->GetGroundLayer()){
-			return tileToCheck->GetTerrainLevel() > m_center->GetTerrainLevel();
-		} else if (tileToCheck->GetCosmeticTerrainLayer() == m_center->GetCosmeticTerrainLayer()){
-			return tileToCheck->GetTerrainLevel() > m_center->GetTerrainLevel();
-			
+		TileDefinition* checkDefinition = tileToCheck->m_extraInfo->m_terrainDef;
+		if (tileToCheck->m_extraInfo->m_cosmeticBaseDefinition != nullptr){
+			checkDefinition = tileToCheck->m_extraInfo->m_cosmeticBaseDefinition;
+		}
+		TileDefinition* centerDefinition = m_center->m_extraInfo->m_terrainDef;
+		if (m_center->m_extraInfo->m_cosmeticBaseDefinition != nullptr){
+			centerDefinition = m_center->m_extraInfo->m_cosmeticBaseDefinition;
+		}
+
+		if (checkDefinition == nullptr || centerDefinition == nullptr){
+			return false;
+		}
+		if (checkDefinition->m_terrainLayer < TERRAIN_GROUND || centerDefinition->m_terrainLayer < TERRAIN_GROUND){		//we don't really wanna fuck with water anymore?
+			return false;
+		}
+
+		//if on the same ground layer, compare as usual
+		if (checkDefinition->m_groundLayer == centerDefinition->m_groundLayer){
+			return checkDefinition->m_terrainLevel > centerDefinition->m_terrainLevel;
+			//otherwise, compare the cosmetic layers
+		/*} else if (tileToCheck->GetCosmeticTerrainLayer() == m_center->GetCosmeticTerrainLayer()){
+			ConsolePrintf("Comparing cosmetic terrain");
+			return tileToCheck->GetCosmeticTerrainLevel() > m_center->GetCosmeticTerrainLevel();
+			*/
 		} else {
 			return false;
 		}
@@ -473,7 +495,9 @@ bool TileNeighborSet::MatchesEdgeDefinition(Tile * tile) const
 	case COMPARE_DEFINITION:
 		if (tile->HasTerrainDefinition(m_edgeToLookFor)){
 			return true;
-		} else {
+		} else if (tile->m_extraInfo->m_cosmeticBaseDefinition == m_edgeToLookFor){
+			return true;
+		} else{
 			return false;
 		}
 		break;

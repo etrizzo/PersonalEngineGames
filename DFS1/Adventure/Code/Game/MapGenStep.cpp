@@ -185,7 +185,7 @@ void MapGenStep_FillAndEdge::Run(Map & map)
 	for(int tileIndex = 0; tileIndex < (int) map.m_tiles.size(); tileIndex++){
 		IntVector2 tileCoords = GetCoordinatesFromIndex(tileIndex, map.GetWidth());
 		if (m_mask->CanDrawOnPoint(tileCoords)){
-			if ( m_mask->GetDistanceFromEdge(tileCoords.x, tileCoords.y) < m_edgeThickness){
+			if ( m_mask->GetDistanceFromEdge(tileCoords.x, tileCoords.y) < (float)m_edgeThickness){
 				if (CheckRandomChance(m_chanceToChangeEachTile)){
 					map.m_tiles[tileIndex].SetType(m_edgeTileDef);
 				} else {

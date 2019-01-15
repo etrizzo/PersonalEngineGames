@@ -3,10 +3,10 @@
   <AdventureDefinition name="Balrog" title="Kill the Balrog">
     <StartConditions startMap="Large Map" startOnTileType="Grass"/>
     <Quests>
-      <!--
+      
       <Quest name="KillGoblins" />
       <Quest name="CollectCrystals" />
-    -->
+
       <Quest name="KillBalrog" />
     </Quests>
 
