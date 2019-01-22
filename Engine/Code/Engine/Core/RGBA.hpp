@@ -42,6 +42,7 @@ public:
 
 	static RGBA GetRandomRainbowColor();
 	static RGBA GetRandomColor();
+	static RGBA GetRandomMutedColor();
 
 
 	const static RGBA WHITE;

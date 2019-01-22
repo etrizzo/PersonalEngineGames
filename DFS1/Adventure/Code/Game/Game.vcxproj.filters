@@ -8,6 +8,21 @@
     <Filter Include="Data">
       <UniqueIdentifier>{b7f231c4-746f-428f-b8ea-c95ce95e27f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="General\Actors">
+      <UniqueIdentifier>{77be43b1-1baf-4855-ba91-9d17922c4fda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="General\Maps">
+      <UniqueIdentifier>{9ee1ed7d-1e0b-4134-b7fc-53a4684cbfbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="General\WorldGameplay">
+      <UniqueIdentifier>{9565c436-1f06-4171-9d7b-794ee23c9b64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="General\Inventory">
+      <UniqueIdentifier>{63ec15ef-6e39-4f6e-9ef2-a8b97261a517}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="General\Utilities">
+      <UniqueIdentifier>{70396bd6-90d9-4333-86d3-e5b445efe697}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main_Win32.cpp">
@@ -25,125 +40,125 @@
     <ClCompile Include="GameCommon.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="Tile.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="TileDefinition.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="MapDefinition.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="MapGenStep.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="Actor.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="ActorDefinition.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
     <ClCompile Include="EntityDefinition.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="Projectile.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="ProjectileDefinition.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="Portal.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="PortalDefinition.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="AdventureDefinition.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="Adventure.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="VictoryCondition.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="Item.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemDefinition.cpp">
       <Filter>General</Filter>
     </ClCompile>
     <ClCompile Include="Tags.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="Stats.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="AIBehavior.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
     <ClCompile Include="GameState.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="DebugRenderSystem.cpp">
-      <Filter>General</Filter>
+    <ClCompile Include="Actor.cpp">
+      <Filter>General\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="DebugRenderTask.cpp">
-      <Filter>General</Filter>
+    <ClCompile Include="ActorDefinition.cpp">
+      <Filter>General\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="MenuState.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="Menu.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="Decoration.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="DecorationDefinition.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="ClothingSet.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="ClothingSetDefinition.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="Dialogue.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="DialogueSetDefinition.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="DialogueSet.cpp">
-      <Filter>General</Filter>
+    <ClCompile Include="AIBehavior.cpp">
+      <Filter>General\Actors</Filter>
     </ClCompile>
     <ClCompile Include="ClothingLayer.cpp">
-      <Filter>General</Filter>
+      <Filter>General\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="Quest.cpp">
-      <Filter>General</Filter>
+    <ClCompile Include="ClothingSet.cpp">
+      <Filter>General\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="QuestReward.cpp">
-      <Filter>General</Filter>
+    <ClCompile Include="ClothingSetDefinition.cpp">
+      <Filter>General\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="QuestDefinition.cpp">
-      <Filter>General</Filter>
+    <ClCompile Include="Dialogue.cpp">
+      <Filter>General\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogueSet.cpp">
+      <Filter>General\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogueSetDefinition.cpp">
+      <Filter>General\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Decoration.cpp">
+      <Filter>General\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>General\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="MapDefinition.cpp">
+      <Filter>General\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGenStep.cpp">
+      <Filter>General\Maps</Filter>
     </ClCompile>
     <ClCompile Include="Party.cpp">
-      <Filter>General</Filter>
+      <Filter>General\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>General\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="DecorationDefinition.cpp">
+      <Filter>General\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="Adventure.cpp">
+      <Filter>General\WorldGameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Quest.cpp">
+      <Filter>General\WorldGameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestDefinition.cpp">
+      <Filter>General\WorldGameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestReward.cpp">
+      <Filter>General\WorldGameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Portal.cpp">
+      <Filter>General\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="PortalDefinition.cpp">
+      <Filter>General\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>General\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="TileDefinition.cpp">
+      <Filter>General\Maps</Filter>
     </ClCompile>
     <ClCompile Include="TileEdgeDefinition.cpp">
-      <Filter>General</Filter>
+      <Filter>General\Maps</Filter>
     </ClCompile>
     <ClCompile Include="TileNeighborSet.cpp">
-      <Filter>General</Filter>
+      <Filter>General\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="Stats.cpp">
+      <Filter>General\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>General\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectileDefinition.cpp">
+      <Filter>General\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="VictoryCondition.cpp">
+      <Filter>General\WorldGameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="AdventureDefinition.cpp">
+      <Filter>General\WorldGameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>General\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemDefinition.cpp">
+      <Filter>General\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugRenderSystem.cpp">
+      <Filter>General\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugRenderTask.cpp">
+      <Filter>General\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuState.cpp">
+      <Filter>General\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>General\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -162,121 +177,125 @@
     <ClInclude Include="EngineBuildPreferences.hpp">
       <Filter>General</Filter>
     </ClInclude>
-    <ClInclude Include="Tile.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="TileDefinition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="MapDefinition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="MapGenStep.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Actor.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="ActorDefinition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
     <ClInclude Include="EntityDefinition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Projectile.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="ProjectileDefinition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Portal.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="PortalDefinition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="AdventureDefinition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Adventure.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Item.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemDefinition.hpp">
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="Tags.hpp">
       <Filter>General</Filter>
     </ClInclude>
-    <ClInclude Include="VictoryCondition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Stats.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="AIBehavior.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
     <ClInclude Include="GameState.hpp">
       <Filter>General</Filter>
     </ClInclude>
-    <ClInclude Include="DebugRenderSystem.hpp" />
-    <ClInclude Include="DebugRenderTask.hpp" />
-    <ClInclude Include="MenuState.hpp">
-      <Filter>General</Filter>
+    <ClInclude Include="Actor.hpp">
+      <Filter>General\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="Menu.hpp">
-      <Filter>General</Filter>
+    <ClInclude Include="ActorDefinition.hpp">
+      <Filter>General\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="Decoration.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="DecorationDefinition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="ClothingSet.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="ClothingSetDefinition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Dialogue.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="DialogueSetDefinition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="DialogueSet.hpp">
-      <Filter>General</Filter>
+    <ClInclude Include="AIBehavior.hpp">
+      <Filter>General\Actors</Filter>
     </ClInclude>
     <ClInclude Include="ClothingLayer.hpp">
-      <Filter>General</Filter>
+      <Filter>General\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="Quest.hpp">
-      <Filter>General</Filter>
+    <ClInclude Include="ClothingSet.hpp">
+      <Filter>General\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="QuestReward.hpp">
-      <Filter>General</Filter>
+    <ClInclude Include="ClothingSetDefinition.hpp">
+      <Filter>General\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="QuestDefinition.hpp">
-      <Filter>General</Filter>
+    <ClInclude Include="Dialogue.hpp">
+      <Filter>General\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogueSet.hpp">
+      <Filter>General\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogueSetDefinition.hpp">
+      <Filter>General\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Decoration.hpp">
+      <Filter>General\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.hpp">
+      <Filter>General\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="MapDefinition.hpp">
+      <Filter>General\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenStep.hpp">
+      <Filter>General\Maps</Filter>
     </ClInclude>
     <ClInclude Include="Party.hpp">
-      <Filter>General</Filter>
+      <Filter>General\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.hpp">
+      <Filter>General\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="DecorationDefinition.hpp">
+      <Filter>General\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="Adventure.hpp">
+      <Filter>General\WorldGameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestDefinition.hpp">
+      <Filter>General\WorldGameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Quest.hpp">
+      <Filter>General\WorldGameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestReward.hpp">
+      <Filter>General\WorldGameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Portal.hpp">
+      <Filter>General\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="PortalDefinition.hpp">
+      <Filter>General\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.hpp">
+      <Filter>General\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="TileDefinition.hpp">
+      <Filter>General\Maps</Filter>
     </ClInclude>
     <ClInclude Include="TileEdgeDefinition.hpp">
-      <Filter>General</Filter>
+      <Filter>General\Maps</Filter>
     </ClInclude>
     <ClInclude Include="TileNeighborSet.hpp">
-      <Filter>General</Filter>
+      <Filter>General\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="Stats.hpp">
+      <Filter>General\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Projectile.hpp">
+      <Filter>General\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileDefinition.hpp">
+      <Filter>General\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="VictoryCondition.hpp">
+      <Filter>General\WorldGameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="AdventureDefinition.hpp">
+      <Filter>General\WorldGameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.hpp">
+      <Filter>General\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemDefinition.hpp">
+      <Filter>General\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuState.hpp">
+      <Filter>General\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.hpp">
+      <Filter>General\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugRenderTask.hpp">
+      <Filter>General\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugRenderSystem.hpp">
+      <Filter>General\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

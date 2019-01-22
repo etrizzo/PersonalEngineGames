@@ -119,7 +119,7 @@ void Adventure::RenderUI()
 	if (!g_theGame->m_fullMapMode){
 		//player stats - bottom left
 		Vector2 boxSize = Vector2(screenWidth * .3f, screenWidth * .2f);
-		AABB2 statBox = cameraBounds.GetPercentageBox(0.f, .9f, .4f, 1.f);
+		AABB2 statBox = cameraBounds.GetPercentageBox(0.f, .87f, .4f, 1.f);
 		g_theGame->m_party->RenderPartyUI(statBox);
 	}
 
@@ -184,7 +184,7 @@ void Adventure::SetCurrentMap(Map * newMap)
 		m_currentMap->StopMusic();
 	}
 	m_currentMap = newMap;
-	m_currentMap->StartMusic();
+	//m_currentMap->StartMusic();
 }
 
 void Adventure::MoveToMapIndex(int index)

@@ -46,16 +46,25 @@ ActorDefinition::ActorDefinition(tinyxml2::XMLElement * actorElement): EntityDef
 		m_clothingSetDef = nullptr;
 	}
 
-	tinyxml2::XMLElement* dialogueElement = actorElement->FirstChildElement("Dialogues");
-	if (dialogueElement != nullptr){
-		m_dialogueDefinition = new DialogueSetDefinition(dialogueElement);
-	} else {
-		m_dialogueDefinition = nullptr;
+	tinyxml2::XMLElement* dialogueElement = actorElement->FirstChildElement("DialogueSet");
+	m_dialogueDefinitions = std::vector<DialogueSetDefinition*>();
+	while(dialogueElement != nullptr){
+		m_dialogueDefinitions.push_back(new DialogueSetDefinition(dialogueElement));
+		dialogueElement = dialogueElement->NextSiblingElement("DialogueSet");
 	}
 }
 
 ActorDefinition::~ActorDefinition()
 {
+}
+
+DialogueSetDefinition * ActorDefinition::GetRandomDialogueDefinition() const
+{
+	if (m_dialogueDefinitions.size() == 0 ){
+		return nullptr;
+	}
+	int index = GetRandomIntLessThan(m_dialogueDefinitions.size());
+	return m_dialogueDefinitions[index];
 }
 
 ActorDefinition * ActorDefinition::GetActorDefinition(std::string definitionName)

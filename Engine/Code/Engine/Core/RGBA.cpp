@@ -212,6 +212,71 @@ RGBA RGBA::GetRandomColor()
 	return RGBA(r,g,b);
 }
 
+RGBA RGBA::GetRandomMutedColor()
+{
+	int r =  GetRandomIntInRange(55, 255);
+	int g =  GetRandomIntInRange(55, 255);
+	int b =  GetRandomIntInRange(55, 255);
+	bool tooExtreme = true;
+	int tries = 0;
+	while (tooExtreme && tries < 10){
+		int minVal = Min(r, g);
+		minVal = Min(minVal, b);
+
+		int maxVal = Max(r,g);
+		maxVal = Max(maxVal, b);
+
+		if ((maxVal - minVal) > 164){
+			//determine which values to lerp
+			if (r == minVal){
+				if (g == maxVal){
+					r = Interpolate(r, g, .05f);
+					g = Interpolate(g, r, .05f);
+					maxVal = g;
+				} else {
+					r = Interpolate(r, b, .05f);
+					b = Interpolate(b, r, .05f);
+					maxVal = b;
+				}
+				minVal = r;
+				
+			}
+
+			if (g == minVal){
+				if (r == maxVal){
+					r = Interpolate(r, g, .05f);
+					g = Interpolate(g, r, .05f);
+					maxVal = r;
+				} else {
+					g = Interpolate(g, b, .05f);
+					b = Interpolate(b, g, .05f);
+					maxVal = b;
+				}
+				minVal = g;
+			}
+
+			if (b == minVal){
+				if (r == maxVal){
+					b = Interpolate(b, r, .05f);
+					r = Interpolate(r, b, .05f);
+					maxVal = b;
+				} else {
+					b = Interpolate(b, g, .05f);
+					g = Interpolate(g, b, .05f);
+					maxVal = g;
+				}
+				minVal = b;
+			}
+			tooExtreme = ((maxVal - minVal) > 164);
+			tries++;
+		} else {
+			tooExtreme = false;
+		}
+	}
+	
+	return RGBA(r,g,b);
+}
+
 const RGBA Interpolate(const RGBA & start, const RGBA & end, float fractionTowardEnd)
 {
 

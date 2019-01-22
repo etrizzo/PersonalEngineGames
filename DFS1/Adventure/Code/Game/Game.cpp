@@ -44,6 +44,8 @@ Game::Game()
 	m_miscSpriteSheet = new SpriteSheet(*miscTexture, 4,4);
 	Texture* bubbleTexture = g_theRenderer->CreateOrGetTexture("speechbubbles_5x6.png");
 	m_speechBubbleSpriteSheet = new SpriteSheet(*bubbleTexture, 6,5);
+	Texture* portraitTexture = g_theRenderer->CreateOrGetTexture("HUMANOIDS/PORTRAITS/portrait_f.png");
+	g_portraitSpriteSheet = new SpriteSheet(*portraitTexture, 9,9);
 
 	g_theRenderer->LoadSpritesFromSpriteAtlas(m_speechBubbleSpriteSheet,32);
 
@@ -84,7 +86,7 @@ Game::Game()
 	m_uiCamera->LookAt( Vector3( uicenter.x, uicenter.y, -1.f ), Vector3(uicenter.x, uicenter.y, .5f)); 
 
 
-	m_dialogueBox = m_uiCamera->GetBounds().GetPercentageBox(.1f,0.f,.9f,.15f);
+	m_dialogueBox = m_uiCamera->GetBounds().GetPercentageBox(.18f,0.03f,.82f,.23f);
 
 	g_theRenderer->SetCamera( m_camera ); 
 

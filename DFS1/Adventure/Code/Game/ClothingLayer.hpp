@@ -1,6 +1,8 @@
 #pragma once
 #include "Game/GameCommon.hpp"
 
+//const std::string DEFAULT_PORTRAIT_SHEET = "\Images\HUMANOIDS\PORTRAITS\portrait_f.png";
+
 class ClothingLayer{
 public:
 	ClothingLayer();
@@ -16,6 +18,8 @@ public:
 
 	Texture* m_texture;
 	RGBA m_tint;		//instanced
+	RGBA m_portraitTint = RGBA::WHITE;
+	IntVector2 m_portraitCoords = IntVector2(0,0);
 	RENDER_SLOT m_slot;
 	SpawnColorCB m_colorCB = nullptr;		//definition (lol)
 
@@ -25,4 +29,21 @@ public:
 	bool m_shouldRenderHair = true;
 
 
+};
+
+
+
+class PortraitLayer{
+public:
+	PortraitLayer(ePortraitSlot slot, RGBA tint = RGBA::WHITE, SpawnColorCB colorCB = nullptr, SpriteSheet* spritesheet = nullptr);
+
+
+	void SetUVsFromSpriteCoords(IntVector2 spriteCoords);
+
+	AABB2 m_uvs = AABB2::ZERO_TO_ONE;
+	SpriteSheet* m_spriteSheet = nullptr;
+	Texture* m_texture = nullptr;
+	RGBA m_tint = RGBA::WHITE;
+	ePortraitSlot m_slot = NUM_PORTRAIT_SLOTS;
+	SpawnColorCB m_colorCB = nullptr;
 };

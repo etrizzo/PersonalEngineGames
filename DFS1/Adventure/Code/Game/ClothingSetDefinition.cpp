@@ -3,6 +3,27 @@
 
 std::map<std::string, ClothingSetDefinition*>	ClothingSetDefinition::s_definitions;
 
+SpawnColorCB GetColorCallbackFromXML(std::string text)
+{
+	if (text == "randomBright"){
+		return RGBA::GetRandomRainbowColor;
+	}
+	if (text == "random"){
+		return RGBA::GetRandomColor;
+	}
+	if (text == "randomMuted"){
+		return RGBA::GetRandomMutedColor;
+	}
+	if (text == "randomLip"){
+		return GetRandomLipColor;
+	}
+	if (text == "randomEye"){
+		return GetRandomEyeColor;
+	}
+	return nullptr;
+}
+
+
 ClothingSetDefinition::ClothingSetDefinition(tinyxml2::XMLElement * setElement)
 {
 	m_name = ParseXmlAttribute(*setElement, "name", "NO_NAME");
@@ -19,6 +40,11 @@ ClothingSetDefinition::ClothingSetDefinition(tinyxml2::XMLElement * setElement)
 	ParseHairs(setElement);
 	ParseHats(setElement);
 	ParseWeapons(setElement);
+
+	tinyxml2::XMLElement* portraitElement = setElement->FirstChildElement("Portrait");
+	if (portraitElement != nullptr){
+		m_portraitDef = new PortraitDefinition(portraitElement);
+	}
 }
 
 ClothingSet * ClothingSetDefinition::GetRandomSet() const
@@ -38,13 +64,22 @@ ClothingSet * ClothingSetDefinition::GetRandomSet() const
 		int bodyIndex = GetRandomIntLessThan((int) m_layersByClothingType[BODY_SLOT].size());
 		set->InitLayer(BODY_SLOT,		GetLayer(BODY_SLOT, bodyIndex));		//init body and ears of same skin tone
 		set->InitLayer(EARS_SLOT,		GetLayer(EARS_SLOT, bodyIndex));
+		//set->InitPortraitBody();
+
 	}
 	if (m_layersByClothingType[HEAD_SLOT].size() > 0){
 		int hairIndex = GetRandomIntLessThan((int) m_layersByClothingType[HEAD_SLOT].size());
 		set->InitLayer(HEAD_SLOT,		GetLayer(HEAD_SLOT, hairIndex));
+		//set->InitPortraitHair();
 	}
 	set->InitLayer(HAT_SLOT,		GetRandomOfType(HAT_SLOT));
 	set->InitLayer(WEAPON_SLOT,		GetRandomOfType(WEAPON_SLOT));
+	
+	//AFTER all the layers for the set have been determined, make the portrait layers.
+	if (m_portraitDef != nullptr){
+		set->m_portraitDef = m_portraitDef;
+		set->InitPortrait();
+	}
 	return set;
 }
 
@@ -90,16 +125,7 @@ ClothingSetDefinition * ClothingSetDefinition::GetDefinition(std::string definit
 	return def;
 }
 
-SpawnColorCB ClothingSetDefinition::GetColorCallbackFromXML(std::string text)
-{
-	if (text == "randomBright"){
-		return RGBA::GetRandomRainbowColor;
-	}
-	if (text == "random"){
-		return RGBA::GetRandomColor;
-	}
-	return nullptr;
-}
+
 
 ClothingLayer * ClothingSetDefinition::GetLayer(RENDER_SLOT slot, int index) const
 {
@@ -184,7 +210,7 @@ void ClothingSetDefinition::ParseLegs(tinyxml2::XMLElement * setElement)
 			bool usesLegs = ParseXmlAttribute(*legElement, "useLegs", true);
 			bool usesHair = ParseXmlAttribute(*legElement, "usesHair", true);
 
-			ClothingLayer* layer = new ClothingLayer(LEGS_SLOT, torsoTexture, tint, usesLegs, usesHair);
+			ClothingLayer* layer = new ClothingLayer(LEGS_SLOT, torsoTexture, tint, usesLegs, usesHair, cb);
 			m_layersByClothingType[LEGS_SLOT].push_back(layer);
 		}
 	}
@@ -206,14 +232,21 @@ void ClothingSetDefinition::ParseHairs(tinyxml2::XMLElement * setElement)
 			std::string colorType = ParseXmlAttribute(*hairElement, "color", "NONE");
 			//get callback function for tint of this layer
 			SpawnColorCB cb = GetColorCallbackFromXML(colorType);
-			RGBA tint = RGBA::WHITE;
+			RGBA tint = RGBA::WHITE ;
 			if (cb != nullptr){
 				tint = cb();
 			}
 			bool usesLegs = ParseXmlAttribute(*hairElement, "useLegs", true);
 			bool usesHair = ParseXmlAttribute(*hairElement, "usesHair", true);
 
-			ClothingLayer* layer = new ClothingLayer(HEAD_SLOT, torsoTexture, tint, usesLegs, usesHair);
+			ClothingLayer* layer = new ClothingLayer(HEAD_SLOT, torsoTexture, tint, usesLegs, usesHair, cb);
+			layer->m_portraitCoords = ParseXmlAttribute(*hairElement, "portraitCoords", IntVector2(0,0));
+			if (cb != nullptr){
+				layer->m_portraitTint = tint;
+			} else {
+				layer->m_portraitTint = ParseXmlAttribute(*hairElement, "portraitTint", RGBA::WHITE);
+			
+			}
 			m_layersByClothingType[HEAD_SLOT].push_back(layer);
 		}
 	}
@@ -302,6 +335,14 @@ void ClothingSetDefinition::ParseBody(tinyxml2::XMLElement * bodyElement)
 	ClothingLayer* bodyLayer = new ClothingLayer(BODY_SLOT, baseTexture, tint, usesLegs, usesHair);
 	ClothingLayer* earLayer = new ClothingLayer(EARS_SLOT, earTexture, tint, usesLegs, usesHair);
 
+	//parse relevant portrait information
+	bodyLayer->m_portraitTint = ParseXmlAttribute(*baseElement, "portraitTint", RGBA::CYAN);
+	earLayer->m_portraitCoords = IntVector2(7,8);
+	if (earsElement != nullptr){
+		earLayer->m_portraitCoords = ParseXmlAttribute(*earsElement, "portraitCoords", earLayer->m_portraitCoords);
+		earLayer->m_portraitTint = ParseXmlAttribute(*baseElement, "portraitTint", RGBA::CYAN);
+	} 
+
 	m_layersByClothingType[BODY_SLOT].push_back(bodyLayer);
 	m_layersByClothingType[EARS_SLOT].push_back(earLayer);
 
@@ -313,4 +354,158 @@ void ClothingSetDefinition::ParseBody(tinyxml2::XMLElement * bodyElement)
 	//m_tintsByClothingType[BODY_SLOT].push_back(tint);
 	//m_tintsByClothingType[EARS_SLOT].push_back(tint);
 
+}
+
+RGBA sPortraitPieceDefinition::GetColorForInstance() const
+{
+	if (m_colorCallback == nullptr){
+		return m_defaultTint;
+	} else {
+		return m_colorCallback();
+	}
+}
+
+PortraitDefinition::PortraitDefinition(tinyxml2::XMLElement * portraitElement)
+{
+	m_lipColorChance = ParseXmlAttribute(*portraitElement, "lipColorChance", m_lipColorChance);
+	m_numFeaturesPossible = ParseXmlAttribute(*portraitElement, "numFeatures", m_numFeaturesPossible);
+	ParseFaces(portraitElement);
+	ParseMouths(portraitElement);
+	ParseNoses(portraitElement);
+	ParseBrows(portraitElement);
+	ParseEyes(portraitElement);
+	ParseFeatures(portraitElement);
+}
+
+IntVector2 PortraitDefinition::GetRandomFaceCoords() const
+{
+	int index = GetRandomIntLessThan(m_faces.size());
+	return m_faces[index]->m_spriteCoords;
+}
+
+IntVector2 PortraitDefinition::GetRandomNoseCoords() const
+{
+	int index = GetRandomIntLessThan(m_noses.size());
+	return m_noses[index]->m_spriteCoords;
+}
+
+IntVector2 PortraitDefinition::GetRandomBrowCoords() const
+{
+	int index = GetRandomIntLessThan(m_brows.size());
+	return m_brows[index]->m_spriteCoords;
+}
+
+IntVector2 PortraitDefinition::GetRandomFeatureCoords() const
+{
+	int index = GetRandomIntLessThan(m_features.size());
+	return m_features[index]->m_spriteCoords;
+}
+
+
+void PortraitDefinition::ParseFaces(tinyxml2::XMLElement * portraitElement)
+{
+	tinyxml2::XMLElement* faceElement = portraitElement->FirstChildElement("Face");
+	while (faceElement != nullptr){
+		sPortraitPieceDefinition* facePiece = new sPortraitPieceDefinition();
+		facePiece->m_name = ParseXmlAttribute(*faceElement, "name", "NO_NAME");
+		facePiece->m_defaultTint = ParseXmlAttribute(*faceElement, "tint", RGBA::WHITE);
+		facePiece->m_spriteCoords = ParseXmlAttribute(*faceElement, "portraitCoords", IntVector2(0,0));
+		std::string callbackName = ParseXmlAttribute(*faceElement, "color", "");
+		facePiece->m_colorCallback = GetColorCallbackFromXML(callbackName);
+		m_faces.push_back(facePiece);
+		faceElement = faceElement->NextSiblingElement("Face");
+	}
+}
+
+void PortraitDefinition::ParseMouths(tinyxml2::XMLElement * portraitElement)
+{
+	tinyxml2::XMLElement* mouthElement = portraitElement->FirstChildElement("Mouth");
+	while (mouthElement != nullptr){
+		//read info for the mouth lines coordinates
+		sPortraitPieceDefinition* linePiece = new sPortraitPieceDefinition();
+		linePiece->m_name = ParseXmlAttribute(*mouthElement, "name", "NO_NAME");
+		linePiece->m_defaultTint = ParseXmlAttribute(*mouthElement, "tint", RGBA::WHITE);
+		linePiece->m_spriteCoords = ParseXmlAttribute(*mouthElement, "portraitCoords", IntVector2(0,0));
+		m_mouthLines.push_back(linePiece);
+
+		//read info for the lip piece (as being 1 below the mouth lines);
+		sPortraitPieceDefinition* lipPiece = new sPortraitPieceDefinition();
+		lipPiece->m_name = linePiece->m_name;
+		lipPiece->m_defaultTint = linePiece->m_defaultTint;
+		lipPiece->m_spriteCoords = linePiece->m_spriteCoords + IntVector2(0,1);
+		std::string callbackName = ParseXmlAttribute(*mouthElement, "color", "");
+		lipPiece->m_colorCallback = GetColorCallbackFromXML(callbackName);
+		m_lipMasks.push_back(lipPiece);
+
+		mouthElement = mouthElement->NextSiblingElement("Mouth");
+	}
+}
+
+void PortraitDefinition::ParseNoses(tinyxml2::XMLElement * portraitElement)
+{
+	tinyxml2::XMLElement* faceElement = portraitElement->FirstChildElement("Nose");
+	while (faceElement != nullptr){
+		sPortraitPieceDefinition* facePiece = new sPortraitPieceDefinition();
+		facePiece->m_name = ParseXmlAttribute(*faceElement, "name", "NO_NAME");
+		facePiece->m_defaultTint = ParseXmlAttribute(*faceElement, "tint", RGBA::WHITE);
+		facePiece->m_spriteCoords = ParseXmlAttribute(*faceElement, "portraitCoords", IntVector2(0,0));
+		std::string callbackName = ParseXmlAttribute(*faceElement, "color", "");
+		facePiece->m_colorCallback = GetColorCallbackFromXML(callbackName);
+		m_noses.push_back(facePiece);
+		faceElement = faceElement->NextSiblingElement("Nose");
+	}
+}
+
+void PortraitDefinition::ParseBrows(tinyxml2::XMLElement * portraitElement)
+{
+	tinyxml2::XMLElement* faceElement = portraitElement->FirstChildElement("Brow");
+	while (faceElement != nullptr){
+		sPortraitPieceDefinition* facePiece = new sPortraitPieceDefinition();
+		facePiece->m_name = ParseXmlAttribute(*faceElement, "name", "NO_NAME");
+		facePiece->m_defaultTint = ParseXmlAttribute(*faceElement, "tint", RGBA::WHITE);
+		facePiece->m_spriteCoords = ParseXmlAttribute(*faceElement, "portraitCoords", IntVector2(0,0));
+		std::string callbackName = ParseXmlAttribute(*faceElement, "color", "");
+		facePiece->m_colorCallback = GetColorCallbackFromXML(callbackName);
+		m_brows.push_back(facePiece);
+		faceElement = faceElement->NextSiblingElement("Brow");
+	}
+}
+
+void PortraitDefinition::ParseEyes(tinyxml2::XMLElement * portraitElement)
+{
+	tinyxml2::XMLElement* mouthElement = portraitElement->FirstChildElement("Eyes");
+	while (mouthElement != nullptr){
+		//read info for the eye lines coordinates
+		sPortraitPieceDefinition* linePiece = new sPortraitPieceDefinition();
+		linePiece->m_name = ParseXmlAttribute(*mouthElement, "name", "NO_NAME");
+		linePiece->m_defaultTint = ParseXmlAttribute(*mouthElement, "tint", RGBA::WHITE);
+		linePiece->m_spriteCoords = ParseXmlAttribute(*mouthElement, "portraitCoords", IntVector2(0,0));
+		m_eyeWhites.push_back(linePiece);
+
+		//read info for the pupil piece (as being 1 to the right the eye lines);
+		sPortraitPieceDefinition* pupilPiece = new sPortraitPieceDefinition();
+		pupilPiece->m_name = linePiece->m_name;
+		pupilPiece->m_defaultTint = linePiece->m_defaultTint;
+		pupilPiece->m_spriteCoords = linePiece->m_spriteCoords + IntVector2(1,0);
+		std::string callbackName = ParseXmlAttribute(*mouthElement, "color", "");
+		pupilPiece->m_colorCallback = GetColorCallbackFromXML(callbackName);
+		m_eyePupils.push_back(pupilPiece);
+
+		mouthElement = mouthElement->NextSiblingElement("Eyes");
+	}
+}
+
+void PortraitDefinition::ParseFeatures(tinyxml2::XMLElement * portraitElement)
+{
+	tinyxml2::XMLElement* faceElement = portraitElement->FirstChildElement("Feature");
+	while (faceElement != nullptr){
+		sPortraitPieceDefinition* facePiece = new sPortraitPieceDefinition();
+		facePiece->m_name = ParseXmlAttribute(*faceElement, "name", "NO_NAME");
+		facePiece->m_defaultTint = ParseXmlAttribute(*faceElement, "tint", RGBA::WHITE);
+		facePiece->m_spriteCoords = ParseXmlAttribute(*faceElement, "portraitCoords", IntVector2(0,0));
+		std::string callbackName = ParseXmlAttribute(*faceElement, "color", "");
+		facePiece->m_colorCallback = GetColorCallbackFromXML(callbackName);
+		m_features.push_back(facePiece);
+		faceElement = faceElement->NextSiblingElement("Feature");
+	}
 }

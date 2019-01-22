@@ -3,6 +3,7 @@
 #include "Game/ClothingLayer.hpp"
 
 class ClothingSetDefinition;
+class PortraitDefinition;
 
 //enum RENDER_SLOT{
 //	BODY_SLOT,		//for rendering actors
@@ -18,14 +19,7 @@ class ClothingSetDefinition;
 class ClothingSet {
 public:
 	ClothingSet();
-	//ClothingSet(ClothingSetDefinition* def);
 
-	//all textures loaded in 2D array by RenderSlot
-		//i.e. m_texturesByClothingType[0] is all body textures
-	//std::vector<Texture*> m_defaultTextures;
-	//std::vector<Texture*> m_currentTextures;
-	//std::vector<RGBA> m_currentTints;
-	//std::vector<RGBA> m_defaultTints;
 	std::vector<ClothingLayer*> m_defaultLayers;
 	std::vector<ClothingLayer*> m_currentLayers;
 
@@ -33,21 +27,32 @@ public:
 	void SetDefaultLayer(RENDER_SLOT slot);
 	void SetLayer(RENDER_SLOT slot, ClothingLayer* layer);
 
-	//void InitTexture(RENDER_SLOT slot, Texture* texture, RGBA tint = RGBA::WHITE);
-	//void SetTexture(RENDER_SLOT slot, Texture* newTexture, RGBA tint = RGBA::WHITE);
-	//void SetTexture(RENDER_SLOT slot, ClothingSetDefinition* setDefinitionName, RGBA tint= RGBA::WHITE);
 	ClothingLayer* GetLayer(RENDER_SLOT slot) const;
 	Texture* GetTexture(RENDER_SLOT slot) const;
 	Texture* GetTexture(int i) const;	//for getting from a for loop
 	RGBA GetTint(RENDER_SLOT slot) const;
 	RGBA GetTint(int i) const;
 
-	//Texture* GetBodyTexture() const;
-	//Texture* GetLegTexture() const;
-	//Texture* GetTorsoTexture() const;
-	//Texture* GetHairTexture() const;
-	//Texture* GetEarsTexture() const;
-	//Texture* GetHatTexture() const;
-	//Texture* GetWeaponTexture() const;
 
+	RGBA m_portraitSkinTone = RGBA::CYAN;
+	RGBA m_hairTint = RGBA::WHITE;
+	IntVector2 m_hairPortraitCoords = IntVector2(0,0);
+	IntVector2 m_earPortraitCoords = IntVector2(0,0);
+
+	
+	PortraitDefinition* m_portraitDef = nullptr;
+	std::vector<std::vector<PortraitLayer*>> m_portraitLayers = std::vector<std::vector<PortraitLayer*>>();
+	void InitPortrait();
+	int GetNumPortraitLayersForSlot(ePortraitSlot slot) const;
+	Texture* GetPortraitTexture(ePortraitSlot slot = FACE_PORTRAIT, int index=0) const;
+
+
+protected:
+	void InitPortraitBody();		//sets the face and ear layers according to set body layers
+	void InitPortraitHair();		//sets the hair according to set head layers
+	void InitPortraitFace();		// mouth, brows, nose, eyes...
+	void InitPortraitFeatures();	//special features
+
+	void InitPortraitMouth();
+	void InitPortraitEyes();		//helpers to wrap the special functionality of eyes/mouth
 };

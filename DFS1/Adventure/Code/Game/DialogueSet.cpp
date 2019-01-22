@@ -1,6 +1,7 @@
 #include "DialogueSet.hpp"
 #include "Game/Game.hpp"
 #include "Game/DialogueSetDefinition.hpp"
+#include "Game/Actor.hpp"
 
 DialogueSet::DialogueSet(DialogueSetDefinition * def)
 {
@@ -29,9 +30,25 @@ bool DialogueSet::ProgressAndCheckFinish()
 
 void DialogueSet::Render(const AABB2 & box)
 {
+
 	if (m_activeDialogue != nullptr){
-		m_activeDialogue->Render(box);
+		AABB2 wholeBox = AABB2(box);
+		//draw the outline
+		g_theRenderer->DrawAABB2(wholeBox, RGBA::BLACK.GetColorWithAlpha(200));
+		g_theRenderer->DrawAABB2Outline(wholeBox, RGBA::WHITE);
+		//split the box
+		AABB2 portraitBox = AABB2(wholeBox);
+		AABB2 dialogueBox = AABB2(wholeBox);
+		//get a square for the dialogue
+		portraitBox.mins.x = wholeBox.maxs.x - wholeBox.GetHeight();
+		dialogueBox.maxs.x = portraitBox.mins.x;
+		//wholeBox.SplitAABB2Vertical(.85f, dialogueBox, portraitBox);
+		//render the text
+		m_activeDialogue->Render(dialogueBox);
+		//render the portrait
+		m_speaker->RenderFaceInBox(portraitBox);
 	}
+	
 }
 
 void DialogueSet::Reset()

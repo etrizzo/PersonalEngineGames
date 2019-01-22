@@ -77,7 +77,7 @@ GameState_Attract::GameState_Attract()
 {
 	if (g_theGame != nullptr){
 		m_soundtrackID = g_theGame->m_attractMusicID;
-		m_soundtrackPlayback = g_theAudio->PlaySound(m_soundtrackID);
+		//m_soundtrackPlayback = g_theAudio->PlaySound(m_soundtrackID);
 	}
 }
 
@@ -86,7 +86,7 @@ void GameState_Attract::Update(float ds)
 	m_timeInState+=ds;
 	if (m_isTransitioning){
 		float percThroughTransition =  (m_timeInState) / m_transitionLength;
-		g_theAudio->SetSoundPlaybackVolume(g_theGame->m_attractPlayback, 1.f - percThroughTransition);
+		//g_theAudio->SetSoundPlaybackVolume(g_theGame->m_attractPlayback, 1.f - percThroughTransition);
 	}
 }
 

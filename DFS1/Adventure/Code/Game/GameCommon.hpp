@@ -18,7 +18,7 @@
 
 const int TILE_WIDTH = 1;
 //const float WINDOW_ASPECT = 1.f;
-const float ZOOM_FACTOR = 15.f;
+const float ZOOM_FACTOR = 12.f;
 
 const float DEFAULT_FORWARD_VIEW_ANGLE = 360.f;
 
@@ -43,6 +43,20 @@ enum EQUIPMENT_SLOT{
 	EQUIP_SLOT_HEAD,
 	EQUIP_SLOT_WEAPON,
 	NUM_EQUIP_SLOTS
+};
+
+//slots for rendering portraits
+enum ePortraitSlot{
+	HAIR_BACK_PORTRAIT,
+	FACE_PORTRAIT,
+	NOSE_PORTRAIT,
+	MOUTH_PORTRAIT,			//1-2
+	BROWS_PORTRAIT,
+	FEATURES_PORTRAIT,		//1-3
+	EYES_PORTRAIT,			//2
+	HAIR_FRONT_PORTRAIT,
+	EAR_PORTRAIT,
+	NUM_PORTRAIT_SLOTS
 };
 
 enum RENDER_SLOT{
@@ -75,6 +89,10 @@ enum eAIBehavior{
 
 eAIBehavior GetBehaviorFromString(std::string behavior);
 
+RGBA GetRandomLipColor();
+RGBA GetRandomEyeColor();
+
+
 class Renderer;
 class InputSystem;
 extern Renderer* g_theRenderer;
@@ -83,6 +101,7 @@ extern AudioSystem* g_theAudio;
 extern XboxController* g_primaryController;
 
 extern SpriteSheet* g_tileSpriteSheet;
+extern SpriteSheet* g_portraitSpriteSheet;
 
 
 

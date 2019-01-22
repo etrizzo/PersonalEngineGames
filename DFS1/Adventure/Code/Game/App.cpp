@@ -20,7 +20,7 @@ App::~App()
 
 App::App(HINSTANCE applicationInstanceHandle)
 {
-	//srand(100);
+	//srand(88);
 	tinyxml2::XMLDocument gameConfigDoc;
 	gameConfigDoc.LoadFile("Data/Data/GameConfig.xml");
 	tinyxml2::XMLElement* configElement = gameConfigDoc.FirstChildElement("GameConfig");

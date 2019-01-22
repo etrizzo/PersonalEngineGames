@@ -3,6 +3,7 @@
 #include "Game/Dialogue.hpp"
 
 class DialogueSetDefinition;
+class Actor;
 
 class DialogueSet{
 public:
@@ -13,7 +14,9 @@ public:
 	//resets dialogue to the definition's dialogue
 	void Reset();
 
-	DialogueSetDefinition* m_definition;
+	Actor* m_speaker = nullptr;
+	DialogueSetDefinition* m_definition = nullptr;
+	Dialogue* m_activeDialogue = nullptr;
 	std::queue<Dialogue*> m_dialogues;
-	Dialogue* m_activeDialogue;
+	
 };

@@ -48,7 +48,8 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 	Stats difficultyMod = Stats(IntRange(0, difficulty));
 	m_stats.Add(difficultyMod);
 
-	m_dialogue = new DialogueSet(m_definition->m_dialogueDefinition);
+	m_dialogue = new DialogueSet(m_definition->GetRandomDialogueDefinition());
+	m_dialogue->m_speaker = this;
 
 	m_healthRenderable = new Renderable2D();
 	m_healthRenderable->SetMaterial(Material::GetMaterial("default"));
@@ -141,18 +142,21 @@ void Actor::AssignAsQuestGiver(Quest * questToGive)
 {
 	m_questGiven = questToGive;
 	m_dialogue = questToGive->GetCurrentDialogueSet();
+	m_dialogue->m_speaker = this;
 }
 
 void Actor::AdvanceQuest()
 {
 	m_questGiven->m_currentIndex++;
 	m_dialogue = m_questGiven->GetCurrentDialogueSet();
+	m_dialogue->m_speaker = this;
 }
 
 void Actor::FinishQuest()
 {
-	m_dialogue = new DialogueSet(m_definition->m_dialogueDefinition);
+	m_dialogue = new DialogueSet(m_definition->GetRandomDialogueDefinition());
 	m_questGiven = nullptr;
+	m_dialogue->m_speaker = this;
 }
 
 
@@ -214,17 +218,22 @@ void Actor::RenderBoyInBox(AABB2 boyBox, RGBA tint)
 
 void Actor::RenderFaceInBox(AABB2 faceBox, RGBA tint)
 {
+	g_theRenderer->DrawAABB2(faceBox, RGBA(160,200, 220, 200));
 	g_theRenderer->DrawAABB2Outline(faceBox, RGBA::WHITE);
 	//faceBox.AddPaddingToSides(-.05f,-.05f);
 	//faceBox.TrimToAspectRatio(GetAspectRatio());
-	float height = faceBox.GetHeight();
-	AABB2 texCoords = m_animSet->GetUVsForAnim("IdleSouth", 0.f);
-	AABB2 faceTexCoords = texCoords.GetPercentageBox(.3f, .4f, .7f, .9f);
-	//faceTexCoords.ExpandToAspectRatio(faceBox.GetAspect());
-	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
-		if (m_currentLook->GetTexture(i) != nullptr){
-			//const Texture* entityTexture = m_animSets[i]->GetTextureForAnim("IdleSouth");
-			g_theRenderer->DrawTexturedAABB2(faceBox, *m_currentLook->GetTexture(i), faceTexCoords.mins, faceTexCoords.maxs, m_currentLook->GetTint(i));
+	//float height = faceBox.GetHeight();
+	faceBox.TrimToSquare();
+
+	Texture* portraitTexture = m_currentLook->GetPortraitTexture();
+	//draw the portrait in layers - for each slot, check how many layers that slot has
+	for (int slot = 0; slot < NUM_PORTRAIT_SLOTS; slot++){
+		for (int i = 0; i < m_currentLook->GetNumPortraitLayersForSlot((ePortraitSlot) slot); i++){
+			if (m_currentLook->m_portraitLayers[slot].size() > i){
+				PortraitLayer* layer = m_currentLook->m_portraitLayers[slot][i];
+				AABB2 layerTexCoords = layer->m_uvs;
+				g_theRenderer->DrawTexturedAABB2(faceBox, *portraitTexture, layerTexCoords.mins, layerTexCoords.maxs, layer->m_tint);
+			}
 		}
 	}
 }

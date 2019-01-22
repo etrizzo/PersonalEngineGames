@@ -24,13 +24,16 @@ public:
 	eAIBehavior m_defaultBehavior;
 
 	bool m_isAggressive = false;
+	std::vector<Texture*> m_layerTextures;
+	std::vector<DialogueSetDefinition*> m_dialogueDefinitions;
+
+	DialogueSetDefinition* GetRandomDialogueDefinition() const;
 
 
 	static std::map< std::string, ActorDefinition* >		s_definitions;
 	static ActorDefinition* GetActorDefinition(std::string definitionName);
 
-	std::vector<Texture*> m_layerTextures;
-	DialogueSetDefinition* m_dialogueDefinition;
+
 
 protected:
 	void ParseStats(tinyxml2::XMLElement* statsElement);

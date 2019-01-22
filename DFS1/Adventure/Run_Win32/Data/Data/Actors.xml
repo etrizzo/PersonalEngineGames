@@ -45,24 +45,30 @@
     <Size physicsRadius=".25" drawRadius="1.0" aspect=".8" pivot="0.5,0.25"/>
     <Movement>
       <Walk speed="1.0"/>
-      <Swim speed ="1.0"/>
     </Movement>
     <Stats baseMovement="1" baseStrength="1~2" baseDefense="0" />
     <Health max="50" start="50"/>
     <SpriteAnimSet name = "humanoid" />
     <Clothing set="Villager" />
-    <Dialogues>
+    <DialogueSet>
       <Dialogue content="Hello!" />
       <Dialogue content="It's nice to meet you!" />
-    </Dialogues>
+    </DialogueSet>
+    <DialogueSet>
+      <Dialogue content="Hey there." />
+      <Dialogue content="Can I help you?" />
+    </DialogueSet>
+    <DialogueSet>
+      <Dialogue content="..." />
+      <Dialogue content="...What do you want?" />
+    </DialogueSet>
   </ActorDefinition>
 
    <ActorDefinition name="Ally" faction="good" aggressive="true" defaultBehavior="None">
     <Size physicsRadius=".25" drawRadius="1.0" aspect=".8" pivot="0.5,0.25"/>
     <Movement>
       <Walk speed="2.0"/>
-      <Swim speed ="1.0"/>
-      <Sight range="5.0"/>
+      <Sight range="7.0"/>
     </Movement>
     <Stats baseMovement="1" baseStrength="1~2" baseDefense="0" />
     <Health max="80" start="80"/>
@@ -72,9 +78,9 @@
        <Item name="Leather Hat" chanceToSpawn="1.0"/>
        <Item name="Bow" chanceToSpawn="1.0"/>
     </Inventory>
-    <Dialogues>
+    <DialogueSet>
       <Dialogue content="Let's stick together!" />
-    </Dialogues>
+    </DialogueSet>
   </ActorDefinition>
 
 </ActorDefinitions>
