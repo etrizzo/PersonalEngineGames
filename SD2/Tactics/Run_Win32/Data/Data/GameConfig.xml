@@ -1,0 +1,9 @@
+<GameConfig
+	
+  appName="Protogame3D"
+	windowAspect="1.77"
+  width="15"
+  bottomLeft="0,0"
+  mapHeight="16"
+	
+/>

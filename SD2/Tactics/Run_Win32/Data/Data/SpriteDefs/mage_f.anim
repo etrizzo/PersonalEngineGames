@@ -1,0 +1,44 @@
+<isoanim id="mage_f.idle" loop="loop">
+   <frame src="mage_f.idle" time="1.0" />
+</isoanim>
+<isoanim id="mage_f.weak" loop="loop">
+   <frame src="mage_f.weak" time="1.0" />
+</isoanim>
+<isoanim id="mage_f.dead" loop="loop">
+   <frame src="mage_f.dead" time="1.0" />
+</isoanim>
+<isoanim id="mage_f.walk" loop="loop">
+   <frame src="mage_f.walk0" time=".25" />
+   <frame src="mage_f.walk1" time=".25" />
+</isoanim>
+<isoanim id="mage_f.attack" loop="clamp">
+   <frame src="mage_f.walk1" time=".25" />
+   <frame src="mage_f.attack2" time=".1" />
+   <frame src="mage_f.attack3" time=".1" />
+   <frame src="mage_f.attack4" time=".1" />
+</isoanim>
+
+<isoanim id="mage_f.charge" loop="clamp">
+   <frame src="mage_f.cast" time=".25" />
+</isoanim>
+
+<isoanim id="mage_f.spell_attack" loop="clamp">
+   <frame src="mage_f.attack0" time=".75" />
+   <frame src="mage_f.attack3" time=".25" />
+</isoanim>
+
+<isoanim id="mage_f.hit" loop="clamp">
+   <frame src="mage_f.hit" time="1.0" />
+</isoanim>
+
+<!-- jump is normalized;
+   25% for prep
+   25% for upward
+   25% for downward
+   25% for landing -->
+<isoanim id="mage_f.jump" loop="clamp">
+   <frame src="mage_f.crouch" time=".25" />
+   <frame src="mage_f.cast" time=".50" />
+   <frame src="mage_f.crouch" time=".25" />
+</isoanim>
+

@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="General">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{b7f231c4-746f-428f-b8ea-c95ce95e27f3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main_Win32.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCommon.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="MapDefinition.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGenStep.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="BlockDefinition.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Encounter.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="EncounterState.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="FlyoutText.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Warrior.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Archer.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="IsoSprite.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="IsoAnimation.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimSet.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Mage.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Fireball.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="App.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCommon.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineBuildPreferences.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="MapDefinition.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenStep.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockDefinition.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Encounter.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="EncounterState.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="FlyoutText.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Warrior.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Archer.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Projectile.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="IsoSprite.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="IsoAnimation.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimSet.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Mage.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Fireball.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\Run_Win32\Data\Data\GameConfig.xml">
+      <Filter>Data</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Data\Tiles.xml">
+      <Filter>Data</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Data\Maps.xml">
+      <Filter>Data</Filter>
+    </Xml>
+  </ItemGroup>
+</Project>

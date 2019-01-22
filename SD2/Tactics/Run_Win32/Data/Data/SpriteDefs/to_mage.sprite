@@ -1,0 +1,341 @@
+<?xml version="1.0"?>
+
+<sprite id="mage_f.portrait">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="152,12,236,129" />
+	<pivot position="0.5,0" />
+</sprite>
+
+<sprite id="mage_f.tr.idle">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="10,13,26,40" />
+	<pivot position="0.5,0.0" />
+</sprite>
+<sprite id="mage_f.al.idle">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="11,45,26,72" />
+	<pivot position="0.5,0.0" />
+</sprite>
+
+<sprite id="mage_f.tr.walk0">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="30,12,46,39" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="mage_f.al.walk0">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="31,44,46,70" />
+	<pivot position="0.5,0" />
+</sprite>
+
+<sprite id="mage_f.tr.walk1">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="50,12,66,38" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="mage_f.al.walk1">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="50,44,66,71" />
+	<pivot position="0.5,0" />
+</sprite>
+
+<sprite id="mage_f.tr.hit">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="70,13,86,40" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="mage_f.al.hit">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="71,45,87,72" />
+	<pivot position="0.5,0" />
+</sprite>
+
+<sprite id="mage_f.tr.weak">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="91,14,106,40" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="mage_f.al.weak">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="91,47,106,72" />
+	<pivot position="0.5,0" />
+</sprite>
+
+<sprite id="mage_f.tr.cast">
+   <diffuse src="Sprites/to_mage.split.png" />
+   <ppu pixels="16" />
+   <uv layout="pixel" bounds="110,13,125,40" />
+   <pivot position="0.5,0" />
+</sprite>
+<sprite id="mage_f.al.cast">
+   <diffuse src="Sprites/to_mage.split.png" />
+   <ppu pixels="16" />
+   <uv layout="pixel" bounds="110,43,126,72" />
+   <pivot position="0.5,0" />
+</sprite>
+
+<sprite id="mage_f.tr.crouch">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="131,16,147,40" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="mage_f.al.crouch">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="130,48,146,72" />
+	<pivot position="0.5,0" />
+</sprite>
+
+<sprite id="mage_f.tr.dead">
+   <diffuse src="Sprites/to_mage.split.png" />
+   <ppu pixels="16" />
+   <uv layout="pixel" bounds="10,84,26,103" />
+   <pivot position="0.5,0" />
+</sprite>
+<sprite id="mage_f.al.dead">
+   <diffuse src="Sprites/to_mage.split.png" />
+   <ppu pixels="16" />
+   <uv layout="pixel" bounds="11,113,27,135" />
+   <pivot position="0.5,0" />
+</sprite>
+
+<sprite id="mage_f.tr.attack0">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="31,75,47,104" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="mage_f.al.attack0">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="30,108,46,136" />
+	<pivot position="0.5,0" />
+</sprite>
+
+<sprite id="mage_f.tr.attack1">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="50,77,66,104" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="mage_f.al.attack1">
+   <diffuse src="Sprites/to_mage.split.png" />
+   <ppu pixels="16" />
+   <uv layout="pixel" bounds="51,109,67,136" />
+   <pivot position="0.5,0" />
+</sprite>
+
+<sprite id="mage_f.tr.attack2">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="71,76,87,101" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="mage_f.al.attack2">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="70,107,86,136" />
+	<pivot position="0.5,0" />
+</sprite>
+
+<sprite id="mage_f.tr.attack3">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="90,76,108,104" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="mage_f.al.attack3">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="89,108,107,136" />
+	<pivot position="0.5,0" />
+</sprite>
+
+<sprite id="mage_f.al.attack4">
+   <diffuse src="Sprites/to_mage.split.png" />
+   <ppu pixels="16" />
+   <uv layout="pixel" bounds="110,108,126,136" />
+   <pivot position="0.5,0" />
+</sprite>
+<sprite id="mage_f.tr.attack4">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="111,76,127,104" />
+	<pivot position="0.5,0" />
+</sprite>
+
+<!-- resume renaming -->
+<sprite id="to_mage_27">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="70,140,86,168" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_28">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="111,140,127,168" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_29">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="30,141,46,168" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_30">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="51,141,66,166" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_31">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="10,142,26,168" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_32">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="91,143,107,168" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_33">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="131,143,146,168" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_34">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="152,143,236,260" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_35">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="31,173,46,199" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_36">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="50,173,66,199" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_37">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="11,174,26,200" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_38">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="70,174,86,200" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_39">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="110,175,126,200" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_40">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="90,176,105,200" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_41">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="131,177,146,200" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_42">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="31,205,46,231" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_43">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="51,206,67,232" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_44">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="70,206,86,230" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_45">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="90,207,108,232" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_46">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="111,207,127,232" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_47">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="10,212,27,231" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_48">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="32,237,48,264" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_49">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="71,237,86,264" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_50">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="89,237,107,264" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_51">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="111,237,127,264" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_52">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="51,238,67,264" />
+	<pivot position="0.5,0" />
+</sprite>
+<sprite id="to_mage_53">
+	<diffuse src="Sprites/to_mage.split.png" />
+	<ppu pixels="16" />
+	<uv layout="pixel" bounds="11,240,27,263" />
+	<pivot position="0.5,0" />
+</sprite>

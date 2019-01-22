@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<isoanim id="knight_f.idle" loop="loop">
+   <frame src="knight_f.idle" time="1.0" />
+</isoanim>
+<isoanim id="knight_f.weak" loop="loop">
+   <frame src="knight_f.weak" time="1.0" />
+</isoanim>
+<isoanim id="knight_f.dead" loop="loop">
+   <frame src="knight_f.dead" time="1.0" />
+</isoanim>
+<isoanim id="knight_f.walk" loop="loop">
+   <frame src="knight_f.walk0" time=".25" />
+   <frame src="knight_f.walk1" time=".25" />
+</isoanim>
+<isoanim id="knight_f.attack" loop="clamp">
+   <frame src="knight_f.walk1" time=".25" />
+   <frame src="knight_f.attack2" time=".1" />
+   <frame src="knight_f.attack3" time=".1" />
+   <frame src="knight_f.attack4" time=".1" />
+</isoanim>
+
+<isoanim id="knight_f.charge" loop="clamp">
+   <frame src="knight_f.cast" time=".25" />
+</isoanim>
+
+<isoanim id="knight_f.spell_attack" loop="clamp">
+   <frame src="knight_f.attack0" time=".75" />
+   <frame src="knight_f.attack3" time=".25" />
+</isoanim>
+
+<isoanim id="knight_f.hit" loop="clamp">
+   <frame src="knight_f.hit" time="1.0" />
+</isoanim>
+
+<isoanim id="knight_f.die" loop="clamp">
+   <frame src="knight_f.crouch" time=".5" />
+   <frame src="knight_f.dead" time="1.0" />
+</isoanim>
+
+<!-- jump is normalized;
+   25% for prep
+   25% for upward
+   25% for downward
+   25% for landing -->
+<isoanim id="knight_f.jump" loop="clamp">
+   <frame src="knight_f.crouch" time=".25" />
+   <frame src="knight_f.cast" time=".50" />
+   <frame src="knight_f.crouch" time=".25" />
+</isoanim>
+
