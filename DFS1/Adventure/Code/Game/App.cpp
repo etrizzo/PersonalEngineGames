@@ -34,6 +34,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 	float maxClientFraction = g_gameConfigBlackboard.GetValue("windowHeight", .9f);
 	g_Window = new Window(name.c_str(), aspect, applicationInstanceHandle, maxClientFraction);
 
+
 	m_appTime = 0.f;
 	m_bottomLeft = Vector2(0.f,0.f);
 	m_topRight = Vector2(screenWidth,screenHeight);
@@ -64,6 +65,9 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_theRenderer->SetCamera(g_theGame->m_camera);
 
 	RemoteCommandService::GetInstance()->Startup();
+
+
+
 }
 
 

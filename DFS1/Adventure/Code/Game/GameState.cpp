@@ -102,6 +102,11 @@ void GameState_Attract::RenderUI()
 	g_theRenderer->DrawTextInBox2D("Adventure", screenBounds, Vector2(.5f,.5f), screenBounds.GetHeight() * .08f);
 	g_theRenderer->DrawTextInBox2D("Press Start", screenBounds, Vector2(.5f,.3f), screenBounds.GetHeight() * .03f);
 
+	Texture* dispTexture = g_theRenderer->CreateOrGetTexture("Noise/heat_displacements.png");
+	g_theRenderer->BindTexture(*dispTexture, 4);
+	g_theRenderer->ApplyEffect("watercolor");
+	g_theRenderer->ReleaseTexture(4);
+	g_theRenderer->FinishEffects();
 	//g_theGame->SetMainCamera();
 }
 
@@ -181,6 +186,21 @@ void GameState_Encounter::RenderGame()
 	m_currentAdventure->Render();
 	g_theGame->m_renderPath->RenderSceneForCamera(g_theGame->m_camera, m_currentAdventure->GetScene());
 	m_currentAdventure->PostRender();
+
+
+	g_theRenderer->BindShaderProgram("watercolor");
+	float windowWidthPixels  = (float) g_Window->GetWidth();
+	float windowHeightPixels = (float) g_Window->GetHeight();
+	Vector2 pixelSizeUVS = Vector2( 1.f / windowWidthPixels, 1.f / windowHeightPixels);
+	g_theRenderer->BindUniform("TEXEL_SIZE_X", pixelSizeUVS.x);
+	g_theRenderer->BindUniform("TEXEL_SIZE_Y", pixelSizeUVS.y);
+
+	//bind the displacement texture
+	Texture* dispTexture = g_theRenderer->CreateOrGetTexture("Noise/heat_displacements.png");
+	g_theRenderer->BindTexture(*dispTexture, 4);
+	g_theRenderer->ApplyEffect("watercolor");
+	g_theRenderer->ReleaseTexture(4);
+	g_theRenderer->FinishEffects();
 }
 
 void GameState_Encounter::RenderUI()

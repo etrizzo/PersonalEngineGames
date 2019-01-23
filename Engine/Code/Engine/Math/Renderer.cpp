@@ -471,6 +471,20 @@ void Renderer::DrawMesh(SubMesh * mesh)
 	}
 }
 
+void Renderer::BindUniform(std::string uniformName, const float & value)
+{
+	GLuint program_handle = m_currentShader->GetProgramHandle(); 
+
+	GLint bind  = glGetUniformLocation(program_handle, uniformName.c_str() );
+
+	if (bind >= 0) {
+		glProgramUniform1f(program_handle, bind, (GLfloat) value);
+		//glUniform1fv( bind, 1, GL_FALSE, (GLfloat*)&m_currentCamera->m_projMatrix.m_top );
+	}
+}
+
+
+
 void Renderer::BindRendererUniforms()
 {
 	GLuint program_handle = m_currentShader->GetProgramHandle(); 

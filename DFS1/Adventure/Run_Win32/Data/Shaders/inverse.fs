@@ -7,5 +7,5 @@ void main( void )
 {
 	vec4 diffuse = texture( gTexDiffuse, passUV );
 	vec4 temp = diffuse * passColor;
-	outColor = vec4(1.f - temp.r, 1.f - temp.g, 1.f - temp.b, ( temp.a *.6f));
+	outColor = vec4(1.f - temp.r, 1.f - temp.g, 1.f - temp.b, temp.a);
 }

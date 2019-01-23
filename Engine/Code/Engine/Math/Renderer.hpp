@@ -98,6 +98,9 @@ public:
 	void DrawMeshImmediate(  Vertex3D_PCU* verts, int numVerts, eDrawPrimitiveType drawPrimitive, const int* indices = nullptr, int numIndices = 0);
 	void DrawMesh(SubMesh* mesh);
 
+	void BindUniform(std::string uniformName, const float& value);
+	void BindUniform(std::string uniformName, const Vector2& value);
+
 	void BindRendererUniforms();
 	void BindRenderState(RenderState state);
 	void BindMeshToProgram(ShaderProgram* program, SubMesh* mesh);
