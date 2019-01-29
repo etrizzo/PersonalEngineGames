@@ -63,6 +63,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 	RegisterCommands();
 	CommandStartup();
 	g_theRenderer->SetCamera(g_theGame->m_camera);
+	g_theRenderer->SetWindowSize(g_Window);
 
 	RemoteCommandService::GetInstance()->Startup();
 

@@ -188,12 +188,12 @@ void GameState_Encounter::RenderGame()
 	m_currentAdventure->PostRender();
 
 
-	g_theRenderer->BindShaderProgram("watercolor");
-	float windowWidthPixels  = (float) g_Window->GetWidth();
-	float windowHeightPixels = (float) g_Window->GetHeight();
-	Vector2 pixelSizeUVS = Vector2( 1.f / windowWidthPixels, 1.f / windowHeightPixels);
-	g_theRenderer->BindUniform("TEXEL_SIZE_X", pixelSizeUVS.x);
-	g_theRenderer->BindUniform("TEXEL_SIZE_Y", pixelSizeUVS.y);
+	//g_theRenderer->BindShaderProgram("watercolor");
+	//float windowWidthPixels  = (float) g_Window->GetWidth();
+	//float windowHeightPixels = (float) g_Window->GetHeight();
+	//Vector2 pixelSizeUVS = Vector2( 1.f / windowWidthPixels, 1.f / windowHeightPixels);
+	//g_theRenderer->BindUniform("TEXEL_SIZE_X", pixelSizeUVS.x);
+	//g_theRenderer->BindUniform("TEXEL_SIZE_Y", pixelSizeUVS.y);
 
 	//bind the displacement texture
 	Texture* dispTexture = g_theRenderer->CreateOrGetTexture("Noise/heat_displacements.png");
