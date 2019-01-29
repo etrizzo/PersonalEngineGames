@@ -48,6 +48,7 @@ public:
 private:
 	HWND m_hwnd; // intptr_t  
 	Vector2 m_dimensions;
+	Vector2 m_center;
 
 	
 

@@ -134,7 +134,7 @@ protected:
 	// note these variables are unrelated to the debug simulation on the session
 	// but will end up reflecting those numbers.
 	float m_lossRate	= 0.0f;       // loss rate we perceive to this connection
-	unsigned int m_rttMS	= 0.0f;       // latency perceived on this connection
+	unsigned int m_rttMS	= 0U;       // latency perceived on this connection
 
 	uint16_t m_nextSentReliableID = 0;
 	uint16_t m_highestReceivedReliableID = 0U;

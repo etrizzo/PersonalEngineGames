@@ -88,6 +88,7 @@ Window::Window(const char * name, const float aspectRatio, HINSTANCE application
 	m_cursor = LoadCursor( NULL, IDC_ARROW );
 
 	m_dimensions = Vector2(clientWidth, clientHeight);
+	m_center = GetCenterInDesktopCoords();
 }
 
 Window::~Window()
@@ -121,7 +122,7 @@ void Window::SetInputSystem(InputSystem * inputSystem)
 
 Vector2 Window::GetCenter() const
 {
-	return m_dimensions * .5f;
+	return m_center;
 }
 
 Vector2 Window::GetCenterInDesktopCoords() const

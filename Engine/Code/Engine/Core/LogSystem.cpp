@@ -1,12 +1,14 @@
 #include "LogSystem.hpp"
 #include "Engine/Core/StringUtils.hpp"
 #include "Engine/Core/DevConsole.hpp"
+#include "Game/EngineBuildPreferences.hpp"
 #include <stdarg.h>
 #include <corecrt_io.h>
 #include <iosfwd>
 
 LogSystem* LogSystem::s_instance;
 
+#if defined LOGGING_ENABLED
 void LogSystemStartup()
 {
 	LogSystem::GetInstance()->m_thread = ThreadCreate(LogThreadWorker);
@@ -24,6 +26,11 @@ void LogSystemShutdown()
 
 	LogSystem::GetInstance()->m_thread = nullptr; 
 }
+#else
+void LogSystemStartup() {};
+void LogSystemShutdown() {};
+#endif
+
 
 void LogSystemFlush()
 {

@@ -2,7 +2,9 @@
 #include "Engine/Networking/Net.hpp"
 #include "Engine/Core/ErrorWarningAssert.hpp"
 #include "Engine/Core/DevConsole.hpp"
+#include "Game/EngineBuildPreferences.hpp"
 
+#if defined NET_ENABLED
 bool Net::Startup()
 {
 	//pick the version we want
@@ -27,6 +29,8 @@ bool Net::Shutdown()
 	::WSACleanup();
 	return true;
 }
+
+
 
 void LogIP(sockaddr_in * in)
 {
@@ -345,5 +349,26 @@ bool HostExample(void * port)
 	// END NEW-- 
 }
 
+#else
+bool Net::Startup() { return false; };
 
+bool Net::Shutdown() { return false; };
+
+bool GetAddressForHost(sockaddr* , int* , char const* , char const*) 
+{ 
+	return false; 
+}
+
+void ConnectExample(std::string, std::string)
+{
+	ConsolePrintf(RGBA::RED, "Network systems disabled.");
+
+}
+
+bool HostExample(void*)
+{
+	ConsolePrintf(RGBA::RED, "Network systems disabled.");
+	return false;
+}
+#endif
 

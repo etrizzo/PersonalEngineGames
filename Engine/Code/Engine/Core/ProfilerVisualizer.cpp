@@ -57,8 +57,8 @@ void ProfilerVisualizer::HandleInput(InputSystem* input)
 
 	if (input->WasKeyJustPressed('M')){
 		m_controllingInput = !m_controllingInput;
-		input->ToggleCursor();
-		input->ToggleMouseLock();
+		input->ShowCursor(m_controllingInput);
+		input->SetMouseLocked(!m_controllingInput);
 		if (m_controllingInput){
 			SetCursor(g_Window->m_cursor);
 		} else {

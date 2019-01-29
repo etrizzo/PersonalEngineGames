@@ -103,3 +103,4 @@ void LogToggleWhitelist();
 void WriteLogToFile(log_t *data, void* user_args );
 void WriteLogToConsole(log_t *data, void* user_args );
 void WriteLogToOutput(log_t * data, void* user_args );
+

@@ -418,19 +418,19 @@ void DevConsole::ReadConsoleHistoryFromFile()
 void DevConsole::RegisterCommands()
 {
 	CommandRegister("quit", CommandQuit, "exits application");
-	CommandRegister("sum", CommandSum, "sums 2 arguments as integers", "sum <int> <int>");
+	//CommandRegister("sum", CommandSum, "sums 2 arguments as integers", "sum <int> <int>");
 	CommandRegister("help", CommandHelp, "prints all known commands. Keyword only shows commands whose name contains keyword.", "help <keyword>");
 	CommandRegister("clear", CommandClear, "clears output of dev console");
-	CommandRegister("echo_with_color", CommandEchoWithColor, "prints <str> with color (<r>, <g>, <b>)", "echo_with_color (<r>, <g>, <b>, <optional a>) \"<string>\"");
-	CommandRegister("save_log", CommandSaveLog, "Saves log to Logs/<filename.txt>", "save_log <filename.txt>");
+	CommandRegister("save_console_log", CommandSaveLog, "Saves console log to Logs/<filename.txt>", "save_log <filename.txt>");
 
-#ifdef RCS_ENABLED	
+#ifdef NET_ENABLED
 	//networking
 	CommandRegister("net_send_message", CommandSendMessage, "Sends a message to forseth", "net_send_message \"ip:port\" \"msg\"");
 	CommandRegister("net_print_local_ip", CommandPrintLocalAddress, "prints local ip");
 	CommandRegister("net_host_server", CommandHostServer, "starts hosting a server i guess");
+#endif
 
-
+#ifdef RCS_ENABLED	
 	//RCS
 	CommandRegister("rc", CommandSendRemoteMessage, "Sends command to specified connections through remote command service", "rc <clientindex> \"message\"");
 	CommandRegister("rca", CommandSendRemoteMessageAll, "Sends command to all connections and runs locally", "rca \"message\"");

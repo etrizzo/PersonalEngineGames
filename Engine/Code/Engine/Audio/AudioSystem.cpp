@@ -13,7 +13,7 @@
 //	Downside: ALL games must now have this Code/Game/EngineBuildPreferences.hpp file.
 //
 #include "Game/EngineBuildPreferences.hpp"
-#if !defined( ENGINE_DISABLE_AUDIO )
+#if defined( AUDIO_ENABLED )
 
 
 //-----------------------------------------------------------------------------------------------
@@ -224,4 +224,4 @@ SoundPlaybackID AudioSystem::PlayOneOffSoundFromGroup(std::string groupName)
 
 
 
-#endif // !defined( ENGINE_DISABLE_AUDIO )
+#endif // defined( AUDIO_ENABLED )
