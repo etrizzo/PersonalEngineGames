@@ -170,7 +170,7 @@ void StoryGraph::GenerateSkeleton(int numPlotNodes)
 		newData = new StoryData(sourceNode);
 		addNode = new StoryNode(newData);
 		//try to add the cloned data, if it doesn't work, clean up
-		if (!AddPlotNode(addNode)){
+		if (!AddEventNode(addNode)){
 			delete newData;
 			delete addNode;
 			newData = nullptr;
@@ -248,7 +248,7 @@ StoryNode * StoryGraph::AddSinglePlotNode()
 		newData = new StoryData(sourceNode);
 		addNode = new StoryNode(newData);
 		//try to add the cloned data, if it doesn't work, clean up
-		if (!AddPlotNode(addNode)){
+		if (!AddEventNode(addNode)){
 			delete newData;
 			delete addNode;
 			newData = nullptr;
@@ -342,7 +342,7 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 			std::vector<Character*> charsForNode = GetCharactersForNode(sourceNode, edge);
 			//if you found characters for the node, add the node.
 			if (charsForNode.size() != 0){
-				if (AddDetailNode(sourceNode, edge, charsForNode)){
+				if (AddOutcomeNode(sourceNode, edge, charsForNode)){
 					added = true;
 				} else {
 					tries++;
@@ -398,13 +398,13 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 	//return added;	
 }
 
-bool StoryGraph::AddPlotNode(StoryNode* newPlotNode)
+bool StoryGraph::AddEventNode(StoryNode* newPlotNode)
 {
 
 	//walk along story until you can place the node
 	std::queue<StoryEdge*> openEdges;
 	//openEdges.push(m_startNode->m_outboundEdges[0]);
-	StoryEdge* startEdge = m_graph.m_edges[GetRandomIntLessThan(m_graph.m_edges.size())];
+	StoryEdge* startEdge = GetEdgeForNewEventNode();
 	if (startEdge->GetCost()->m_isLocked){
 		return false;
 	}
@@ -456,7 +456,7 @@ bool StoryGraph::AddPlotNode(StoryNode* newPlotNode)
 	return foundSpot;
 }
 
-bool StoryGraph::AddDetailNode(StoryNode * newDetailNode)
+bool StoryGraph::AddOutcomeNode(StoryNode * newDetailNode)
 {
 
 	//walk along story until you can place the node
@@ -491,7 +491,7 @@ bool StoryGraph::AddDetailNode(StoryNode * newDetailNode)
 	return foundSpot;
 }
 
-bool StoryGraph::AddDetailNode(StoryDataDefinition * dataDefinition, StoryEdge * edgeToAddAt, std::vector<Character*> charactersForNode)
+bool StoryGraph::AddOutcomeNode(StoryDataDefinition * dataDefinition, StoryEdge * edgeToAddAt, std::vector<Character*> charactersForNode)
 {
 	//at this point, we need to know what characters will be set for this node set.
 	StoryNode* startNode = edgeToAddAt->GetStart();
@@ -1309,6 +1309,21 @@ std::vector<Character*> StoryGraph::GetCharactersForNode(StoryDataDefinition* no
 	}
 	//if not, there's no permutation of characters that satisfy the node right now.
 	return std::vector<Character*>();
+}
+
+StoryEdge * StoryGraph::GetEdgeForNewEventNode() const
+{
+	int numEdges = m_graph.m_edges.size();
+	StoryEdge* eventEdge = nullptr;
+	while (eventEdge == nullptr){
+		eventEdge = m_graph.m_edges[GetRandomIntLessThan(numEdges)];
+		if (eventEdge->GetStart()->m_data->m_type == PLOT_NODE && eventEdge->GetEnd()->m_data->m_type == DETAIL_NODE){
+			//we are in between an event node and it's subsequent outcome node
+			//reroll
+			eventEdge = nullptr;
+		}
+	}
+	return eventEdge;
 }
 
 

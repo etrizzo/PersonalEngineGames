@@ -59,19 +59,20 @@ void CommandRecompileShaders(Command& cmd);
 void CommandSetGodMode(Command& cmd);
 void CommandToggleGodMode(Command& cmd);
 
-void CommandToggleProfiler(Command& cmd);
-void CommandPrintProfilerReport(Command& cmd);
-void CommandProfilePause(Command& cmd);
-void CommandProfileResume(Command& cmd);
+//void CommandToggleProfiler(Command& cmd);
+//void CommandPrintProfilerReport(Command& cmd);
+//void CommandProfilePause(Command& cmd);
+//void CommandProfileResume(Command& cmd);
+//
 
 
-
-void AddProfilerFrameAsTreeToConsole();
-void AddProfilerFrameAsFlatToConsole();
-void PrintTree(ProfilerReportEntry* tree, int depth = 0);
+//void AddProfilerFrameAsTreeToConsole();
+//void AddProfilerFrameAsFlatToConsole();
+//void PrintTree(ProfilerReportEntry* tree, int depth = 0);
 
 std::string FormatProfilerReport(ProfilerReportEntry* entry, int parentCount = 0);
 
+void CommandSetSeed(Command& cmd);
 void CommandPrintGraph(Command& cmd);
 void CommandGenerateGraph(Command& cmd);
 void CommandFindPath(Command& cmd);

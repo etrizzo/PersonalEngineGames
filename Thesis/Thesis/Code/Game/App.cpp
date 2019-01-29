@@ -33,7 +33,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 	float screenWidth = g_gameConfigBlackboard.GetValue("width", 1000.f);
 	float screenHeight = screenWidth / aspect;
 	std::string name = g_gameConfigBlackboard.GetValue("appName", "Win32 OpenGL Test App");
-	g_Window = new Window(name.c_str(), aspect, applicationInstanceHandle);
+	g_Window = new Window(name.c_str(), aspect, applicationInstanceHandle, .9f);
 
 	m_appTime = 0.f;
 	m_farTopRight = m_nearBottomLeft + Vector3(screenWidth,screenHeight, 100.f);
@@ -59,7 +59,8 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_devConsole = new DevConsole(UIBounds);
 	g_devConsole->SetRenderer(g_theRenderer);
 
-	g_profilerVisualizer = new ProfilerVisualizer(g_theRenderer, g_theInput, UIBounds);
+	//g_profilerVisualizer = new ProfilerVisualizer(g_theRenderer, g_theInput, UIBounds);
+	ProfilerVisualizer::GetInstance(g_theRenderer, g_theInput, UIBounds);
 
 	LogSystemStartup();
 	Net::Startup();
@@ -117,7 +118,7 @@ void App::Update()
 	//if (DevConsoleIsOpen()){
 	g_devConsole->Update(ds);
 	//}
-	g_profilerVisualizer->Update();
+	ProfilerVisualizer::GetInstance()->Update();
 
 	m_appTime = GetCurrentTimeSeconds();
 	HandleInput();
@@ -132,8 +133,8 @@ void App::Render()
 	g_theGame->Render();
 
 	PROFILE_PUSH("RenderProfiler");
-	if (g_profilerVisualizer->IsOpen()){
-		g_profilerVisualizer->Render();
+	if (ProfilerVisualizer::GetInstance()->IsOpen()){
+		ProfilerVisualizer::GetInstance()->Render();
 	}
 	PROFILE_POP();
 
@@ -164,15 +165,8 @@ void App::RegisterCommands()
 	CommandRegister("debug_show_tasks", CommandDebugPrintTasks, "Prints all debug render types");
 	CommandRegister("debug_task", CommandDebugDrawTask, "Draws debug render task", "debug_task <render_task_type>");
 
-	CommandRegister("set_god_mode", CommandSetGodMode, "Sets god mode", "set_god_mode <bool>");
-	CommandRegister("toggle_god_mode", CommandToggleGodMode, "Toggles god mode");
-	CommandRegister("tgm", CommandToggleGodMode, "Toggles god mode");
 
-	CommandRegister("profiler", CommandToggleProfiler, "Toggles profiler view");
-	CommandRegister("profiler_report", CommandPrintProfilerReport, "Prints a frame of the profiler to the console", "profiler_report <tree|flat>");
-	CommandRegister("profiler_pause", CommandProfilePause, "Pauses profiling");
-	CommandRegister("profiler_resume", CommandProfileResume, "Resumes profiling");
-
+	CommandRegister("set_seed", CommandSetSeed, "Sets the random seed for the program", "set_seed <int>");
 	CommandRegister("output_graph_to_console", CommandPrintGraph, "Prints current graph as text");
 	CommandRegister("generate_graph", CommandGenerateGraph, "Re-generates story graph");
 	CommandRegister("generate_skeleton", CommandGenerateSkeleton, "Generates n plot nodes for a graph", "generate_skeleton, <int>");
@@ -187,6 +181,7 @@ void App::RegisterCommands()
 
 	CommandRegister("read_default_data", CommandReadDefaultData, "reads the default data set into the graph and resets it.");
 	CommandRegister("read_murder_data", CommandReadMurderData, "reads the murder mystery data set into the graph and resets it.");
+
 }
 
 void App::HandleInput()
@@ -203,7 +198,7 @@ void App::HandleInput()
 	}
 
 	if (g_theInput->WasKeyJustPressed(VK_F2)){
-		g_profilerVisualizer->ToggleOpen();
+		ProfilerVisualizer::GetInstance()->ToggleOpen();
 	}
 
 
@@ -214,11 +209,11 @@ void App::HandleInput()
 		}
 
 		//have game handle input
-		if (!g_profilerVisualizer->IsControllingInput()){
+		if (!ProfilerVisualizer::GetInstance()->IsControllingInput()){
 			g_theGame->HandleInput();
 		}
-		if (g_profilerVisualizer->IsOpen()){
-			g_profilerVisualizer->HandleInput(g_theInput);
+		if (ProfilerVisualizer::GetInstance()->IsOpen()){
+			ProfilerVisualizer::GetInstance()->HandleInput(g_theInput);
 		}
 
 	/*	if (g_theInput->WasKeyJustPressed(VK_F1)){
@@ -396,75 +391,85 @@ void CommandToggleGodMode(Command & cmd)
 	ConsolePrintf(("God mode is: " +  std::to_string(g_theGame->m_godMode)).c_str());
 }
 
-void CommandToggleProfiler(Command & cmd)
-{
-	UNUSED(cmd);
-	g_profilerVisualizer->ToggleOpen();
-}
+//void CommandToggleProfiler(Command & cmd)
+//{
+//	UNUSED(cmd);
+//	ProfilerVisualizer::GetInstance()->ToggleOpen();
+//}
+//
+//void CommandPrintProfilerReport(Command & cmd)
+//{
+//	UNUSED(cmd);
+//	std::string type = cmd.GetNextString();
+//	if (type == "flat"){
+//		AddProfilerFrameAsFlatToConsole();
+//	} else {
+//		AddProfilerFrameAsTreeToConsole();
+//	}
+//}
+//
+//void CommandProfilePause(Command & cmd)
+//{
+//	UNUSED(cmd);
+//	Profiler::GetInstance()->Pause();
+//}
+//
+//void CommandProfileResume(Command & cmd)
+//{
+//	UNUSED(cmd);
+//	Profiler::GetInstance()->Resume();
+//}
 
-void CommandPrintProfilerReport(Command & cmd)
+//void AddProfilerFrameAsTreeToConsole()
+//{
+//	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
+//
+//	if (tree != nullptr){
+//		ProfilerReport* report = new ProfilerReport();
+//		report->GenerateReportTreeFromFrame(tree);
+//		if (tree != nullptr){
+//			PrintTree(report->m_root);
+//		}
+//	} else {
+//		ConsolePrintf(RGBA::RED, "No profiler frame found - profiling may be disabled in EngineBuildPreferences.hpp");
+//	}
+//}
+//
+//void AddProfilerFrameAsFlatToConsole()
+//{
+//	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
+//
+//	if (tree != nullptr){
+//		ProfilerReport* report = new ProfilerReport();
+//		report->GenerateReportFlatFromFrame(tree);
+//		if (tree != nullptr){
+//			PrintTree(report->m_root);
+//		}
+//	} else {
+//		ConsolePrintf(RGBA::RED, "No profiler frame found- profiling may be disabled in EngineBuildPreferences.hpp");
+//	}
+//}
+//
+//void PrintTree(ProfilerReportEntry * tree, int depth)
+//{
+////	ConsolePrintf("%.64s : %.8fms", tree->m_id, tree->GetTotalElapsedTime());
+//	std::string text = FormatProfilerReport(tree, depth);
+//	ConsolePrint(text.c_str());
+//	for ( ProfilerReportEntry* child : tree->m_children){
+//		PrintTree(child, depth + 1);
+//	}
+//}
+
+
+void CommandSetSeed(Command & cmd)
 {
-	UNUSED(cmd);
-	std::string type = cmd.GetNextString();
-	if (type == "flat"){
-		AddProfilerFrameAsFlatToConsole();
-	} else {
-		AddProfilerFrameAsTreeToConsole();
+	int seed = cmd.GetNextInt();
+	if (seed == 0){
+		seed = (int) time(0);
 	}
+	srand((unsigned int) seed);
+	ConsolePrintf("Setting seed to %i", seed);
 }
-
-void CommandProfilePause(Command & cmd)
-{
-	UNUSED(cmd);
-	Profiler::GetInstance()->Pause();
-}
-
-void CommandProfileResume(Command & cmd)
-{
-	UNUSED(cmd);
-	Profiler::GetInstance()->Resume();
-}
-
-void AddProfilerFrameAsTreeToConsole()
-{
-	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
-
-	if (tree != nullptr){
-		ProfilerReport* report = new ProfilerReport();
-		report->GenerateReportTreeFromFrame(tree);
-		if (tree != nullptr){
-			PrintTree(report->m_root);
-		}
-	} else {
-		ConsolePrintf(RGBA::RED, "No profiler frame found - profiling may be disabled in EngineBuildPreferences.hpp");
-	}
-}
-
-void AddProfilerFrameAsFlatToConsole()
-{
-	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
-
-	if (tree != nullptr){
-		ProfilerReport* report = new ProfilerReport();
-		report->GenerateReportFlatFromFrame(tree);
-		if (tree != nullptr){
-			PrintTree(report->m_root);
-		}
-	} else {
-		ConsolePrintf(RGBA::RED, "No profiler frame found- profiling may be disabled in EngineBuildPreferences.hpp");
-	}
-}
-
-void PrintTree(ProfilerReportEntry * tree, int depth)
-{
-//	ConsolePrintf("%.64s : %.8fms", tree->m_id, tree->GetTotalElapsedTime());
-	std::string text = FormatProfilerReport(tree, depth);
-	ConsolePrint(text.c_str());
-	for ( ProfilerReportEntry* child : tree->m_children){
-		PrintTree(child, depth + 1);
-	}
-}
-
 
 void CommandPrintGraph(Command & cmd)
 {
@@ -475,14 +480,14 @@ void CommandPrintGraph(Command & cmd)
 
 void CommandGenerateGraph(Command & cmd)
 {
-	int seed = cmd.GetNextInt();
-	if (seed != 0){
-		srand((unsigned int) seed);
-	} else {
-		unsigned int randoSeed = (unsigned int) time(0);
-		srand(randoSeed);
-		ConsolePrintf("Generating graph with seed %i", randoSeed);
-	}
+	//int seed = cmd.GetNextInt();
+	//if (seed != 0){
+	//	srand((unsigned int) seed);
+	//} else {
+	//	unsigned int randoSeed = (unsigned int) time(0);
+	//	srand(randoSeed);
+	//	ConsolePrintf("Generating graph with seed %i", randoSeed);
+	//}
 	g_theGame->GenerateGraph();
 }
 

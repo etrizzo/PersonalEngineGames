@@ -79,9 +79,9 @@ public:
 	void AddDetailNodesToDesiredSize(int desiredSize = 10);
 	void GenerateStartAndEnd();
 	bool TryToAddDetailNodeAtEdge(StoryEdge* edge, int maxTries = 10);
-	bool AddPlotNode(StoryNode* newPlotNode);
-	bool AddDetailNode(StoryNode* newDetailNode);
-	bool AddDetailNode(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode);
+	bool AddEventNode(StoryNode* newPlotNode);
+	bool AddOutcomeNode(StoryNode* newDetailNode);
+	bool AddOutcomeNode(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode);
 	bool AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToAdd, bool branchToFutureNodesIfNecessary);
 
 	//by default, adds 1/4 * (numNodes) branches
@@ -153,6 +153,9 @@ public:
 protected:
 	StoryNode* m_startNode							= nullptr;
 	StoryNode* m_endNode							= nullptr;
+
+	//finds a good spot for a new pair of nodes.
+	StoryEdge* GetEdgeForNewEventNode()	const;
 
 	DirectedGraph<StoryData*, StoryState*> m_graph	= DirectedGraph<StoryData*, StoryState*>();
 	std::vector<Character*> m_allCharacters			= std::vector<Character*>();
