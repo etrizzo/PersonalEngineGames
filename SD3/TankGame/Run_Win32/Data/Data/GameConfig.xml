@@ -1,0 +1,10 @@
+<GameConfig
+	
+  appName="TankGame"
+	windowAspect="1.7"
+  windowHeight=".65"
+  width="10"
+	isFullscreen="false"
+  
+	
+/>
