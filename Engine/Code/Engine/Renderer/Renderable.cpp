@@ -40,10 +40,12 @@ Renderable::Renderable(std::string objFile, std::string matFile)
 	if (mat == nullptr){
 		Material::LoadMaterials(matFile);		//try to load materials as a .mtl file
 		//at this point materials specified in the .obj will load correctly
+	} else {
+		m_materials.push_back(mat);
 	}
 
 
-	CreateMeshFromOBJ(objFile); 
+	CreateMeshFromOBJ(objFile, mat != nullptr); 
 }
 
 Material * Renderable::GetEditableMaterial(int index)
@@ -126,14 +128,16 @@ void Renderable::SetPosition(Vector3 pos)
 	m_transform.SetLocalPosition(pos);
 }
 
-void Renderable::CreateMeshFromOBJ(std::string objFile)
+void Renderable::CreateMeshFromOBJ(std::string objFile, bool matFound)
 {
 	m_mesh = Mesh::GetMesh(objFile);
 	Strings mats;
 	if (m_mesh == nullptr){
 		ObjLoader obj = ObjLoader(objFile);
 		m_mesh = obj.CreateMesh();
-		mats = obj.GetMaterials();
+		if (!matFound){
+			mats = obj.GetMaterials();
+		}
 	}
 	SetMaterials(mats);
 	
@@ -152,6 +156,8 @@ void Renderable::SetMaterials(Strings matNames)
 			m_materials.push_back(mat);
 		}
 	} else {
-		m_materials.push_back(Material::GetMaterial("default_lit"));
+		if (m_materials.size() == 0){
+			m_materials.push_back(Material::GetMaterial("default_lit"));
+		}
 	}
 }

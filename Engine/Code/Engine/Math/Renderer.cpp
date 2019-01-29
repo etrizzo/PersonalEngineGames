@@ -397,6 +397,19 @@ RECT Renderer::CalculateClientWindow(float clientAspect)
 	return clientRect;
 }
 
+void Renderer::SetWindowSize(Window * theWindow)
+{
+
+	//g_theRenderer->BindShaderProgram("watercolor");
+	m_windowSizeTexels  = Vector2((float) theWindow->GetWidth(),  (float) theWindow->GetHeight());
+	m_texelSize = Vector2( 1.f / m_windowSizeTexels.x, 1.f / m_windowSizeTexels.y);
+
+	m_sizeData.m_screenSizeX = m_windowSizeTexels.x;
+	m_sizeData.m_screenSizeY = m_windowSizeTexels.y;
+	m_sizeData.m_texelSizeX = m_texelSize.x;
+	m_sizeData.m_texelSizeY = m_texelSize.y;
+}
+
 GLenum Renderer::GetGLPrimitiveType(eDrawPrimitiveType primType)
 {
 	switch (primType){
@@ -770,11 +783,7 @@ void Renderer::BeginFrame(const Vector2 & bottomLeft, const Vector2 & topRight, 
 	
 	BindRendererUniforms();
 	BindRenderState(m_currentShader->m_state);
-
-	m_timeBuffer.CopyToGPU( sizeof(m_timeData), &m_timeData); 
-	glBindBufferBase( GL_UNIFORM_BUFFER, 
-		TIME_BUFFER_BINDING, 
-		m_timeBuffer.GetHandle() ); 
+	BindFrameUniforms();
 }
 
 void Renderer::BeginFrame(const Vector3 & nearBottomLeft, const Vector3 & farTopRight, RGBA color)
@@ -789,11 +798,21 @@ void Renderer::BeginFrame(const Vector3 & nearBottomLeft, const Vector3 & farTop
 
 	BindRendererUniforms();
 	BindRenderState(m_currentShader->m_state);
+	BindFrameUniforms();
+}
 
+void Renderer::BindFrameUniforms()
+{
 	m_timeBuffer.CopyToGPU( sizeof(m_timeData), &m_timeData); 
 	glBindBufferBase( GL_UNIFORM_BUFFER, 
 		TIME_BUFFER_BINDING, 
 		m_timeBuffer.GetHandle() ); 
+
+	m_sizeBuffer.CopyToGPU(sizeof(m_sizeData), &m_sizeData);
+	glBindBufferBase( GL_UNIFORM_BUFFER, 
+		SIZE_BUFFER_BINDING, 
+		m_sizeBuffer.GetHandle() ); 
+	
 }
 
 void Renderer::UpdateClock(float gameDS, float systemDS)

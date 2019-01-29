@@ -222,6 +222,7 @@ static void LogProgramError(GLuint program_id)
 	// print it to the output pane
 	buffer[length] = NULL;
 	DebuggerPrintf("class", buffer);
+	ConsolePrintf("class", buffer);
 	//DEBUGBREAK();           
 
 	// cleanup

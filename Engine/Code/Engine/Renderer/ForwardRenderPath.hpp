@@ -31,6 +31,7 @@ public:
 	void ComputeMostContributingLights(Light* (&lightarray)[8], const Vector3& position, std::vector<Light*>& lights);
 	void SortDrawCalls(std::vector<DrawCall> &drawCalls, Camera* cam);
 
+	void SetFogColor(RGBA color);
 	void BindFog();
 	void SetShadows(RenderScene* scene);
 	

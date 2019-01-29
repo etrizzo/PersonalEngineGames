@@ -33,11 +33,18 @@
 // Uniform bindings
 #define LIGHT_BUFFER_BINDING	(2)
 #define TIME_BUFFER_BINDING		(8)
+#define SIZE_BUFFER_BINDING		(9)
 
 typedef RenderBuffer UniformBuffer;
 
 
-
+struct size_data_t
+{
+	float m_texelSizeX;
+	float m_texelSizeY;
+	float m_screenSizeX;
+	float m_screenSizeY;
+};
 
 
 const std::string FONT_DIRECTORY = "Data/Fonts/";
@@ -93,10 +100,17 @@ public:
 	void BindNewWGLFunctions();
 	void BindGLFunctions();
 	RECT CalculateClientWindow(float clientAspect);
+	void SetWindowSize(Window* theWindow);
 
 	GLenum GetGLPrimitiveType(eDrawPrimitiveType primType);
 	void DrawMeshImmediate(  Vertex3D_PCU* verts, int numVerts, eDrawPrimitiveType drawPrimitive, const int* indices = nullptr, int numIndices = 0);
 	void DrawMesh(SubMesh* mesh);
+
+	void BeginFrame(const Vector2 & bottomLeft, const Vector2 & topRight, RGBA color);
+	void BeginFrame(const Vector3 & nearBottomLeft, const Vector3 & farTopRight, RGBA color);
+	void BindFrameUniforms();
+	void UpdateClock(float gameDS, float systemDS);
+
 
 	void BindUniform(std::string uniformName, const float& value);
 	void BindUniform(std::string uniformName, const Vector2& value);
@@ -161,9 +175,7 @@ public:
 	void BindDefaultTexture(unsigned int textureIndex = 0U);
 	void ReleaseTexture(unsigned int textureIndex = 0U);
 	
-	void BeginFrame(const Vector2 & bottomLeft, const Vector2 & topRight, RGBA color);
-	void BeginFrame(const Vector3 & nearBottomLeft, const Vector3 & farTopRight, RGBA color);
-	void UpdateClock(float gameDS, float systemDS);
+
 
 	void ClearScreen( const RGBA& clearColor);
 	void SetOrtho(const Vector3& nearBottomLeft, const Vector3& farTopRight);
@@ -252,12 +264,17 @@ private:
 	light_buffer_t m_lightData;
 	UniformBuffer m_lightBuffer;
 
+	size_data_t m_sizeData;
+	UniformBuffer m_sizeBuffer;
+
 
 	Texture* m_effectTarget  = nullptr;
 	Texture* m_effectScratch = nullptr;
 	FrameBuffer* m_copyFBO = nullptr;
 	FrameBuffer* m_copyFBOScratch = nullptr;
 	
+	Vector2 m_texelSize;
+	Vector2 m_windowSizeTexels;
 
 	void PostStartup();
 	

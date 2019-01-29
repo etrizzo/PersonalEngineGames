@@ -15,7 +15,7 @@ class Renderable{
 public:
 	Renderable();
 	Renderable(eRenderablePrimatives primType, float size = 1.f);
-	Renderable(std::string objFile, std::string matFile = "default");
+	Renderable(std::string objFile, std::string material = "default");
 
 public:
 	Mesh* m_mesh;
@@ -44,7 +44,7 @@ public:
 	inline Vector3 GetPosition() { return m_transform.GetWorldPosition(); };
 
 	//creates mesh from OBJ file
-	void CreateMeshFromOBJ(std::string objFile);
+	void CreateMeshFromOBJ(std::string objFile, bool matFound);
 	//loads materials from OBJ file
 	void SetMaterials(Strings matNames);
 

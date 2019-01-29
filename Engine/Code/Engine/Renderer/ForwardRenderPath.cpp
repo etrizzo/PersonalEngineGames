@@ -136,7 +136,7 @@ void ForwardRenderPath::ComputeMostContributingLights(Light* (&lightarray)[8], c
 			}
 		}
 
-		//fill the drawcall's light array with the MAX_LIGHTS closest
+		//fill the draw call's light array with the MAX_LIGHTS closest
 		for(int i = 0; i < MAX_LIGHTS; i++){
 			lightarray[i] = lights[i];
 		}
@@ -175,6 +175,11 @@ void ForwardRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls, Camera* 
 			break;
 		}
 	}
+}
+
+void ForwardRenderPath::SetFogColor(RGBA color)
+{
+	m_fogData.fogColor = color.GetNormalized();
 }
 
 void ForwardRenderPath::BindFog()
