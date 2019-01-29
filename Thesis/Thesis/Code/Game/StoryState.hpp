@@ -11,6 +11,7 @@ public:
 	StoryState(){};
 
 	void UpdateFromNode(StoryData* data);
+	void UpdateFromNodeDefinition(StoryDataDefinition* dataDef);		//only updates story state with what is concrete
 	void PredictUpdateOnCharacter(Character* character, unsigned int indexOnNode, StoryData* node);
 	//updates for the entire set of actions
 	void PredictUpdateOnCharacterFromDefinition(Character* character, unsigned int indexOnNode, StoryDataDefinition* definition);

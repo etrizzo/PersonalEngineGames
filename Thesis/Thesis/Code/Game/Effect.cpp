@@ -34,7 +34,11 @@ Effect_TagChange::Effect_TagChange(tinyxml2::XMLElement * element, StoryDataDefi
 bool Effect_TagChange::ApplyToState(StoryState * state, StoryData* instancedData)
 {
 	if (m_type == EFFECT_TYPE_CHARACTER){
-
+		if (instancedData == nullptr)
+		{
+			//we can't tell what will happen with a character without any instance data
+			return false;
+		}
 		Character* character = instancedData->m_characters[m_characterID];
 		CharacterState* characterState = state->GetCharacterStateForCharacter(character);
 		characterState->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
@@ -50,6 +54,11 @@ bool Effect_TagChange::ApplyToState(StoryState * state, StoryData* instancedData
 		return true;
 	} else if (m_type == EFFECT_TYPE_STORY){
 		if (m_tag.GetType() == "character"){
+			if (instancedData == nullptr)
+			{
+				//we can't tell what will happen with a character without any instance data
+				return false;
+			}
 			std::string charName = instancedData->ReadCharacterNameFromDataString(m_tag.GetValue());
 			state->m_storyTags.SetTagWithValue(m_tag.GetName(), charName, m_tag.GetType());
 			return true;

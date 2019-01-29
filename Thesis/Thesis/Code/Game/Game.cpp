@@ -65,6 +65,7 @@ Game::Game()
 
 void Game::PostStartup()
 {
+	srand(2);
 	PROFILE_LOG_SCOPE_FUNCTION();
 	m_soundTrackID = g_theAudio->CreateOrGetSound("Data/Audio/OrbitalColossus.mp3");
 

@@ -1199,12 +1199,12 @@ bool StoryGraph::ContainsEdge(StoryNode * start, StoryNode * end) const
 	return m_graph.ContainsEdge(start, end);
 }
 
-bool StoryGraph::NodeRequirementsAreMet(StoryNode * node, StoryEdge* atEdge)
+bool StoryGraph::NodeRequirementsAreMet(StoryNode * newNode, StoryEdge* atEdge)
 {
 	int tries = 0;
 	//keep trying to match valid characters with 
-	if (StoryRequirementsMet(node->m_data->m_definition, atEdge)){
-		if (TryToSetCharactersForNode(node, atEdge)){
+	if (StoryRequirementsMet(newNode->m_data->m_definition, atEdge)){
+		if (TryToSetCharactersForNode(newNode, atEdge)){
 			return true;
 		}	
 	}
@@ -1214,8 +1214,17 @@ bool StoryGraph::NodeRequirementsAreMet(StoryNode * node, StoryEdge* atEdge)
 bool StoryGraph::StoryRequirementsMet(StoryDataDefinition * node, StoryEdge * atEdge)
 {
 	if (node->DoesEdgeMeetStoryRequirements(atEdge->GetCost())){
-		return true;
+		//meets the requirements for the incoming edge - now we just need to check if the node after you will be invalidated by the new node
+		StoryState* newEdge = new StoryState(*atEdge->GetCost());
+		newEdge->UpdateFromNodeDefinition(node);
+		if (atEdge->GetEnd()->m_data->IsCompatibleWithIncomingEdge(newEdge))
+		{
+			return true;
+		} else {
+			return false;
+		}
 	}
+	
 	return false;
 }
 

@@ -50,6 +50,14 @@ void StoryState::UpdateFromNode(StoryData * data)
 	//}
 }
 
+void StoryState::UpdateFromNodeDefinition(StoryDataDefinition * dataDef)
+{
+	for (Effect* effect : dataDef->m_storyEffects->m_effects)
+	{
+		effect->ApplyToState(this, nullptr);
+	}
+}
+
 void StoryState::PredictUpdateOnCharacter(Character * character, unsigned int indexOnNode, StoryData * node)
 {
 	CharacterState* stateToUpdate = GetCharacterStateForCharacter(character);

@@ -213,6 +213,7 @@ void StoryData::SetCharacters(std::vector<Character*> characters)
 
 bool StoryData::IsCompatibleWithIncomingEdge(StoryState * edgeState)
 {
+	//check the character requirements
 	for (CharacterState* charState : edgeState->m_characterStates){
 		Character* character = charState->m_character;
 		CharacterRequirementSet* reqs = GetRequirementsForCharacter(character);
@@ -222,6 +223,14 @@ bool StoryData::IsCompatibleWithIncomingEdge(StoryState * edgeState)
 				//if any character doesn't meet the requirements, return false.
 				return false;
 			}
+		}
+	}
+
+	if (m_definition != nullptr){
+		//check the story requirements
+		StoryRequirementSet* storyReqs = m_definition->m_storyReqs;
+		if (!storyReqs->DoesEdgeMeetAllRequirements(edgeState)){
+			return false;
 		}
 	}
 	//if no characters violated requirements, return true.

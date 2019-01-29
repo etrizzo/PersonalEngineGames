@@ -1,4 +1,4 @@
-	<PlotGrammar lockIncoming="true">
+	<PlotGrammar>
 		<!-- *[X]* indicates a character name who should be replaced at rutntime -->
 		<Action text="A man is murdered." />
 		<Characters>
