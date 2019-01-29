@@ -1,0 +1,38 @@
+<AudioGroups>
+	<AudioGroup name="laser1">
+		<Sound file="laser_g1_1.wav" />
+		<Sound file="laser_g1_2.wav" />
+		<Sound file="laser_g1_3.wav" />
+	</AudioGroup>
+
+	<AudioGroup name="laser2">
+		<Sound file="laser_g2_1.wav" />
+		<Sound file="laser_g2_2.wav" />
+		<Sound file="laser_g2_3.wav" />
+	</AudioGroup>
+
+	<AudioGroup name="explosion">
+		<Sound file="boom1.wav" />
+		<Sound file="boom4.wav" />
+		<Sound file="boom7.wav" />
+	</AudioGroup>
+
+
+	<AudioGroup name="minion">
+		<Sound file="goblin-1.wav" />
+		<Sound file="goblin-2.wav" />
+		<Sound file="goblin-3.wav" />
+		<Sound file="goblin-4.wav" />
+		<Sound file="goblin-5.wav" />
+		<Sound file="goblin-6.wav" />
+		<Sound file="goblin-7.wav" />
+		<Sound file="goblin-8.wav" />
+		<Sound file="goblin-9.wav" />
+		<Sound file="goblin-10.wav" />
+		<Sound file="goblin-11.wav" />
+		<Sound file="goblin-12.wav" />
+		<Sound file="goblin-13.wav" />
+		<Sound file="goblin-14.wav" />
+		<Sound file="goblin-15.wav" />
+	</AudioGroup>
+</AudioGroups>
