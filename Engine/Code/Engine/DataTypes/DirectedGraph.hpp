@@ -34,6 +34,11 @@ public:
 
 	std::vector<Node<T,C>*> GetReachableNodes(int targetDepth = -1, int depth = 0);
 
+	void ResetDepth(int resetDepthValue = 99999);
+	void SetDepthRecursively(int depth);
+
+	int m_depth = 99999;
+
 	std::vector<DirectedEdge<T, C>*> m_outboundEdges;
 	std::vector<DirectedEdge<T, C>*> m_inboundEdges;
 	
@@ -125,7 +130,7 @@ inline std::string Node<T, C>::GetName()
 template<typename T, typename C>
 inline std::string Node<T, C>::GetDataAsString()
 {
-	std::string data = Stringf("cost:%.2f\nOrder Added: %i\n", m_shortestDistance, m_orderAdded);
+	std::string data = Stringf("cost:%.2f\nOrder Added: %i\nDepth:%i\n", m_shortestDistance, m_orderAdded, m_depth);
 	return  data + ptr(m_data)->ToString();
 }
 
@@ -211,6 +216,24 @@ inline std::vector<Node<T,C>*> Node<T, C>::GetReachableNodes(int targetDepth, in
 		}
 	}
 	return nodes;
+}
+
+template<typename T, typename C>
+inline void Node<T, C>::ResetDepth(int resetDepthValue)
+{
+	m_depth = resetDepthValue;
+}
+
+template<typename T, typename C>
+inline void Node<T, C>::SetDepthRecursively(int depth)
+{
+	if (m_depth > depth){
+		m_depth = depth;
+	}
+	for (DirectedEdge<T,C>* edge : m_outboundEdges){
+		Node<T,C>* end = edge->GetEnd();
+		end->SetDepthRecursively(depth + 1);
+	}
 }
 
 

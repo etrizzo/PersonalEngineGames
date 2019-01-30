@@ -1,9 +1,10 @@
 generate_graph 5
 generate_graph
+set_seed 500
 reset_graph
-set_seed 2
 generate_pairs 1
 quit
+set_seed 2
 set_seed 1
 clear
 set_seed 5

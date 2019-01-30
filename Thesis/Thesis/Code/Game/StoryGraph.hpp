@@ -70,7 +70,9 @@ public:
 	Generation Functions
 	=====================
 	*/
-	void RunGeneration(int numPlotNodes = 3, int desiredSize = 10);
+	void RunGenerationPairs(int numPairs);
+	void RunGenerationPlotAndDetail(int numPlotNodes = 3, int desiredSize = 10);
+	
 
 	void GenerateSkeleton(int numPlotNodes);
 	void AddPlotNodes(int numPlotNodes);
@@ -180,7 +182,7 @@ protected:
 	Vector2 CalculateNodePush(StoryNode* node) const;
 	void RenderNode(StoryNode* node, Vector2 position, RGBA color = RGBA::BLANCHEDALMOND) const;
 	void RenderEdge(StoryEdge* edge, RGBA color = RGBA::WHITE) const;
-
+	void UpdateDepths();
 
 	std::vector<Character*> ClearCharacterArray(int numCharacters);
 	bool AreAllCharactersSet(const std::vector<Character*>& chars) const;

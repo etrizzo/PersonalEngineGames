@@ -142,7 +142,23 @@ void StoryGraph::HandleInput()
 	}
 }
 
-void StoryGraph::RunGeneration(int numPlotNodes, int desiredSize)
+void StoryGraph::RunGenerationPairs(int numPairs)
+{
+	Clear();
+
+	//m_graph.RunGeneration(NUM_PLOT_NODES_TO_GENERATE,NUM_DETAIL_NODES_TO_GENERATE + NUM_PLOT_NODES_TO_GENERATE);
+	GenerateStartAndEnd();
+	//generate node pairs
+	for (int i = 0; i < numPairs; i++){
+		//add an event node
+		StoryNode* newNode = AddSinglePlotNode();
+		//add an outcome node that works off of that event node
+		AddOutcomeNodesToPlotNode(newNode);
+	}
+	RunNodeAdjustments();
+}
+
+void StoryGraph::RunGenerationPlotAndDetail(int numPlotNodes, int desiredSize)
 {
 	GenerateSkeleton(numPlotNodes);
 	RunNodeAdjustments();
@@ -353,6 +369,11 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 		} else {
 			tries++;
 		}
+	}
+
+	if (added)
+	{
+		UpdateDepths();
 	}
 
 	return added;
@@ -716,6 +737,8 @@ void StoryGraph::AddNodeAtEdge(StoryNode * newNode, StoryEdge * existingEdge)
 			edge->GetCost()->UpdateFromNode(newNode->m_data);
 		}
 	}
+
+	UpdateDepths();
 }
 
 void StoryGraph::SetBranchChance(float branchChance)
@@ -1419,6 +1442,14 @@ void StoryGraph::RenderEdge(StoryEdge * edge, RGBA color) const
 	std::string cost = edge->GetCost()->ToString();
 	g_theRenderer->DrawTextInBox2D(cost, costBox, Vector2::HALF, EDGE_FONT_SIZE, TEXT_DRAW_WORD_WRAP, m_edgeTextColor);
 	//g_theRenderer->DrawText2D(cost, halfPoint - Vector2(.002f, 0.f), EDGE_FONT_SIZE, RGBA::YELLOW);
+}
+
+void StoryGraph::UpdateDepths()
+{
+	for(StoryNode* node: m_graph.m_nodes){
+		node->ResetDepth();
+	}
+	m_startNode->SetDepthRecursively(0);
 }
 
 std::vector<Character*> StoryGraph::ClearCharacterArray(int numCharacters)

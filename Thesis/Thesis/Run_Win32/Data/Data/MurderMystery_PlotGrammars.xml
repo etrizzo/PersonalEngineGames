@@ -1,3 +1,7 @@
+<Acts>
+	<Act1 "Murder" />
+
+
 	<PlotGrammar>
 		<!-- *[X]* indicates a character name who should be replaced at rutntime -->
 		<Action text="A man is murdered." />
@@ -90,6 +94,7 @@
 			<Requirement tag="murderOcurred" target="true" />
 			<Requirement tag="killerFound" target="false" />
 			<Requirement tag="storyOver" target="false" />
+			<Requirement tag="Investigator" target="none" type="character"/>
 		</StoryRequirements>
 
 		<StoryEffects>

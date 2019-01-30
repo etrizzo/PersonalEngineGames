@@ -1,0 +1,31 @@
+<!-- Murder Mystery Acts -->
+<Acts>
+	<!-- this being like setup at a party and gossiping before the murder, ends with the murder -->
+	<Act name="Buildup" required = "true" length="1~5"/> 	
+	<!-- the actual murder has happened, this is the investigation phase -->
+	<Act name="Investigation1" required = "true" length="3~"/>     
+	<!-- accusation and aftermath -->
+	<Act name="Accusation1" required="true"	/> 		
+	<!-- a second investigation phase if the first one was wrong -->
+	<Act name="Investigation2" required="false" />  
+	<!-- a second accusation/aftermath phase, probably with more probability for a twist -->
+	<Act name="Accusation2" required="false" />     
+	 <!-- probably either an arrest or an escape and not much else -->
+	<Act name="Conclusion" required="true" />  
+</Acts>
+
+<OutcomeNode>
+	.
+	.
+	.
+	<ActInfo>
+		<ActPlacement name="Accusation1" chance=".8"/>
+	</ActInfo>
+</OutcomeNode>
+
+
+<Acts numRequired="2~3"> 
+	<Act name="Introduction" required="true" />  <!-- Hi -->
+	<Act name="Conversation" required="true" />  <!-- i have been having a good day -->
+	<Act name="Inquiry"	required="false"/>       <!-- Have you been to this interesting place yet? -->
+</Acts>
