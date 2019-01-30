@@ -32,7 +32,7 @@ bool Sampler::Create()
 */
 // filtering; (trilinear) - really - if you want mips with nearest, siwtch the GL_LINEAR_* to GL_NEAREST_*
 	glSamplerParameteri( m_samplerHandle, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );         // Default: GL_LINEAR
-	glSamplerParameteri( m_samplerHandle, GL_TEXTURE_MAG_FILTER, GL_LINEAR );         // Default: GL_LINEAR
+	glSamplerParameteri( m_samplerHandle, GL_TEXTURE_MAG_FILTER, GL_NEAREST );         // Default: GL_LINEAR
 
 	// Limit where on the LOD I can actually fetch (if you want to control it through the sampler)
 	// defaults to -1000.0f to 1000.0f
