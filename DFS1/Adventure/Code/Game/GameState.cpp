@@ -196,7 +196,7 @@ void GameState_Encounter::RenderGame()
 	//g_theRenderer->BindUniform("TEXEL_SIZE_Y", pixelSizeUVS.y);
 
 	//bind the displacement texture
-	Texture* dispTexture = g_theRenderer->CreateOrGetTexture("Noise/heat_displacements.png");
+	Texture* dispTexture = g_theRenderer->CreateOrGetTexture("Noise/noise1.png");
 	g_theRenderer->BindTexture(*dispTexture, 4);
 	g_theRenderer->ApplyEffect("watercolor");
 	g_theRenderer->ReleaseTexture(4);

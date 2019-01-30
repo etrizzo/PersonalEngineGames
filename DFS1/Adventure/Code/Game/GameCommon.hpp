@@ -18,7 +18,7 @@
 
 const int TILE_WIDTH = 1;
 //const float WINDOW_ASPECT = 1.f;
-const float ZOOM_FACTOR = 12.f;
+const float ZOOM_FACTOR = 8.f;
 
 const float DEFAULT_FORWARD_VIEW_ANGLE = 360.f;
 
