@@ -69,14 +69,14 @@ void DebugRenderTask_Point::Render()
 	Vector3 forward = Vector3(-1.f, 0.f, 1.f).GetNormalized();
 
 	RGBA color = Interpolate(m_info.m_startColor, m_info.m_endColor, m_info.m_age / m_info.m_lifetime);
-	g_theRenderer->DrawPoint(m_position, .1f, right, Vector3::UP, forward, color);
+	g_theRenderer->DrawPoint(m_position, .1f, right, UP, forward, color);
 
 	//g_theRenderer->DrawPoint(m_position, 1.f,Vector3::RIGHT, Vector3::UP, Vector3::FORWARD, RGBA::WHITE);
 	
 }
 
-DebugRenderTask_Basis::DebugRenderTask_Basis(Vector3 pos, Matrix44 basis, float size, float lifetime, RGBA startColor, RGBA endColor, DebugRenderMode mode)
-	: DebugRenderTask_Point(pos, lifetime, startColor, endColor, mode)
+DebugRenderTask_Basis::DebugRenderTask_Basis(Vector3 pos, Matrix44 basis, float size, float lifetime, DebugRenderMode mode)
+	: DebugRenderTask_Point(pos, lifetime, RGBA::WHITE, RGBA::WHITE, mode)
 {
 	m_size = size;
 	m_right = basis.GetI().XYZ();
@@ -84,14 +84,27 @@ DebugRenderTask_Basis::DebugRenderTask_Basis(Vector3 pos, Matrix44 basis, float 
 	m_forward = basis.GetK().XYZ();
 }
 
+DebugRenderTask_Basis::DebugRenderTask_Basis(Vector3 pos, Vector3 right, Vector3 up, Vector3 forward, float size, float lifetime, DebugRenderMode mode)
+	: DebugRenderTask_Point(pos, lifetime, RGBA::WHITE, RGBA::WHITE, mode)
+{
+	m_size = size;
+	m_right = right;
+	m_up = up;
+	m_forward = forward;
+}
+
 void DebugRenderTask_Basis::Render()
 {
-	RGBA color = Interpolate(m_info.m_startColor, m_info.m_endColor, m_info.m_age / m_info.m_lifetime);
-	RGBA right = Interpolate(color, RGBA::RED, .5f);
-	RGBA up = Interpolate(color, RGBA::GREEN, .5f);
-	RGBA forward = Interpolate(color, RGBA::BLUE, .5f);
+	RGBA color = m_info.m_startColor;
+	RGBA rightColor		= RGBA::RED;
+	RGBA upColor		= RGBA::GREEN;
+	RGBA forwardColor	= RGBA::BLUE;
 
-	g_theRenderer->DrawPoint(m_position, m_size, m_right, m_up, m_forward, right, up, forward);
+	g_theRenderer->DrawLine3D(m_position, m_position + m_right, rightColor);
+	g_theRenderer->DrawLine3D(m_position, m_position + m_up,	upColor);
+	g_theRenderer->DrawLine3D(m_position, m_position + m_up,	forwardColor);
+
+	//g_theRenderer->DrawPoint(m_position, m_size, m_right, m_up, m_forward, right, up, forward);
 }
 
 DebugRenderTask_Quad::DebugRenderTask_Quad(Vector3 center, Vector2 size, Vector3 right, Vector3 up, float lifetime, RGBA startColor, RGBA endColor, DebugRenderMode mode)
@@ -233,10 +246,10 @@ void DebugRenderTask_Ruler::Render()
 	RGBA c1 = Interpolate(m_c1, tint, .5f);
 	RGBA midPointColor = Interpolate(c0, c1, .5f);
 
-	g_theRenderer->DrawPoint(m_p0, .05f, Vector3::RIGHT, Vector3::UP, Vector3::FORWARD, c0);
-	g_theRenderer->DrawPoint(m_p1, .05f, Vector3::RIGHT, Vector3::UP, Vector3::FORWARD, c1);
-	g_theRenderer->DrawPoint(m_midPoint, .05f, Vector3::RIGHT, Vector3::UP, Vector3::FORWARD, midPointColor);
-	g_theRenderer->DrawTextAsSprite(distance, m_p1 + Vector3::UP * .02f, Vector2::HALF, .05f, g_theGame->GetCurrentCameraRight(), g_theGame->GetCurrentCameraUp(), RGBA::WHITE);
+	g_theRenderer->DrawPoint(m_p0, .05f, RIGHT, UP, FORWARD, c0);
+	g_theRenderer->DrawPoint(m_p1, .05f, RIGHT, UP, FORWARD, c1);
+	g_theRenderer->DrawPoint(m_midPoint, .05f, RIGHT, UP, FORWARD, midPointColor);
+	g_theRenderer->DrawTextAsSprite(distance, m_p1 + UP * .02f, Vector2::HALF, .05f, g_theGame->GetCurrentCameraRight(), g_theGame->GetCurrentCameraUp(), RGBA::WHITE);
 	g_theRenderer->DrawLine3D(m_p0, m_p1, c0, c1);
 
 }

@@ -83,7 +83,7 @@ void GameState_Attract::Update(float ds)
 	int selection = m_mainMenu->GetFrameSelection();
 	if (selection != -1){
 		if (selection == 0){
-			g_theGame->TransitionToState(new GameState_Select());
+			g_theGame->TransitionToState(g_theGame->m_playState);
 		}
 		if (selection == 1){
 			//CommandQuit(Command("text"));
@@ -99,15 +99,6 @@ void GameState_Attract::RenderUI()
 	AABB2 UIBounds = g_theGame->SetUICamera();
 	g_theRenderer->DrawAABB2(UIBounds, RGBA(0, 64, 64));
 	m_mainMenu->Render();
-	//g_theRenderer->DrawTextInBox2D("Tactics", UIBounds, Vector2(.5f,.5f), .1f);
-	//g_theRenderer->DrawTextInBox2D("Press Start", UIBounds, Vector2(.5f,.3f), .05f);
-
-	//float seconds = GetMasterClock()->GetCurrentSeconds();
-	//g_theRenderer->DrawTextInBox2D(std::to_string(seconds), UIBounds, Vector2(0.f, .8f), .05f);
-	//
-	//float gameSeconds = g_theGame->m_gameClock->GetCurrentSeconds();
-	//g_theRenderer->DrawTextInBox2D(std::to_string(gameSeconds), UIBounds, Vector2(0.f, .6f), .05f);
-
 	g_theGame->SetGameCamera();
 }
 

@@ -46,7 +46,8 @@ public:
 
 class DebugRenderTask_Basis: public DebugRenderTask_Point{
 public: 
-	DebugRenderTask_Basis(Vector3 pos, Matrix44 basis, float size = 1.f, float lifetime = 0.f, RGBA startColor = RGBA::WHITE, RGBA endColor = RGBA::WHITE, DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH);
+	DebugRenderTask_Basis(Vector3 pos, Matrix44 basis, float size = 1.f, float lifetime = 0.f, DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH);
+	DebugRenderTask_Basis(Vector3 pos, Vector3 right = RIGHT, Vector3 up = UP, Vector3 forward = FORWARD, float size = 1.f, float lifetime = 0.f, DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH);
 	void Render() override;
 	float m_size = .1f;
 	Vector3 m_right;
@@ -57,7 +58,7 @@ public:
 
 class DebugRenderTask_Quad: public DebugRenderTask{
 public:
-	DebugRenderTask_Quad(Vector3 center, Vector2 size, Vector3 right = Vector3::RIGHT, Vector3 up = Vector3::UP, float lifetime = 0.f, RGBA startColor = RGBA::WHITE, RGBA endColor = RGBA::WHITE, DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH);
+	DebugRenderTask_Quad(Vector3 center, Vector2 size, Vector3 right = RIGHT, Vector3 up = UP, float lifetime = 0.f, RGBA startColor = RGBA::WHITE, RGBA endColor = RGBA::WHITE, DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH);
 	void Render() override;
 
 	Plane m_plane;
@@ -104,7 +105,7 @@ public:
 
 class DebugRenderTask_Text3: public DebugRenderTask{
 public:
-	DebugRenderTask_Text3(std::string text, Vector3 center, float size, float lifetime = 0.f, RGBA startColor = RGBA::WHITE, RGBA endColor = RGBA::WHITE, Vector3 up = Vector3::UP, Vector3 right = Vector3::RIGHT,  DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH);
+	DebugRenderTask_Text3(std::string text, Vector3 center, float size, float lifetime = 0.f, RGBA startColor = RGBA::WHITE, RGBA endColor = RGBA::WHITE, Vector3 up = UP, Vector3 right = RIGHT,  DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH);
 	void Render() override;
 
 	std::string m_text;

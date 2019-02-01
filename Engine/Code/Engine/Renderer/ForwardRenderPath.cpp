@@ -68,7 +68,7 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 			if (m_usingShadows){
 				dc.m_material->SetTexture(SHADOW_DEPTH_BINDING, scene->m_shadowCamera->GetDepthTarget());
 			}
-			dc.m_layer = r->GetEditableMaterial()->m_shader->m_sortLayer;
+			dc.m_layer = r->GetEditableMaterial(i)->m_shader->m_sortLayer;
 			dc.m_queue = 0;
 			if (r->GetEditableMaterial(i)->UsesLights()){
 				dc.SetLights(lights);
@@ -160,19 +160,33 @@ void ForwardRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls, Camera* 
 				drawCalls[j-1] = dc;
 				sorted = false;
 			}
-			//sort alpha layer by distance to camera
-			if (dc.GetSortLayer() >= SORT_LAYER_ALPHA && prevDC.GetSortLayer() >= SORT_LAYER_ALPHA){
-				//sort by distance to camera
-				if (dc.GetDistance(camPos) > prevDC.GetDistance(camPos)){
-					drawCalls[j] = prevDC;
-					drawCalls[j-1] = dc;
-					sorted = false;
-				}
-			}
-
 		}
 		if (sorted){
 			break;
+		}
+	}
+
+	//sort alpha layer
+	for (int i = 1; i < (int) drawCalls.size(); i ++){
+		bool sorted = false;
+		if (i >= SORT_LAYER_ALPHA){
+			for (int j = i; j < (int) drawCalls.size(); j++){
+				sorted = true;
+				DrawCall dc = drawCalls[j];
+				DrawCall prevDC = drawCalls[j-1];
+				//sort alpha layer by distance to camera
+				if (dc.GetSortLayer() >= SORT_LAYER_ALPHA && prevDC.GetSortLayer() >= SORT_LAYER_ALPHA){
+					//sort by distance to camera
+					if (dc.GetDistance(camPos) > prevDC.GetDistance(camPos)){
+						drawCalls[j] = prevDC;
+						drawCalls[j-1] = dc;
+						sorted = false;
+					}
+				}
+			}
+			if (sorted){
+				break;
+			}
 		}
 	}
 }

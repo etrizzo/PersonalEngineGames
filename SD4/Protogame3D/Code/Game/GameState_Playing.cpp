@@ -23,8 +23,8 @@ GameState_Playing::GameState_Playing()
 
 	m_sun = m_scene->AddNewDirectionalLight(Vector3(-0, 20, -0.f), RGBA::WHITE.GetColorWithAlpha(180), Vector3(-35.f, -30.f, 0.f));	
 
-	m_sun->SetUsesShadows(true);
-	m_scene->SetShadowCameraTransform(m_sun->m_transform);
+	//m_sun->SetUsesShadows(true);
+	//m_scene->SetShadowCameraTransform(m_sun->m_transform);
 
 	m_scene->AddCamera(g_theGame->m_currentCamera);
 	g_theGame->m_mainCamera->AddSkybox("galaxy2.png");
@@ -49,7 +49,10 @@ void GameState_Playing::Update(float ds)
 {
 	PROFILE_PUSH_FUNCTION_SCOPE();
 	m_timeInState+=ds;
-
+	float rotation = 45.f * ds;
+	m_thaMiku->Rotate(Vector3(0.f, rotation,0.f));
+	m_thaShip->Rotate(Vector3(0.f, rotation, 0.f));
+	m_thaOrb->Rotate(Vector3(0.f, rotation, 0.f));
 	m_player->Update();
 	//Update spawners before the rest of entities bc it can add entities
 	for (Entity* entity : m_allEntities){
@@ -210,31 +213,52 @@ unsigned int GameState_Playing::GetNumActiveLights() const
 
 void GameState_Playing::Startup()
 {
-	m_thaShip = new Entity(Vector3(8.f, 5.f, 12.f), "scifi_fighter_mk6.obj");
-	m_thaShip->SetDiffuseTexture("SciFi_Fighter-MK6-diffuse.png");
+	m_thaShip = new Entity(Vector3(8.f, 5.f, 12.f), "scifi_fighter_mk6.obj", "normal");
+	Entity* otherShip = new Entity(Vector3(8.f, 10.f, 12.f), "scifi_fighter_mk6.obj", "normal");
+	//m_thaShip->SetDiffuseTexture("SciFi_Fighter-MK6-diffuse.png");
 
-	m_thaMiku = new Entity(Vector3(0.f, 3.f, 10.f), "miku.obj", "miku.mtl");
-	m_thaMiku->Rotate(Vector3(0.f,180.f,0.f));
+	m_thaMiku = new Entity(Vector3(-2.f, 3.f, 10.f), "miku.obj", "miku.mtl");
+	//m_thaMiku->Rotate(Vector3(0.f,180.f,0.f));
 	m_thaMiku->m_renderable->SetShader("lit_alpha", 0);
 	m_thaMiku->m_renderable->SetShader("lit_alpha", 1);
-	m_thaMiku->m_renderable->SetShader("default_lit", 2);
+	m_thaMiku->m_renderable->SetShader("world_normal", 2);
+
+	Entity* otherMiku = new Entity(Vector3(-2.f, 8.f, 10.f), "miku.obj", "miku.mtl");
+	otherMiku->m_renderable->SetShader("lit_alpha", 0);
+	otherMiku->m_renderable->SetShader("lit_alpha", 1);
+	otherMiku->m_renderable->SetShader("world_normal", 2);
+
+	m_thaOrb = new Entity();
+	m_thaOrb->m_renderable = new Renderable(RENDERABLE_CUBE, 3.f);
+	m_thaOrb->SetMaterial(Material::GetMaterial("normal"));
+	m_thaOrb->SetPosition(Vector3(-8.f, 4.f, 10.f));
+
+	Entity* otherOrb = new Entity();
+	otherOrb->m_renderable = new Renderable(RENDERABLE_CUBE, 3.f);
+	otherOrb->SetMaterial(Material::GetMaterial("normal"));
+	otherOrb->SetPosition(Vector3(-8.f, 9.f, 10.f));
 
 	m_particleSystem = new ParticleSystem();
-	m_particleSystem->CreateEmitter(Vector3(0.f, 4.f, 0.f));
+	m_particleSystem->CreateEmitter(Vector3(0.f, 10.f, 15.f));
 	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
 
 	m_scene->AddRenderable(m_particleSystem->m_emitters[0]->m_renderable);
 	m_scene->AddRenderable(m_thaShip->m_renderable);
 	m_scene->AddRenderable(m_thaMiku->m_renderable);
+	m_scene->AddRenderable(m_thaOrb->m_renderable);
+
+	m_scene->AddRenderable(otherShip->m_renderable);
+	m_scene->AddRenderable(otherMiku->m_renderable);
+	m_scene->AddRenderable(otherOrb->m_renderable);
 
 
 	//m_scene->AddNewPointLight(Vector3::ZERO, RGBA::WHITE);
-	m_scene->AddNewSpotLight(Vector3(0.f, 4.f, -5.f), RGBA::WHITE, 20.f, 23.f);		//camera light
-	m_scene->AddNewSpotLight(Vector3(0.f, 5.f, 5.f), RGBA(255,255,128,255));			//orbiting light
-	m_scene->AddNewPointLight(Vector3(0.f, 5.f, 15.f), RGBA(255, 128, 70,255));		//reddish point light
+	//m_scene->AddNewSpotLight(Vector3(0.f, 4.f, -5.f), RGBA::WHITE, 20.f, 23.f);		//camera light
+	//m_scene->AddNewSpotLight(Vector3(0.f, 5.f, 5.f), RGBA(255,255,128,255));			//orbiting light
+	//m_scene->AddNewPointLight(Vector3(0.f, 5.f, 15.f), RGBA(255, 128, 70,255));		//reddish point light
 	
-	m_cameraLight = m_scene->m_lights[0];
-	m_orbitLight = (SpotLight*) m_scene->m_lights[1];
+	//m_cameraLight = m_scene->m_lights[0];
+	//m_orbitLight = (SpotLight*) m_scene->m_lights[1];
 
 	SpawnPlayer(Vector3::ZERO);
 }

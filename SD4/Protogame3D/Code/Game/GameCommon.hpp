@@ -40,7 +40,10 @@ enum eDebugShaders{
 	NUM_DEBUG_SHADERS
 };
 
-
+//vector definitions
+const static Vector3 RIGHT		= Vector3(1.f, 0.f, 0.f);
+const static Vector3 UP			= Vector3(0.f, 1.f, 0.f);
+const static Vector3 FORWARD	= Vector3(0.f, 0.f, 1.f);
 
 
 //determines if arrow keys or d pad buttons were pressed
