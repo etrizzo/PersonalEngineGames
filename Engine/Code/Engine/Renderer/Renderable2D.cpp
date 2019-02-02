@@ -19,7 +19,7 @@ Renderable2D::Renderable2D(eRenderablePrimatives primType, float size)
 	m_mb->Begin(PRIMITIVE_TRIANGLES, true);
 	switch(primType){
 	case RENDERABLE_PLANE:
-		m_mb->AppendPlane(Vector3::ZERO, Vector3::UP, Vector3::RIGHT, Vector2::ONE * size, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
+		m_mb->AppendPlane(Vector3::ZERO, Vector3::Y_AXIS, Vector3::X_AXIS, Vector2::ONE * size, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
 		break;
 	//case RENDERABLE_CIRCLE:
 	//	mb.AppendSphere(Vector3::ZERO, size, 10.f, 10.f, RGBA::WHITE);

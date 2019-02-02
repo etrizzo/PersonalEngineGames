@@ -33,6 +33,7 @@
 
 
 
+
 <!-- special mats -->
 
 <material name="cutout" shader="cutout">
@@ -78,6 +79,26 @@
 </material>
 
 <material name="additive" shader="additive">
+	<textures>
+		<texture type="diffuse" path="white" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+<material name="watercolor" shader="watercolor">
+	<textures>
+		<texture type="diffuse" path="white" />
+		<texture index="4" path="Noise/heat_displacements.png" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+
+<material name="outline" shader="outline">
 	<textures>
 		<texture type="diffuse" path="white" />
 	</textures>

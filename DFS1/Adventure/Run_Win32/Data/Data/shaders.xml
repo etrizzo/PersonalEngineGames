@@ -51,3 +51,13 @@
 	<depth write="false" test="less"/>
 </shader>
 
+
+<shader name="outline" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="outline" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="watercolor" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="watercolor" />
+	<depth write="true" test="less"/>
+</shader>

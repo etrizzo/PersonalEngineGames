@@ -51,7 +51,7 @@ class SpotLight : public Light{
 public:
 	SpotLight(Vector3 pos, RGBA color, float innerAngleDegrees = 20.f, float outerAngleDegrees = 23.f);
 
-	void LookAt(const Vector3& position, const Vector3& target, const Vector3& up = Vector3::UP);
+	void LookAt(const Vector3& position, const Vector3& target, const Vector3& up = Vector3::Y_AXIS);
 
 	light_t GetBuffer() const override;
 	void RenderAsPoint(Renderer* r) override;

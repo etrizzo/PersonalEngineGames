@@ -28,8 +28,15 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 	//	s->PreRenderForCamera(cam);
 	//}
 	std::vector<DrawCall2D> drawCalls;
+	float cameraViewRadius = cam->m_orthographicSize * 5.f;
 	//now we want to generate the draw calls
 	for(Renderable2D* r : scene->m_renderables){
+		//check for how far we are from the camera
+		
+		if ((r->m_transform.GetWorldPosition() - cam->m_transform.GetWorldPosition().XY()).GetLengthSquared() > (cameraViewRadius * cameraViewRadius)){
+			continue;
+		}
+		
 		//this will change for multi-pass shaders or multi-material meshes
 		for (int i = 0; i < (int) r->m_mesh->m_subMeshes.size(); i++){
 			if (r->m_mesh->m_subMeshes[i] != nullptr){
@@ -57,6 +64,7 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 	SortDrawCalls(drawCalls);
 	//sort alpha by distance to camera, etc.
 
+	PROFILE_PUSH("Sprite Render Path Draw");
 	for(DrawCall2D dc: drawCalls){
 		//an optimization would be to only bind the thing if it's different from the previous bind.
 		m_renderer->BindMaterial(dc.m_material);
@@ -64,6 +72,7 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 		//m_renderer->BindLightUniforms(dc.m_lights);
 		m_renderer->DrawMesh(dc.m_mesh);
 	}
+	PROFILE_POP();
 	TODO("Add post-processing to forward render path");
 	////post-processing? it go here
 	//for(Material * effect in cam-> m_effects){

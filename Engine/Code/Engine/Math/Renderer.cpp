@@ -955,8 +955,14 @@ void Renderer::ReleaseShaderProgram()
 
 void Renderer::ApplyEffect(std::string shaderRoot)
 {
-	ShaderProgram* prog = CreateOrGetShaderProgram(shaderRoot);
-	ApplyEffect(prog);
+	Material* mat = Material::GetMaterial(shaderRoot);
+	if (mat != nullptr)
+	{
+		ApplyEffect(mat);
+	} else {
+		ShaderProgram* prog = CreateOrGetShaderProgram(shaderRoot);
+		ApplyEffect(prog);
+	}
 }
 
 void Renderer::ApplyEffect(ShaderProgram * program)
@@ -990,6 +996,36 @@ void Renderer::ApplyEffect(ShaderProgram * program)
 
 }
 
+void Renderer::ApplyEffect(Material * material)
+{
+	//make sure you've got both targets
+	if (m_effectTarget == nullptr){
+		m_effectTarget = m_defaultColorTarget;
+		//m_effectTarget = m_currentCamera->m_output.m_colorTarget;		//lazy instantiation of effect target(s)
+		if (m_effectScratch == nullptr){
+			m_effectScratch = Texture::CreateCompatible(m_effectTarget);
+		}
+	}
+
+	//Draw full screen quad using the program
+	m_effectCamera->SetColorTarget(m_effectScratch);
+	SetCamera(m_effectCamera);
+	BindMaterial(material);
+
+	BindTexture(*m_effectTarget, 0);
+	//BindTexture(*m_defaultDepthTarget, 1);
+	DrawAABB2(AABB2(-1.f * Vector2::ONE, Vector2::ONE), RGBA::WHITE);
+
+
+	//the current output should be the input for this step
+	//scratch will BECOME the new output - flipping output and scratch
+	//BLIT memcopy's the image, pretty much
+
+	std::swap(m_effectTarget, m_effectScratch);
+	//(m_effectTarget = m_effectScratch, and m_effectScratch = m_effectTarget)
+	GL_CHECK_ERROR();
+}
+
 void Renderer::FinishEffects()
 {
 	//check if you've applied any effects
@@ -1004,7 +1040,8 @@ void Renderer::FinishEffects()
 		m_effectScratch = m_effectTarget;		//put scratch back where it belongs
 	}
 	m_effectTarget = nullptr;
-	ReleaseShaderProgram();
+	ReleaseShader();
+	//ReleaseShaderProgram();
 	ReleaseTexture();
 }
 

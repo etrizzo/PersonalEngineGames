@@ -19,7 +19,7 @@ public:
 	std::string m_startingFaction;
 	Stats m_minStats;
 	Stats m_maxStats;
-	ClothingSetDefinition* m_clothingSetDef;
+	std::vector<ClothingSetDefinition*> m_clothingSetDefs;
 
 	eAIBehavior m_defaultBehavior;
 

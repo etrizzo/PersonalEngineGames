@@ -19,7 +19,7 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 
 	//make turret
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	Vector3 sphere = Vector3::ZERO - (Vector3::UP * .08f);
+	Vector3 sphere = Vector3::ZERO - (Vector3::Y_AXIS * .08f);
 	mb.AppendSphere(sphere, .2f, 10, 10, RGBA::RED);
 	//mb.AppendCube(sphere, Vector3::ONE * .5f, RGBA::RED);
 	mb.AppendCube(Vector3::FORWARD * .4f, Vector3(.1f, .1f, .8f), RGBA::RED);

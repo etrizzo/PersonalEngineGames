@@ -2,7 +2,7 @@
 	AttractMusic="Data/Audio/TownTheme.mp3"
   VictoryMusic="Data/Audio/Lively Meadow Victory Fanfare.mp3"
   
-  windowAspect="1.5"
+  windowAspect="1.85"
   width="40.0"
   appName="Adventure"
 />

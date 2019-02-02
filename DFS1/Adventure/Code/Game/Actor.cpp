@@ -35,14 +35,20 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 	//m_animSets.resize(NUM_RENDER_SLOTS);
 	//m_layerTextures = std::vector<Texture*>();
 	int numTextures = BODY_SLOT;
-	m_currentLook = m_definition->m_clothingSetDef->GetRandomSet();
+	int setindex = GetRandomIntLessThan(m_definition->m_clothingSetDefs.size());
+	ClothingSetDefinition* def = m_definition->m_clothingSetDefs[setindex];
+	m_currentLook = def->GetRandomSet();
+	Material* outlineMat = Material::GetMaterial("outline");
+	
 	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
 		if (m_currentLook->GetTexture(i) != nullptr){
 			m_renderable->SetSubMesh(m_localDrawingBox, m_lastUVs, m_currentLook->GetTint(i), numTextures);
 			m_renderable->AddDiffuseTexture(m_currentLook->GetTexture(i), numTextures);
+			
 			numTextures++;
 		}
 	}
+	//m_renderable->SetMaterial(outlineMat, 0);
 	
 	m_health+= (difficulty * 5);
 	Stats difficultyMod = Stats(IntRange(0, difficulty));
@@ -159,6 +165,23 @@ void Actor::FinishQuest()
 	m_dialogue->m_speaker = this;
 }
 
+
+void Actor::RandomizeAppearance()
+{
+	int numTextures = BODY_SLOT;
+	int setindex = GetRandomIntLessThan(m_definition->m_clothingSetDefs.size());
+	ClothingSetDefinition* def = m_definition->m_clothingSetDefs[setindex];
+	m_currentLook = def->GetRandomSet();
+	m_renderable->Clear();
+	//m_renderable->m_mesh->ClearSubMeshes();
+	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
+		if (m_currentLook->GetTexture(i) != nullptr){
+			m_renderable->SetSubMesh(m_localDrawingBox, m_lastUVs, m_currentLook->GetTint(i), numTextures);
+			m_renderable->AddDiffuseTexture(m_currentLook->GetTexture(i), numTextures);
+			numTextures++;
+		} 
+	}
+}
 
 void Actor::RenderStatsInBox(AABB2 boxToDrawIn, RGBA tint)
 {

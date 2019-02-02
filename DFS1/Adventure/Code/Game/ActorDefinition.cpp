@@ -39,12 +39,18 @@ ActorDefinition::ActorDefinition(tinyxml2::XMLElement * actorElement): EntityDef
 	ParseStats(actorElement->FirstChildElement("Stats"));			//maybe should be in entity? Will apply to actors, projectiles, and items, most likely
 	ParseLayersElement(actorElement->FirstChildElement("Layers"));
 	tinyxml2::XMLElement* clothingElement = actorElement->FirstChildElement("Clothing");
-	if (clothingElement != nullptr){
+	while (clothingElement != nullptr){
+		std::string setName = ParseXmlAttribute(*clothingElement, "set", "NONE");
+		m_clothingSetDefs.push_back(ClothingSetDefinition::GetDefinition(setName));
+
+		clothingElement = clothingElement->NextSiblingElement("Clothing");
+	}
+	/*if (clothingElement != nullptr){
 		std::string setName = ParseXmlAttribute(*clothingElement, "set", "NONE");
 		m_clothingSetDef = ClothingSetDefinition::GetDefinition(setName);
 	} else {
 		m_clothingSetDef = nullptr;
-	}
+	}*/
 
 	tinyxml2::XMLElement* dialogueElement = actorElement->FirstChildElement("DialogueSet");
 	m_dialogueDefinitions = std::vector<DialogueSetDefinition*>();

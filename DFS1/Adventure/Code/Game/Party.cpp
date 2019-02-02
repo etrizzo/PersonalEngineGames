@@ -196,7 +196,7 @@ void Party::RenderPartyMemberUI(Actor* actor, AABB2 memberBox)
 	memberBox.SplitAABB2Vertical(height / width, faceBox, healthBox);
 	AABB2 weaponBox = faceBox.GetPercentageBox(.7f, .7f, 1.f, 1.f);
 
-	healthBox.AddPaddingToSides(-height * .3f, -height * .3f);
+	healthBox.AddPaddingToSides(-height * .2f, -height * .3f);
 	
 	actor->RenderFaceInBox(faceBox);
 	actor->RenderEquippedWeaponInBox(weaponBox);

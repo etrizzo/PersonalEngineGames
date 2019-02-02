@@ -161,12 +161,12 @@ public:
 	void DrawPlane(const Plane& plane, const RGBA& color = RGBA::WHITE, const Vector2& uvMins= Vector2::ZERO, const Vector2& uvMaxs= Vector2::ONE);
 	void DrawLine3D(const Vector3& start, const Vector3& end, const RGBA& startColor = RGBA::WHITE, const RGBA& endColor = RGBA::WHITE);
 	void DrawPoint(const Vector3& pos,float size, const Vector3& right, const Vector3& up, const Vector3& forward, RGBA rightColor , RGBA upColor, RGBA forwardColor);
-	void DrawPoint(const Vector3& pos, float size = 1.f, const Vector3& right = Vector3::RIGHT, const Vector3& up = Vector3::UP, const Vector3& forward = Vector3::FORWARD, const RGBA& color = RGBA::WHITE);
+	void DrawPoint(const Vector3& pos, float size = 1.f, const Vector3& right = Vector3::X_AXIS, const Vector3& up = Vector3::Y_AXIS, const Vector3& forward = Vector3::Z_AXIS, const RGBA& color = RGBA::WHITE);
 
 	//scales the box provided to the sprites dimensions
 	AABB2 DrawSpriteOnAABB2(const AABB2& box, Sprite* sprite, RGBA tint = RGBA::WHITE);
-	void DrawSprite(const Vector3& pos, Sprite* sprite, const Vector3& right = Vector3::RIGHT, const Vector3& up = Vector3::UP, RGBA tint = RGBA::WHITE);
-	void DrawTextAsSprite(const std::string& asciiText, const Vector3& pos, const Vector2 & pivot = Vector2::HALF, float cellHeight = 1.f, const Vector3& right = Vector3::RIGHT, const Vector3& up = Vector3::UP, RGBA tint = RGBA::WHITE, const BitmapFont* font = nullptr, float aspect = 1.f);
+	void DrawSprite(const Vector3& pos, Sprite* sprite, const Vector3& right = Vector3::X_AXIS, const Vector3& up = Vector3::Y_AXIS, RGBA tint = RGBA::WHITE);
+	void DrawTextAsSprite(const std::string& asciiText, const Vector3& pos, const Vector2 & pivot = Vector2::HALF, float cellHeight = 1.f, const Vector3& right = Vector3::X_AXIS, const Vector3& up = Vector3::Y_AXIS, RGBA tint = RGBA::WHITE, const BitmapFont* font = nullptr, float aspect = 1.f);
 
 	void BindTextureCube(const TextureCube& cube, unsigned int textureIndex = 8U);
 	void BindTexture(const std::string& fileName, unsigned int textureIndex = 0U, const std::string& directory = IMAGE_DIRECTORY);
@@ -193,7 +193,8 @@ public:
 	void ReleaseShaderProgram();		//resets to default shader program
 
 	void ApplyEffect(std::string shaderRoot);
-	void ApplyEffect(ShaderProgram* program);
+	void ApplyEffect(ShaderProgram* program);		//backwards compatibility
+	void ApplyEffect(Material* material);
 	void FinishEffects();
 
 	void EnableDepth( eCompare compare, bool should_write );
@@ -234,7 +235,7 @@ public:
 
 	BitmapFont* CreateOrGetBitmapFont( const char* bitmapFontName);
 	void DrawText2D(const std::string& asciiText, const Vector2& drawMins, float cellHeight, const RGBA& tint = RGBA::WHITE, const BitmapFont* font = nullptr, float aspectScale = 1.f);
-	void DrawText3D(const std::string& asciiText, const Vector3& drawMins, float cellHeight, const Vector3& up = Vector3::UP, const Vector3& right = Vector3::RIGHT, const RGBA& tint = RGBA::WHITE, const BitmapFont* font = nullptr, float aspectScale = 1.f);
+	void DrawText3D(const std::string& asciiText, const Vector3& drawMins, float cellHeight, const Vector3& up = Vector3::Y_AXIS, const Vector3& right = Vector3::X_AXIS, const RGBA& tint = RGBA::WHITE, const BitmapFont* font = nullptr, float aspectScale = 1.f);
 	//returns the text width
 	float DrawTextInBox2D(const std::string& asciiText, AABB2 box, Vector2 alignment, float cellHeight, eTextDrawMode drawMode = TEXT_DRAW_OVERRUN, const RGBA& tint = RGBA::WHITE, const BitmapFont* font = nullptr, float aspectScale = 1.f);
 	float GetTextWidth(const std::string& asciiText, float cellHeight, float aspectScale = 1.f);

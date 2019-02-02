@@ -6,10 +6,10 @@
 
 const Vector3 Vector3::ZERO		= Vector3(0.f,0.f,0.f);
 const Vector3 Vector3::ONE		= Vector3(1.f,1.f,1.f);
-const Vector3 Vector3::UP		= Vector3(0.f,1.f,0.f);
-const Vector3 Vector3::RIGHT	= Vector3(1.f, 0.f, 0.f);
-const Vector3 Vector3::FORWARD	= Vector3(0.f,0.f,1.f);
-const Vector3 Vector3::GRAVITY  = Vector3(0.f, -9.8f, 0.f);
+const Vector3 Vector3::Y_AXIS		= Vector3(0.f,1.f,0.f);
+const Vector3 Vector3::X_AXIS	= Vector3(1.f, 0.f, 0.f);
+const Vector3 Vector3::Z_AXIS	= Vector3(0.f,0.f,1.f);
+
 
 //-----------------------------------------------------------------------------------------------
 Vector3::Vector3( const Vector3& copy )

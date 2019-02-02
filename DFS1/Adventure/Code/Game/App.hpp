@@ -57,6 +57,8 @@ void CommandEdgeLowPriority(Command& cmd);
 
 void CommandEdgeTiles(Command& cmd);
 
+void CommandRerollPlayerAppearance(Command& cmd);
+
 //void CommandToggleProfiler(Command& cmd);
 //void CommandPrintProfilerReport(Command& cmd);
 //void CommandProfilePause(Command& cmd);

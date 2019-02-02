@@ -83,15 +83,15 @@ void Adventure::Update(float deltaSeconds)
 	PROFILE_PUSH("Adventure::MapUpdate");
 	m_currentMap->Update(deltaSeconds);
 	PROFILE_POP();
-	PROFILE_PUSH("Adventure::PartyUpdate");
+	//PROFILE_PUSH("Adventure::PartyUpdate");
 	g_theGame->m_party->Update(deltaSeconds);
-	PROFILE_POP();
-	PROFILE_PUSH("Adventure::VictoryCheck");
+	//PROFILE_POP();
+	//PROFILE_PUSH("Adventure::VictoryCheck");
 	CheckForVictory();
-	PROFILE_POP();
-	PROFILE_PUSH("Adventure::Cleanup");
+	//PROFILE_POP();
+	//PROFILE_PUSH("Adventure::Cleanup");
 	m_currentMap->RemoveDoomedEntities();
-	PROFILE_POP();
+	//PROFILE_POP();
 }
 
 void Adventure::Render()
@@ -119,7 +119,7 @@ void Adventure::RenderUI()
 	if (!g_theGame->m_fullMapMode){
 		//player stats - bottom left
 		Vector2 boxSize = Vector2(screenWidth * .3f, screenWidth * .2f);
-		AABB2 statBox = cameraBounds.GetPercentageBox(0.f, .87f, .4f, 1.f);
+		AABB2 statBox = cameraBounds.GetPercentageBox(0.01f, .85f, .3f, .98f);
 		g_theGame->m_party->RenderPartyUI(statBox);
 	}
 

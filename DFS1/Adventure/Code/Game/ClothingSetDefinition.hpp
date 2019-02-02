@@ -12,6 +12,7 @@ public:
 	ClothingSetDefinition(tinyxml2::XMLElement* setElement);
 
 	std::string m_name;
+	int m_equipmentIndex = 0;
 
 	//all textures loaded in 2D array by RenderSlot
 	//i.e. m_texturesByClothingType[0] is all body textures

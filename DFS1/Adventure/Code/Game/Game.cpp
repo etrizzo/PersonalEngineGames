@@ -44,8 +44,8 @@ Game::Game()
 	m_miscSpriteSheet = new SpriteSheet(*miscTexture, 4,4);
 	Texture* bubbleTexture = g_theRenderer->CreateOrGetTexture("speechbubbles_5x6.png");
 	m_speechBubbleSpriteSheet = new SpriteSheet(*bubbleTexture, 6,5);
-	Texture* portraitTexture = g_theRenderer->CreateOrGetTexture("HUMANOIDS/PORTRAITS/portrait_f.png");
-	g_portraitSpriteSheet = new SpriteSheet(*portraitTexture, 9,9);
+	Texture* portraitTexture = g_theRenderer->CreateOrGetTexture("HUMANOIDS/PORTRAITS/portrait_all.png");
+	g_portraitSpriteSheet = new SpriteSheet(*portraitTexture, 17,9);
 
 	g_theRenderer->LoadSpritesFromSpriteAtlas(m_speechBubbleSpriteSheet,32);
 
@@ -138,8 +138,11 @@ void Game::Render()
 	g_theRenderer->DisableDepth();
 	g_theRenderer->ClearScreen(RGBA::BLACK);
 
+	g_theGame->SetGameCamera();
+	g_theRenderer->BindCamera(m_camera);
 	m_currentState->Render();
 	g_theGame->SetGameCamera();
+
 	m_debugRenderSystem->UpdateAndRender();
 
 }
@@ -334,6 +337,11 @@ void Game::DebugSpawnItem(std::string itemName)
 	} else {
 		ConsolePrintf(RGBA::RED, "No current adventure - start the game");
 	}
+}
+
+void Game::DebugRerollPlayerAppearance()
+{
+	m_party->m_currentPlayer->RandomizeAppearance();
 }
 
 void Game::SetCurrentMap(Map * newMap)

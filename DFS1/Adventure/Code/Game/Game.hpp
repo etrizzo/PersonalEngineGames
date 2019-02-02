@@ -92,6 +92,8 @@ public:
 	void DebugSetPlayerSpeed(int newSpeed);
 	void DebugSpawnActor(std::string actorName);
 	void DebugSpawnItem(std::string itemName);
+	void DebugRerollPlayerAppearance();
+
 	void SetCurrentMap(Map* newMap);
 	void GoToMap(std::string mapName);
 

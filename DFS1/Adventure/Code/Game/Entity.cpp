@@ -271,7 +271,7 @@ void Entity::RenderHealthInBox(AABB2 healthBox)
 	float healthHeight = healthBox.GetHeight();
 	g_theRenderer->DrawAABB2(healthBox, RGBA(0,0,0));	//draw black outline
 	AABB2 boundsBackground = healthBox;
-	boundsBackground.AddPaddingToSides(-.2f * healthHeight,-.2f * healthHeight);
+	boundsBackground.AddPaddingToSides(-.1f * healthHeight,-.1f * healthHeight);
 	g_theRenderer->DrawAABB2(boundsBackground, RGBA(255,0,0));// draw red background;
 	float healthWidth = boundsBackground.GetWidth();
 	AABB2 boundsHealth = AABB2(boundsBackground.mins, Vector2(boundsBackground.mins.x + (percentFull * healthWidth), boundsBackground.maxs.y));

@@ -2,29 +2,35 @@
 
 	<ClothingSet name="Leather">
 		<Torsos>
-			<Torso texture="HUMANOIDS/CHEST/chest_leather_f.png" />
+			<Torso texture="HUMANOIDS/CHEST/chest_leather_f.png" index="0"/>
+			<Torso texture="HUMANOIDS/CHEST/Men/chest_leather_m.png" index="1"/>
 		</Torsos>
 
 		<Legs>
-			<Leg texture="HUMANOIDS/LEGS/pants_leather_f.png" />
+			<Leg texture="HUMANOIDS/LEGS/pants_leather_f.png" index="0"/>
+			<Torso texture="HUMANOIDS/LEGS/Men/legs_leather_m.png" index="1"/>
 		</Legs>
 
 		<Hats>
-			<Hat texture="HUMANOIDS/HEAD/HATS/leathercap_f.png" />
+			<Hat texture="HUMANOIDS/HEAD/HATS/leathercap_f.png" index="0"/>
+			<Hat texture="HUMANOIDS/HEAD/HATS/leathercap_f.png" index="1"/>
 		</Hats>
 	</ClothingSet>
 
 	<ClothingSet name="Platemail">
 		<Torsos>
-			<Torso texture="HUMANOIDS/CHEST/chest_plate_f.png" />
+			<Torso texture="HUMANOIDS/CHEST/chest_plate_f.png" index="0"/>
+			<Torso texture="HUMANOIDS/CHEST/Men/chest_plate_m.png" index="1"/>
 		</Torsos>
 
 		<Legs>
-			<Leg texture="HUMANOIDS/LEGS/pants_plate_f.png" />
+			<Leg texture="HUMANOIDS/LEGS/pants_plate_f.png" index="0"/>
+			<Torso texture="HUMANOIDS/LEGS/Men/legs_plate_m.png" index="1"/>
 		</Legs>
 
 		<Hats>
-			<Hat texture="HUMANOIDS/HEAD/HATS/helmet_f.png" />
+			<Hat texture="HUMANOIDS/HEAD/HATS/helmet_f.png" index="0"/>
+			<Hat texture="HUMANOIDS/HEAD/HATS/helmet_f.png" index="1"/>
 		</Hats>
 	</ClothingSet>
 
@@ -64,7 +70,7 @@
 	</ClothingSet>
 
 
-	<ClothingSet name="Villager">
+	<ClothingSet name="Villager_f" equipmentIndex="0">
 		<Bodys>
 			<Body>
 			 <Base texture="HUMANOIDS/BODY/body_human_f_1.png" portraitTint="253,213,183,255"/>
@@ -97,12 +103,16 @@
 			<Torso texture="HUMANOIDS/CHEST/chest_f_2.png" color="randomBright"/>
 			<Torso texture="HUMANOIDS/CHEST/chest_f_1.png" color="randomBright"/>
 			<Torso texture="HUMANOIDS/CHEST/chest_f_2.png" color="randomBright"/>
-			<Torso texture="HUMANOIDS/CHEST/chest_dress_f.png" useLegs="false" color="randomBright"/>
+			<Torso texture="HUMANOIDS/CHEST/chest_shortdress_f.png" useLegs="false" color="randomBright"/>
+
 			<Torso texture="HUMANOIDS/CHEST/chest_f_1.png" color="randomMuted"/>
 			<Torso texture="HUMANOIDS/CHEST/chest_f_2.png" color="randomMuted"/>
 			<Torso texture="HUMANOIDS/CHEST/chest_f_1.png" color="randomMuted"/>
 			<Torso texture="HUMANOIDS/CHEST/chest_f_2.png" color="randomMuted"/>
 			<Torso texture="HUMANOIDS/CHEST/chest_dress_f.png" useLegs="false" color="randomMuted"/>
+			<Torso texture="HUMANOIDS/CHEST/chest_shortdress_f.png" useLegs="false" color="randomMuted"/>
+			<Torso texture="HUMANOIDS/CHEST/chest_shortdress_f.png" useLegs="false" color="randomMuted"/>
+
 		</Torsos>
 
 		<Legs>
@@ -112,7 +122,7 @@
 
 		<Hairs>
 			<!-- portrait coords are front, back is 1 below it -->
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_human_1.png" portraitTint="255,150,165,255" portraitCoords="1,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_ponytail_f.png"  color="randomMuted" portraitCoords="1,3"/>
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_unkempt_f.png" color="randomMuted" portraitCoords="7,3"/>
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_longbangs_f.png" portraitTint="45,40,40,255" portraitCoords="3,3"/>
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_shortbangs_f.png" color="randomMuted" portraitCoords="5,3"/>
@@ -129,9 +139,13 @@
 			<!-- portrait coords are shape, color is 1 below it -->
 			<Mouth name="thick" portraitCoords="1,5" color="randomLip"/> 
 			<Mouth name="thick" portraitCoords="1,5" color="randomLip"/> 
+			<Mouth name="thick" portraitCoords="1,5" color="randomLip"/> 
+			<Mouth name="thick" portraitCoords="1,5" color="randomLip"/> 
 			<Mouth name="solemn" portraitCoords="2,5" color="randomLip"/> 
 			<Mouth name="solemn" portraitCoords="2,5" color="randomLip"/> 
 			<Mouth name="narrow" portraitCoords="3,5" color="randomLip"/> 
+			<Mouth name="warm" portraitCoords="4,5" color="randomLip"/>
+			<Mouth name="warm" portraitCoords="4,5" color="randomLip"/> 
 			<Mouth name="warm" portraitCoords="4,5" color="randomLip"/>
 			<Mouth name="warm" portraitCoords="4,5" color="randomLip"/> 
 
@@ -163,11 +177,116 @@
 			<Feature name="nose_stud" portraitCoords="7,2"/>
 			<Feature name="nose_ring" portraitCoords="8,2"/>
 			<Feature name="nose_ring" portraitCoords="8,2"/>
-
-
 		</Portrait>
-
 	</ClothingSet>
+
+
+
+
+
+	<ClothingSet name="Villager_m" equipmentIndex="0">
+		<Bodys>
+			<Body>
+			 <Base texture="HUMANOIDS/BODY/body_human_m_1.png" portraitTint="253,213,183,255"/>
+			 <Ears texture="HUMANOIDS/HEAD/EARS/ears_human_f_1.png" portraitCoords="8,8"/>
+			</Body>
+			<Body>
+			 <Base texture="HUMANOIDS/BODY/body_human_m_2.png" portraitTint="253,208,130,255"/>
+			 <Ears texture="HUMANOIDS/HEAD/EARS/ears_human_f_2.png" portraitCoords="8,8"/>
+			</Body>
+			<Body>
+			 <Base texture="HUMANOIDS/BODY/body_human_m_3.png" portraitTint="186,132,84,255"/>
+			 <Ears texture="HUMANOIDS/HEAD/EARS/ears_human_f_3.png" portraitCoords="8,8"/>
+			</Body>
+			<Body>
+			 <Base texture="HUMANOIDS/BODY/body_human_m_1.png" portraitTint="253,213,183,255"/>
+			</Body>
+			<Body>
+			 <Base texture="HUMANOIDS/BODY/body_human_m_2.png" portraitTint="253,208,130,255"/>
+			</Body>
+			<Body>
+			 <Base texture="HUMANOIDS/BODY/body_human_m_3.png" portraitTint="186,132,84,255"/>
+			</Body>
+			<Weapons>
+				<Weapon texture="HUMANOIDS/WEAPON/recurvebow.png" />
+			</Weapons>
+		</Bodys>
+
+		<Torsos>
+			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirt_m.png" color="randomBright"/>
+			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirtbelt_m.png" color="randomBright"/>
+			<Torso texture="HUMANOIDS/CHEST/Men/chest_tunic_m.png" color="randomBright"/>
+			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirt_m.png" color="randomMuted"/>
+			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirtbelt_m.png" color="randomMuted"/>
+			<Torso texture="HUMANOIDS/CHEST/Men/chest_tunic_m.png" color="randomMuted"/>
+			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirt_m.png" color="randomMuted"/>
+			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirtbelt_m.png" color="randomMuted"/>
+			<Torso texture="HUMANOIDS/CHEST/Men/chest_tunic_m.png" color="randomMuted"/>
+		</Torsos>
+
+		<Legs>
+			<Leg texture="HUMANOIDS/LEGS/Men/legs_jeans_m.png" />
+			<Leg texture="HUMANOIDS/LEGS/Men/legs_leather_m.png" />
+		</Legs>
+
+		<Hairs>
+			<!-- portrait coords are front, back is 1 below it -->
+			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_bedhead_m.png" color="randomMuted" portraitCoords="11,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_long_m.png" color="randomMuted" portraitCoords="12,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_messy_m.png" color="randomMuted" portraitCoords="10,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_parted_m.png" color="randomMuted" portraitCoords="13,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_shorthawk_m.png" color="randomMuted" portraitCoords="14,3"/>
+		</Hairs>
+
+		<Portrait numFeatures="0~3" lipColorChance=".1">
+			<Face name="wide" portraitCoords="10,8" />
+			<Face name="round_m" portraitCoords="11,8" />
+			<Face name="square_m" portraitCoords="12,8" />
+
+			<!-- portrait coords are shape, color is 1 below it -->
+			<Mouth name="thick" portraitCoords="10,5" color="randomLip"/> 
+			<Mouth name="solemn" portraitCoords="11,5" color="randomLip"/>
+			<Mouth name="narrow" portraitCoords="12,5" color="randomLip"/>
+			<Mouth name="warm" portraitCoords="13,5" color="randomLip"/>
+			<Mouth name="solemn" portraitCoords="11,5" color="randomLip"/>
+			<Mouth name="narrow" portraitCoords="12,5" color="randomLip"/>
+			<Mouth name="warm" portraitCoords="13,5" color="randomLip"/>
+
+			<Nose name="bigg" portraitCoords="10,7"/>
+			<Nose name="round" portraitCoords="2,7"/>
+			<Nose name="pointed" portraitCoords="3,7"/>
+			<Nose name="strong" portraitCoords="4,7"/>
+
+			<Brow name="heavy" portraitCoords="6,7"/>
+			<Brow name="heavy" portraitCoords="6,7"/>
+			<Brow name="heavy" portraitCoords="6,7"/>
+			<Brow name="thin" portraitCoords="6,7"/>
+			<Brow name="forward" portraitCoords="6,7"/>
+			<Brow name="forward" portraitCoords="6,7"/>
+
+			<!-- portrait coords is the whites layer, 1 to the right is the pupil -->
+			<Eyes name="serious" portraitCoords="10,1" color="random"/>
+			<Eyes name="almond" portraitCoords="12,1" color="random"/>
+			<Eyes name="wide" portraitCoords="14,1" color="random"/>
+
+			<Feature name="freckles_L" portraitCoords="1,2"/>
+			<Feature name="freckles_L" portraitCoords="1,2"/>
+			<Feature name="freckles_L" portraitCoords="1,2"/>
+			<Feature name="freckles_H" portraitCoords="2,2"/>
+			<Feature name="freckles_H" portraitCoords="2,2"/>
+			<Feature name="beauty_1" portraitCoords="3,2"/>
+			<Feature name="beauty_2" portraitCoords="4,2"/>
+			<Feature name="scar_eye" portraitCoords="5,2"/>
+			<Feature name="scar_face" portraitCoords="6,2"/>
+			<Feature name="scar_eye" portraitCoords="5,2"/>
+			<Feature name="scar_face" portraitCoords="6,2"/>
+			<Feature name="nose_stud" portraitCoords="7,2"/>
+			<Feature name="nose_ring" portraitCoords="8,2"/>
+		</Portrait>
+	</ClothingSet>
+
+
+
 
 	<ClothingSet name="Player">
 		<Bodys>
@@ -210,12 +329,13 @@
 
 		<Hairs>
 			<!-- portrait coords are front, back is 1 below it -->
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_human_1.png"  portraitTint="250,170,180,255" portraitCoords="1,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_ponytail_f.png"  color="randomMuted" portraitCoords="1,3"/>
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_unkempt_f.png" color="randomMuted" portraitCoords="7,3"/>
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_longbangs_f.png" portraitTint="45,40,40,255" portraitCoords="3,3"/>
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_loose.png" color="randomMuted" portraitCoords="4,3"/>
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_long_f.png" color="randomMuted" portraitCoords="2,3"/>
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_shoulder_f.png" color="randomMuted" portraitCoords="6,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_shortbangs_f.png" color="randomMuted" portraitCoords="5,3"/>
 		</Hairs>
 
 		<Portrait numFeatures="0~3" lipColorChance=".5">
@@ -245,11 +365,16 @@
 
 			<Feature name="freckles_L" portraitCoords="1,2"/>
 			<Feature name="freckles_H" portraitCoords="2,2"/>
+			<Feature name="freckles_L" portraitCoords="1,2"/>
+			<Feature name="freckles_H" portraitCoords="2,2"/>
 			<Feature name="beauty_1" portraitCoords="3,2"/>
 			<Feature name="beauty_2" portraitCoords="4,2"/>
 			<Feature name="scar_eye" portraitCoords="5,2"/>
 			<Feature name="scar_face" portraitCoords="6,2"/>
+			<Feature name="scar_eye" portraitCoords="5,2"/>
+			<Feature name="scar_face" portraitCoords="6,2"/>
 			<Feature name="nose_stud" portraitCoords="7,2"/>
+			<Feature name="nose_ring" portraitCoords="8,2"/>
 			<Feature name="nose_ring" portraitCoords="8,2"/>
 
 

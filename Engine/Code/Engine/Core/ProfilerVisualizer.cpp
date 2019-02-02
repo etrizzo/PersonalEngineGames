@@ -138,7 +138,7 @@ void ProfilerVisualizer::RenderReport()
 			m_currentReport->SortByTotalTime();
 		}
 		std::string header = Stringf( "%-*s %-8s %8s %12s %8s %12s\n", 
-			64, "ID", 
+			32, "ID", 
 			"Calls",
 			"Total %",
 			"Total ms", 
@@ -265,7 +265,7 @@ std::string FormatProfilerReport(ProfilerReportEntry * entry, int parentCount)
 
 	std::string fancy = Stringf( "%*s%-*s %-8u %-8s %-12s %-8s %-12s", 
 		parentCount, "", 
-		64 - parentCount, entry->m_id.data(), 
+		32 - parentCount, entry->m_id.data(), 
 		entry->m_callCount,
 		entry->GetTotalPercentTime().c_str(),
 		entry->GetTotalMillisecondsAsString().c_str(), 

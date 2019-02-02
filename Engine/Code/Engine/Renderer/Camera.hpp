@@ -17,7 +17,7 @@ public:
 	Texture*  GetDepthTarget();
 
 	// model setters
-	void LookAt( Vector3 position, Vector3 target, Vector3 up = Vector3::UP ); 
+	void LookAt( Vector3 position, Vector3 target, Vector3 up = Vector3::Y_AXIS ); 
 
 	// projection settings
 	void SetProjection( Matrix44 proj ); 

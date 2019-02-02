@@ -27,6 +27,7 @@ SpawnColorCB GetColorCallbackFromXML(std::string text)
 ClothingSetDefinition::ClothingSetDefinition(tinyxml2::XMLElement * setElement)
 {
 	m_name = ParseXmlAttribute(*setElement, "name", "NO_NAME");
+	m_equipmentIndex = ParseXmlAttribute(*setElement, "equipmentIndex", m_equipmentIndex);	//what equipment sprite this set should use (f or m)
 	//m_texturesByClothingType = std::vector<std::vector<Texture*>>();
 	//m_texturesByClothingType.resize(NUM_RENDER_SLOTS);
 	//m_tintsByClothingType = std::vector<std::vector<RGBA>>();

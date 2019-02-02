@@ -63,7 +63,7 @@ void Map::Render()
 {
 	SetCamera();
 	
-	//RenderTiles();
+	RenderTiles();
 	//RenderEntities();
 }
 
@@ -129,39 +129,45 @@ void Map::RenderTileTags()
 
 
 void Map::RenderTiles(){
-	static std::vector<Vertex3D_PCU> tileVerts;
-	tileVerts.clear();
-	AABB2 camBounds = GetCameraBounds();
-	Vector2 spacing = Vector2(1.f,1.f);
-	Tile* minTile = TileAtFloat(camBounds.mins - spacing);
-	Tile* maxTile = TileAtFloat(camBounds.maxs + spacing);
+	//an optimization would be to only bind the thing if it's different from the previous bind.
+	g_theRenderer->BindMaterial(m_tileRenderable->GetEditableMaterial());
+	g_theRenderer->BindModel(m_tileRenderable->m_transform.GetWorldMatrix());
+	g_theRenderer->DrawMesh(m_tileRenderable->m_mesh->m_subMeshes[0]);
 
-	IntVector2 minTileCoords = IntVector2(0,0);
-	IntVector2 maxTileCoords = m_dimensions;
-	if (minTile != nullptr){
-		 minTileCoords= minTile->m_coordinates;
-	}
-	if (maxTile != nullptr){
-		maxTileCoords = maxTile->m_coordinates;
-	}
-	for ( int x = minTileCoords.x; x < maxTileCoords.x; x++){
-		for (int y = minTileCoords.y; y < maxTileCoords.y; y++){
-			//push vertices
-			Tile* tileToRender = TileAt(x,y);
-			AABB2 bounds = tileToRender->GetBounds();
-			RGBA color = tileToRender->m_tileDef->m_spriteTint;
-			AABB2 texCoords = tileToRender->m_tileDef->GetTexCoords(tileToRender->m_extraInfo->m_variant);
-			tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.mins.x, bounds.mins.y), color, Vector2(texCoords.mins.x, texCoords.maxs.y)));
-			tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.maxs.x, bounds.mins.y), color, Vector2(texCoords.maxs.x, texCoords.maxs.y)));
-			tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.maxs.x, bounds.maxs.y), color, Vector2(texCoords.maxs.x, texCoords.mins.y)));
-			tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.mins.x, bounds.maxs.y), color, Vector2(texCoords.mins.x, texCoords.mins.y)));
-		}
-	}
-	Vertex3D_PCU* vertArray = &tileVerts[0];
-	const Texture* tileTexture = g_tileSpriteSheet->GetTexture();
-	g_theRenderer->BindTexture(*tileTexture);
-	g_theRenderer->DrawMeshImmediate(vertArray, tileVerts.size(), PRIMITIVE_QUADS);
-	g_theRenderer->ReleaseTexture();
+
+	//static std::vector<Vertex3D_PCU> tileVerts;
+	//tileVerts.clear();
+	//AABB2 camBounds = GetCameraBounds();
+	//Vector2 spacing = Vector2(1.f,1.f);
+	//Tile* minTile = TileAtFloat(camBounds.mins - spacing);
+	//Tile* maxTile = TileAtFloat(camBounds.maxs + spacing);
+
+	//IntVector2 minTileCoords = IntVector2(0,0);
+	//IntVector2 maxTileCoords = m_dimensions;
+	//if (minTile != nullptr){
+	//	 minTileCoords= minTile->m_coordinates;
+	//}
+	//if (maxTile != nullptr){
+	//	maxTileCoords = maxTile->m_coordinates;
+	//}
+	//for ( int x = minTileCoords.x; x < maxTileCoords.x; x++){
+	//	for (int y = minTileCoords.y; y < maxTileCoords.y; y++){
+	//		//push vertices
+	//		Tile* tileToRender = TileAt(x,y);
+	//		AABB2 bounds = tileToRender->GetBounds();
+	//		RGBA color = tileToRender->m_tileDef->m_spriteTint;
+	//		AABB2 texCoords = tileToRender->m_tileDef->GetTexCoords(tileToRender->m_extraInfo->m_variant);
+	//		tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.mins.x, bounds.mins.y), color, Vector2(texCoords.mins.x, texCoords.maxs.y)));
+	//		tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.maxs.x, bounds.mins.y), color, Vector2(texCoords.maxs.x, texCoords.maxs.y)));
+	//		tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.maxs.x, bounds.maxs.y), color, Vector2(texCoords.maxs.x, texCoords.mins.y)));
+	//		tileVerts.push_back(Vertex3D_PCU(Vector2(bounds.mins.x, bounds.maxs.y), color, Vector2(texCoords.mins.x, texCoords.mins.y)));
+	//	}
+	//}
+	//Vertex3D_PCU* vertArray = &tileVerts[0];
+	//const Texture* tileTexture = g_tileSpriteSheet->GetTexture();
+	//g_theRenderer->BindTexture(*tileTexture);
+	//g_theRenderer->DrawMeshImmediate(vertArray, tileVerts.size(), PRIMITIVE_QUADS);
+	//g_theRenderer->ReleaseTexture();
 }
 
 bool Map::RunBubbleSortPassOnEntities()
@@ -196,22 +202,28 @@ void Map::Update(float deltaSeconds)
 	PROFILE_PUSH("Map::UpdateEntities");
 	UpdateEntities(deltaSeconds);
 	PROFILE_POP();
-	PROFILE_PUSH("Map::RunPhysics");
+	//PROFILE_PUSH("Map::RunPhysics");
 	RunPhysics();
-	PROFILE_POP();
-	PROFILE_PUSH("Map::CheckInteractions");
+	//PROFILE_POP();
+	//PROFILE_PUSH("Map::CheckInteractions");
 	CheckEntityInteractions();
-	PROFILE_POP();
+	//PROFILE_POP();
 	ResetPortals();
 
 }
 
 void Map::UpdateEntities(float deltaSeconds)
 {
+	float cameraUpdateRadius = ZOOM_FACTOR * 5.f;
+	Vector2 playerPosition = g_theGame->m_party->m_currentPlayer->GetPosition();
 	for (unsigned int entityIndex = 0; entityIndex < m_allEntities.size(); entityIndex++){
 		Entity* currentEntity = m_allEntities.at(entityIndex);
+		Vector2 entityPosition = currentEntity->GetPosition();
 		if (currentEntity != nullptr && !currentEntity->m_aboutToBeDeleted){
-			m_allEntities.at(entityIndex)->Update(deltaSeconds);
+			if ((entityPosition - playerPosition).GetLengthSquared() < (cameraUpdateRadius * cameraUpdateRadius)){
+				currentEntity->Update(deltaSeconds);
+			}
+			
 		}
 	}
 
@@ -490,7 +502,7 @@ void Map::AddActorToMap(Actor * actor)
 	m_allActors.push_back(actor);
 	m_allEntities.push_back(actor);
 	m_scene->AddRenderable(actor->m_renderable);
-	m_scene->AddRenderable(actor->m_healthRenderable);
+	//m_scene->AddRenderable(actor->m_healthRenderable);
 }
 
 void Map::RemoveEntities()
@@ -911,7 +923,7 @@ Actor * Map::SpawnNewPlayer(Vector2 spawnPosition)
 	m_allEntities.push_back(newPlayer);
 	m_allActors.push_back(newPlayer);
 	m_scene->AddRenderable(newPlayer->m_renderable);
-	m_scene->AddRenderable(newPlayer->m_healthRenderable);
+	//m_scene->AddRenderable(newPlayer->m_healthRenderable);
 	newPlayer->EquipItemsInInventory();
 	return newPlayer;
 }
@@ -1183,7 +1195,7 @@ void Map::CreateTileRenderable(bool edge)
 	m_tileRenderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_3DPCU));
 	m_tileRenderable->SetMaterial(tileMat);
 	m_tileRenderable->m_zOrder = 0;
-	m_scene->AddRenderable(m_tileRenderable);
+	//m_scene->AddRenderable(m_tileRenderable);
 }
 
 void Map::RunMapGeneration()
@@ -1234,15 +1246,13 @@ void Map::EdgeTiles()
 
 void Map::EdgeTilesThreeSteps()
 {
-	RemoveInvalidTiles();
+	RemoveInvalidTiles();		//A single pass 
 	RemoveInvalidTiles();
 
 	AddTufts();		//if a high-level edge is surrounded by lower-level edges, fuck it up
 	EdgeShoreline();
 	EdgeGrassToDirt();
 	EdgeLowPriority();
-
-	
 }
 
 void Map::RemoveInvalidTiles()

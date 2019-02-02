@@ -157,7 +157,7 @@ SubMesh * MeshBuilder::CreateSubMesh(eVertexType vertType)
 
 void MeshBuilder::AppendLine(Vector3 start, Vector3 end, RGBA startColor, RGBA endColor)
 {
-	SetNormal(Vector3::UP);
+	SetNormal(Vector3::Y_AXIS);
 	SetColor(startColor);
 	SetUV(Vector2::ZERO);
 	PushVertex(start);
@@ -252,8 +252,8 @@ void MeshBuilder::AppendPlane2D(const AABB2 & plane, const RGBA & color, const A
 	Vector2 tl_UV = Vector2(uvMins.x, uvMaxs.y);
 	Vector2 tr_UV = uvMaxs;
 
-	SetNormal(Vector3::FORWARD * -1.f);
-	SetTangent(Vector3::RIGHT);
+	SetNormal(Vector3::Z_AXIS * -1.f);
+	SetTangent(Vector3::X_AXIS);
 	SetUV(bl_UV);
 	unsigned int idx = PushVertex(bottomLeft);
 
@@ -318,8 +318,8 @@ void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 U
 	|   |
 	c - d
 	*/
-	SetNormal(-1.f * Vector3::FORWARD);
-	SetTangent(1.f * Vector3::RIGHT);
+	SetNormal(-1.f * Vector3::Z_AXIS);
+	SetTangent(1.f * Vector3::X_AXIS);
 	SetUV(SIDE_bl_UV);
 	unsigned int idx = PushVertex(c);
 
@@ -341,8 +341,8 @@ void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 U
 		|   |
 		h - g
 	*/
-	SetNormal(Vector3::FORWARD);
-	SetTangent(-1.f * Vector3::RIGHT);
+	SetNormal(Vector3::Z_AXIS);
+	SetTangent(-1.f * Vector3::X_AXIS);
 	SetUV(SIDE_bl_UV);
 	idx = PushVertex(h);
 
@@ -364,8 +364,8 @@ void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 U
 	|   |
 	d - h
 	*/
-	SetNormal(Vector3::RIGHT);
-	SetTangent(Vector3::FORWARD);
+	SetNormal(Vector3::X_AXIS);
+	SetTangent(Vector3::Z_AXIS);
 	SetUV(SIDE_bl_UV);
 	idx = PushVertex(d);
 
@@ -386,8 +386,8 @@ void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 U
 	|   |
 	g - c
 	*/
-	SetNormal(-1.f * Vector3::RIGHT);
-	SetTangent(-1.f * Vector3::FORWARD);
+	SetNormal(-1.f * Vector3::X_AXIS);
+	SetTangent(-1.f * Vector3::Z_AXIS);
 	SetUV(SIDE_bl_UV);
 	idx = PushVertex(g);
 
@@ -408,8 +408,8 @@ void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 U
 	|   |
 	a - b
 	*/
-	SetNormal(Vector3::UP);
-	SetTangent(Vector3::RIGHT);
+	SetNormal(Vector3::Y_AXIS);
+	SetTangent(Vector3::X_AXIS);
 	SetUV(TOP_bl_UV);
 	idx = PushVertex(a);
 
@@ -434,8 +434,8 @@ void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 U
 	|   |
 	g - h
 	*/
-	SetNormal(-1.f * Vector3::UP);
-	SetTangent( Vector3::RIGHT);
+	SetNormal(-1.f * Vector3::Y_AXIS);
+	SetTangent( Vector3::X_AXIS);
 	SetUV(BOTTOM_bl_UV);
 	idx = PushVertex(g);
 
@@ -560,8 +560,8 @@ void MeshBuilder::AppendQuad(const Vector3 & botLeft, const Vector3 & botRight, 
 	Vector2 tr_UV = uvMaxs;
 
 	TODO("Fix normal/tangent for quad");
-	SetNormal(-1.f * Vector3::UP);
-	SetTangent( Vector3::RIGHT);
+	SetNormal(-1.f * Vector3::Y_AXIS);
+	SetTangent( Vector3::X_AXIS);
 	SetColor(color);
 	SetUV(bl_UV);
 	unsigned int idx = PushVertex(botLeft);

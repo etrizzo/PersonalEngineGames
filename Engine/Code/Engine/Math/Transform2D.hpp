@@ -75,7 +75,7 @@ public:
 	Vector3 GetRight() const;
 	Vector3 GetUp() const;
 
-	void LookAt(const Vector3& position, const Vector3& target, const Vector3& up = Vector3::UP);
+	void LookAt(const Vector3& position, const Vector3& target, const Vector3& up = Vector3::Y_AXIS);
 
 	void SetParent(Transform2D* t);
 	void AddChild(Transform2D* t);

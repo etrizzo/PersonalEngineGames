@@ -101,7 +101,7 @@ void ObjLoader::AddFace(std::string line)
 			mb->SetNormal(actualNorm);
 			mb->SetUV(m_uvs[uvIndex]);
 			TODO("Replace with mikkt");
-			mb->SetTangent(Vector3::RIGHT);		
+			mb->SetTangent(Vector3::X_AXIS);		
 			Vector3 actualPos =m_positions[posIndex];
 			actualPos.x = actualPos.x * -1.f;
 			int idx = mb->PushVertex(actualPos);
@@ -119,7 +119,7 @@ void ObjLoader::AddFace(std::string line)
 			mb->SetNormal(actualNorm);
 			mb->SetUV(m_uvs[uvIndex]);
 			TODO("Replace with mikkt");
-			mb->SetTangent(Vector3::RIGHT);		
+			mb->SetTangent(Vector3::X_AXIS);		
 			Vector3 actualPos =m_positions[posIndex];
 			actualPos.x = actualPos.x * -1.f;
 			int idx = mb->PushVertex(actualPos);

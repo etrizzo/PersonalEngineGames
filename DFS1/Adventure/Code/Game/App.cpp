@@ -158,6 +158,8 @@ void App::RegisterCommands()
 	CommandRegister("edge_high", CommandEdgeHighPriority, "Edges high-to-low ground levels");
 	CommandRegister("edge_low", CommandEdgeLowPriority, "Edges different tiles of the same ground level (dirt -> sand, eg.)");
 	CommandRegister("edge_map", CommandEdgeTiles, "Goes through the entire tile-edging process.");
+
+	CommandRegister("reroll_appearance", CommandRerollPlayerAppearance, "Rerolls the sprite/portrait appearance for the current player");
 	//CommandRegister("profiler", CommandToggleProfiler, "Toggles profiler view");
 	//CommandRegister("profiler_report", CommandPrintProfilerReport, "Prints a frame of the profiler to the console", "profiler_report <tree|flat>");
 	//CommandRegister("profiler_pause", CommandProfilePause, "Pauses profiling");
@@ -326,6 +328,12 @@ void CommandEdgeTiles(Command & cmd)
 	UNUSED(cmd);
 	g_theGame->m_currentState->m_currentAdventure->m_currentMap->EdgeTilesThreeSteps();
 	g_theGame->m_currentState->m_currentAdventure->m_currentMap->ReCreateRenderable(g_theGame->m_renderingEdges);
+}
+
+void CommandRerollPlayerAppearance(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->DebugRerollPlayerAppearance();
 }
 
 
