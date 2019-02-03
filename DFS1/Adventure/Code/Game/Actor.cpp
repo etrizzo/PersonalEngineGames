@@ -529,7 +529,7 @@ void Actor::EquipOrUnequipItem(Item * itemToEquip)
 				m_equippedItems[slotToEquipIn] = itemToEquip;
 			}
 			itemToEquip->m_currentlyEquipped = true;
-			m_currentLook->SetLayer(texSlot, itemToEquip->GetEquipLayer());
+			m_currentLook->SetLayer(texSlot, itemToEquip->GetEquipLayer(m_currentLook->m_equipmentIndex));
 			//m_layerTextures[texSlot] = itemToEquip->GetEquipTexture();
 			m_changedClothes = true;
 		}

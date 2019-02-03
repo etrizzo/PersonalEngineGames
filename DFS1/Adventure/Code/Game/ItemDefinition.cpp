@@ -39,9 +39,10 @@ Texture * ItemDefinition::GetEquipTexture() const
 	}
 }
 
-ClothingLayer * ItemDefinition::GetEquipLayer() const
+ClothingLayer * ItemDefinition::GetEquipLayer(int equipIndex)
 {
 	if (m_defaultSet != nullptr){
+		m_defaultSet = m_clothingSetDefinition->GetSetAtEquipmentIndex(equipIndex);
 		return m_defaultSet->GetLayer(GetRenderSlotForEquipSlot(m_equipSlot));
 	} else {
 		return m_defaultEquipLayer;

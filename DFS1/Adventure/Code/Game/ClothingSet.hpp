@@ -39,6 +39,8 @@ public:
 	IntVector2 m_hairPortraitCoords = IntVector2(0,0);
 	IntVector2 m_earPortraitCoords = IntVector2(0,0);
 
+	int m_equipmentIndex = 0;
+
 	
 	PortraitDefinition* m_portraitDef = nullptr;
 	std::vector<std::vector<PortraitLayer*>> m_portraitLayers = std::vector<std::vector<PortraitLayer*>>();

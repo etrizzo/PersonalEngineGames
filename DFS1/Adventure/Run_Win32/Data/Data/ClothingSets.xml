@@ -8,7 +8,7 @@
 
 		<Legs>
 			<Leg texture="HUMANOIDS/LEGS/pants_leather_f.png" index="0"/>
-			<Torso texture="HUMANOIDS/LEGS/Men/legs_leather_m.png" index="1"/>
+			<Leg texture="HUMANOIDS/LEGS/Men/legs_leather_m.png" index="1"/>
 		</Legs>
 
 		<Hats>
@@ -25,7 +25,7 @@
 
 		<Legs>
 			<Leg texture="HUMANOIDS/LEGS/pants_plate_f.png" index="0"/>
-			<Torso texture="HUMANOIDS/LEGS/Men/legs_plate_m.png" index="1"/>
+			<Leg texture="HUMANOIDS/LEGS/Men/legs_plate_m.png" index="1"/>
 		</Legs>
 
 		<Hats>
@@ -103,7 +103,6 @@
 			<Torso texture="HUMANOIDS/CHEST/chest_f_2.png" color="randomBright"/>
 			<Torso texture="HUMANOIDS/CHEST/chest_f_1.png" color="randomBright"/>
 			<Torso texture="HUMANOIDS/CHEST/chest_f_2.png" color="randomBright"/>
-			<Torso texture="HUMANOIDS/CHEST/chest_shortdress_f.png" useLegs="false" color="randomBright"/>
 
 			<Torso texture="HUMANOIDS/CHEST/chest_f_1.png" color="randomMuted"/>
 			<Torso texture="HUMANOIDS/CHEST/chest_f_2.png" color="randomMuted"/>
@@ -162,6 +161,9 @@
 			<Eyes name="serious" portraitCoords="1,1" color="random"/>
 			<Eyes name="almond" portraitCoords="3,1" color="random"/>
 			<Eyes name="wide" portraitCoords="5,1" color="random"/>
+			<Eyes name="serious" portraitCoords="1,1" color="randomMuted"/>
+			<Eyes name="almond" portraitCoords="3,1" color="randomMuted"/>
+			<Eyes name="wide" portraitCoords="5,1" color="randomMuted"/>
 
 			<Feature name="freckles_L" portraitCoords="1,2"/>
 			<Feature name="freckles_L" portraitCoords="1,2"/>
@@ -184,7 +186,7 @@
 
 
 
-	<ClothingSet name="Villager_m" equipmentIndex="0">
+	<ClothingSet name="Villager_m" equipmentIndex="1">
 		<Bodys>
 			<Body>
 			 <Base texture="HUMANOIDS/BODY/body_human_m_1.png" portraitTint="253,213,183,255"/>
@@ -215,7 +217,7 @@
 		<Torsos>
 			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirt_m.png" color="randomBright"/>
 			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirtbelt_m.png" color="randomBright"/>
-			<Torso texture="HUMANOIDS/CHEST/Men/chest_tunic_m.png" color="randomBright"/>
+			<Torso texture="HUMANOIDS/CHEST/Men/chest_tunic_m.png" color="randomMuted"/>
 			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirt_m.png" color="randomMuted"/>
 			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirtbelt_m.png" color="randomMuted"/>
 			<Torso texture="HUMANOIDS/CHEST/Men/chest_tunic_m.png" color="randomMuted"/>
@@ -268,6 +270,9 @@
 			<Eyes name="serious" portraitCoords="10,1" color="random"/>
 			<Eyes name="almond" portraitCoords="12,1" color="random"/>
 			<Eyes name="wide" portraitCoords="14,1" color="random"/>
+			<Eyes name="serious" portraitCoords="10,1" color="randomMuted"/>
+			<Eyes name="almond" portraitCoords="12,1" color="randomMuted"/>
+			<Eyes name="wide" portraitCoords="14,1" color="randomMuted"/>
 
 			<Feature name="freckles_L" portraitCoords="1,2"/>
 			<Feature name="freckles_L" portraitCoords="1,2"/>

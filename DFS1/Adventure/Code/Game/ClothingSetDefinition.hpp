@@ -18,6 +18,7 @@ public:
 	//i.e. m_texturesByClothingType[0] is all body textures
 	std::vector< std::vector<ClothingLayer*> > m_layersByClothingType;
 
+	ClothingSet* GetSetAtEquipmentIndex(int equipIndex) const;
 	ClothingSet* GetRandomSet() const;
 
 	ClothingLayer* GetRandomOfType(RENDER_SLOT slot) const;

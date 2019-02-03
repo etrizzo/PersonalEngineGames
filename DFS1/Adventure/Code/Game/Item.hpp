@@ -23,7 +23,7 @@ public:
 	Stats m_stats;
 	bool m_currentlyEquipped = false;
 	Texture* GetEquipTexture() const;
-	ClothingLayer* GetEquipLayer() const;
+	ClothingLayer* GetEquipLayer(int equipIndex) const;
 	bool ShowsHair() const;
 private:
 	void RenderEquipmentIcon(AABB2 boxToRenderIn);

@@ -172,7 +172,7 @@ void MenuState_Inventory::RenderBackground()
 void MenuState_Inventory::RenderContent()
 {
 	float m_screenWidth = m_bounds.GetWidth();
-	float fontSize = m_screenWidth * .02f;
+	float fontSize = m_bounds.GetHeight() * .05f;
 
 	//------ Draw raw inventory box -------//
 
@@ -199,12 +199,15 @@ void MenuState_Inventory::RenderContent()
 
 	//AABB2 equippedBox = AABB2(m_bounds.mins + Vector2(.5f, m_screenWidth * .35f), m_bounds.maxs - Vector2((m_screenWidth* .5f) + .5f,2.f));
 	AABB2 equippedBox = m_bounds.GetPercentageBox(.05f, .1f, .45f, .8f);
+	fontSize = equippedBox.GetHeight() * .32f * .125f;		//shrink font size to be the size we need for drawing the text stuff
+	textHeight = Vector2(0.f,fontSize);
+
 	g_theRenderer->DrawAABB2(equippedBox, RGBA(64,64,64,200));
 	g_theRenderer->DrawAABB2Outline(equippedBox, RGBA(255,255,255,128));
 	g_theRenderer->DrawTextInBox2D("Equipped", equippedBox, Vector2(.5f, .97f),fontSize * 1.5f);
 
 	float eqWidth = equippedBox.GetWidth();
-	AABB2 equippedItemBox = AABB2(equippedBox.mins.x, equippedBox.maxs.y - textHeight.y - .02f, equippedBox.mins.x + (eqWidth * .4f), equippedBox.maxs.y - .02f);
+	AABB2 equippedItemBox = AABB2(equippedBox.mins.x, equippedBox.maxs.y - textHeight.y -.02f, equippedBox.mins.x + (eqWidth * .4f), equippedBox.maxs.y - .02f);
 	equippedItemBox.Translate(fontSize, fontSize * -2.5f);
 	float eqItemHeight = equippedItemBox.GetHeight();
 	AABB2 itemIconBox = AABB2(equippedItemBox.maxs.x, equippedItemBox.mins.y, equippedItemBox.maxs.x + eqItemHeight, equippedItemBox.maxs.y);
@@ -213,8 +216,8 @@ void MenuState_Inventory::RenderContent()
 		std::string drawText = Actor::GetEquipSlotByID((EQUIPMENT_SLOT) i) + ": ";
 		std::string itemText = "NONE";
 		Texture* buttonTexture = g_theGame->m_miscSpriteSheet->GetTexture();
-		float padding = eqItemHeight * .2f;
-		itemIconBox.AddPaddingToSides(padding, padding);
+		float padding = fontSize * .1f;
+		
 		if (item != nullptr){
 			//itemText= item->m_definition->m_name;
 			AABB2 texCoords = g_theGame->m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(0,0));
@@ -226,6 +229,7 @@ void MenuState_Inventory::RenderContent()
 			g_theRenderer->DrawTexturedAABB2(itemIconBox, *buttonTexture, texCoords.mins, texCoords.maxs , RGBA::WHITE);
 			itemIconBox.AddPaddingToSides(-padding, -padding);
 		}
+		itemIconBox.AddPaddingToSides(padding, padding);
 		g_theRenderer->DrawTextInBox2D(drawText, equippedItemBox, Vector2(.05f, .5f), fontSize, TEXT_DRAW_SHRINK_TO_FIT);
 		//g_theRenderer->DrawTextInBox2D(itemText, equippedItemBox, )
 		equippedItemBox.Translate(textHeight * -1.5f);

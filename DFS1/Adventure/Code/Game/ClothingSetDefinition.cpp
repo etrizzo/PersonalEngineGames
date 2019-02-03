@@ -48,6 +48,60 @@ ClothingSetDefinition::ClothingSetDefinition(tinyxml2::XMLElement * setElement)
 	}
 }
 
+ClothingSet * ClothingSetDefinition::GetSetAtEquipmentIndex(int equipIndex) const
+{
+	ClothingSet* set = new ClothingSet();
+	if ((int)  m_layersByClothingType[CHEST_SLOT].size() > 0){
+		//load chest clothing
+		int torsoIndex = equipIndex;
+		ASSERT_OR_DIE(torsoIndex < m_layersByClothingType[CHEST_SLOT].size(), "Asked for an equipment index that doesn't exist.");
+		set->InitLayer(CHEST_SLOT, GetLayer(CHEST_SLOT, torsoIndex));
+		//if that chest clothing should render pants, get random pants
+		if ( GetLayer(CHEST_SLOT, torsoIndex)->ShouldRenderLegs()){
+			int legIndex = equipIndex;
+			ASSERT_OR_DIE(legIndex < m_layersByClothingType[LEGS_SLOT].size(), "Asked for an equipment index that doesn't exist.");
+			set->InitLayer(LEGS_SLOT,		GetLayer(LEGS_SLOT, legIndex));		//init body and ears of same skin tone
+		}
+	}
+	if ((int)  m_layersByClothingType[BODY_SLOT].size() > 0){
+		//load body
+		int bodyIndex = equipIndex;
+		ASSERT_OR_DIE(bodyIndex < m_layersByClothingType[BODY_SLOT].size(), "Asked for an equipment index that doesn't exist.");
+		set->InitLayer(BODY_SLOT,		GetLayer(BODY_SLOT, bodyIndex));		//init body and ears of same skin tone
+		set->InitLayer(EARS_SLOT,		GetLayer(EARS_SLOT, bodyIndex));
+		//set->InitPortraitBody();
+
+	}
+	if (m_layersByClothingType[HEAD_SLOT].size() > 0){
+		int hairIndex = GetRandomIntLessThan((int) m_layersByClothingType[HEAD_SLOT].size());
+		set->InitLayer(HEAD_SLOT,		GetLayer(HEAD_SLOT, hairIndex));
+		//set->InitPortraitHair();
+	}
+
+	if ((int)  m_layersByClothingType[HAT_SLOT].size() > 0){
+		//load body
+		int bodyIndex = equipIndex;
+		ASSERT_OR_DIE(bodyIndex < m_layersByClothingType[HAT_SLOT].size(), "Asked for an equipment index that doesn't exist.");
+		set->InitLayer(HAT_SLOT,		GetLayer(HAT_SLOT, bodyIndex));		//init body and ears of same skin tone
+
+	}
+	if ((int)  m_layersByClothingType[WEAPON_SLOT].size() > 0){
+		//load body
+		int bodyIndex = equipIndex;
+		ASSERT_OR_DIE(bodyIndex < m_layersByClothingType[WEAPON_SLOT].size(), "Asked for an equipment index that doesn't exist.");
+		set->InitLayer(WEAPON_SLOT,		GetLayer(WEAPON_SLOT, bodyIndex));		//init body and ears of same skin tone
+
+	}
+
+	//AFTER all the layers for the set have been determined, make the portrait layers.
+	if (m_portraitDef != nullptr){
+		set->m_portraitDef = m_portraitDef;
+		set->InitPortrait();
+	}
+	set->m_equipmentIndex = m_equipmentIndex;
+	return set;
+}
+
 ClothingSet * ClothingSetDefinition::GetRandomSet() const
 {
 	ClothingSet* set = new ClothingSet();
@@ -81,6 +135,7 @@ ClothingSet * ClothingSetDefinition::GetRandomSet() const
 		set->m_portraitDef = m_portraitDef;
 		set->InitPortrait();
 	}
+	set->m_equipmentIndex = m_equipmentIndex;
 	return set;
 }
 
@@ -173,7 +228,23 @@ void ClothingSetDefinition::ParseTorsos(tinyxml2::XMLElement * setElement)
 			bool usesHair = ParseXmlAttribute(*torsoElement, "usesHair", true);
 
 			ClothingLayer* layer = new ClothingLayer(CHEST_SLOT, torsoTexture, tint, usesLegs, usesHair, cb);
-			m_layersByClothingType[CHEST_SLOT].push_back(layer);
+			
+			int index = ParseXmlAttribute(*torsoElement, "index", -1);
+			if (index >= 0){
+				int size = m_layersByClothingType[CHEST_SLOT].size();
+				//insert at the right spot
+				if (index == size){
+					m_layersByClothingType[CHEST_SLOT].push_back(layer);
+				} else if (index < size){
+					m_layersByClothingType[CHEST_SLOT][index] = layer;
+				} else {
+					m_layersByClothingType[CHEST_SLOT].resize(index);
+					m_layersByClothingType[CHEST_SLOT][index] = layer;
+				}
+			} else {
+				//just push back.
+				m_layersByClothingType[CHEST_SLOT].push_back(layer);
+			}
 			//m_texturesByClothingType[CHEST_SLOT].push_back(torsoTexture);
 			////store whether that torso texture can use a leg texture too (i.e., dresses shouldn't have leg textures)
 			//
@@ -212,7 +283,22 @@ void ClothingSetDefinition::ParseLegs(tinyxml2::XMLElement * setElement)
 			bool usesHair = ParseXmlAttribute(*legElement, "usesHair", true);
 
 			ClothingLayer* layer = new ClothingLayer(LEGS_SLOT, torsoTexture, tint, usesLegs, usesHair, cb);
-			m_layersByClothingType[LEGS_SLOT].push_back(layer);
+			int index = ParseXmlAttribute(*legElement, "index", -1);
+			if (index >= 0){
+				int size = m_layersByClothingType[LEGS_SLOT].size();
+				//insert at the right spot
+				if (index == size){
+					m_layersByClothingType[LEGS_SLOT].push_back(layer);
+				} else if (index < size){
+					m_layersByClothingType[LEGS_SLOT][index] = layer;
+				} else {
+					m_layersByClothingType[LEGS_SLOT].resize(index);
+					m_layersByClothingType[LEGS_SLOT][index] = layer;
+				}
+			} else {
+				//just push back.
+				m_layersByClothingType[LEGS_SLOT].push_back(layer);
+			}
 		}
 	}
 }
@@ -271,7 +357,22 @@ void ClothingSetDefinition::ParseHats(tinyxml2::XMLElement * setElement)
 			bool usesHair = ParseXmlAttribute(*hatElement, "usesHair", true);
 
 			ClothingLayer* layer = new ClothingLayer(HAT_SLOT, hatTexture, tint, usesLegs, usesHair);
-			m_layersByClothingType[HAT_SLOT].push_back(layer);
+			int index = ParseXmlAttribute(*hatElement, "index", -1);
+			if (index >= 0){
+				int size = m_layersByClothingType[HAT_SLOT].size();
+				//insert at the right spot
+				if (index == size){
+					m_layersByClothingType[HAT_SLOT].push_back(layer);
+				} else if (index < size){
+					m_layersByClothingType[HAT_SLOT][index] = layer;
+				} else {
+					m_layersByClothingType[HAT_SLOT].resize(index);
+					m_layersByClothingType[HAT_SLOT][index] = layer;
+				}
+			} else {
+				//just push back.
+				m_layersByClothingType[HAT_SLOT].push_back(layer);
+			}
 		}
 	}
 }

@@ -18,7 +18,7 @@ public:
 	ClothingLayer* m_defaultEquipLayer;		//used if there's no default set
 	bool m_showHair = false;
 	Texture* GetEquipTexture() const;
-	ClothingLayer* GetEquipLayer() const;
+	ClothingLayer* GetEquipLayer(int equipIndex);
 
 	static std::map< std::string, ItemDefinition* >		s_definitions;
 	static ItemDefinition* GetItemDefinition(std::string definitionName);
