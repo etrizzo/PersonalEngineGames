@@ -38,7 +38,6 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 	int setindex = GetRandomIntLessThan(m_definition->m_clothingSetDefs.size());
 	ClothingSetDefinition* def = m_definition->m_clothingSetDefs[setindex];
 	m_currentLook = def->GetRandomSet();
-	Material* outlineMat = Material::GetMaterial("outline");
 	
 	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
 		if (m_currentLook->GetTexture(i) != nullptr){
@@ -198,13 +197,9 @@ void Actor::RenderStatsInBox(AABB2 boxToDrawIn, RGBA tint)
 	healthBox.Translate(fontSize *2.f, - fontSize * .1f);
 	Entity::RenderHealthInBox(healthBox);
 
-	//AABB2 pictureBox = AABB2(boxToDrawIn.mins + padding, Vector2(boxToDrawIn.maxs.x - (widthOfBox*.5f), boxToDrawIn.maxs.y - fontSize) - padding);
 	AABB2 pictureBox = boxToDrawIn.GetPercentageBox(.05f, .15f, .45f, .72f);
 	pictureBox.TrimToAspectRatio(GetAspectRatio());
-	float height = pictureBox.GetHeight();
-	//pictureBox.AddPaddingToSides(height * -.1f,height * -.15f);
 	g_theRenderer->DrawAABB2Outline(pictureBox, RGBA(255,255,255,64));
-	//pictureBox.AddPaddingToSides(height *-.1f, height *-.1f);
 	AABB2 texCoords = m_animSet->GetUVsForAnim("IdleSouth", 0.f);
 	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
 		if (m_currentLook->GetTexture(i) != nullptr){
@@ -229,7 +224,6 @@ void Actor::RenderStatsInBox(AABB2 boxToDrawIn, RGBA tint)
 void Actor::RenderBoyInBox(AABB2 boyBox, RGBA tint)
 {
 	boyBox.TrimToAspectRatio(GetAspectRatio());
-	float height = boyBox.GetHeight();
 	AABB2 texCoords = m_animSet->GetUVsForAnim("IdleSouth", 0.f);
 	for (int i = BODY_SLOT; i < NUM_RENDER_SLOTS; i++){
 		if (m_currentLook->GetTexture(i) != nullptr){
@@ -250,7 +244,7 @@ void Actor::RenderFaceInBox(AABB2 faceBox, RGBA tint)
 
 	Texture* portraitTexture = m_currentLook->GetPortraitTexture();
 	//draw the portrait in layers - for each slot, check how many layers that slot has
-	for (int slot = 0; slot < NUM_PORTRAIT_SLOTS; slot++){
+	for (int slot = 0; slot < (int) NUM_PORTRAIT_SLOTS; slot++){
 		for (int i = 0; i < m_currentLook->GetNumPortraitLayersForSlot((ePortraitSlot) slot); i++){
 			if (m_currentLook->m_portraitLayers[slot].size() > i){
 				PortraitLayer* layer = m_currentLook->m_portraitLayers[slot][i];

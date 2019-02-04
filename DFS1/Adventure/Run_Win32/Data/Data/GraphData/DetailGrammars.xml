@@ -1,0 +1,400 @@
+<!--
+	Sample new format:
+-->
+
+	<DetailGrammar name="Fight">
+		<Characters>
+			<Character id = "*0*" title="fighter"/>
+		</Characters>
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="isFighting" target="true" type="boolean" weight ="3.0"/>
+			</Character>
+		</CharacterRequirements>
+
+		<Guaranteed>
+			<EffectSet>
+				<TagChange character="*0*" hasTag="isFighting" target="false" />
+			</EffectSet>
+		</Guaranteed>
+
+		<Actions>
+			<Action text="*0* wins the fight." chance=".6">
+				<Modifier character = "0" multiplier = "1.5"> 
+					<CharacterRequirements>
+						<Requirement trait="Bravery" minValue="70"/>
+					</CharacterRequirements>
+				</Modifier>
+				<Modifier character="0" multiplier="1.5">\
+					<CharacterRequirements>
+						<Requirement tag="isWounded" target="true" multiplier=".9" />
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*0*" hasTag="isFighting" target="false" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*0* loses the fight and flees." chance=".3">
+				<Modifier character = "0" multiplier = "1.5"> 
+					<CharacterRequirements>
+						<Requirement trait="Bravery" maxValue="30"/>
+					</CharacterRequirements>
+				</Modifier>
+				<Modifier character="0" multiplier="1.5">
+					<CharacterRequirements>
+						<Requirement tag="isWounded" target="true" multiplier="1.5" />
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<!--<TagChange character="*0*" hasTag="isFighting" target="false" />-->
+					<TagChange character="*0*" hasTag="onQuest" target="false" />
+					<TagChange character="*0*" hasTag="inCave" target="false" />
+					<TagChange character="*0*" hasTag="inDungeon" target="false" />
+					<TagChange character="*0*" hasTag="isWounded" target="true" expiration="3~5"/>
+				</EffectSet>
+			</Action>
+
+			<Action text="*0* loses the fight and dies." chance=".1">
+				<Modifier character = "0" multiplier = "1.5"> 
+					<CharacterRequirements>
+						<Requirement trait="Bravery" maxValue="30"/>
+					</CharacterRequirements>
+				</Modifier>
+				<Modifier character="0" multiplier="1.5">
+					<CharacterRequirements>
+						<Requirement tag="isWounded" target="true" multiplier="1.5" />
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<!--<TagChange character="*0*" hasTag="isFighting" target="false" />-->
+					<TagChange character="*0*" hasTag="onQuest" target="false" />
+					<TagChange character="*0*" hasTag="isAlive" target="false" />
+				</EffectSet>
+			</Action>
+		</Actions>
+	</DetailGrammar>
+
+
+	<DetailGrammar name="GetLostDungeon" chanceToPlace=".1">
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inDungeon" target="true" />
+				<Requirement tag="isFighting" target="false" />
+			</Character>
+		</CharacterRequirements>
+		<Actions>
+			<Action text="*0* gets lost."/>
+
+			<Action text="*0* enters the darkest part of the dungeon" chanceToPlace=".5">
+				<Modifier character="0" multiplier = "0">
+					<CharacterRequirements>
+						<Requirement tag="hasNightVision" target="false" />
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*0*" hasTag="inDarkArea" target="true" />
+				</EffectSet>
+			</Action>
+
+		</Actions>
+		
+		<StoryRequirements>
+		</StoryRequirements>
+		<StoryEffects>
+		</StoryEffects>
+	</DetailGrammar>
+
+	<DetailGrammar name="GetLostCave" chanceToPlace=".2">>
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inCave" target="true" />
+				<Requirement tag="isFighting" target="false" />
+			</Character>
+		</CharacterRequirements>
+
+		<Actions>
+			<Action text="*0* gets lost." >
+				<EffectSet>
+					<TagChange character="*0*" hasTag="isLost" target="true" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*0* enters the darkest part of the cave" >
+				<Modifier character="0" multiplier = "0">
+					<CharacterRequirements>
+						<Requirement tag="hasNightVision" target="false" />
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*0*" hasTag="inDarkArea" target="true" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryRequirements>
+		</StoryRequirements>
+		<StoryEffects>
+		</StoryEffects>
+	</DetailGrammar>
+
+
+	<DetailGrammar name="FindWayAndStay" chanceToPlace=".3">>
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+		<Actions>
+			<Action text="*0* figures out where they are.">
+				<EffectSet>
+					<TagChange character="*0*" hasTag="isLost" target="false" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isLost" target="true" weight="5"/>
+			</Character>
+		</CharacterRequirements>
+	</DetailGrammar>
+
+	<DetailGrammar name="LosesHope" chanceToPlace=".1">>
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+		<Actions>
+			<Action text="*0* loses hope." chanceToPlace=".1">
+				<EffectSet>
+					<TagChange character="*0*" hasTag="hasHope" target="false" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isLost" target="true" weight="5"/>
+			</Character>
+		</CharacterRequirements>
+	</DetailGrammar>
+
+	<DetailGrammar name="StarveWhileLost" chanceToPlace=".05">>
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+		<Actions>
+			<Action text="*0* starves to death while lost." chanceToPlace=".1">
+				<EffectSet>
+					<TagChange character="*0*" hasTag="isAlive" target="false" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isLost" target="true" weight="5"/>
+				<Requirement tag="hasHope" target="false" weight="5" />
+			</Character>
+		</CharacterRequirements>
+	</DetailGrammar>
+
+	<DetailGrammar name="FindWayAndLeaveCave" chanceToPlace=".5">
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+		<Actions>
+			<Action text="*0* finds their way out of the cave." chanceToPlace=".1">
+				<EffectSet>
+					<TagChange character="*0*" hasTag="isLost" target="false" />
+					<TagChange character="*0*" hasTag="inCave" target="false" />
+					<TagChange character="*0*" hasTag="onQuest" target="false" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isLost" target="true" weight="5"/>
+				<Requirement tag="inCave" target="true" />
+			</Character>
+		</CharacterRequirements>
+	</DetailGrammar>
+
+	<DetailGrammar name="FindWayAndLeaveDung" chanceToPlace=".5">>
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+		<Actions>
+			<Action text="*0* finds their way out of the dungeon." chanceToPlace=".1">
+				<EffectSet>
+					<TagChange character="*0*" hasTag="isLost" target="false" />
+					<TagChange character="*0*" hasTag="inDungeon" target="false" />
+					<TagChange character="*0*" hasTag="onQuest" target="false" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isLost" target="true" weight="5"/>
+				<Requirement tag="inDungeon" target="true" />
+			</Character>
+		</CharacterRequirements>
+	</DetailGrammar>
+
+
+<!--
+
+	<DetailGrammar>
+		<Action text="*0* talks to *1* about *0_TAG*" />
+		<CharacterRequirements>
+			<Character number="0">
+				<Requirement trait="Social" value="60" compare="greater" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<A tag = "isAlive" 	target="true"/> 
+			<B tag = "isAlive" 	target="true"/>
+			<A tag = "isAngryAt" target="! *0*" />
+		</StoryRequirements>
+		<StoryEffects>
+
+			<EffectSet chance="default">
+				<TraitChange character="0" trait="Social" change="-10" />
+				<TraitChange character="1" trait="Social" change="-10" />
+				<TagChange character="1" hasTag = "isAngry" target="*A" />
+				<StoryChange Action="+5" Tension="+10" /> 
+			</EffectSet>
+		</StoryEffects>
+	</DetailGrammar>
+
+	<DetailGrammar>
+		<Action text="*0* chats with *1*" />
+		<CharacterRequirements>
+			<Character number="0">
+				<Requirement trait="Social" value="60" compare="greater" />
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isAngryAt" target="*1*"/>
+			</Character>
+			<Character number="1">
+				<Requirement tag="isAlive" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TraitChange character="0" trait="Social" change="-10" />
+				<TraitChange character="1" trait="Social" change="-10" />
+				<TagChange character="1" hasTag = "isAngry" target="*0*" />
+				<StoryChange Action="+5" Tension="+10" /> 
+			</EffectSet>
+		</StoryEffects>
+	</DetailGrammar>
+-->
+
+<!--
+	<DetailGrammar>
+		<Action text="*0* fights a cave jelly" />
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inCave" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<StoryChange Action="+5" Tension="+10" /> 
+				<TagChange character="0" hasTag="isFighting" target="true" type="boolean"/>
+			</EffectSet>
+		</StoryEffects>
+	</DetailGrammar>
+
+
+
+	<DetailGrammar>
+		<Action text="*0* fights a dungeon monster" />
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="inDungeon" target="true" />
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<StoryChange Action="+5" Tension="+10" /> 
+				<TagChange character="0" hasTag="isFighting" target="true" type="boolean"/>
+			</EffectSet>
+		</StoryEffects>
+	</DetailGrammar>
+-->
+
+
+	<!-- fighting a thing? -->
+	<!--
+	<DetailGrammar>
+		<Action text="*0* wins the fight." chance=".5"/>
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="isFighting" target="true" type="boolean"/>
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<StoryChange Action="+5" Tension="+10" /> 
+				<TagChange character="0" hasTag="isFighting" target="false" />
+			</EffectSet>
+		</StoryEffects>
+	</DetailGrammar>
+
+
+	<DetailGrammar>
+		<Action text="*0* wins the fight with *1*." />
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="isFighting" target="*1*" type="character"/>
+			</Character>
+		</CharacterRequirements>
+		<StoryRequirements>
+			<StoryRequirement feeling="tension" value="15" compare="greater" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<StoryChange Action="+5" Tension="+10" /> 
+				<TagChange character="0" hasTag="isFighting" target="false" />
+				<TagChange character="1" hasTag="isFighting" target="false" />
+			</EffectSet>
+		</StoryEffects>
+	</DetailGrammar>
+-->
+
+				<!--
+			<EffectSet chance="*B_INVERSE_TRAIT1"/>
+				<TraitChange character="*A" trait="Social" change="+10" />
+				<TraitChange character="*B" trait="Social" change="+10" />
+				<TagChange character="*B" hasTag = "isTrusting" target="*A" />
+				<StoryChange Action="+5" Romance="+10" /> 
+			</EffectSet>
+		-->

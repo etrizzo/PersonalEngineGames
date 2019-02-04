@@ -1,0 +1,230 @@
+	<PlotGrammar>
+		<!-- *[X]* indicates a character name who should be replaced at rutntime -->
+		<Action text="A man is murdered." />
+		<Characters>
+
+		</Characters>
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+			</Character>
+
+			<Character index="1">
+				<Requirement tag="isWeapon" target="true"/>
+			</Character>
+
+			<Character index="2">
+				<Requirement tag="isRoom" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="murderOcurred" target="false" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange hasTag="murderOcurred" target="true" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+	</PlotGrammar>
+
+
+
+	<PlotGrammar name="InvestigateRoom">
+		<Action text="*0* investigates *1*" />	
+		<Characters>
+			<Character id = "*0*" title="investigator"/>
+			<Character id = "*1*" title="room" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+			</Character>
+
+			<Character index="1">
+				<Requirement tag="isRoom" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="murderOcurred" target="true" />
+			<Requirement tag="killerFound" target="false" />
+			<Requirement tag="storyOver" target="false" />
+		</StoryRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange hasTag="Investigator" target="*0*" type="character" effectType="story"/>
+				<TagChange hasTag="Suspect" target="*1*" type="character" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+
+		<CharacterEffects>
+			<EffectSet>
+				<TagChange character="0" hasTag = "isInvestigating" target="true" />
+				<TagChange character="0" hasTag = "investigationTarget" target="*1*" type="character"/>
+			</EffectSet>
+		</CharacterEffects>
+	</PlotGrammar>
+
+
+	<PlotGrammar name="InvestigateSuspect">
+		<Action text="*0* investigates *1*" />	
+		<Characters>
+			<Character id = "*0*" title="investigator"/>
+			<Character id = "*1*" title="suspect" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+			</Character>
+
+			<Character index="1">
+				<Requirement tag="isAlive" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="murderOcurred" target="true" />
+			<Requirement tag="killerFound" target="false" />
+			<Requirement tag="storyOver" target="false" />
+			<Requirement tag="Investigator" target="none" type="character"/>
+		</StoryRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange hasTag="Investigator" target="*0*" type="character" effectType="story"/>
+				<TagChange hasTag="Suspect" target="*1*" type="character" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+
+		<CharacterEffects>
+			<EffectSet>
+				<TagChange character="0" hasTag = "isInvestigating" target="true" />
+				<TagChange character="0" hasTag = "investigationTarget" target="*1*" type="character"/>
+			</EffectSet>
+		</CharacterEffects>
+	</PlotGrammar>
+
+
+	<PlotGrammar name="InvestigateWeapon">
+		<Action text="*0* investigates *1*" />	
+		<Characters>
+			<Character id = "*0*" title="investigator"/>
+			<Character id = "*1*" title="weapon" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+			</Character>
+
+			<Character index="1">
+				<Requirement tag="isWeapon" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="murderOcurred" target="true" />
+			<Requirement tag="killerFound" target="false" />
+			<Requirement tag="storyOver" target="false" />
+		</StoryRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange hasTag="Investigator" target="*0*" type="character" effectType="story"/>
+				<TagChange hasTag="Suspect" target="*1*" type="character" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+
+		<CharacterEffects>
+			<EffectSet>
+				<TagChange character="0" hasTag = "isInvestigating" target="true" />
+				<TagChange character="0" hasTag = "investigationTarget" target="*1*" type="character"/>
+			</EffectSet>
+		</CharacterEffects>
+	</PlotGrammar>
+
+
+	<PlotGrammar name="AccusePerson">
+		<Action text="*0* accuses *1* of being the killer" />	
+		<Characters>
+			<Character id = "*0*" title="investigator"/>
+			<Character id = "*1*" title="weapon" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+			</Character>
+
+			<Character index="1">
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isSuspicious" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="murderOcurred" target="true" />
+			<Requirement tag="Accused" target="none" type="character" />
+			<Requirement tag="killerFound" target="false" />
+		</StoryRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange hasTag="Accuser" target="*0*" type="character" effectType="story"/>
+				<TagChange hasTag="Accused" target="*1*" type="character" effectType="story"/>
+				<TagChange hasTag="accusationOcurred" target="true" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+
+		<CharacterEffects>
+			<EffectSet>
+				<TagChange character="0" hasTag = "isAccuser" target="true" />
+				<TagChange character="1" hasTag = "isAccused" target="*true*" />
+			</EffectSet>
+		</CharacterEffects>
+	</PlotGrammar>
+
+
+
+	<PlotGrammar name="ArrestKiller">
+		<Action text="*0* tries to arrest *1*" />	
+		<Characters>
+			<Character id = "*0*" title="investigator"/>
+			<Character id = "*1*" title="killer" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isKiller" target="false" />
+			</Character>
+
+			<Character index="1">
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isKiller" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="killerFound" target="true" />
+			<Requirement tag="storyOver" target="false" />
+		</StoryRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange hasTag="Arrester" target="*0*" type="character" effectType="story"/>
+				<TagChange hasTag="Arrested" target="*1*" type="character" effectType="story"/>
+				<TagChange hasTag="arrestInProgress" target="true" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+
+		<CharacterEffects>
+			<EffectSet>
+				<TagChange character="1" hasTag = "isBeingArrested" target="*true*" />
+			</EffectSet>
+		</CharacterEffects>
+	</PlotGrammar>

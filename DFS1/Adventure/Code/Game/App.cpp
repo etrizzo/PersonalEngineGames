@@ -66,9 +66,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_theRenderer->SetWindowSize(g_Window);
 
 	RemoteCommandService::GetInstance()->Startup();
-
-
-
+	g_theGame->PostStartup();
 }
 
 
@@ -150,20 +148,34 @@ void App::RegisterCommands()
 	CommandRegister("set_speed", CommandSetSpeed, "Sets player walking speed", "set_speed <int>");
 	CommandRegister("spawn_actor", CommandSpawnActor, "Spawns an actor of the specified type near the player", "spawn_actor \"Actor Name\"");
 	CommandRegister("spawn_item", CommandSpawnItem, "Spawns an item of the specified type near the player", "spawn_item \"Item Name\"");
+	
 	CommandRegister("toggle_edges", CommandToggleEdges, "Sets whether or not the map should render edge tiles", "toggle_edges <bool>");
-
 	CommandRegister("edge_remove_invalid", CommandRemoveInvalidTiles, "Removes un-edgable tiles from the map");
 	CommandRegister("edge_tufts", CommandAddTufts, "Adds \"tufts\" on high level tiles surrounded by lower-level tiles");
 	CommandRegister("edge_shore", CommandEdgeShore, "Edges the shoreline");
 	CommandRegister("edge_high", CommandEdgeHighPriority, "Edges high-to-low ground levels");
 	CommandRegister("edge_low", CommandEdgeLowPriority, "Edges different tiles of the same ground level (dirt -> sand, eg.)");
 	CommandRegister("edge_map", CommandEdgeTiles, "Goes through the entire tile-edging process.");
-
+	
 	CommandRegister("reroll_appearance", CommandRerollPlayerAppearance, "Rerolls the sprite/portrait appearance for the current player");
-	//CommandRegister("profiler", CommandToggleProfiler, "Toggles profiler view");
-	//CommandRegister("profiler_report", CommandPrintProfilerReport, "Prints a frame of the profiler to the console", "profiler_report <tree|flat>");
-	//CommandRegister("profiler_pause", CommandProfilePause, "Pauses profiling");
-	//CommandRegister("profiler_resume", CommandProfileResume, "Resumes profiling");
+	
+
+	//thesis
+	CommandRegister("set_seed", CommandSetSeed, "Sets the random seed for the program", "set_seed <int>");
+	CommandRegister("output_graph_to_console", CommandPrintGraph, "Prints current graph as text");
+	CommandRegister("generate_graph", CommandGenerateGraph, "Re-generates story graph");
+	CommandRegister("generate_skeleton", CommandGenerateSkeleton, "Generates n plot nodes for a graph", "generate_skeleton, <int>");
+	CommandRegister("generate_details", CommandAddDetails, "Generates n detail nodes", "generate_details <int>");
+	CommandRegister("find_path", CommandFindPath, "Finds the shortest path in the graph");
+	CommandRegister("print_story", CommandPrintStory, "Prints the current story to the screen");
+	CommandRegister("add_branches", CommandFindBranches, "Adds branches to the graph");
+	CommandRegister("set_branch_chance", CommandSetBranchChance, "Sets the chance to branch nodes on failure to place node.", "set_branch_chance <float 0-1>");
+
+	CommandRegister("generate_pairs", CommandGeneratePairs, "Generates a plot node and outcome node as a pair", "generate_pairs <numPairs>");
+	CommandRegister("reset_graph", CommandResetGraph, "resets the graph to start->end");
+
+	CommandRegister("read_default_data", CommandReadDefaultData, "reads the default data set into the graph and resets it.");
+	CommandRegister("read_murder_data", CommandReadMurderData, "reads the murder mystery data set into the graph and resets it.");
 
 }
 void App::HandleInput()
@@ -240,6 +252,7 @@ void CommandGoToMap(Command & cmd)
 
 void CommandPrintMapNames(Command & cmd)
 {
+	UNUSED(cmd);
 	if (g_theGame->m_currentState->m_currentAdventure != nullptr){
 		for(Map* m : g_theGame->m_currentState->m_currentAdventure->m_mapsByIndex){
 			ConsolePrintf(("  " + m->GetName() ).c_str());
@@ -251,6 +264,7 @@ void CommandPrintMapNames(Command & cmd)
 
 void CommandWinAdventure(Command & cmd)
 {
+	UNUSED(cmd);
 	g_theGame->DebugWinAdventure();
 	g_devConsole->Close();
 }
@@ -281,7 +295,7 @@ void CommandSpawnItem(Command & cmd)
 
 void CommandToggleEdges(Command & cmd)
 {
-	bool shouldEdge = cmd.GetNextBool();
+	UNUSED(cmd);
 	g_theGame->m_renderingEdges = (!g_theGame->m_renderingEdges);
 	g_theGame->m_currentState->m_currentAdventure->m_currentMap->ReCreateRenderable(g_theGame->m_renderingEdges);
 
@@ -336,72 +350,134 @@ void CommandRerollPlayerAppearance(Command & cmd)
 	g_theGame->DebugRerollPlayerAppearance();
 }
 
+void CommandSetSeed(Command & cmd)
+{
+	int seed = cmd.GetNextInt();
+	if (seed == 0){
+		seed = (int) time(0);
+	}
+	srand((unsigned int) seed);
+	ConsolePrintf("Setting seed to %i", seed);
+}
+
+void CommandPrintGraph(Command & cmd)
+{
+	UNUSED(cmd);
+	std::string graphString = g_theGame->m_graph.ToString();
+	ConsolePrintf(graphString.c_str());
+}
+
+void CommandGenerateGraph(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->GenerateGraph();
+}
+
+void CommandFindPath(Command & cmd)
+{
+	int seed = cmd.GetNextInt();
+	if (seed != 0){
+		srand((unsigned int) seed);
+	} else {
+		unsigned int randoSeed = (unsigned int) time(0);
+		srand(randoSeed);
+		ConsolePrintf("Calculating path with seed %i", randoSeed);
+	}
+	//g_theGame->m_graph.FindPath(RandomPathHeuristic);
+	g_theGame->m_graph.FindPath(CalculateChanceHeuristic);
+}
 
 
-//void CommandToggleProfiler(Command & cmd)
-//{
-//	UNUSED(cmd);
-//	ProfilerVisualizer::GetInstance()->ToggleOpen();
-//}
-//
-//void CommandPrintProfilerReport(Command & cmd)
-//{
-//	std::string type = cmd.GetNextString();
-//	if (type == "flat"){
-//		AddProfilerFrameAsFlatToConsole();
-//	} else {
-//		AddProfilerFrameAsTreeToConsole();
-//	}
-//}
-//
-//void CommandProfilePause(Command & cmd)
-//{
-//	Profiler::GetInstance()->Pause();
-//}
-//
-//void CommandProfileResume(Command & cmd)
-//{
-//	Profiler::GetInstance()->Resume();
-//}
-//
-//void AddProfilerFrameAsTreeToConsole()
-//{
-//	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
-//
-//	if (tree != nullptr){
-//		ProfilerReport* report = new ProfilerReport();
-//		report->GenerateReportTreeFromFrame(tree);
-//		if (tree != nullptr){
-//			PrintTree(report->m_root);
-//		}
-//	} else {
-//		ConsolePrintf(RGBA::RED, "No profiler frame found - profiling may be disabled in EngineBuildPreferences.hpp");
-//	}
-//}
-//
-//void AddProfilerFrameAsFlatToConsole()
-//{
-//	profileMeasurement_t* tree = Profiler::GetInstance()->ProfileGetPreviousFrame();
-//
-//	if (tree != nullptr){
-//		ProfilerReport* report = new ProfilerReport();
-//		report->GenerateReportFlatFromFrame(tree);
-//		if (tree != nullptr){
-//			PrintTree(report->m_root);
-//		}
-//	} else {
-//		ConsolePrintf(RGBA::RED, "No profiler frame found- profiling may be disabled in EngineBuildPreferences.hpp");
-//	}
-//}
-//
-//
-//void PrintTree(ProfilerReportEntry * tree, int depth)
-//{
-//	//	ConsolePrintf("%.64s : %.8fms", tree->m_id, tree->GetTotalElapsedTime());
-//	std::string text = FormatProfilerReport(tree, depth);
-//	ConsolePrint(text.c_str());
-//	for ( ProfilerReportEntry* child : tree->m_children){
-//		PrintTree(child, depth + 1);
-//	}
-//}
+void CommandPrintStory(Command& cmd)
+{
+	UNUSED(cmd);
+	g_theGame->m_graph.PrintPath();
+}
 
+void CommandFindBranches(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->m_graph.IdentifyBranchesAndAdd();
+}
+
+void CommandSetBranchChance(Command & cmd)
+{
+	UNUSED(cmd);
+	float chance = cmd.GetNextFloat();
+	g_theGame->m_graph.SetBranchChance(chance);
+	ConsolePrintf(RGBA::YELLOW, "Changed branch chance on generation to %.2f", chance);
+}
+
+void CommandResetGraph(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->ClearGraph();
+	g_theGame->m_graph.GenerateStartAndEnd();
+}
+
+void CommandGenerateSkeleton(Command & cmd)
+{
+	g_theGame->ClearGraph();
+	int numToGenerate = cmd.GetNextInt();
+	if (numToGenerate == 0){
+		numToGenerate = NUM_PLOT_NODES_TO_GENERATE;
+	}
+	numToGenerate+=2;	//for start and end nodes
+	g_theGame->GeneratePlotNodes(numToGenerate);
+}
+
+void CommandAddDetails(Command & cmd)
+{
+	int numToGenerate = cmd.GetNextInt();
+	if (numToGenerate == 0){
+		numToGenerate = NUM_DETAIL_NODES_TO_GENERATE;
+	}
+	g_theGame->GenerateDetailNodes(numToGenerate);
+}
+
+void CommandGeneratePairs(Command & cmd)
+{
+	int numToGenerate = cmd.GetNextInt();
+	if (numToGenerate == 0){
+		numToGenerate = NUM_NODE_PAIRS_TO_GENERATE;
+	}
+	int seed = cmd.GetNextInt();
+	if (seed > 0){
+		srand((unsigned int) seed);
+	} else if (seed == -1){
+		unsigned int randoSeed = (unsigned int) time(0);
+		srand(randoSeed);
+		ConsolePrintf("Generating pairs with seed %i", randoSeed);
+	}
+	g_theGame->GenerateNodePairs(numToGenerate);
+}
+
+void CommandReadDefaultData(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->ClearGraph();
+
+	g_theGame->ResetGraphData();
+	g_theGame->ReadPlotNodes("Data/Data/PlotGrammars.xml");
+	g_theGame->ReadOutcomeNodes("Data/Data/DetailGrammars.xml");
+	g_theGame->ReadCharacters("Data/Data/Characters.xml");
+	g_theGame->InitCharacterArray();
+
+	g_theGame->m_graph.GenerateStartAndEnd();
+	ConsolePrintf("Default data loaded.");
+}
+
+void CommandReadMurderData(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->ClearGraph();
+
+	g_theGame->ResetGraphData();
+	g_theGame->ReadPlotNodes("Data/Data/MurderMystery_PlotGrammars.xml");
+	g_theGame->ReadOutcomeNodes("Data/Data/MurderMystery_OutcomeGrammars.xml");
+	g_theGame->ReadCharacters("Data/Data/MurderMystery_Characters.xml");
+	g_theGame->InitCharacterArray();
+
+	g_theGame->m_graph.GenerateStartAndEnd();
+	ConsolePrintf("Murder mystery data loaded.");
+}

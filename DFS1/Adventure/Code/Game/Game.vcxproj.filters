@@ -23,6 +23,9 @@
     <Filter Include="General\Utilities">
       <UniqueIdentifier>{70396bd6-90d9-4333-86d3-e5b445efe697}</UniqueIdentifier>
     </Filter>
+    <Filter Include="General\StoryGraph">
+      <UniqueIdentifier>{1a427284-85b9-45db-a88e-7ab8c29a2297}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main_Win32.cpp">
@@ -160,6 +163,57 @@
     <ClCompile Include="Menu.cpp">
       <Filter>General\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="Action.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionDefinition.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionModifier.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterRequirement.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterRequirementSet.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterState.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="StoryData.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="StoryDataDefinition.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="StoryGraph.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="StoryRequirement.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="StoryRequirementSet.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="StoryState.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="TagPair.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectSet.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="TagSet.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -296,6 +350,57 @@
     </ClInclude>
     <ClInclude Include="DebugRenderSystem.hpp">
       <Filter>General\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Action.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionDefinition.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionModifier.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterRequirement.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterRequirementSet.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterState.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="StoryData.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="StoryDataDefinition.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="StoryGraph.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="StoryRequirement.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="StoryRequirementSet.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="StoryState.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="TagPair.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectSet.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="TagSet.hpp">
+      <Filter>General\StoryGraph</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

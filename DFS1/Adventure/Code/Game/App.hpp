@@ -48,23 +48,27 @@ void CommandSetSpeed(Command& cmd);
 void CommandSpawnActor(Command& cmd);
 void CommandSpawnItem(Command& cmd);
 void CommandToggleEdges(Command& cmd);
-
 void CommandRemoveInvalidTiles(Command& cmd);
 void CommandAddTufts(Command& cmd);
 void CommandEdgeShore(Command& cmd);
 void CommandEdgeHighPriority(Command& cmd);
 void CommandEdgeLowPriority(Command& cmd);
-
 void CommandEdgeTiles(Command& cmd);
-
 void CommandRerollPlayerAppearance(Command& cmd);
 
-//void CommandToggleProfiler(Command& cmd);
-//void CommandPrintProfilerReport(Command& cmd);
-//void CommandProfilePause(Command& cmd);
-//void CommandProfileResume(Command& cmd);
-//
-//
-//void AddProfilerFrameAsTreeToConsole();
-//void AddProfilerFrameAsFlatToConsole();
-//void PrintTree(ProfilerReportEntry* tree, int depth = 0);
+
+void CommandSetSeed(Command& cmd);
+void CommandPrintGraph(Command& cmd);
+void CommandGenerateGraph(Command& cmd);
+void CommandFindPath(Command& cmd);
+void CommandPrintStory(Command& cmd);
+void CommandFindBranches(Command& cmd);
+void CommandSetBranchChance(Command& cmd);
+
+void CommandResetGraph(Command& cmd);
+void CommandGenerateSkeleton(Command& cmd);
+void CommandAddDetails(Command& cmd);
+void CommandGeneratePairs(Command& cmd);
+
+void CommandReadDefaultData(Command& cmd);
+void CommandReadMurderData(Command& cmd);

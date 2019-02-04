@@ -1,12 +1,12 @@
-#include "Tags.hpp"
+#include "TagSet.hpp"
 
-Tags::Tags(const std::string & commaSeparatedTagNames)
+TagSet::TagSet(const std::string & commaSeparatedTagNames)
 {
 	m_tags = std::vector<TagPair>();
 	SetOrRemoveTags(commaSeparatedTagNames);
 }
 
-Tags::Tags(const Tags & copy)
+TagSet::TagSet(const TagSet & copy)
 {
 	for (int i = 0; i < copy.m_tags.size(); i++){
 		TagPair tag = TagPair(copy.m_tags[i].GetName(), copy.m_tags[i].GetValue(), copy.m_tags[i].GetType());
@@ -14,17 +14,17 @@ Tags::Tags(const Tags & copy)
 	}
 }
 
-Tags::~Tags()
+TagSet::~TagSet()
 {
 	
 }
 
-int Tags::GetNumTags() const
+int TagSet::GetNumTagSet() const
 {
 	return m_tags.size();
 }
 
-std::string Tags::GetTagsAsString() const
+std::string TagSet::GetTagsAsString() const
 {
 	std::string tags = Stringf("%-12s | %s\n", "Tag", "Value");
 	tags += "-------------|-----------\n";
@@ -36,22 +36,22 @@ std::string Tags::GetTagsAsString() const
 	return tags;
 }
 
-void Tags::SetOrRemoveTags(const std::string & commaSeparatedTagNames)
+void TagSet::SetOrRemoveTags(const std::string & commaSeparatedTagNames)
 {
-	Strings unparsedTags = Strings();
+	Strings unparsedTagSet = Strings();
 	unsigned int oldIndex = 0;
 	unsigned int commaIndex = (unsigned int) commaSeparatedTagNames.find(',');
 	while (commaIndex != std::string::npos){
 		std::string indexString = commaSeparatedTagNames.substr(oldIndex,commaIndex);
-		unparsedTags.push_back(indexString); 
+		unparsedTagSet.push_back(indexString); 
 
 		oldIndex = commaIndex + 1;
 		commaIndex = (unsigned int) commaSeparatedTagNames.find(',', oldIndex);
 	}
 	std::string indexString = commaSeparatedTagNames.substr(oldIndex);
-	unparsedTags.push_back(indexString);  
+	unparsedTagSet.push_back(indexString);  
 
-	for(std::string tag : unparsedTags){
+	for(std::string tag : unparsedTagSet){
 		if (tag[0] == '!'){
 			RemoveTag(tag.substr(1));
 		} else {
@@ -60,24 +60,24 @@ void Tags::SetOrRemoveTags(const std::string & commaSeparatedTagNames)
 	}
 }
 
-bool Tags::HasTags(const std::string & commaSeparatedTagNames)
+bool TagSet::HasTags(const std::string & commaSeparatedTagNames)
 {
-	Strings unparsedTags = Strings();
+	Strings unparsedTagSet = Strings();
 	unsigned int oldIndex = 0;
 	unsigned int commaIndex = (unsigned int) commaSeparatedTagNames.find(',');
 	while (commaIndex != std::string::npos){
 		std::string indexString = commaSeparatedTagNames.substr(oldIndex,commaIndex);
-		unparsedTags.push_back(indexString); 
+		unparsedTagSet.push_back(indexString); 
 
 		oldIndex = commaIndex + 1;
 		commaIndex = (unsigned int) commaSeparatedTagNames.find(',', oldIndex);
 	}
 	std::string indexString = commaSeparatedTagNames.substr(oldIndex);
-	unparsedTags.push_back(indexString);  
+	unparsedTagSet.push_back(indexString);  
 
 
-	//bool allTagsCorrect = true; 
-	for (std::string tag : unparsedTags){
+	//bool allTagSetCorrect = true; 
+	for (std::string tag : unparsedTagSet){
 		if (tag[0] == '!'){
 			if (HasTag(tag.substr(1))){
 				return false;
@@ -91,14 +91,14 @@ bool Tags::HasTags(const std::string & commaSeparatedTagNames)
 	return true;
 }
 
-void Tags::SetTag(const std::string & tagName)
+void TagSet::SetTag(const std::string & tagName)
 {
 	if (!HasTag(tagName)){
 		m_tags.push_back(TagPair(tagName, "true", "boolean"));
 	}
 }
 
-void Tags::SetTagWithValue(const std::string & tagName, const std::string & value, std::string type)
+void TagSet::SetTagWithValue(const std::string & tagName, const std::string & value, std::string type)
 {
 	if (!HasTag(tagName)){
 		TagPair tag = TagPair(tagName, value, type);
@@ -113,7 +113,7 @@ void Tags::SetTagWithValue(const std::string & tagName, const std::string & valu
 	}
 }
 
-void Tags::RemoveTag(const std::string & tagName)
+void TagSet::RemoveTag(const std::string & tagName)
 {
 	for( std::vector<TagPair>::iterator tagIter = m_tags.begin(); tagIter != m_tags.end(); ++tagIter )
 	{
@@ -125,7 +125,7 @@ void Tags::RemoveTag(const std::string & tagName)
 	}
 }
 
-bool Tags::HasTag(const std::string & tagName)
+bool TagSet::HasTag(const std::string & tagName)
 {
 	for (TagPair tag : m_tags){
 		if (tag.HasName(tagName)){
@@ -135,7 +135,7 @@ bool Tags::HasTag(const std::string & tagName)
 	return false;
 }
 
-bool Tags::HasTag(TagPair checkTag)
+bool TagSet::HasTag(TagPair checkTag)
 {
 	for (TagPair tag : m_tags){
 		if (tag.HasName(checkTag.GetName())){
@@ -153,7 +153,7 @@ bool Tags::HasTag(TagPair checkTag)
 	return false;
 }
 
-bool Tags::HasTagWithValue(const std::string & tagName, const std::string & value)
+bool TagSet::HasTagWithValue(const std::string & tagName, const std::string & value)
 {
 	for (TagPair tag : m_tags){
 		if (tag.HasName(tagName) && tag.HasValue(value)){
@@ -163,7 +163,7 @@ bool Tags::HasTagWithValue(const std::string & tagName, const std::string & valu
 	return false;
 }
 
-bool Tags::ContainsTagWithAnyValue(const std::string & tagName, const std::string & type)
+bool TagSet::ContainsTagWithAnyValue(const std::string & tagName, const std::string & type)
 {
 	for (TagPair tag : m_tags){
 		if (tag.HasName(tagName) && (tag.GetType() == type) ){

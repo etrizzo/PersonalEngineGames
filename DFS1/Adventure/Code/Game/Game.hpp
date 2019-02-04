@@ -1,6 +1,8 @@
 #pragma once
 #include "GameCommon.hpp"
 #include "Game/GameState.hpp"
+#include "Engine/DataTypes/DirectedGraph.hpp"
+#include "Game/StoryGraph.hpp"
 
 
 class Entity;
@@ -24,14 +26,9 @@ public:
 	bool m_fullMapMode;
 	bool m_isMapViewerMode = false;
 	bool m_renderingEdges = true;
-	//float m_gameTime;
 	Clock* m_gameClock;
-	//Map* m_currentMap;
-	//Adventure* m_currentAdventure;
 	Camera* m_camera	= nullptr;		//might change 
 	Camera* m_uiCamera	= nullptr;		//stays the same from encounter to encounter
-	//std::map<std::string, Map*> m_mapsByName;
-	//Actor* m_player;
 	Party* m_party = nullptr;
 
 	GameState* m_currentState = nullptr;
@@ -51,15 +48,16 @@ public:
 	SoundPlaybackID m_victoryPlayback;
 	AABB2 m_dialogueBox;
 
-	//static SpriteAnimSetDef* s_humanoidAnimSetDef;
+	Vector2 m_normalizedMousePos;
+
 
 	DebugRenderSystem* m_debugRenderSystem;
 
 	Vector2 GetPlayerPosition() const;
 
+	void PostStartup();
 
-	void Update			(float deltaSeconds);
-
+	void Update	(float deltaSeconds);
 	void HandleInput();
 
 	void Render();
@@ -71,6 +69,7 @@ public:
 	void Unpause();
 	void TogglePause();
 	void ToggleDevMode();
+	inline bool IsDevMode() const {return m_devMode;};
 
 	void TransitionToState(GameState* newState);
 	void TriggerTransition();
@@ -83,9 +82,6 @@ public:
 
 	void UpdateMenuSelection(int direction = 1);
 
-	//void StartStateTransition(GAME_STATE newState, float transitionTime = .5f, RGBA transitionColor = RGBA(0,0,0,255));
-	//void Transition();
-	//void FadeIn();
 	void DebugWinAdventure();
 	void DebugCompleteQuest(int index = 0);
 	void DebugSetDifficulty(int difficulty);
@@ -97,12 +93,32 @@ public:
 	void SetCurrentMap(Map* newMap);
 	void GoToMap(std::string mapName);
 
-	
-
 	void ToggleState(bool& stateToToggle);
 	void LookAtNextMap(int direction);
 
 	void ShowActorStats();
+
+	/*=========
+	Thesis Stuff
+	==========*/
+	StoryGraph m_graph;
+
+	void InitGraphDefault();
+	void InitGraphMurder();
+	void ReadPlotNodes(std::string filePath);
+	void ReadOutcomeNodes(std::string filePath);
+	void ReadCharacters(std::string filePath);
+	void InitCharacterArray();
+	void ResetGraphData();
+
+	void GenerateGraph();
+	void ClearGraph();
+	void GeneratePlotNodes(int numToGenerate = NUM_PLOT_NODES_TO_GENERATE);
+	void GenerateDetailNodes(int numToGenerate = NUM_DETAIL_NODES_TO_GENERATE);
+
+	void GenerateNodePairs(int numToGenerate = NUM_NODE_PAIRS_TO_GENERATE);
+	void AddPlotAndOutcomeNodeInPair();
+
 
 private:
 	void LoadSounds();

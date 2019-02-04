@@ -20,7 +20,8 @@
 #include "Game/Party.hpp"
 #include <map>
 
-//SpriteAnimSetDef* Game::s_humanoidAnimSetDef;
+//for working only on the graph - skip loading all the spritesheets for speed
+#define PRELOAD_ALL
 
 Game::~Game()
 {
@@ -59,10 +60,13 @@ Game::Game()
 	LoadSounds();
 	LoadTileDefinitions();
 	LoadMapDefinitions();
+#ifdef PRELOAD_ALL
 	LoadClothingDefinitions();
+
 	LoadEntityDefinitions();
 	LoadQuestDefinitions();
 	LoadAdventureDefinitions();
+#endif
 
 	m_screenWidth = 10;
 	m_camera = new Camera();
@@ -108,6 +112,14 @@ Vector2 Game::GetPlayerPosition() const
 	return Vector2::ZERO;
 }
 
+void Game::PostStartup()
+{
+	m_graph = StoryGraph();
+
+	InitGraphMurder();
+	GenerateGraph();
+}
+
 void Game::Update(float deltaSeconds)
 {
 	//m_gameTime+=deltaSeconds;
@@ -128,7 +140,7 @@ void Game::Update(float deltaSeconds)
 
 void Game::HandleInput()
 {
-	
+	m_normalizedMousePos = g_theInput->GetMouseNormalizedScreenPosition(GetUIBounds());
 	m_currentState->HandleInput();
 }
 
@@ -148,34 +160,10 @@ void Game::Render()
 }
 
 
-//void Game::RenderDefeat()
-//{
-//	m_currentAdventure->Render();
-//	g_theRenderer->DrawAABB2( m_camera->GetBounds(), m_startFadeColor);
-//
-//	RGBA textColor = RGBA::WHITE;
-//	if (!m_isFinishedTransitioning){
-//		float percThroughTransition = (m_gameTime - m_timeEnteredState)/m_transitionLength;
-//		if (m_transitionToState == NO_STATE){
-//			textColor = Interpolate( textColor.GetColorWithAlpha(0), textColor, percThroughTransition);
-//		} else {
-//			textColor = Interpolate( textColor, textColor.GetColorWithAlpha(0), percThroughTransition);
-//		}
-//	}
-//
-//	AABB2 camBounds = m_currentAdventure->m_currentMap->GetCameraBounds();
-//	g_theRenderer->DrawTextInBox2D("Defeat :(", camBounds, Vector2(.5f,.5f), 1.f);
-//	g_theRenderer->DrawTextInBox2D("Press 'start' or 'n' to respawn", camBounds, Vector2(.5f,.3f), .5f, TEXT_DRAW_SHRINK_TO_FIT);
-//	g_theRenderer->DrawAABB2Outline(camBounds, RGBA::WHITE);
-//}
-
-
 void Game::RenderSelectArrow(AABB2 boxToDrawIn)
 {
 	g_theRenderer->DrawTextInBox2D(">", boxToDrawIn, Vector2(.5f,.5f), boxToDrawIn.GetHeight() * .8f);
 }
-
-
 
 
 void Game::RenderXboxStartButton(AABB2 boxToDrawIn)
@@ -543,6 +531,95 @@ void Game::LoadQuestDefinitions()
 		QuestDefinition::s_definitions.insert(std::pair<std::string, QuestDefinition*>(newDefinition->m_name, newDefinition));
 	}
 }
+
+
+void Game::InitGraphDefault()
+{
+
+	ClearGraph();
+
+	ResetGraphData();
+	ReadPlotNodes("Data/Data/GraphData/PlotGrammars.xml");
+	ReadOutcomeNodes("Data/Data/GraphData/DetailGrammars.xml");
+	ReadCharacters("Data/Data/GraphData/Characters.xml");
+	InitCharacterArray();
+
+	m_graph.GenerateStartAndEnd();
+	ConsolePrintf("Default data loaded.");
+}
+
+void Game::InitGraphMurder()
+{
+	ClearGraph();
+
+	ResetGraphData();
+	ReadPlotNodes("Data/Data/GraphData/MurderMystery_PlotGrammars.xml");
+	ReadOutcomeNodes("Data/Data/GraphData/MurderMystery_OutcomeGrammars.xml");
+	ReadCharacters("Data/Data/GraphData/MurderMystery_Characters.xml");
+	InitCharacterArray();
+
+	m_graph.GenerateStartAndEnd();
+	ConsolePrintf("Murder mystery data loaded.");
+}
+
+void Game::ReadPlotNodes(std::string filePath)
+{
+	m_graph.ReadPlotNodesFromXML(filePath);
+}
+
+void Game::ReadOutcomeNodes(std::string filePath)
+{
+	m_graph.ReadDetailNodesFromXML(filePath);
+}
+
+void Game::ReadCharacters(std::string filePath)
+{
+	m_graph.ReadCharactersFromXML(filePath);
+}
+
+void Game::InitCharacterArray()
+{
+	m_graph.SelectCharactersForGraph();
+}
+
+void Game::ResetGraphData()
+{
+	m_graph.ClearGraphData();
+}
+
+void Game::GenerateGraph()
+{
+	m_graph.RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
+}
+
+void Game::ClearGraph()
+{
+	m_graph.Clear();
+}
+
+void Game::GeneratePlotNodes(int numToGenerate)
+{
+	m_graph.GenerateSkeleton(numToGenerate);
+}
+
+void Game::GenerateDetailNodes(int numToGenerate)
+{
+	m_graph.AddDetailNodesToDesiredSize(numToGenerate + m_graph.GetNumNodes());
+}
+
+void Game::GenerateNodePairs(int numToGenerate)
+{
+	for (int i = 0; i < numToGenerate; i++){
+		AddPlotAndOutcomeNodeInPair();
+	}
+}
+
+void Game::AddPlotAndOutcomeNodeInPair()
+{
+	StoryNode* newNode = m_graph.AddSinglePlotNode();
+	m_graph.AddOutcomeNodesToPlotNode(newNode);
+}
+
 
 
 

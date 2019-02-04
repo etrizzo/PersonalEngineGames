@@ -13,6 +13,8 @@
 #include "Engine/Renderer/SpriteAnimSetDef.hpp"
 #include "Engine/Renderer/SpriteRenderPath.hpp"
 
+#include "Engine/DataTypes/DirectedGraph.hpp"
+
 #define SCREEN_MAX 1000.f
 #define SCREEN_MIN 0.f
 
@@ -108,4 +110,26 @@ extern SpriteSheet* g_tileSpriteSheet;
 extern SpriteSheet* g_portraitSpriteSheet;
 
 
+/*==========================
+Thesis Stuff
+============================*/
 
+#define NUM_NODE_PAIRS_TO_GENERATE (5)
+#define NUM_PLOT_NODES_TO_GENERATE (6 + 2)
+#define NUM_DETAIL_NODES_TO_GENERATE (3)
+#define DEFAULT_BRANCH_CHANCE_ON_FAIL (0.0f)
+
+
+class Character;
+class StoryData;
+class StoryState;
+
+typedef Node<StoryData*, StoryState*> StoryNode ;
+typedef DirectedEdge<StoryData*, StoryState*> StoryEdge;
+
+enum eNodeType{
+	PLOT_NODE,
+	DETAIL_NODE,
+	DEFAULT_NODE,		//for start and end nodes
+	NUM_NODE_TYPES
+};

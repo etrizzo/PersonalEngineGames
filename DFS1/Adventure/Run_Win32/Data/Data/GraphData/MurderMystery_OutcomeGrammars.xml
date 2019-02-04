@@ -1,0 +1,177 @@
+	
+	<DetailGrammar name="GeneratesSuspicion" chanceToPlace=".3">
+		<Characters>
+			<Character id = "*0*" />
+			<Character id = "*1*" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<StoryRequirement tag="Investigator" />  <!-- name matches the character labeled "Investigator"  in the story state -->
+			</Character>
+			<Character index="1">
+				<StoryRequirement tag="Suspect" />
+				<Requirement tag="isAlive" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<Actions>
+			<Action text="*0* is suspicious of *1*" chance=".5">
+				<EffectSet>
+					<TagChange character="*1*" hasTag="isSuspicious" target="true" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*0* thinks *1* is innocent" chance=".5">
+				<EffectSet>
+					<TagChange character="*1*" hasTag="isSuspicious" target="false" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange hasTag="Investigator" target="none" type="character" effectType="story"/>
+				<TagChange hasTag="Suspect" target="none" type="character" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+
+	</DetailGrammar>
+
+
+	<DetailGrammar name="AccusationOutcome" chanceToPlace="1">
+		<Characters>
+			<Character id = "*0*" />
+			<Character id = "*1*" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<StoryRequirement tag="Accuser" weight="10"/>  <!-- character name matches the character labeled "Accuser"  in the story state -->
+			</Character>
+			<Character index="1">
+				<StoryRequirement tag="Accused" weight="10"/>
+			</Character>
+		</CharacterRequirements>
+		<Actions>
+			<Action text="*1* was the killer!." chance = ".3">
+				<Modifier character = "0" multiplier = "1.75"> 
+					<CharacterRequirements>
+						<Requirement tag="isEnlightened" target="true"/>
+					</CharacterRequirements>
+				</Modifier>
+				<Modifier character="0" multiplier = "0.0">
+					<StoryRequirements>
+						<Requirement tag="killerFound" target="true" />
+					</StoryRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*1*" hasTag="isKiller" target="true" />
+					<TagChange character="*1*" hasTag="isAccused" target="true" />
+					<TagChange effectType="story" hasTag="killerFound" target="true" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*1* was found to be innocent." chance = ".7">
+				<EffectSet>
+					<TagChange character="*1*" hasTag="isKiller" target="false" />
+					<TagChange character="*1*" hasTag="isAccused" target="true" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange hasTag="Accuser" target="none" type="character" effectType="story"/>
+				<TagChange hasTag="Accused" target="none" type="character" effectType="story"/>
+				<!--
+				<TagChange hasTag="Accuser" target="none" type="character" effectType="story"/>
+				<TagChange hasTag="Accused" target="none" type="character" effectType="story"/>
+			-->
+			</EffectSet>
+		</StoryEffects>
+	</DetailGrammar>
+
+
+
+	<DetailGrammar name="ArrestOutcome" chanceToPlace="1">
+		<Characters>
+			<Character id = "*0*" />
+			<Character id = "*1*" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<StoryRequirement tag="Arrester" weight="10"/>  <!-- character name matches the character labeled "Accuser"  in the story state -->
+			</Character>
+			<Character index="1">
+				<StoryRequirement tag="Arrested" weight="10"/>
+			</Character>
+		</CharacterRequirements>
+		<Actions>
+			<Action text="*1* escapes!" chance = ".3">
+				<Modifier character = "0" multiplier = "1.75"> 
+					<CharacterRequirements>
+						<Requirement tag="isEnlightened" target="true"/>
+					</CharacterRequirements>
+				</Modifier>
+				<Modifier character="0" multiplier = "0.0">
+					<StoryRequirements>
+						<Requirement tag="storyOver" target="true" />
+					</StoryRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*1*" hasTag="isKiller" target="true" />
+					<TagChange character="*1*" hasTag="isAccused" target="true" />
+					<TagChange effectType="story" hasTag="killerFound" target="true" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*1* is arrested and brought to justice." chance = ".7">
+				<EffectSet>
+					<TagChange character="*1*" hasTag="isArrested" target="true" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange hasTag="Accuser" target="none" type="character" effectType="story"/>
+				<TagChange hasTag="Accused" target="none" type="character" effectType="story"/>
+				<TagChange hasTag="storyOver" target="true" effectType="story" />
+				<!--
+				<TagChange hasTag="Accuser" target="none" type="character" effectType="story"/>
+				<TagChange hasTag="Accused" target="none" type="character" effectType="story"/>
+			-->
+			</EffectSet>
+		</StoryEffects>
+	</DetailGrammar>
+
+
+	<DetailGrammar name="LearnsSomething" chanceToPlace=".3">
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isInvestigating" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<Actions>
+			<Action text="*0* learns some valuable information while investigating.">
+				<EffectSet>
+					<TagChange character="*0*" hasTag="isInvestigating" target="false" />
+					<TagChange character="*0*" hasTag="isEnlightened" target="true" />
+					<TagChange hasTag="Investigator" target="none" type="character" effectType="story"/>
+					<TagChange hasTag="Suspect" target="none" type="character" effectType="story"/>
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryRequirements>
+			<Requirement tag="killerFound" target="false" />
+			<Requirement tag="storyOver" target="false" />
+		</StoryRequirements>
+	</DetailGrammar>

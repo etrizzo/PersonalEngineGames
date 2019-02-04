@@ -1,0 +1,119 @@
+<Character name="Prof. Plum">
+	<Tags>
+		<Tag tag="isAlive" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+<Character name="Mrs. Peacock">
+	<Tags>
+		<Tag tag="isAlive" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+
+<Character name="Col. Mustard">
+	<Tags>
+		<Tag tag="isAlive" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+
+<Character name="Mrs. White">
+	<Tags>
+		<Tag tag="isAlive" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+<Character name="Rev. Green">
+	<Tags>
+		<Tag tag="isAlive" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+<Character name="Ms. Scarlet">
+	<Tags>
+		<Tag tag="isAlive" value="true" type="bool"/>
+	</Tags>
+</Character>
+<!--
+-->
+
+<!--
+<Character name="Revolver">
+	<Tags>
+		<Tag tag="isWeapon" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+<Character name="Dagger">
+	<Tags>
+		<Tag tag="isWeapon" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+<Character name="Lead Pipe">
+	<Tags>
+		<Tag tag="isWeapon" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+
+
+<Character name="Rope">
+	<Tags>
+		<Tag tag="isWeapon" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+<Character name="Spanner">
+	<Tags>
+		<Tag tag="isWeapon" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+<Character name="Candlestick">
+	<Tags>
+		<Tag tag="isWeapon" value="true" type="bool"/>
+	</Tags>
+</Character>
+-->
+
+<!--
+<Character name="Kitchen">
+	<Tags>
+		<Tag tag="isRoom" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+<Character name="Ballroom">
+	<Tags>
+		<Tag tag="isRoom" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+<Character name="Conservatory">
+	<Tags>
+		<Tag tag="isRoom" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+
+
+<Character name="Library">
+	<Tags>
+		<Tag tag="isRoom" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+<Character name="Study">
+	<Tags>
+		<Tag tag="isRoom" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+<Character name="Lounge">
+	<Tags>
+		<Tag tag="isRoom" value="true" type="bool"/>
+	</Tags>
+</Character>
+-->

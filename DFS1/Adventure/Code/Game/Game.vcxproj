@@ -280,12 +280,19 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Action.cpp" />
+    <ClCompile Include="ActionDefinition.cpp" />
+    <ClCompile Include="ActionModifier.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="ActorDefinition.cpp" />
     <ClCompile Include="Adventure.cpp" />
     <ClCompile Include="AdventureDefinition.cpp" />
     <ClCompile Include="AIBehavior.cpp" />
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Character.cpp" />
+    <ClCompile Include="CharacterRequirement.cpp" />
+    <ClCompile Include="CharacterRequirementSet.cpp" />
+    <ClCompile Include="CharacterState.cpp" />
     <ClCompile Include="ClothingLayer.cpp" />
     <ClCompile Include="ClothingSet.cpp" />
     <ClCompile Include="ClothingSetDefinition.cpp" />
@@ -296,6 +303,8 @@
     <ClCompile Include="Dialogue.cpp" />
     <ClCompile Include="DialogueSet.cpp" />
     <ClCompile Include="DialogueSetDefinition.cpp" />
+    <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="EffectSet.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityDefinition.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -319,7 +328,15 @@
     <ClCompile Include="QuestDefinition.cpp" />
     <ClCompile Include="QuestReward.cpp" />
     <ClCompile Include="Stats.cpp" />
+    <ClCompile Include="StoryData.cpp" />
+    <ClCompile Include="StoryDataDefinition.cpp" />
+    <ClCompile Include="StoryGraph.cpp" />
+    <ClCompile Include="StoryRequirement.cpp" />
+    <ClCompile Include="StoryRequirementSet.cpp" />
+    <ClCompile Include="StoryState.cpp" />
+    <ClCompile Include="TagPair.cpp" />
     <ClCompile Include="Tags.cpp" />
+    <ClCompile Include="TagSet.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="TileDefinition.cpp" />
     <ClCompile Include="TileEdgeDefinition.cpp" />
@@ -332,12 +349,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Action.hpp" />
+    <ClInclude Include="ActionDefinition.hpp" />
+    <ClInclude Include="ActionModifier.hpp" />
     <ClInclude Include="Actor.hpp" />
     <ClInclude Include="ActorDefinition.hpp" />
     <ClInclude Include="Adventure.hpp" />
     <ClInclude Include="AdventureDefinition.hpp" />
     <ClInclude Include="AIBehavior.hpp" />
     <ClInclude Include="App.hpp" />
+    <ClInclude Include="Character.hpp" />
+    <ClInclude Include="CharacterRequirement.hpp" />
+    <ClInclude Include="CharacterRequirementSet.hpp" />
+    <ClInclude Include="CharacterState.hpp" />
     <ClInclude Include="ClothingLayer.hpp" />
     <ClInclude Include="ClothingSet.hpp" />
     <ClInclude Include="ClothingSetDefinition.hpp" />
@@ -348,6 +372,8 @@
     <ClInclude Include="Dialogue.hpp" />
     <ClInclude Include="DialogueSet.hpp" />
     <ClInclude Include="DialogueSetDefinition.hpp" />
+    <ClInclude Include="Effect.hpp" />
+    <ClInclude Include="EffectSet.hpp" />
     <ClInclude Include="EngineBuildPreferences.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="EntityDefinition.hpp" />
@@ -371,7 +397,15 @@
     <ClInclude Include="QuestDefinition.hpp" />
     <ClInclude Include="QuestReward.hpp" />
     <ClInclude Include="Stats.hpp" />
+    <ClInclude Include="StoryData.hpp" />
+    <ClInclude Include="StoryDataDefinition.hpp" />
+    <ClInclude Include="StoryGraph.hpp" />
+    <ClInclude Include="StoryRequirement.hpp" />
+    <ClInclude Include="StoryRequirementSet.hpp" />
+    <ClInclude Include="StoryState.hpp" />
+    <ClInclude Include="TagPair.hpp" />
     <ClInclude Include="Tags.hpp" />
+    <ClInclude Include="TagSet.hpp" />
     <ClInclude Include="Tile.hpp" />
     <ClInclude Include="TileDefinition.hpp" />
     <ClInclude Include="TileEdgeDefinition.hpp" />
