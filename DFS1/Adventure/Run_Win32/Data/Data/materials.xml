@@ -97,6 +97,16 @@
 	</properties>
 </material>
 
+<material name="map" shader="watercolor">
+	<textures>
+		<texture type="diffuse" path="white" />
+		<texture index="4" path="Noise/heat_displacements.png" />
+	</textures>
+	<properties>
+		<property type="float" name="GRAYSCALE_WEIGHT" value=".55"/>
+	</properties>
+</material>
+
 
 <material name="outline" shader="outline">
 	<textures>
