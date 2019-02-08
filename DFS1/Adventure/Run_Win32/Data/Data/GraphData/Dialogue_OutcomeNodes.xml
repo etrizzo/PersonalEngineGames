@@ -1,0 +1,39 @@
+<!-- in the context of dialogue trees, this is probably just gonna be player choices. -->
+<OutcomeNode name="askforhelp">
+		<Characters>
+			<Character id = "*0*" name="villager"/>
+			<Character id = "*1*" name="player"/>
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<StoryRequirement tag="Asker" />  
+				<Requirement tag="isSpeaker" target="true"/>
+			</Character>
+			<Character index="1">
+				<Requirement tag="isPlayer" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<Actions>
+			<Action text="Have you seen anything strange lately?" chance=".5">
+				<EffectSet>
+					<TagChange tag="askingAbout" target="strange" effectType="story"/>
+				</EffectSet>
+			</Action>
+
+			<Action text="Can you tell me about this village?" chance=".5">
+				<EffectSet>
+					<TagChange tag="askingAbout" target="village" effectType="story"/>
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="villagerAsking" target="none" effectType="story"/>
+				<TagChange tag="Asker" target="*1*" type="character" effectType="story" />
+			</EffectSet>
+		</StoryEffects>
+
+	</OutcomeNode>

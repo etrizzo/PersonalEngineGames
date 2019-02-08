@@ -56,8 +56,9 @@ public:
 	const static RGBA LIGHTGRAY;
 	const static RGBA GRAY;
 	const static RGBA DARKGRAY;
-	const static RGBA PUREBLACK;
+	const static RGBA NICEBLACK;
 	const static RGBA BLANCHEDALMOND;
+	const static RGBA BEEFEE;
 
 };
 

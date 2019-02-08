@@ -176,6 +176,7 @@ void App::RegisterCommands()
 
 	CommandRegister("read_default_data", CommandReadDefaultData, "reads the default data set into the graph and resets it.");
 	CommandRegister("read_murder_data", CommandReadMurderData, "reads the murder mystery data set into the graph and resets it.");
+	CommandRegister("read_dialogue_data", CommandReadDialogueData, "reads the dialogue data set into the graph and resets it.");
 
 }
 void App::HandleInput()
@@ -455,7 +456,8 @@ void CommandGeneratePairs(Command & cmd)
 void CommandReadDefaultData(Command & cmd)
 {
 	UNUSED(cmd);
-	g_theGame->ClearGraph();
+	g_theGame->InitGraphDefault();
+	/*g_theGame->ClearGraph();
 
 	g_theGame->ResetGraphData();
 	g_theGame->ReadPlotNodes("Data/Data/PlotGrammars.xml");
@@ -463,14 +465,15 @@ void CommandReadDefaultData(Command & cmd)
 	g_theGame->ReadCharacters("Data/Data/Characters.xml");
 	g_theGame->InitCharacterArray();
 
-	g_theGame->m_graph.GenerateStartAndEnd();
+	g_theGame->m_graph.GenerateStartAndEnd();*/
 	ConsolePrintf("Default data loaded.");
 }
 
 void CommandReadMurderData(Command & cmd)
 {
 	UNUSED(cmd);
-	g_theGame->ClearGraph();
+	g_theGame->InitGraphMurder();
+	/*g_theGame->ClearGraph();
 
 	g_theGame->ResetGraphData();
 	g_theGame->ReadPlotNodes("Data/Data/MurderMystery_PlotGrammars.xml");
@@ -478,6 +481,13 @@ void CommandReadMurderData(Command & cmd)
 	g_theGame->ReadCharacters("Data/Data/MurderMystery_Characters.xml");
 	g_theGame->InitCharacterArray();
 
-	g_theGame->m_graph.GenerateStartAndEnd();
+	g_theGame->m_graph.GenerateStartAndEnd();*/
 	ConsolePrintf("Murder mystery data loaded.");
+}
+
+void CommandReadDialogueData(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->InitGraphDialogue();
+	ConsolePrintf("Dialogue data loaded.");
 }

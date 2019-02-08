@@ -63,6 +63,7 @@ public:
 	//std::string ToStringDebug() const;
 
 private:
+	std::string m_name;
 	Node<T, C>* m_start;
 	Node<T, C>* m_end;
 	C m_cost;
@@ -243,6 +244,7 @@ inline DirectedEdge<T, C>::DirectedEdge(Node<T, C>* start, Node<T, C>* end, C co
 	m_start = start;
 	m_end = end;
 	m_cost = cost;
+	m_name = m_start->GetName() + m_end->GetName();
 }
 
 template<typename T, typename C>
@@ -251,6 +253,7 @@ inline DirectedEdge<T, C>::DirectedEdge(Node<T, C>* start, Node<T, C>* end)
 	m_start = start;
 	m_end = end;
 	m_cost = C();
+	m_name = m_start->GetName() + " -> " + m_end->GetName();
 }
 
 template<typename T, typename C>

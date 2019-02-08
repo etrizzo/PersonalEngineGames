@@ -21,6 +21,7 @@ ActionDefinition::ActionDefinition(tinyxml2::XMLElement * actionElement, StoryDa
 	m_parentData = parent;
 	m_baseText = ParseXmlAttribute(*actionElement, "text", "NO_TEXT");
 	m_baseChance = ParseXmlAttribute(*actionElement, "chance", 1.f);
+	m_endsAct = ParseXmlAttribute(*actionElement, "endsAct", false);
 	m_chanceToPlaceAction = ParseXmlAttribute(*actionElement, "chanceToPlace", 1.f);
 
 	for (tinyxml2::XMLElement* modifierElement = actionElement->FirstChildElement("Modifier"); modifierElement != nullptr; modifierElement = modifierElement->NextSiblingElement("Modifier")){

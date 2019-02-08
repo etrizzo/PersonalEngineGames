@@ -20,8 +20,7 @@
 #include "Game/Party.hpp"
 #include <map>
 
-//for working only on the graph - skip loading all the spritesheets for speed
-#define PRELOAD_ALL
+
 
 Game::~Game()
 {
@@ -56,17 +55,19 @@ Game::Game()
 	//m_gameTime = 0.f;
 	m_gameClock = new Clock(GetMasterClock());
 	
+	m_thesisMode = g_gameConfigBlackboard.GetValue("ThesisOnlyMode", false);
 
-	LoadSounds();
-	LoadTileDefinitions();
-	LoadMapDefinitions();
-#ifdef PRELOAD_ALL
-	LoadClothingDefinitions();
+	if (!m_thesisMode){
+		LoadSounds();
+		LoadTileDefinitions();
+		LoadMapDefinitions();
 
-	LoadEntityDefinitions();
-	LoadQuestDefinitions();
-	LoadAdventureDefinitions();
-#endif
+		LoadClothingDefinitions();
+
+		LoadEntityDefinitions();
+		LoadQuestDefinitions();
+		LoadAdventureDefinitions();
+	}
 
 	m_screenWidth = 10;
 	m_camera = new Camera();
@@ -115,6 +116,7 @@ Vector2 Game::GetPlayerPosition() const
 void Game::PostStartup()
 {
 	m_graph = StoryGraph();
+	
 
 	InitGraphMurder();
 	GenerateGraph();
@@ -553,8 +555,8 @@ void Game::InitGraphMurder()
 	ClearGraph();
 
 	ResetGraphData();
-	ReadPlotNodes("Data/Data/GraphData/MurderMystery_PlotGrammars.xml");
-	ReadOutcomeNodes("Data/Data/GraphData/MurderMystery_OutcomeGrammars.xml");
+	ReadPlotNodes("Data/Data/GraphData/MurderMystery_EventNodes.xml");
+	ReadOutcomeNodes("Data/Data/GraphData/MurderMystery_OutcomeNodes.xml");
 	ReadCharacters("Data/Data/GraphData/MurderMystery_Characters.xml");
 	InitCharacterArray();
 
@@ -562,9 +564,23 @@ void Game::InitGraphMurder()
 	ConsolePrintf("Murder mystery data loaded.");
 }
 
+void Game::InitGraphDialogue()
+{
+	ClearGraph();
+
+	ResetGraphData();
+	ReadPlotNodes("Data/Data/GraphData/Dialogue_EventNodes.xml");
+	ReadOutcomeNodes("Data/Data/GraphData/Dialogue_OutcomeNodes.xml");
+	ReadCharacters("Data/Data/GraphData/Dialogue_Characters.xml");
+	InitCharacterArray();
+
+	m_graph.GenerateStartAndEnd();
+	ConsolePrintf("Dialogue data loaded.");
+}
+
 void Game::ReadPlotNodes(std::string filePath)
 {
-	m_graph.ReadPlotNodesFromXML(filePath);
+	m_graph.ReadEventNodesFromXML(filePath);
 }
 
 void Game::ReadOutcomeNodes(std::string filePath)
@@ -589,7 +605,9 @@ void Game::ResetGraphData()
 
 void Game::GenerateGraph()
 {
+	srand(1);
 	m_graph.RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
+	//m_graph.AddEndingsToEachBranch();
 }
 
 void Game::ClearGraph()
@@ -616,8 +634,8 @@ void Game::GenerateNodePairs(int numToGenerate)
 
 void Game::AddPlotAndOutcomeNodeInPair()
 {
-	StoryNode* newNode = m_graph.AddSinglePlotNode();
-	m_graph.AddOutcomeNodesToPlotNode(newNode);
+	StoryNode* newNode = m_graph.AddSingleEventNode();
+	m_graph.AddOutcomeNodesToEventNode(newNode);
 }
 
 

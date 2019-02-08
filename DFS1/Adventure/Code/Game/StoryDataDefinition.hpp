@@ -19,8 +19,8 @@ public:
 	~StoryDataDefinition();
 
 	void InitFromXML(tinyxml2::XMLElement* nodeElement);
-	void InitAsDetailNode(tinyxml2::XMLElement* nodeElement);
-	void InitAsPlotNode(tinyxml2::XMLElement* nodeElement);
+	void InitAsOutcomeNode(tinyxml2::XMLElement* nodeElement);
+	void InitAsEventNode(tinyxml2::XMLElement* nodeElement);
 
 	std::string GetName() const;
 	std::string ToString() const;
@@ -62,6 +62,7 @@ public:
 
 	float m_chanceToPlaceData = 1.f;
 	bool m_shouldLockIncomingEdge = false;
+	
 
 
 

@@ -76,6 +76,7 @@
     <Health max="80" start="80"/>
     <SpriteAnimSet name = "humanoid" />
     
+    <Clothing set="Villager_f"/>
     <Clothing set="Villager_m" />
     <Inventory>
        <Item name="Leather Hat" chanceToSpawn="1.0"/>

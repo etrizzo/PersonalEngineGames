@@ -9,6 +9,8 @@ public:
 	ActionDefinition(std::string text, tinyxml2::XMLElement* effectsElement, StoryDataDefinition* parent);		//for single action bullshit
 	ActionDefinition(tinyxml2::XMLElement* actionElement, StoryDataDefinition* parent);
 
+	bool m_endsAct = false;
+
 	std::string m_baseText;
 	float m_baseChance;
 	float m_chanceToPlaceAction = 1.f;

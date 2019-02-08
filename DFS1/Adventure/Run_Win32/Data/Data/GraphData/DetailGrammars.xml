@@ -2,7 +2,7 @@
 	Sample new format:
 -->
 
-	<DetailGrammar name="Fight">
+	<OutcomeNode name="Fight">
 		<Characters>
 			<Character id = "*0*" title="fighter"/>
 		</Characters>
@@ -15,7 +15,7 @@
 
 		<Guaranteed>
 			<EffectSet>
-				<TagChange character="*0*" hasTag="isFighting" target="false" />
+				<TagChange character="*0*" tag="isFighting" target="false" />
 			</EffectSet>
 		</Guaranteed>
 
@@ -32,7 +32,7 @@
 					</CharacterRequirements>
 				</Modifier>
 				<EffectSet>
-					<TagChange character="*0*" hasTag="isFighting" target="false" />
+					<TagChange character="*0*" tag="isFighting" target="false" />
 				</EffectSet>
 			</Action>
 
@@ -48,11 +48,11 @@
 					</CharacterRequirements>
 				</Modifier>
 				<EffectSet>
-					<!--<TagChange character="*0*" hasTag="isFighting" target="false" />-->
-					<TagChange character="*0*" hasTag="onQuest" target="false" />
-					<TagChange character="*0*" hasTag="inCave" target="false" />
-					<TagChange character="*0*" hasTag="inDungeon" target="false" />
-					<TagChange character="*0*" hasTag="isWounded" target="true" expiration="3~5"/>
+					<!--<TagChange character="*0*" tag="isFighting" target="false" />-->
+					<TagChange character="*0*" tag="onQuest" target="false" />
+					<TagChange character="*0*" tag="inCave" target="false" />
+					<TagChange character="*0*" tag="inDungeon" target="false" />
+					<TagChange character="*0*" tag="isWounded" target="true" expiration="3~5"/>
 				</EffectSet>
 			</Action>
 
@@ -68,16 +68,16 @@
 					</CharacterRequirements>
 				</Modifier>
 				<EffectSet>
-					<!--<TagChange character="*0*" hasTag="isFighting" target="false" />-->
-					<TagChange character="*0*" hasTag="onQuest" target="false" />
-					<TagChange character="*0*" hasTag="isAlive" target="false" />
+					<!--<TagChange character="*0*" tag="isFighting" target="false" />-->
+					<TagChange character="*0*" tag="onQuest" target="false" />
+					<TagChange character="*0*" tag="isAlive" target="false" />
 				</EffectSet>
 			</Action>
 		</Actions>
-	</DetailGrammar>
+	</OutcomeNode>
 
 
-	<DetailGrammar name="GetLostDungeon" chanceToPlace=".1">
+	<OutcomeNode name="GetLostDungeon" chanceToPlace=".1">
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -99,7 +99,7 @@
 					</CharacterRequirements>
 				</Modifier>
 				<EffectSet>
-					<TagChange character="*0*" hasTag="inDarkArea" target="true" />
+					<TagChange character="*0*" tag="inDarkArea" target="true" />
 				</EffectSet>
 			</Action>
 
@@ -109,9 +109,9 @@
 		</StoryRequirements>
 		<StoryEffects>
 		</StoryEffects>
-	</DetailGrammar>
+	</OutcomeNode>
 
-	<DetailGrammar name="GetLostCave" chanceToPlace=".2">>
+	<OutcomeNode name="GetLostCave" chanceToPlace=".2">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -127,7 +127,7 @@
 		<Actions>
 			<Action text="*0* gets lost." >
 				<EffectSet>
-					<TagChange character="*0*" hasTag="isLost" target="true" />
+					<TagChange character="*0*" tag="isLost" target="true" />
 				</EffectSet>
 			</Action>
 
@@ -138,7 +138,7 @@
 					</CharacterRequirements>
 				</Modifier>
 				<EffectSet>
-					<TagChange character="*0*" hasTag="inDarkArea" target="true" />
+					<TagChange character="*0*" tag="inDarkArea" target="true" />
 				</EffectSet>
 			</Action>
 		</Actions>
@@ -147,17 +147,17 @@
 		</StoryRequirements>
 		<StoryEffects>
 		</StoryEffects>
-	</DetailGrammar>
+	</OutcomeNode>
 
 
-	<DetailGrammar name="FindWayAndStay" chanceToPlace=".3">>
+	<OutcomeNode name="FindWayAndStay" chanceToPlace=".3">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
 		<Actions>
 			<Action text="*0* figures out where they are.">
 				<EffectSet>
-					<TagChange character="*0*" hasTag="isLost" target="false" />
+					<TagChange character="*0*" tag="isLost" target="false" />
 				</EffectSet>
 			</Action>
 		</Actions>
@@ -167,16 +167,16 @@
 				<Requirement tag="isLost" target="true" weight="5"/>
 			</Character>
 		</CharacterRequirements>
-	</DetailGrammar>
+	</OutcomeNode>
 
-	<DetailGrammar name="LosesHope" chanceToPlace=".1">>
+	<OutcomeNode name="LosesHope" chanceToPlace=".1">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
 		<Actions>
 			<Action text="*0* loses hope." chanceToPlace=".1">
 				<EffectSet>
-					<TagChange character="*0*" hasTag="hasHope" target="false" />
+					<TagChange character="*0*" tag="hasHope" target="false" />
 				</EffectSet>
 			</Action>
 		</Actions>
@@ -186,16 +186,16 @@
 				<Requirement tag="isLost" target="true" weight="5"/>
 			</Character>
 		</CharacterRequirements>
-	</DetailGrammar>
+	</OutcomeNode>
 
-	<DetailGrammar name="StarveWhileLost" chanceToPlace=".05">>
+	<OutcomeNode name="StarveWhileLost" chanceToPlace=".05">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
 		<Actions>
 			<Action text="*0* starves to death while lost." chanceToPlace=".1">
 				<EffectSet>
-					<TagChange character="*0*" hasTag="isAlive" target="false" />
+					<TagChange character="*0*" tag="isAlive" target="false" />
 				</EffectSet>
 			</Action>
 		</Actions>
@@ -206,18 +206,18 @@
 				<Requirement tag="hasHope" target="false" weight="5" />
 			</Character>
 		</CharacterRequirements>
-	</DetailGrammar>
+	</OutcomeNode>
 
-	<DetailGrammar name="FindWayAndLeaveCave" chanceToPlace=".5">
+	<OutcomeNode name="FindWayAndLeaveCave" chanceToPlace=".5">
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
 		<Actions>
 			<Action text="*0* finds their way out of the cave." chanceToPlace=".1">
 				<EffectSet>
-					<TagChange character="*0*" hasTag="isLost" target="false" />
-					<TagChange character="*0*" hasTag="inCave" target="false" />
-					<TagChange character="*0*" hasTag="onQuest" target="false" />
+					<TagChange character="*0*" tag="isLost" target="false" />
+					<TagChange character="*0*" tag="inCave" target="false" />
+					<TagChange character="*0*" tag="onQuest" target="false" />
 				</EffectSet>
 			</Action>
 		</Actions>
@@ -228,18 +228,18 @@
 				<Requirement tag="inCave" target="true" />
 			</Character>
 		</CharacterRequirements>
-	</DetailGrammar>
+	</OutcomeNode>
 
-	<DetailGrammar name="FindWayAndLeaveDung" chanceToPlace=".5">>
+	<OutcomeNode name="FindWayAndLeaveDung" chanceToPlace=".5">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
 		<Actions>
 			<Action text="*0* finds their way out of the dungeon." chanceToPlace=".1">
 				<EffectSet>
-					<TagChange character="*0*" hasTag="isLost" target="false" />
-					<TagChange character="*0*" hasTag="inDungeon" target="false" />
-					<TagChange character="*0*" hasTag="onQuest" target="false" />
+					<TagChange character="*0*" tag="isLost" target="false" />
+					<TagChange character="*0*" tag="inDungeon" target="false" />
+					<TagChange character="*0*" tag="onQuest" target="false" />
 				</EffectSet>
 			</Action>
 		</Actions>
@@ -250,12 +250,12 @@
 				<Requirement tag="inDungeon" target="true" />
 			</Character>
 		</CharacterRequirements>
-	</DetailGrammar>
+	</OutcomeNode>
 
 
 <!--
 
-	<DetailGrammar>
+	<OutcomeNode>
 		<Action text="*0* talks to *1* about *0_TAG*" />
 		<CharacterRequirements>
 			<Character number="0">
@@ -272,13 +272,13 @@
 			<EffectSet chance="default">
 				<TraitChange character="0" trait="Social" change="-10" />
 				<TraitChange character="1" trait="Social" change="-10" />
-				<TagChange character="1" hasTag = "isAngry" target="*A" />
+				<TagChange character="1" tag = "isAngry" target="*A" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</StoryEffects>
-	</DetailGrammar>
+	</OutcomeNode>
 
-	<DetailGrammar>
+	<OutcomeNode>
 		<Action text="*0* chats with *1*" />
 		<CharacterRequirements>
 			<Character number="0">
@@ -297,15 +297,15 @@
 			<EffectSet chance="default">
 				<TraitChange character="0" trait="Social" change="-10" />
 				<TraitChange character="1" trait="Social" change="-10" />
-				<TagChange character="1" hasTag = "isAngry" target="*0*" />
+				<TagChange character="1" tag = "isAngry" target="*0*" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</StoryEffects>
-	</DetailGrammar>
+	</OutcomeNode>
 -->
 
 <!--
-	<DetailGrammar>
+	<OutcomeNode>
 		<Action text="*0* fights a cave jelly" />
 		<CharacterRequirements>
 			<Character index="0">
@@ -319,14 +319,14 @@
 		<StoryEffects>
 			<EffectSet chance="default">
 				<StoryChange Action="+5" Tension="+10" /> 
-				<TagChange character="0" hasTag="isFighting" target="true" type="boolean"/>
+				<TagChange character="0" tag="isFighting" target="true" type="boolean"/>
 			</EffectSet>
 		</StoryEffects>
-	</DetailGrammar>
+	</OutcomeNode>
 
 
 
-	<DetailGrammar>
+	<OutcomeNode>
 		<Action text="*0* fights a dungeon monster" />
 		<CharacterRequirements>
 			<Character index="0">
@@ -340,16 +340,16 @@
 		<StoryEffects>
 			<EffectSet chance="default">
 				<StoryChange Action="+5" Tension="+10" /> 
-				<TagChange character="0" hasTag="isFighting" target="true" type="boolean"/>
+				<TagChange character="0" tag="isFighting" target="true" type="boolean"/>
 			</EffectSet>
 		</StoryEffects>
-	</DetailGrammar>
+	</OutcomeNode>
 -->
 
 
 	<!-- fighting a thing? -->
 	<!--
-	<DetailGrammar>
+	<OutcomeNode>
 		<Action text="*0* wins the fight." chance=".5"/>
 		<CharacterRequirements>
 			<Character index="0">
@@ -363,13 +363,13 @@
 		<StoryEffects>
 			<EffectSet chance="default">
 				<StoryChange Action="+5" Tension="+10" /> 
-				<TagChange character="0" hasTag="isFighting" target="false" />
+				<TagChange character="0" tag="isFighting" target="false" />
 			</EffectSet>
 		</StoryEffects>
-	</DetailGrammar>
+	</OutcomeNode>
 
 
-	<DetailGrammar>
+	<OutcomeNode>
 		<Action text="*0* wins the fight with *1*." />
 		<CharacterRequirements>
 			<Character index="0">
@@ -383,18 +383,18 @@
 		<StoryEffects>
 			<EffectSet chance="default">
 				<StoryChange Action="+5" Tension="+10" /> 
-				<TagChange character="0" hasTag="isFighting" target="false" />
-				<TagChange character="1" hasTag="isFighting" target="false" />
+				<TagChange character="0" tag="isFighting" target="false" />
+				<TagChange character="1" tag="isFighting" target="false" />
 			</EffectSet>
 		</StoryEffects>
-	</DetailGrammar>
+	</OutcomeNode>
 -->
 
 				<!--
 			<EffectSet chance="*B_INVERSE_TRAIT1"/>
 				<TraitChange character="*A" trait="Social" change="+10" />
 				<TraitChange character="*B" trait="Social" change="+10" />
-				<TagChange character="*B" hasTag = "isTrusting" target="*A" />
+				<TagChange character="*B" tag = "isTrusting" target="*A" />
 				<StoryChange Action="+5" Romance="+10" /> 
 			</EffectSet>
 		-->

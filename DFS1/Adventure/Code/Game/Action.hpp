@@ -13,5 +13,6 @@ public:
 	float m_instancedChance;
 	ActionDefinition* m_definition;
 
+	bool DoesActionEndAct() const;
 	void SetChanceFromEdge(StoryData* parentData, StoryState* edge);
 };

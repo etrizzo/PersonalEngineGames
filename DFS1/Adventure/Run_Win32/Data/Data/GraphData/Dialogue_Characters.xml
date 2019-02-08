@@ -1,0 +1,14 @@
+<Character name="TheVillager">
+	<Tags>
+		<Tag tag="isAlive" value="true" type="bool"/>
+		<Tag tag="isSpeaker" value="true" type="bool"/>
+		<Tag tag="isRude" value="true" type="bool"/>
+	</Tags>
+</Character>
+
+<Character name="Player">
+	<Tags>
+		<Tag tag="isPlayer" value="true" type="bool"/>
+		<Tag tag="knowsVillage" value="false" type="bool"/>
+	</Tags>
+</Character>

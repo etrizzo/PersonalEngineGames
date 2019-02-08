@@ -1,5 +1,5 @@
 
-	<PlotGrammar>
+	<EventNode>
 		<!-- *[X]* indicates a character name who should be replaced at rutntime -->
 		<Action text="*0* fights *1*" />
 		<CharacterRequirements>
@@ -18,16 +18,16 @@
 			<EffectSet chance="default">
 				<TraitChange character="0" trait="Social" change="-10" />
 				<TraitChange character="1" trait="Social" change="-10" />
-				<TagChange character="1" hasTag = "isAngry" target="*0*" type="character"/>
-				<TagChange character="0" hasTag = "isFighting" target="*1*" type="character"/>
-				<TagChange character="1" hasTag = "isFighting" target="*0*" type="character"/>
+				<TagChange character="1" tag = "isAngry" target="*0*" type="character"/>
+				<TagChange character="0" tag = "isFighting" target="*1*" type="character"/>
+				<TagChange character="1" tag = "isFighting" target="*0*" type="character"/>
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</CharacterEffects>
-	</PlotGrammar>
+	</EventNode>
 
 
-	<PlotGrammar>
+	<EventNode>
 		<Action text="*0* steals *1*'s treasure" />
 		<CharacterRequirements>
 			<Character index="0">
@@ -41,15 +41,15 @@
 		</CharacterRequirements>
 		<CharacterEffects>
 			<EffectSet chance="default">
-				<TagChange character="1" hasTag = "isAngry" target="*0*" type="character"/>
-				<TagChange character="1" hasTag = "hasTreasure" target="false" />
-				<TagChange character="0" hasTag = "hasTreasure" target="true" />
+				<TagChange character="1" tag = "isAngry" target="*0*" type="character"/>
+				<TagChange character="1" tag = "hasTreasure" target="false" />
+				<TagChange character="0" tag = "hasTreasure" target="true" />
 			</EffectSet>
 		</CharacterEffects>
-	</PlotGrammar>
+	</EventNode>
 
 
-	<PlotGrammar>
+	<EventNode>
 		<Action text="*0* goes on a quest to a cave" />
 		<CharacterRequirements>
 			<Character index="0">
@@ -63,14 +63,14 @@
 		<CharacterEffects>
 			<EffectSet chance="default">
 				<TraitChange character="0" trait="Social" change="-10" />
-				<TagChange character="0" hasTag = "onQuest" target="true" />
-				<TagChange character="0" hasTag = "inCave" target="true" />
+				<TagChange character="0" tag = "onQuest" target="true" />
+				<TagChange character="0" tag = "inCave" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</CharacterEffects>
-	</PlotGrammar>
+	</EventNode>
 
-	<PlotGrammar>
+	<EventNode>
 		<Action text="*0* goes on a quest to a dungeon" />
 		<CharacterRequirements>
 			<Character index="0">
@@ -84,14 +84,14 @@
 		<CharacterEffects>
 			<EffectSet chance="default">
 				<TraitChange character="0" trait="Social" change="-10" />
-				<TagChange character="0" hasTag = "onQuest" target="true" />
-				<TagChange character="0" hasTag = "inDungeon" target="true" />
+				<TagChange character="0" tag = "onQuest" target="true" />
+				<TagChange character="0" tag = "inDungeon" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</CharacterEffects>
-	</PlotGrammar>
+	</EventNode>
 
-	<PlotGrammar>
+	<EventNode>
 		<Action text="*0* finds a cave treasure" />
 		<CharacterRequirements>
 			<Character index="0">
@@ -105,13 +105,13 @@
 		</StoryRequirements>
 		<CharacterEffects>
 			<EffectSet chance="default">
-				<TagChange character="0" hasTag = "hasTreasure" target="true" />
+				<TagChange character="0" tag = "hasTreasure" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</CharacterEffects>
-	</PlotGrammar>
+	</EventNode>
 
-	<PlotGrammar>
+	<EventNode>
 		<Action text="*0* finds a rare cave treasure" />
 		<CharacterRequirements>
 			<Character index="0">
@@ -125,14 +125,14 @@
 		</StoryRequirements>
 		<CharacterEffects>
 			<EffectSet chance="default">
-				<TagChange character="0" hasTag = "hasTreasure" target="true" />
+				<TagChange character="0" tag = "hasTreasure" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</CharacterEffects>
-	</PlotGrammar>
+	</EventNode>
 
 
-	<PlotGrammar>
+	<EventNode>
 		<Action text="*0* finds a dungeon treasure" />
 		<CharacterRequirements>
 			<Character index="0">
@@ -145,13 +145,13 @@
 		</StoryRequirements>
 		<CharacterEffects>
 			<EffectSet chance="default">
-				<TagChange character="0" hasTag = "hasTreasure" target="true" />
+				<TagChange character="0" tag = "hasTreasure" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</CharacterEffects>
-	</PlotGrammar>
+	</EventNode>
 
-	<PlotGrammar>
+	<EventNode>
 		<Action text="*0* finds a rare dungeon treasure" />
 		<CharacterRequirements>
 			<Character index="0">
@@ -165,14 +165,14 @@
 		</StoryRequirements>
 		<CharacterEffects>
 			<EffectSet chance="default">
-				<TagChange character="0" hasTag = "hasTreasure" target="true" />
+				<TagChange character="0" tag = "hasTreasure" target="true" />
 				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</CharacterEffects>
-	</PlotGrammar>
+	</EventNode>
 
 
-<PlotGrammar>
+<EventNode>
 		<Action text="*0* fights a cave jelly" />
 		<CharacterRequirements>
 			<Character index="0">
@@ -186,13 +186,13 @@
 		<CharacterEffects>
 			<EffectSet chance="default">
 				<StoryChange Action="+5" Tension="+10" /> 
-				<TagChange character="0" hasTag="isFighting" target="true" type="boolean"/>
+				<TagChange character="0" tag="isFighting" target="true" type="boolean"/>
 			</EffectSet>
 		</CharacterEffects>
-	</PlotGrammar>
+	</EventNode>
 
 
-	<PlotGrammar>
+	<EventNode>
 		<Action text="*0* fights a dungeon monster" />
 		<CharacterRequirements>
 			<Character index="0">
@@ -206,7 +206,7 @@
 		<CharacterEffects>
 			<EffectSet chance="default">
 				<StoryChange Action="+5" Tension="+10" /> 
-				<TagChange character="0" hasTag="isFighting" target="true" type="boolean"/>
+				<TagChange character="0" tag="isFighting" target="true" type="boolean"/>
 			</EffectSet>
 		</CharacterEffects>
-	</PlotGrammar>
+	</EventNode>

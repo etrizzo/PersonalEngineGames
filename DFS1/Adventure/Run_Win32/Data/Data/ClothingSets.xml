@@ -154,8 +154,8 @@
 			<Nose name="strong" portraitCoords="4,7"/>
 
 			<Brow name="heavy" portraitCoords="6,7"/>
-			<Brow name="thin" portraitCoords="6,7"/>
-			<Brow name="forward" portraitCoords="6,7"/>
+			<Brow name="thin" portraitCoords="7,7"/>
+			<Brow name="forward" portraitCoords="8,7"/>
 
 			<!-- portrait coords is the whites layer, 1 to the right is the pupil -->
 			<Eyes name="serious" portraitCoords="1,1" color="random"/>
@@ -262,9 +262,9 @@
 			<Brow name="heavy" portraitCoords="6,7"/>
 			<Brow name="heavy" portraitCoords="6,7"/>
 			<Brow name="heavy" portraitCoords="6,7"/>
-			<Brow name="thin" portraitCoords="6,7"/>
-			<Brow name="forward" portraitCoords="6,7"/>
-			<Brow name="forward" portraitCoords="6,7"/>
+			<Brow name="thin" portraitCoords="7,7"/>
+			<Brow name="forward" portraitCoords="8,7"/>
+			<Brow name="forward" portraitCoords="8,7"/>
 
 			<!-- portrait coords is the whites layer, 1 to the right is the pupil -->
 			<Eyes name="serious" portraitCoords="10,1" color="random"/>

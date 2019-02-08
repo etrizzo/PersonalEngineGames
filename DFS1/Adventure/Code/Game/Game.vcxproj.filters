@@ -214,6 +214,12 @@
     <ClCompile Include="TagSet.cpp">
       <Filter>General\StoryGraph</Filter>
     </ClCompile>
+    <ClCompile Include="GameState_Graph.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState_Encounter.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -401,6 +407,12 @@
     </ClInclude>
     <ClInclude Include="TagSet.hpp">
       <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState_Graph.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState_Encounter.hpp">
+      <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

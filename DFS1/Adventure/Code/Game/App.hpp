@@ -72,3 +72,4 @@ void CommandGeneratePairs(Command& cmd);
 
 void CommandReadDefaultData(Command& cmd);
 void CommandReadMurderData(Command& cmd);
+void CommandReadDialogueData(Command& cmd);

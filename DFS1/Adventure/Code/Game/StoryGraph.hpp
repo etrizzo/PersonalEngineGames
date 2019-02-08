@@ -36,7 +36,7 @@ public:
 	===========================
 	*/
 	void ClearGraphData();
-	void ReadPlotNodesFromXML(std::string filePath);
+	void ReadEventNodesFromXML(std::string filePath);
 	void ReadDetailNodesFromXML(std::string filePath);
 	void ReadCharactersFromXML(std::string filePath);
 
@@ -76,15 +76,20 @@ public:
 
 	void GenerateSkeleton(int numPlotNodes);
 	void AddPlotNodes(int numPlotNodes);
-	StoryNode* AddSinglePlotNode();
-	void AddOutcomeNodesToPlotNode(StoryNode* plotNode);
+	StoryNode* AddSingleEventNode();
+	StoryNode* AddEventNodeAtEdge(StoryEdge* edge);
+	void AddOutcomeNodesToEventNode(StoryNode* plotNode);
 	void AddDetailNodesToDesiredSize(int desiredSize = 10);
 	void GenerateStartAndEnd();
 	bool TryToAddDetailNodeAtEdge(StoryEdge* edge, int maxTries = 10);
-	bool AddEventNode(StoryNode* newPlotNode);
+	bool FindEdgeForNewEventNodeAndAdd(StoryNode* newPlotNode);
 	bool AddOutcomeNode(StoryNode* newDetailNode);
-	bool AddOutcomeNode(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode);
+	bool CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode);
+	StoryNode* CreateAndAddEventNodeAtEdge(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode);
 	bool AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToAdd, bool branchToFutureNodesIfNecessary);
+
+	//looks backwards from the end node and adds nodes to edges that don't have an end
+	void AddEndingsToEachBranch();
 
 	//by default, adds 1/4 * (numNodes) branches
 	void IdentifyBranchesAndAdd(int numBranchesToAdd = -1);
@@ -207,12 +212,13 @@ protected:
 	std::vector<StoryDataDefinition*> m_usedPlotNodes;
 	std::vector<StoryDataDefinition*> m_usedDetailNodes;
 public:
-	static std::vector<StoryDataDefinition*> s_plotNodes;
-	static std::vector<StoryDataDefinition*> s_detailNodes;
-	static StoryDataDefinition* GetRandomPlotNode();
-	static StoryDataDefinition* GetRandomDetailNode();
+	static std::vector<StoryDataDefinition*> s_eventNodes;
+	static std::vector<StoryDataDefinition*> s_outcomeNodes;
+	static StoryDataDefinition* GetRandomEventNode();
+	static StoryDataDefinition* GetRandomOutcomeNode();
 
-	static StoryDataDefinition* GetDetailNodeWithWeights(StoryState* edge, float minFitness = 2.f);
+	static StoryDataDefinition* GetOutcomeNodeWithWeights(StoryState* edge, float minFitness = 2.f);
+	static StoryDataDefinition* GetEventNodeWithWeights(StoryState* edge, float minFitness = 2.f);
 	static float CalculateEdgeFitnessForData(StoryState* edge, StoryDataDefinition* data);
 };
 

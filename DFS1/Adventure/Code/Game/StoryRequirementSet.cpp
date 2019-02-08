@@ -38,10 +38,10 @@ float StoryRequirementSet::GetEdgeFitness(StoryState * character)
 	return baseFitness;
 }
 
-bool StoryRequirementSet::DoesEdgeMeetAllRequirements(StoryState* character)
+bool StoryRequirementSet::DoesEdgeMeetAllRequirements(StoryState* edgeState)
 {
 	for (StoryRequirement* req : m_requirements){
-		if (!req->PassesRequirement(character)){
+		if (!req->PassesRequirement(edgeState)){
 			return false;
 		}
 	}

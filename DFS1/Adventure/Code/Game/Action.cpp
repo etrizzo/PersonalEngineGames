@@ -8,6 +8,11 @@ Action::Action(ActionDefinition * def)
 	m_instancedChance = def->m_baseChance;
 }
 
+bool Action::DoesActionEndAct() const
+{
+	return m_definition->m_endsAct;
+}
+
 void Action::SetChanceFromEdge(StoryData * parentData, StoryState * edge)
 {
 	m_instancedChance = m_definition->m_baseChance;

@@ -13,17 +13,14 @@ public:
 
 	std::string GetName() const;
 
-	void AddExtroversion (float val);
 
 	TagSet m_tags;
 
 protected:
 	std::string m_name;
 	// traits
-	float m_social;			// Introversion --- Extroversion
-	float m_information;	//		Sensing --- Intuition
-	float m_decisions;		//		feeling --- thinking
-	float m_structure;		//		judging --- perceiving
+
+	//Actor* m_pawn = nullptr;	
 
 
 };

@@ -1,9 +1,5 @@
 
 	<Character name="Abby">
-		<Traits>
-			<Trait name="Bravery"  		value = "80" />
-			<Trait name="Cleverness"   value = "30" />
-		</Traits>
 
 		<Tags>
 			<Tag tag="isAlive" value="true" type="bool"/>
@@ -19,11 +15,6 @@
 	</Character>
 
 	<Character name="Bob">
-		<Traits>
-			<Trait name="Bravery"  		value = "20" />
-			<Trait name="Cleverness"   value = "90" />
-		</Traits>
-
 		<Tags>
 			<Tag tag="isAlive" value="true" type="bool"/>
 		</Tags>

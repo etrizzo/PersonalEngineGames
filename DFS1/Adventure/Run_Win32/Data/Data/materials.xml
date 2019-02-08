@@ -90,7 +90,7 @@
 <material name="watercolor" shader="watercolor">
 	<textures>
 		<texture type="diffuse" path="white" />
-		<texture index="4" path="Noise/heat_displacements.png" />
+		<texture index="4" path="Noise/noise_perlin.png" />
 	</textures>
 	<properties>
 		<property type="RGBA" name="TINT" value="255,255,255,255"/>
@@ -100,7 +100,7 @@
 <material name="map" shader="watercolor">
 	<textures>
 		<texture type="diffuse" path="white" />
-		<texture index="4" path="Noise/heat_displacements.png" />
+		<texture index="4" path="Noise/noise1.png" />
 	</textures>
 	<properties>
 		<property type="float" name="GRAYSCALE_WEIGHT" value=".55"/>

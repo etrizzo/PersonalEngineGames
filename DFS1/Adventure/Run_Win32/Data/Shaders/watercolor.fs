@@ -12,7 +12,7 @@ uniform float EDGE_CRISPNESS = .8;
 uniform float OUTLINE_STRENGTH = 10.0;
 uniform float EDGE_GRADIENT_STRENGTH = .7;    //1-this gets added to the random to brighten the edges from noise
 uniform float EDGE_SCROLL_TIME_SCALE = .15;
-uniform float GRAYSCALE_WEIGHT = .95;  //good at .75 for full map
+uniform float GRAYSCALE_WEIGHT = .75;  //good at .75 for full map
 uniform float HALFTONE_WEIGHT = .55;
 
 uniform float WATERCOLOR_WEIGHT = 1.45;
@@ -24,6 +24,8 @@ uniform float EDGE_MIX_WEIGHT = .85;
 
 in vec4 passColor;
 in vec2 passUV; 
+in vec2 worldUV_mins;
+in vec2 worldUV_maxs;
 
 out vec4 outColor; 
 
@@ -129,6 +131,10 @@ void main()
 	vec2 dispUVs = vec2(passUV.x + scaledTime, passUV.y + scaledTime);
  	vec4 displacement = texture(gTexDisplacement, dispUVs);
 
+  vec2 worldUVSize = worldUV_maxs - worldUV_mins;
+  vec2 rangeMappedUV = worldUVSize * passUV;
+  vec2 worldUVs = worldUV_mins + rangeMappedUV;
+
 
    //vec4 edgeColor = GetEdgeColor(passUV);
    
@@ -139,6 +145,9 @@ void main()
    
    vec2 positiveEdgePosition = passUV;
    vec2 negativeEdgePosition = passUV;
+
+   vec2 positiveEdgeNoisePos = passUV;    //worldUVs
+   vec2 negativeEdgeNoisePos = passUV;    //worldUVs
 
    vec2 positiveWatercolorPosition = passUV;
    vec2 negativeWatercolorPosition = passUV;
@@ -229,8 +238,11 @@ void main()
         positiveEdgePosition +=EDGE_CRISPNESS *normalize(GetPerpendicular(gr)) * texelSize;
         negativeEdgePosition -=EDGE_CRISPNESS *normalize(GetPerpendicular(gr2))* texelSize;
 
-        edgeColor3+=distanceFactor*mix(vec3(1.2),getBWDist(positiveEdgePosition).xyz*2.,gr1Strength); //use the strength of the gradient to determine
-        edgeColor3+=distanceFactor*mix(vec3(1.2),getBWDist(negativeEdgePosition).xyz*2.,gr2Strength);    //if this is an edge or nah ( too low will be mostly wite)
+        positiveEdgeNoisePos +=EDGE_CRISPNESS *normalize(GetPerpendicular(gr)) * texelSize;
+        negativeEdgeNoisePos -=EDGE_CRISPNESS *normalize(GetPerpendicular(gr2))* texelSize;
+
+        edgeColor3+=distanceFactor*mix(vec3(1.2),getBWDist(positiveEdgeNoisePos).xyz*2.,gr1Strength); //use the strength of the gradient to determine
+        edgeColor3+=distanceFactor*mix(vec3(1.2),getBWDist(negativeEdgeNoisePos).xyz*2.,gr2Strength);    //if this is an edge or nah ( too low will be mostly wite)
         
         count+=distanceFactor;      //edge factor?
         
@@ -250,7 +262,9 @@ void main()
    //vec4 finalColor = clamp(clamp(edgeColor*.85+.15,0.,1.)*waterColor,0.,1.);
    outColor = (finalColor * passColor) ;
    //outColor = mix(outColor, diffuse, .1)
-   //outColor = getBWDist(passUV);
+   //outColor = vec4(GetGradient(passUV, 2.0).xy, 0.0, 1.0);
+   //outColor = getBWDist(worldUVs);
+   //outColor = GetRandom(worldUVs)
    //outColor = vec4(vign * vign);
    //outColor = waterColor;
    outColor.a = 1.0;

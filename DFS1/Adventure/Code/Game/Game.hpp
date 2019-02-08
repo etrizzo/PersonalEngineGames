@@ -102,9 +102,12 @@ public:
 	Thesis Stuff
 	==========*/
 	StoryGraph m_graph;
+	bool m_thesisMode;
 
 	void InitGraphDefault();
 	void InitGraphMurder();
+	void InitGraphDialogue();
+
 	void ReadPlotNodes(std::string filePath);
 	void ReadOutcomeNodes(std::string filePath);
 	void ReadCharacters(std::string filePath);

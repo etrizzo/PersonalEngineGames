@@ -1,0 +1,359 @@
+
+<EventNode name="polite_hello_stranger">
+	<!-- chooses one -->
+	<Action text="Hi there." />
+	<Action text="Hello, you must be new here." />
+	<Action text="Hi, I'm *0*. Welcome to $VILLAGE_NAME$." />
+
+
+	<Characters>
+		<Character id = "*0*" title="villager"/>
+		<Character id = "*1*" title="player" />
+	</Characters>
+
+	<CharacterRequirements>
+		<Character index="0">
+			<Requirement tag="isSpeaker" target="true"/>
+			<Requirement tag="isRude" target="false"/> <!-- a trait decided in villager generation -->
+			<Requirement tag="hasMetPlayer" target="false"/> <!-- starts false, switches to true after dialogue is set -->
+		</Character>
+
+		<Character index="1">
+			<Requirement tag="isPlayer" target="true"/>
+			<Requirement tag="knowsVillage" target="false"/>
+		</Character>
+	</CharacterRequirements>
+
+	<StoryRequirements>
+		<!-- <Requirement tag="cycleDay" target="1~2" compare="lessthan"/> IntRange, fed in from adventure state -->
+	</StoryRequirements>
+
+	<StoryEffects>
+	</StoryEffects>
+
+	<CharacterEffects>
+		<EffectSet>
+			<TagChange character="0" tag = "hasMetPlayer" target="true" />
+		</EffectSet>
+	</CharacterEffects>
+</EventNode>
+
+<EventNode name="rude_hello_stranger">
+	<!-- chooses one -->
+	<Action text="Um." />
+	<Action text="Hi." />
+	<Action text="We don't like strangers in $VILLAGE_NAME$." />
+
+
+	<Characters>
+		<Character id = "*0*" title="villager"/>
+		<Character id = "*1*" title="player" />
+	</Characters>
+
+	<CharacterRequirements>
+		<Character index="0">
+			<Requirement tag="isSpeaker" target="true"/>
+			<Requirement tag="isRude" target="true"/> <!-- a trait decided in villager generation -->
+			<Requirement tag="hasMetPlayer" target="false"/> <!-- starts false, switches to true after dialogue is set -->
+		</Character>
+
+		<Character index="1">
+			<Requirement tag="isPlayer" target="true"/>
+			<Requirement tag="knowsVillage" target="false"/>
+		</Character>
+	</CharacterRequirements>
+
+	<StoryRequirements>
+		<!-- <Requirement tag="cycleDay" target="1~2" compare="lessthan"/>  fed in from adventure state -->
+	</StoryRequirements>
+
+	<StoryEffects>
+	</StoryEffects>
+
+	<CharacterEffects>
+		<EffectSet>
+			<TagChange character="0" tag = "hasMetPlayer" target="true" />
+		</EffectSet>
+	</CharacterEffects>
+</EventNode>
+
+<EventNode name="polite_conversation">
+	<Action text="The weather's been nice, I hope it lasts." />
+	<Action text="$VILLAGE_NAME$ is so pretty this time of year, you're visiting at the best time." />
+
+
+	<Characters>
+		<Character id = "*0*" title="villager"/>
+		<Character id = "*1*" title="player" />
+	</Characters>
+
+	<CharacterRequirements>
+		<Character index="0">
+			<Requirement tag="isSpeaker" target="true"/>
+			<Requirement tag="isRude" target="false"/> <!-- a trait decided in villager generation -->
+		</Character>
+
+		<Character index="1">
+			<Requirement tag="isPlayer" target="true"/>
+			<Requirement tag="knowsVillage" target="false"/>
+		</Character>
+	</CharacterRequirements>
+
+	<StoryRequirements>
+		<!-- <Requirement tag="cycleDay" target="1~3"/> fed in from adventure state -->
+	</StoryRequirements>
+
+	<StoryEffects>
+	</StoryEffects>
+
+	<CharacterEffects>
+		<EffectSet>
+			<TagChange character="0" tag = "hasMetPlayer" target="true" />
+		</EffectSet>
+	</CharacterEffects>
+</EventNode>
+
+
+
+
+<EventNode name="polite_question">
+	<!-- could split this into separate nodes and seed whehter or not there is a forest/spookyzone on the map. -->
+	<Action text="Can I help you with something?" />
+
+	<Characters>
+		<Character id = "*0*" title="villager"/>
+		<Character id = "*1*" title="player" />
+	</Characters>
+
+	<CharacterRequirements>
+		<Character index="0">
+			<Requirement tag="isSpeaker" target="true"/>
+			<Requirement tag="isRude" target="false"/> <!-- a trait decided in villager generation -->
+		</Character>
+
+		<Character index="1">
+			<Requirement tag="isPlayer" target="true"/>
+			<Requirement tag="knowsVillage" target="false"/>
+		</Character>
+	</CharacterRequirements>
+
+	<StoryRequirements>
+		<!-- <Requirement tag="cycleDay" target="1~3"/> fed in from adventure state -->
+		<Requirement tag="villagerAsking" target="false"/>
+		<Requirement tag="villagerAsked" target="false" />
+	</StoryRequirements>
+
+	<StoryEffects>
+		<EffectSet>
+			<TagChange tag="villagerAsking" target="help" effectType="story"/>
+			<TagChange tag="Asker" type="character" target="*0*" effectType="story" />
+			<TagChange tag="villagerAsked" target="true" effectType="story"/>
+		</EffectSet>
+	</StoryEffects>
+
+	<CharacterEffects>
+		<EffectSet>
+			<TagChange character="0" tag = "hasMetPlayer" target="true" />
+		</EffectSet>
+	</CharacterEffects>
+</EventNode>
+
+<EventNode name="rude_question">
+	<!-- could split this into separate nodes and seed whehter or not there is a forest/spookyzone on the map. -->
+	<Action text="What do you want?" />
+
+	<Characters>
+		<Character id = "*0*" title="villager"/>
+		<Character id = "*1*" title="player" />
+	</Characters>
+
+	<CharacterRequirements>
+		<Character index="0">
+			<Requirement tag="isSpeaker" target="true"/>
+			<Requirement tag="isRude" target="true"/> <!-- a trait decided in villager generation -->
+		</Character>
+
+		<Character index="1">
+			<Requirement tag="isPlayer" target="true"/>
+			<Requirement tag="knowsVillage" target="false"/>
+		</Character>
+	</CharacterRequirements>
+
+	<StoryRequirements>
+		<!-- <Requirement tag="cycleDay" target="1~3"/> fed in from adventure state -->
+		<Requirement tag="villagerAsking" target="false"/>
+		<Requirement tag="villagerAsked" target="false" />
+	</StoryRequirements>
+
+	<StoryEffects>
+		<EffectSet>
+			<TagChange tag="villagerAsking" target="help" effectType="story"/>
+			<TagChange tag="Asker" type="character" target="*0*" effectType="story" />
+			<TagChange tag="villagerAsked" target="true" effectType="story"/>
+		</EffectSet>
+	</StoryEffects>
+
+	<CharacterEffects>
+		<EffectSet>
+			<TagChange character="0" tag = "hasMetPlayer" target="true" />
+		</EffectSet>
+	</CharacterEffects>
+</EventNode>
+
+
+<EventNode name="polite_answer_strange">
+	<!-- could split this into separate nodes and seed whehter or not there is a forest/spookyzone on the map. -->
+	<Action text="I thought I saw a weird creature in the forest earlier." />
+
+	<Characters>
+		<Character id = "*0*" title="villager"/>
+		<Character id = "*1*" title="player" />
+	</Characters>
+
+	<CharacterRequirements>
+		<Character index="0">
+			<Requirement tag="isSpeaker" target="true"/>
+			<Requirement tag="isRude" target="false"/> <!-- a trait decided in villager generation -->
+		</Character>
+
+		<Character index="1">
+			<StoryRequirement tag="Asker" /> 
+			<Requirement tag="isPlayer" target="true"/>
+		</Character>
+	</CharacterRequirements>
+
+	<StoryRequirements>
+		<!--  <Requirement tag="cycleDay" target="1~3"/> fed in from adventure state -->
+		<Requirement tag="villagerAsking" target="none" type="character"/>
+		<Requirement tag="villagerAsked" target="true" />
+		<Requirement tag="askingAbout" target="strange" />
+	</StoryRequirements>
+
+	<StoryEffects>
+		<EffectSet>
+			<TagChange tag="askingAbout" target="none" effectType="story"/>
+		</EffectSet>
+	</StoryEffects>
+
+	<CharacterEffects>
+	</CharacterEffects>
+</EventNode>
+
+
+
+<EventNode name="polite_answer_village">
+	<!-- could split this into separate nodes and seed whehter or not there is a forest/spookyzone on the map. -->
+	<Action text="$VILLAGE_NAME$ is great. The community cares about you here." />
+	<Action text="I love $VILLAGE_NAME$. I grew up here!" />
+
+	<Characters>
+		<Character id = "*0*" title="villager"/>
+		<Character id = "*1*" title="player" />
+	</Characters>
+
+	<CharacterRequirements>
+		<Character index="0">
+			<Requirement tag="isSpeaker" target="true"/>
+			<Requirement tag="isRude" target="false"/> <!-- a trait decided in villager generation -->
+		</Character>
+
+		<Character index="1">
+			<StoryRequirement tag="Asker" /> 
+			<Requirement tag="isPlayer" target="true"/>
+		</Character>
+	</CharacterRequirements>
+
+	<StoryRequirements>
+		<!--  <Requirement tag="cycleDay" target="1~3"/> fed in from adventure state -->
+		<Requirement tag="villagerAsking" target="none" type="character"/>
+		<Requirement tag="villagerAsked" target="true" />
+		<Requirement tag="askingAbout" target="village" />
+	</StoryRequirements>
+
+	<StoryEffects>
+		<EffectSet>
+			<TagChange tag="askingAbout" target="none" effectType="story"/>
+		</EffectSet>
+	</StoryEffects>
+
+	<CharacterEffects>
+	</CharacterEffects>
+</EventNode>
+
+<EventNode name="rude_answer_strange">
+	<!-- could split this into separate nodes and seed whehter or not there is a forest/spookyzone on the map. -->
+	<Action text="Yes, I'm talking to a strange person right now." />
+
+	<Characters>
+		<Character id = "*0*" title="villager"/>
+		<Character id = "*1*" title="player" />
+	</Characters>
+
+	<CharacterRequirements>
+		<Character index="0">
+			<Requirement tag="isSpeaker" target="true"/>
+			<Requirement tag="isRude" target="true"/> <!-- a trait decided in villager generation -->
+		</Character>
+
+		<Character index="1">
+			<StoryRequirement tag="Asker" /> 
+			<Requirement tag="isPlayer" target="true"/>
+		</Character>
+	</CharacterRequirements>
+
+	<StoryRequirements>
+		<!--  <Requirement tag="cycleDay" target="1~3"/> fed in from adventure state -->
+		<Requirement tag="villagerAsking" target="none" type="character"/>
+		<Requirement tag="villagerAsked" target="true" />
+		<Requirement tag="askingAbout" target="strange" />
+	</StoryRequirements>
+
+	<StoryEffects>
+		<EffectSet>
+			<TagChange tag="askingAbout" target="none" effectType="story"/>
+		</EffectSet>
+	</StoryEffects>
+
+	<CharacterEffects>
+	</CharacterEffects>
+</EventNode>
+
+
+
+<EventNode name="rude_answer_village">
+	<!-- could split this into separate nodes and seed whehter or not there is a forest/spookyzone on the map. -->
+	<Action text="It's none of your business what I think of $VILLAGE_NAME$." />
+
+	<Characters>
+		<Character id = "*0*" title="villager"/>
+		<Character id = "*1*" title="player" />
+	</Characters>
+
+	<CharacterRequirements>
+		<Character index="0">
+			<Requirement tag="isSpeaker" target="true"/>
+			<Requirement tag="isRude" target="true"/> <!-- a trait decided in villager generation -->
+		</Character>
+
+		<Character index="1">
+			<StoryRequirement tag="Asker" /> 
+			<Requirement tag="isPlayer" target="true"/>
+		</Character>
+	</CharacterRequirements>
+
+	<StoryRequirements>
+		<!--  <Requirement tag="cycleDay" target="1~3"/> fed in from adventure state -->
+		<Requirement tag="villagerAsking" target="none" type="character"/>
+		<Requirement tag="villagerAsked" target="true" />
+		<Requirement tag="askingAbout" target="village" />
+	</StoryRequirements>
+
+	<StoryEffects>
+		<EffectSet>
+			<TagChange tag="askingAbout" target="none" effectType="story"/>
+		</EffectSet>
+	</StoryEffects>
+
+	<CharacterEffects>
+	</CharacterEffects>
+</EventNode>

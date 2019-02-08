@@ -310,6 +310,8 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameCommon.cpp" />
     <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="GameState_Graph.cpp" />
+    <ClCompile Include="GameState_Encounter.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemDefinition.cpp" />
     <ClCompile Include="Main_Win32.cpp" />
@@ -380,6 +382,8 @@
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="GameCommon.hpp" />
     <ClInclude Include="GameState.hpp" />
+    <ClInclude Include="GameState_Graph.hpp" />
+    <ClInclude Include="GameState_Encounter.hpp" />
     <ClInclude Include="Item.hpp" />
     <ClInclude Include="ItemDefinition.hpp" />
     <ClInclude Include="Map.hpp" />

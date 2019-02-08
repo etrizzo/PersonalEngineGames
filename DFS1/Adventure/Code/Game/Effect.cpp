@@ -23,7 +23,7 @@ Effect::Effect(tinyxml2::XMLElement * element, StoryDataDefinition* parentData)
 Effect_TagChange::Effect_TagChange(tinyxml2::XMLElement * element, StoryDataDefinition* parentData)
 	:Effect(element, parentData)
 {
-	std::string tag = ParseXmlAttribute(*element, "hasTag", "NO_TAG");
+	std::string tag = ParseXmlAttribute(*element, "tag", "NO_TAG");
 	std::string value = ParseXmlAttribute(*element, "target", "true");
 	std::string type = ParseXmlAttribute(*element, "type", "boolean");
 	

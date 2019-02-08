@@ -51,10 +51,10 @@ StoryDataDefinition::~StoryDataDefinition()
 void StoryDataDefinition::InitFromXML(tinyxml2::XMLElement* nodeElement)
 {
 	if (m_type == DETAIL_NODE){
-		InitAsDetailNode(nodeElement);
+		InitAsOutcomeNode(nodeElement);
 		//InitAsDetailNode(nodeElement);
 	} else if (m_type == PLOT_NODE){
-		InitAsPlotNode(nodeElement);
+		InitAsEventNode(nodeElement);
 	} else {
 		ERROR_AND_DIE("Node initialized without type.");
 	}
@@ -62,7 +62,7 @@ void StoryDataDefinition::InitFromXML(tinyxml2::XMLElement* nodeElement)
 	m_shouldLockIncomingEdge = ParseXmlAttribute(*nodeElement, "lockIncoming", false);
 }
 
-void StoryDataDefinition::InitAsDetailNode(tinyxml2::XMLElement * nodeElement)
+void StoryDataDefinition::InitAsOutcomeNode(tinyxml2::XMLElement * nodeElement)
 {
 	m_characters = std::vector<Character*>();
 	m_actions = std::vector<ActionDefinition*>();
@@ -123,13 +123,16 @@ void StoryDataDefinition::InitAsDetailNode(tinyxml2::XMLElement * nodeElement)
 	}
 }
 
-void StoryDataDefinition::InitAsPlotNode(tinyxml2::XMLElement * nodeElement)
+void StoryDataDefinition::InitAsEventNode(tinyxml2::XMLElement * nodeElement)
 {
 	tinyxml2::XMLElement* actionElement = nodeElement->FirstChildElement("Action");
 	std::string actionText = ParseXmlAttribute(*actionElement, "text", "NO_ACTION");
 
+	m_name = ParseXmlAttribute(*nodeElement, "name", "NO_NAME");
+
 	m_chanceToPlaceData = ParseXmlAttribute(*nodeElement, "chanceToPlace", 1.f);
 
+	//out dated
 	TODO("Pull num characters from character table in data")
 	m_characters = std::vector<Character*>();
 	m_characterReqs = std::vector<CharacterRequirementSet*>();
@@ -145,6 +148,17 @@ void StoryDataDefinition::InitAsPlotNode(tinyxml2::XMLElement * nodeElement)
 			}
 		}
 	}
+
+	int numInElement = 0;
+	tinyxml2::XMLElement* charactersElement = nodeElement->FirstChildElement("Characters");
+	for (tinyxml2::XMLElement* charElement = charactersElement->FirstChildElement("Character"); charElement != nullptr; charElement = charElement->NextSiblingElement("Character")){
+		numInElement++;
+		//m_numCharacters++;
+	}
+
+	m_numCharacters = Max(numInElement, m_numCharacters);
+
+
 	//fill data with empty stuff
 	for (int i= 0; i < m_numCharacters; i++){
 		m_characters.push_back(nullptr);

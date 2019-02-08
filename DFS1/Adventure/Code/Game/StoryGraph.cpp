@@ -5,8 +5,8 @@
 #include "Game/CharacterRequirementSet.hpp"
 #include "Game/ActionDefinition.hpp"
 
-std::vector<StoryDataDefinition*> StoryGraph::s_plotNodes = std::vector<StoryDataDefinition*>();
-std::vector<StoryDataDefinition*> StoryGraph::s_detailNodes = std::vector<StoryDataDefinition*>();
+std::vector<StoryDataDefinition*> StoryGraph::s_eventNodes = std::vector<StoryDataDefinition*>();
+std::vector<StoryDataDefinition*> StoryGraph::s_outcomeNodes = std::vector<StoryDataDefinition*>();
 
 StoryGraph::StoryGraph()
 {
@@ -15,21 +15,21 @@ StoryGraph::StoryGraph()
 
 void StoryGraph::ClearGraphData()
 {
-	s_plotNodes.clear();
-	s_detailNodes.clear();
+	s_eventNodes.clear();
+	s_outcomeNodes.clear();
 	m_characters.clear();
 	m_allCharacters.clear();
 }
 
-void StoryGraph::ReadPlotNodesFromXML(std::string filePath)
+void StoryGraph::ReadEventNodesFromXML(std::string filePath)
 {
 	tinyxml2::XMLDocument nodeDoc;
 //	std::string filePath = "Data/Data/" + fileName;
 	nodeDoc.LoadFile(filePath.c_str());
-	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("PlotGrammar"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("PlotGrammar")){
+	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("EventNode"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("EventNode")){
 		StoryDataDefinition* data = new StoryDataDefinition( PLOT_NODE);
 		data->InitFromXML(nodeElement);
-		s_plotNodes.push_back(data);
+		s_eventNodes.push_back(data);
 	}
 	
 }
@@ -39,10 +39,10 @@ void StoryGraph::ReadDetailNodesFromXML(std::string filePath)
 	tinyxml2::XMLDocument nodeDoc;
 	//	std::string filePath = "Data/Data/" + fileName;
 	nodeDoc.LoadFile(filePath.c_str());
-	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("DetailGrammar"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("DetailGrammar")){
+	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("OutcomeNode"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("OutcomeNode")){
 		StoryDataDefinition* data = new StoryDataDefinition( DETAIL_NODE);
 		data->InitFromXML(nodeElement);
-		s_detailNodes.push_back(data);
+		s_outcomeNodes.push_back(data);
 	}
 }
 
@@ -60,7 +60,7 @@ void StoryGraph::ReadCharactersFromXML(std::string filePath)
 
 void StoryGraph::SelectCharactersForGraph()
 {
-	int numChars = g_gameConfigBlackboard.GetValue("numCharacters", (int) m_characters.size());
+	int numChars = g_gameConfigBlackboard.GetValue("numCharacters", (int) m_allCharacters.size());
 	if (numChars >= m_allCharacters.size()){
 		for(Character* character : m_allCharacters){
 			m_characters.push_back(character);
@@ -151,9 +151,9 @@ void StoryGraph::RunGenerationPairs(int numPairs)
 	//generate node pairs
 	for (int i = 0; i < numPairs; i++){
 		//add an event node
-		StoryNode* newNode = AddSinglePlotNode();
+		StoryNode* newNode = AddSingleEventNode();
 		//add an outcome node that works off of that event node
-		AddOutcomeNodesToPlotNode(newNode);
+		AddOutcomeNodesToEventNode(newNode);
 	}
 	RunNodeAdjustments();
 }
@@ -173,12 +173,12 @@ void StoryGraph::GenerateSkeleton(int numPlotNodes)
 	StoryData* newData = nullptr;
 	while(GetNumNodes() < numPlotNodes){
 		//re-roll if you get a duplicate node.
-		StoryDataDefinition* sourceNode = StoryGraph::GetRandomPlotNode();
+		StoryDataDefinition* sourceNode = StoryGraph::GetRandomEventNode();
 		bool alreadyUsed = false;
 		if (Contains(m_usedPlotNodes, sourceNode)){
 			alreadyUsed = true;
 			if (CheckRandomChance(REROLL_REPEAT_PLOT_NODE_CHANCE)){
-				sourceNode =  StoryGraph::GetRandomPlotNode();
+				sourceNode =  StoryGraph::GetRandomEventNode();
 			}
 		}
 
@@ -186,7 +186,7 @@ void StoryGraph::GenerateSkeleton(int numPlotNodes)
 		newData = new StoryData(sourceNode);
 		addNode = new StoryNode(newData);
 		//try to add the cloned data, if it doesn't work, clean up
-		if (!AddEventNode(addNode)){
+		if (!FindEdgeForNewEventNodeAndAdd(addNode)){
 			delete newData;
 			delete addNode;
 			newData = nullptr;
@@ -236,7 +236,7 @@ void StoryGraph::GenerateSkeleton(int numPlotNodes)
 //	}
 //}
 
-StoryNode * StoryGraph::AddSinglePlotNode()
+StoryNode * StoryGraph::AddSingleEventNode()
 {
 	
 	bool added = false;
@@ -244,14 +244,14 @@ StoryNode * StoryGraph::AddSinglePlotNode()
 	StoryData* newData = nullptr;
 	while(!added){
 		//re-roll if you get a duplicate node.
-		StoryDataDefinition* sourceNode = StoryGraph::GetRandomPlotNode();
+		StoryDataDefinition* sourceNode = StoryGraph::GetRandomEventNode();
 		bool alreadyUsed = true;
 		int rerollRepeatTries = 0;
 		while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
 			if (Contains(m_usedPlotNodes, sourceNode)){
 				alreadyUsed = true;
 				if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
-					sourceNode = StoryGraph::GetRandomPlotNode();
+					sourceNode = StoryGraph::GetRandomEventNode();
 				} else {
 					alreadyUsed = false;		//let it slide based on chance
 				}
@@ -264,7 +264,7 @@ StoryNode * StoryGraph::AddSinglePlotNode()
 		newData = new StoryData(sourceNode);
 		addNode = new StoryNode(newData);
 		//try to add the cloned data, if it doesn't work, clean up
-		if (!AddEventNode(addNode)){
+		if (!FindEdgeForNewEventNodeAndAdd(addNode)){
 			delete newData;
 			delete addNode;
 			newData = nullptr;
@@ -280,7 +280,63 @@ StoryNode * StoryGraph::AddSinglePlotNode()
 	return addNode;
 }
 
-void StoryGraph::AddOutcomeNodesToPlotNode(StoryNode * plotNode)
+StoryNode * StoryGraph::AddEventNodeAtEdge(StoryEdge * edge)
+{
+	bool added = false;
+	int tries = 0;
+	int maxTries = 100;
+	StoryNode* addedNode = nullptr;
+	while (tries < maxTries && !added){
+		//reroll if you get a duplicate node.
+		StoryDataDefinition* sourceNode = StoryGraph::GetEventNodeWithWeights(edge->GetCost(), 3.f);
+		//bool alreadyUsed = true;
+		//int rerollRepeatTries = 0;
+		//while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
+		//	if (Contains(m_usedPlotNodes, sourceNode)){
+		//		alreadyUsed = true;
+		//		if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
+		//			if (rerollRepeatTries < (float) MAX_REPEAT_REROLLS * .5f){
+		//				sourceNode = StoryGraph::GetEventNodeWithWeights(edge->GetCost(), 3.f);
+		//			} else {
+		//				sourceNode = StoryGraph::GetEventNodeWithWeights(edge->GetCost(), 1.f);
+		//			}
+		//		} else {
+		//			alreadyUsed = false;		//let it slide based on chance
+		//		}
+		//	} else {
+		//		alreadyUsed = false;
+		//	}
+		//}
+
+		//try to add the node
+		if (StoryRequirementsMet(sourceNode, edge)){
+			//if the story requirements are met, check character requirements
+			std::vector<Character*> charsForNode = GetCharactersForNode(sourceNode, edge);
+			//if you found characters for the node, add the node.
+			if (charsForNode.size() != 0){
+				addedNode = CreateAndAddEventNodeAtEdge(sourceNode, edge, charsForNode);
+				if (addedNode != nullptr){
+					added = true;
+				} else {
+					tries++;
+				}
+			} else {
+				tries++;
+			}
+		} else {
+			tries++;
+		}
+	}
+
+	if (added)
+	{
+		UpdateDepths();
+	}
+
+	return addedNode;
+}
+
+void StoryGraph::AddOutcomeNodesToEventNode(StoryNode * plotNode)
 {
 	ClearSavedState();
 	std::vector<StoryEdge*> edges = plotNode->m_outboundEdges;
@@ -332,7 +388,7 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 	int tries = 0;
 	while (tries < maxTries && !added){
 		//reroll if you get a duplicate node.
-		StoryDataDefinition* sourceNode = StoryGraph::GetDetailNodeWithWeights(edge->GetCost(), 3.f);
+		StoryDataDefinition* sourceNode = StoryGraph::GetOutcomeNodeWithWeights(edge->GetCost(), 3.f);
 		bool alreadyUsed = true;
 		int rerollRepeatTries = 0;
 		while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
@@ -340,9 +396,9 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 				alreadyUsed = true;
 				if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
 					if (rerollRepeatTries < (float) MAX_REPEAT_REROLLS * .5f){
-						sourceNode = StoryGraph::GetDetailNodeWithWeights(edge->GetCost(), 3.f);
+						sourceNode = StoryGraph::GetOutcomeNodeWithWeights(edge->GetCost(), 3.f);
 					} else {
-						sourceNode = StoryGraph::GetDetailNodeWithWeights(edge->GetCost(), 1.f);
+						sourceNode = StoryGraph::GetOutcomeNodeWithWeights(edge->GetCost(), 1.f);
 					}
 				} else {
 					alreadyUsed = false;		//let it slide based on chance
@@ -358,7 +414,7 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 			std::vector<Character*> charsForNode = GetCharactersForNode(sourceNode, edge);
 			//if you found characters for the node, add the node.
 			if (charsForNode.size() != 0){
-				if (AddOutcomeNode(sourceNode, edge, charsForNode)){
+				if (CreateAndAddOutcomeNodeAtEdge(sourceNode, edge, charsForNode)){
 					added = true;
 				} else {
 					tries++;
@@ -419,7 +475,7 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 	//return added;	
 }
 
-bool StoryGraph::AddEventNode(StoryNode* newPlotNode)
+bool StoryGraph::FindEdgeForNewEventNodeAndAdd(StoryNode* newPlotNode)
 {
 
 	//walk along story until you can place the node
@@ -439,23 +495,8 @@ bool StoryGraph::AddEventNode(StoryNode* newPlotNode)
 		//if the story meets the requirements of the new nodes at that edge, continue.
 		//if not, add the end of the edge to the open list.
 		if (!NodeRequirementsAreMet(newPlotNode, edgeToAddAt)){
-			if (CheckRandomChance(m_branchChance)){
-				//if you can't add at a real edge, random chance to add a branch
-				//branches are "fake" edges between the node and any reachable node,
-				// with the same starting state as the edge you are trying to add at (?)
-				// but now, the compare will happen on the new end node
-				TODO("Check to add branch");
-				for (int i = 0; i < 5; i++){
-					bool addedBranch = AttemptToAddBranchAfterFail(edgeToAddAt->GetStart(), edgeToAddAt, newPlotNode);
-					if (addedBranch){
-						//foundSpot = true;
-						//edgeToAddAt = addedFakeEdge;
-						return true;
-						break;
-					}
-				}
+			//try again
 
-			}
 			//if you didn't branch and find a spot, add all your outbound edges to the open edges list
 			/*if (!foundSpot){
 				for (StoryEdge* edge : edgeToAddAt->GetEnd()->m_outboundEdges){
@@ -512,7 +553,7 @@ bool StoryGraph::AddOutcomeNode(StoryNode * newDetailNode)
 	return foundSpot;
 }
 
-bool StoryGraph::AddOutcomeNode(StoryDataDefinition * dataDefinition, StoryEdge * edgeToAddAt, std::vector<Character*> charactersForNode)
+bool StoryGraph::CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition * dataDefinition, StoryEdge * edgeToAddAt, std::vector<Character*> charactersForNode)
 {
 	//at this point, we need to know what characters will be set for this node set.
 	StoryNode* startNode = edgeToAddAt->GetStart();
@@ -582,6 +623,15 @@ bool StoryGraph::AddOutcomeNode(StoryDataDefinition * dataDefinition, StoryEdge 
 	}
 }
 
+StoryNode * StoryGraph::CreateAndAddEventNodeAtEdge(StoryDataDefinition * dataDefinition, StoryEdge * edgeToAddAt, std::vector<Character*> charactersForNode)
+{
+	StoryData* newData = new StoryData(dataDefinition);
+	newData->SetCharacters(charactersForNode);
+	StoryNode* newNode = new StoryNode(newData);
+	AddNodeAtEdge(newNode, edgeToAddAt);
+	return newNode;
+}
+
 
 
 bool StoryGraph::AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToAdd, bool branchToFutureNodesIfNecessary)
@@ -626,6 +676,33 @@ bool StoryGraph::AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToA
 		}
 	}
 	return added;
+}
+
+void StoryGraph::AddEndingsToEachBranch()
+{
+	bool allPathsHaveEndings = false;
+
+	while (!allPathsHaveEndings){
+		allPathsHaveEndings = true;
+		//look at all incoming edges to the end node
+		for(StoryEdge* incomingEdge : m_endNode->m_inboundEdges)
+		{
+			//if you find a node before the end node that doesn't end the act, need to add to it
+			StoryData* startNode = incomingEdge->GetStart()->m_data;
+			if (!startNode->DoesNodeEndAct())
+			{
+				allPathsHaveEndings = false;
+				//add event/outcome pairs until it does
+				StoryNode* newNode = AddEventNodeAtEdge(incomingEdge);
+				if (newNode !=nullptr){
+					AddOutcomeNodesToEventNode(newNode);
+				}
+				break;
+			} else {
+				int x = 0;
+			}
+		}
+	}
 }
 
 void StoryGraph::IdentifyBranchesAndAdd(int numBranchesToAdd)
@@ -1363,6 +1440,10 @@ StoryEdge * StoryGraph::GetEdgeForNewEventNode() const
 
 void StoryGraph::RenderNode(StoryNode * node, Vector2 position, RGBA color) const
 {
+	if (node->m_data->m_type == DETAIL_NODE){
+		color = RGBA::BEEFEE;
+	}
+
 	std::string nodeName = node->GetName();
 	AABB2 nodeBox = AABB2 (position, NODE_SIZE, NODE_SIZE);
 	
@@ -1471,23 +1552,68 @@ bool StoryGraph::AreAllCharactersSet(const std::vector<Character*>& chars) const
 	return true;
 }
 
-StoryDataDefinition * StoryGraph::GetRandomPlotNode()
+StoryDataDefinition * StoryGraph::GetRandomEventNode()
 {
-	int i = GetRandomIntLessThan(StoryGraph::s_plotNodes.size());
-	return StoryGraph::s_plotNodes[i];
+	int i = GetRandomIntLessThan(StoryGraph::s_eventNodes.size());
+	return StoryGraph::s_eventNodes[i];
 }
 
-StoryDataDefinition * StoryGraph::GetRandomDetailNode()
+StoryDataDefinition * StoryGraph::GetRandomOutcomeNode()
 {
-	int i = GetRandomIntLessThan(StoryGraph::s_detailNodes.size());
-	return StoryGraph::s_detailNodes[i];
+	int i = GetRandomIntLessThan(StoryGraph::s_outcomeNodes.size());
+	return StoryGraph::s_outcomeNodes[i];
 }
 
-StoryDataDefinition * StoryGraph::GetDetailNodeWithWeights(StoryState * edge, float minFitness)
+StoryDataDefinition * StoryGraph::GetOutcomeNodeWithWeights(StoryState * edge, float minFitness)
 {
 	std::vector<StoryDataDefinition*> fitNodes = std::vector<StoryDataDefinition*>();
 	std::vector<StoryDataDefinition*> defaultNodes = std::vector<StoryDataDefinition*>();
-	for(StoryDataDefinition* data : StoryGraph::s_detailNodes){
+	for(StoryDataDefinition* data : StoryGraph::s_outcomeNodes){
+		float fitness = CalculateEdgeFitnessForData(edge, data);
+		if (fitness >= minFitness){
+			if (fitness >= 1.f){
+				//try to populate the array with the most fit nodes being more likely
+				int intFitness = (int) fitness;
+				for (int i = 0; i < intFitness; i++){
+					fitNodes.push_back(data);
+				}
+			} else {
+				//by default the node is added once to the array
+				fitNodes.push_back(data);
+			}
+		} else {
+			if (fitness >= 1.f){
+				//try to populate the array with the most fit nodes being more likely
+				int intFitness = (int) fitness;
+				for (int i = 0; i < intFitness; i++){
+					defaultNodes.push_back(data);
+				}
+			} else {
+				//by default the node is added once to the array
+				defaultNodes.push_back(data);
+			}
+		}
+	}
+
+	StoryDataDefinition* chosenNode = nullptr;
+	do 
+	{
+		if (fitNodes.size() > 0){
+			int i = GetRandomIntLessThan(fitNodes.size());
+			chosenNode = fitNodes[i];
+		} else {
+			int i = GetRandomIntLessThan(defaultNodes.size());
+			chosenNode = defaultNodes[i];
+		}
+	} while (!CheckRandomChance(chosenNode->m_chanceToPlaceData));
+	return chosenNode;
+}
+
+StoryDataDefinition * StoryGraph::GetEventNodeWithWeights(StoryState * edge, float minFitness)
+{
+	std::vector<StoryDataDefinition*> fitNodes = std::vector<StoryDataDefinition*>();
+	std::vector<StoryDataDefinition*> defaultNodes = std::vector<StoryDataDefinition*>();
+	for(StoryDataDefinition* data : StoryGraph::s_eventNodes){
 		float fitness = CalculateEdgeFitnessForData(edge, data);
 		if (fitness >= minFitness){
 			if (fitness >= 1.f){
@@ -1549,6 +1675,14 @@ float StoryGraph::CalculateEdgeFitnessForData(StoryState * edge, StoryDataDefini
 			fitness+=1.f;
 		}
 	}
+	
+	//also want to check story requirements....
+	if(data->m_storyReqs->DoesEdgeMeetAllRequirements(edge)){
+		fitness+= (float) data->m_storyReqs->m_requirements.size();
+	} else {
+		fitness = 0.f;
+	}
+	
 	//if no characters violated requirements, return true.
 	return fitness;
 }

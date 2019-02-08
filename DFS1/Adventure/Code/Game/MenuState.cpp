@@ -1,5 +1,6 @@
 #include "MenuState.hpp"
 #include "Game/GameState.hpp"
+#include "Game/GameState_Encounter.hpp"
 #include "Game/Game.hpp"
 #include "Game/Player.hpp"
 #include "Game/Item.hpp"
@@ -100,7 +101,7 @@ void MenuState_Paused::RenderContent()
 
 		for (VictoryCondition* condition : quest->m_conditions){
 			if (condition->m_active || condition->m_complete){
-				RGBA tint = RGBA::WHITE;
+				tint = RGBA::WHITE;
 				if (quest->IsMainQuest()){
 					tint = mainQuestColor;
 				}
@@ -112,7 +113,7 @@ void MenuState_Paused::RenderContent()
 					AABB2 texCoords = g_theGame->m_miscSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(0,0));
 					g_theRenderer->DrawTexturedAABB2(iconBox, *buttonTexture, texCoords.mins, texCoords.maxs ,  tint);
 				}
-				std::string victoryText = condition->GetText();
+				victoryText = condition->GetText();
 				g_theRenderer->DrawTextInBox2D(victoryText, textBox, Vector2(0.f,.5f), fontHeight, TEXT_DRAW_WORD_WRAP, tint);
 				//g_theRenderer->DrawAABB2Outline(iconBox, RGBA::RED);
 				//g_theRenderer->DrawAABB2Outline(textBox, RGBA::MAGENTA);
@@ -147,7 +148,7 @@ void MenuState_Paused::HandleInput()
 MenuState_Inventory::MenuState_Inventory(GameState_Paused * pauseState, AABB2 bounds)
 	:MenuState(pauseState, bounds)
 {
-	float m_screenWidth = m_bounds.GetWidth();
+	//float m_screenWidth = m_bounds.GetWidth();
 	//AABB2 unequippedBox = AABB2(m_bounds.mins + Vector2((m_screenWidth* .5f) + .5f,.5f), m_bounds.maxs - Vector2(.5f,2.f));
 	AABB2 unequippedBox = m_bounds.GetPercentageBox(.55f, .1f, .95f, .8f);
 	m_menu = new Menu(unequippedBox);
@@ -158,6 +159,7 @@ MenuState_Inventory::MenuState_Inventory(GameState_Paused * pauseState, AABB2 bo
 
 void MenuState_Inventory::Update(float ds)
 {
+	UNUSED(ds);
 	int selection = m_menu->GetFrameSelection();
 	if (selection != -1){
 		g_theGame->m_party->EquipOrUnequipItem(g_theGame->m_party->m_inventory[selection]);
@@ -171,7 +173,7 @@ void MenuState_Inventory::RenderBackground()
 
 void MenuState_Inventory::RenderContent()
 {
-	float m_screenWidth = m_bounds.GetWidth();
+	//float m_screenWidth = m_bounds.GetWidth();
 	float fontSize = m_bounds.GetHeight() * .05f;
 
 	//------ Draw raw inventory box -------//
@@ -185,7 +187,7 @@ void MenuState_Inventory::RenderContent()
 
 	AABB2 drawItemBox = AABB2(unequippedBox.mins.x, unequippedBox.maxs.y - textHeight.y, unequippedBox.maxs.x, unequippedBox.maxs.y);
 	drawItemBox.Translate(0.f, fontSize * -2.f);
-	for (unsigned int i = 0; i < g_theGame->m_party->m_inventory.size(); i++){
+	for (int i = 0; i < (int) g_theGame->m_party->m_inventory.size(); i++){
 		Item* item = g_theGame->m_party->m_inventory[i];
 		if (i == m_menu->m_currentIndex){
 			item->RenderInMenu(drawItemBox, true);

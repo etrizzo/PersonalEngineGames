@@ -265,6 +265,11 @@ std::string StoryData::ReadCharacterNameFromDataString(std::string data)
 	}
 }
 
+bool StoryData::DoesNodeEndAct() const
+{
+	return m_action->DoesActionEndAct();
+}
+
 void StoryData::SetPosition(Vector2 pos)
 {
 	m_graphPosition = pos;
