@@ -73,10 +73,9 @@ Game::Game()
 	m_camera = new Camera();
 	m_camera->SetColorTarget( g_theRenderer->m_defaultColorTarget );
 	m_camera->SetDepthStencilTarget( g_theRenderer->m_defaultDepthTarget );
-	//m_camera->SetProjectionOrtho(Vector2(0.f,0.f), Vector2((float) m_screenWidth, (float) m_screenWidth));
 	m_camera->SetProjectionOrtho(m_screenWidth, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f,100.f);
-	Vector2 center = m_camera->GetBounds().GetCenter();
-	m_camera->LookAt(Vector3(center.x, center.y, -1.f), Vector3(center.x, center.y, .5f));
+	//Vector2 center = m_camera->GetBounds().GetCenter();
+	//m_camera->LookAt(Vector3(center.x, center.y, -1.f), Vector3(center.x, center.y, .5f));
 
 
 	// Setup ui camera - draws from (0,0) to (1,1) always
@@ -87,8 +86,6 @@ Game::Game()
 	m_uiCamera->SetDepthStencilTarget( g_theRenderer->m_defaultDepthTarget );
 
 	m_uiCamera->SetProjectionOrtho(1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f,100.f);
-	Vector2 uicenter = m_uiCamera->GetBounds().GetCenter();
-	m_uiCamera->LookAt( Vector3( uicenter.x, uicenter.y, -1.f ), Vector3(uicenter.x, uicenter.y, .5f)); 
 
 
 	m_dialogueBox = m_uiCamera->GetBounds().GetPercentageBox(.18f,0.03f,.82f,.23f);

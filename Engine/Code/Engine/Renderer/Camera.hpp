@@ -21,12 +21,12 @@ public:
 
 	// projection settings
 	void SetProjection( Matrix44 proj ); 
-	void SetProjectionOrtho( float size, float aspect, float nearVal, float farVal ); //how can you set screenMin to anything but 0,0??
+	void SetProjectionOrtho( float size, float aspect, float nearVal, float farVal, const Vector2& screenMins = Vector2::ZERO); //how can you set screenMin to anything but 0,0??
 	void SetProjectionOrtho( const Vector3 & nearBottomLeft, const Vector3 & farTopRight );
 	void SetProjectionOrtho( const Vector2 & nearBottomLeft, const Vector2 & farTopRight );
 
 
-
+	void SetPosition(const Vector3& position);
 	void Translate(Vector3 translation);
 	void Rotate(Vector3 eulerChange);
 	void Rotate(float yaw, float pitch, float roll);

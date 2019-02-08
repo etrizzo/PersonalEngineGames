@@ -64,12 +64,12 @@ void Camera::SetProjection(Matrix44 proj)
 	m_projMatrix.Load(proj);
 }
 
-void Camera::SetProjectionOrtho(float height, float aspect, float nearVal, float farVal)
+void Camera::SetProjectionOrtho(float height, float aspect, float nearVal, float farVal, const Vector2& screenMins)
 {
 	float width = height * aspect;
 	m_orthographicSize = height;
-	m_bounds = AABB2(0.f,0.f, width, height);
-	SetProjection(Matrix44::MakeOrtho3D(Vector3(0.f,0.f,nearVal), Vector3(width, height, farVal)));
+	m_bounds = AABB2(screenMins, screenMins + Vector2(width, height));
+	SetProjection(Matrix44::MakeOrtho3D(Vector3(screenMins,nearVal), Vector3(screenMins + Vector2(width, height), farVal)));
 }
 
 
@@ -91,6 +91,12 @@ void Camera::SetProjectionOrtho(const Vector2 & nearBottomLeft, const Vector2 & 
 Matrix44 Camera::GetProjectionMatrix()
 {
 	return m_projMatrix.GetTop();
+}
+
+void Camera::SetPosition(const Vector3 & position)
+{
+	m_transform.SetLocalPosition(position);
+	m_viewMatrix = InvertFast( m_transform.GetWorldMatrix() );
 }
 
 void Camera::Translate(Vector3 translation)

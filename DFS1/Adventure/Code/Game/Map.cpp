@@ -1046,32 +1046,35 @@ Actor * Map::GetActorOfType(ActorDefinition * actorDef)
 
 void Map::SetCamera()
 {
+	float aspect = g_gameConfigBlackboard.GetValue("windowAspect", 1.f);
 	if (g_theGame->m_fullMapMode){
-		int ortho = max(m_dimensions.x, m_dimensions.y);
+		int ortho = m_dimensions.y;
 		g_theGame->m_party->GetPlayerCharacter()->SetScale(m_dimensions.x * .05f);
-		g_theGame->m_camera->SetProjectionOrtho((float) ortho + 1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
-		g_theGame->m_camera->LookAt( Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, -1.f), Vector3(m_dimensions.x *.5f, m_dimensions.y * .5f, .5f));
-		g_theRenderer->DrawAABB2(g_theGame->m_camera->GetBounds(), RGBA::BLACK);
+		float screenWidth = aspect * ortho;
+		g_theGame->m_camera->SetProjectionOrtho((float) ortho + 1.f, aspect, 0.f, 100.f);
+		g_theGame->m_camera->SetPosition(Vector3(screenWidth * -.25f,0.f, -1.f));
 	} else {
-		float aspect = g_gameConfigBlackboard.GetValue("windowAspect", 1.f);
+		
 		float viewWidth = aspect * ZOOM_FACTOR;
 		Vector2 halfDimensions = Vector2(viewWidth, ZOOM_FACTOR) * .5f;
-		Vector2 positionToCenter = g_theGame->m_party->GetPlayerCharacter()->GetPosition();
+		Vector2 positionToCenter = g_theGame->m_party->GetPlayerCharacter()->GetPosition() - halfDimensions;
 		g_theGame->m_party->GetPlayerCharacter()->SetScale(1.f);
 
 
-		float minX = ZOOM_FACTOR * aspect * .5f;
-		float maxX = m_dimensions.x - minX;
-		float minY = ZOOM_FACTOR * .5f;
-		float maxY = m_dimensions.y - minY;
+		float minX = 0.f;
+		float maxX = m_dimensions.x - viewWidth;
+		float minY = 0.f;
+		float maxY = m_dimensions.y - ZOOM_FACTOR;
 
 
 		positionToCenter.x = ClampFloat(positionToCenter.x, minX, maxX);
 		positionToCenter.y = ClampFloat(positionToCenter.y, minY, maxY);
 
-		g_theGame->m_camera->LookAt( Vector3(positionToCenter, -1.f), Vector3(positionToCenter, .5f));
+		
+		//g_theGame->m_camera->SetProjectionOrtho(ZOOM_FACTOR, aspect, -.1f, 100.f, positionToCenter);
 
-		g_theGame->m_camera->SetProjectionOrtho(ZOOM_FACTOR, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
+		g_theGame->m_camera->SetProjectionOrtho(ZOOM_FACTOR, aspect, -.1f, 100.f);
+		g_theGame->m_camera->SetPosition(Vector3(positionToCenter, -1.f));
 		
 		//ClampCameraToMap();
 	}
