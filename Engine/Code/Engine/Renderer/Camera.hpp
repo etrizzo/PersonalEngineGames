@@ -17,7 +17,7 @@ public:
 	Texture*  GetDepthTarget();
 
 	// model setters
-	void LookAt( Vector3 position, Vector3 target, Vector3 up = Vector3::Y_AXIS ); 
+	void LookAt( Vector3 position, Vector3 target, Vector3 up = Vector3::Y_AXIS, const Matrix44& worldBasis = Matrix44::IDENTITY); 
 
 	// projection settings
 	void SetProjection( Matrix44 proj ); 
@@ -29,12 +29,13 @@ public:
 
 	void Translate(Vector3 translation);
 	void Rotate(Vector3 eulerChange);
+	void Rotate(float yaw, float pitch, float roll);
 
 	void RotateAroundX(float x);
 	void RotateAroundY(float y);
 	void RotateAroundZ(float z);
 
-	void AddSkybox(const char* skyboxTexture);
+	void AddSkybox(const char* skyboxTexture, const Vector3& right, const Vector3& up, const Vector3& forward);
 
 
 	

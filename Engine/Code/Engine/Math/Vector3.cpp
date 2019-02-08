@@ -6,7 +6,7 @@
 
 const Vector3 Vector3::ZERO		= Vector3(0.f,0.f,0.f);
 const Vector3 Vector3::ONE		= Vector3(1.f,1.f,1.f);
-const Vector3 Vector3::Y_AXIS		= Vector3(0.f,1.f,0.f);
+const Vector3 Vector3::Y_AXIS	= Vector3(0.f,1.f,0.f);
 const Vector3 Vector3::X_AXIS	= Vector3(1.f, 0.f, 0.f);
 const Vector3 Vector3::Z_AXIS	= Vector3(0.f,0.f,1.f);
 
@@ -42,6 +42,11 @@ Vector3::Vector3(const Vector2 & vec2, float initialz)
 	z = initialz;
 }
 
+
+const Vector3 Vector3::operator-() const
+{
+	return Vector3(-x, -y, -z);
+}
 
 //-----------------------------------------------------------------------------------------------
 const Vector3 Vector3::operator + ( const Vector3& vecToAdd ) const

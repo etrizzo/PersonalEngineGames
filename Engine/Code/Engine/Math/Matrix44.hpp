@@ -94,7 +94,7 @@ public:
 	static Matrix44 MakeOrtho3D( const Vector3& nearBottomLeft, const Vector3& farTopRight);
 	static Matrix44 MakePerspectiveProjection( float fov_degrees, float aspect, float nearZ, float farZ );
 
-	static Matrix44 LookAt(const Vector3& position, const Vector3& target, const Vector3& up = Vector3::Y_AXIS);
+	static Matrix44 LookAt(const Vector3& position, const Vector3& target, const Vector3& up = Vector3::Y_AXIS, bool isLeftHanded = true);
 	static Vector3 TransformPosition(const Vector3& position, Matrix44 mat);
 
 

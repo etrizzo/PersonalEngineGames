@@ -13,7 +13,9 @@ public:
 	Vector3( const Vector3& copyFrom );						// copy constructor (from another vec3)
 	Vector3( float initialX, float initialY, float initialZ = 0.f);
 	Vector3( const Vector2& vec2, float initialz = 0.f);
-															// Operators
+	
+	// Operators
+	const Vector3 operator-() const;								// -vec3
 	const Vector3 operator+( const Vector3& vecToAdd ) const;		// vec2 + vec2
 	const Vector3 operator-( const Vector3& vecToSubtract ) const;	// vec2 - vec2
 	const Vector3 operator*( float uniformScale ) const;			// vec2 * float

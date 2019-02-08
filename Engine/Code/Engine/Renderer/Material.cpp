@@ -165,6 +165,13 @@ void Material::SetProperty(const char * name, RGBA value)
 	m_properties.push_back(prop);
 }
 
+void Material::SetProperty(const char * name, Vector2 value)
+{
+	RemoveProperty( name );
+	MaterialPropertyVec2* prop = new MaterialPropertyVec2(name, value);
+	m_properties.push_back(prop);
+}
+
 Strings Material::LoadMaterials(std::string mtlFile)
 {
 	MtlLoader loader = MtlLoader(mtlFile);

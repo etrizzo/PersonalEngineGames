@@ -12,16 +12,16 @@ Renderable::Renderable()
 	//m_materials[0]->SetShader("default_lit");
 }
 
-Renderable::Renderable(eRenderablePrimatives primType, float size)
+Renderable::Renderable(eRenderablePrimatives primType, float size, const Vector3 & right, const Vector3 & up, const Vector3 & forward, const AABB2 & topUVs, const AABB2 & sideUVs, const AABB2 & bottomUVs)
 {
 	MeshBuilder mb;
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
 	switch(primType){
 	case RENDERABLE_CUBE:
-		mb.AppendCube(Vector3::ZERO, Vector3::ONE * size, RGBA::WHITE);
+		mb.AppendCube(Vector3::ZERO, Vector3::ONE * size, RGBA::WHITE, right, up, forward, topUVs, sideUVs, bottomUVs);
 		break;
 	case RENDERABLE_PLANE:
-		mb.AppendPlane(Vector3::ZERO, Vector3::Y_AXIS, Vector3::X_AXIS, Vector2::ONE * size, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
+		mb.AppendPlane(Vector3::ZERO, Vector3::Y_AXIS, right, Vector2::ONE * size, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
 		break;
 	case RENDERABLE_SPHERE:
 		mb.AppendSphere(Vector3::ZERO, size, 10, 10, RGBA::WHITE);
@@ -29,6 +29,7 @@ Renderable::Renderable(eRenderablePrimatives primType, float size)
 	}
 	mb.End();
 	m_mesh = mb.CreateMesh(VERTEX_TYPE_LIT);
+	m_transform = Transform();
 
 	m_materials.push_back(Material::GetMaterial("default_lit"));
 }
@@ -44,6 +45,7 @@ Renderable::Renderable(std::string objFile, std::string matFile)
 		m_materials.push_back(mat);
 	}
 
+	m_transform = Transform();
 
 	CreateMeshFromOBJ(objFile, mat != nullptr); 
 }

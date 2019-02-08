@@ -8,7 +8,7 @@ class Camera;
 //just a container for everything
 class Skybox {
 public:
-	Skybox(const char* fileName);
+	Skybox(const char* fileName, const Vector3& right = Vector3::X_AXIS, const Vector3& up = Vector3::Y_AXIS, const Vector3& forward = Vector3::Z_AXIS);
 	~Skybox(){};
 
 	void Update();

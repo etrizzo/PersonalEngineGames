@@ -7,6 +7,7 @@
 #include "Engine/Core/Image.hpp"
 #include "Engine/Core/ErrorWarningAssert.hpp"
 #include "Engine/Math/Renderer.hpp"
+#include "Game/EngineBuildPreferences.hpp"
 
 /************************************************************************/
 /*                                                                      */
@@ -187,6 +188,16 @@ bool TextureCube::MakeFromImage(Image & image)
 	glPixelStorei( GL_UNPACK_ROW_LENGTH, image.GetDimensions().x ); 
 	GL_CHECK_ERROR(); 
 
+
+#if defined (DONT)
+						//side						 //img		//size //offsetX   //offsetY   //channels  //layout
+	BindImageToSide( GL_TEXTURE_CUBE_MAP_POSITIVE_X,	image,  m_size, m_size * 1, m_size * 1, channels, pixel_layout ); 																
+	BindImageToSide( GL_TEXTURE_CUBE_MAP_NEGATIVE_X,	image,  m_size, m_size * 3, m_size * 1, channels, pixel_layout ); 															
+	BindImageToSide( GL_TEXTURE_CUBE_MAP_POSITIVE_Y,    image,  m_size, m_size * 0, m_size * 1, channels, pixel_layout ); 																
+	BindImageToSide( GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,	image,  m_size, m_size * 2, m_size * 1, channels, pixel_layout ); 																
+	BindImageToSide( GL_TEXTURE_CUBE_MAP_POSITIVE_Z,	image,  m_size, m_size * 1, m_size * 0, channels, pixel_layout ); 															
+	BindImageToSide( GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,	image,  m_size, m_size * 1, m_size * 2, channels, pixel_layout ); 
+#else
 	// bind the image to the side; 
 	BindImageToSide( GL_TEXTURE_CUBE_MAP_POSITIVE_X,	image,  m_size, m_size * 2, m_size * 1, channels, pixel_layout ); 																
 	BindImageToSide( GL_TEXTURE_CUBE_MAP_NEGATIVE_X,	image,  m_size, m_size * 0, m_size * 1, channels, pixel_layout ); 															
@@ -194,6 +205,7 @@ bool TextureCube::MakeFromImage(Image & image)
 	BindImageToSide( GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,	image,  m_size, m_size * 1, m_size * 2, channels, pixel_layout ); 																
 	BindImageToSide( GL_TEXTURE_CUBE_MAP_POSITIVE_Z,	image,  m_size, m_size * 1, m_size * 1, channels, pixel_layout ); 															
 	BindImageToSide( GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,	image,  m_size, m_size * 3, m_size * 1, channels, pixel_layout ); 
+#endif
 
 	glPixelStorei( GL_UNPACK_ROW_LENGTH, 0 ); 
 

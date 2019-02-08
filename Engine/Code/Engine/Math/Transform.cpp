@@ -1,20 +1,35 @@
+#include "Game/EngineBuildPreferences.hpp"
 #include "Transform.hpp"
 #include "Engine/Core/Profiler.hpp"
+
 
 Matrix44 transform_t::GetMatrix() const
 {
 	Matrix44 mat = Matrix44();
 	mat.SetIdentity();
 	mat.Translate3D(m_position);
-	mat.RotateDegrees3D(m_euler);
+#if defined( USE_X_FORWARD_Z_UP )
+	mat.RotateDegreesZ(m_yaw);
+	mat.RotateDegreesY(m_pitch);
+	mat.RotateDegreesX(m_roll);
+#else
+	mat.RotateDegreesY(m_yaw);		//is this really just RotateDegreesUp?
+	mat.RotateDegreesX(m_pitch);		//is this really just RotateDegreesRight?
+	mat.RotateDegreesZ(m_roll);		//is this really just RotateDegreesForward?
+#endif
 	mat.Scale3D(m_scale);
+
+	//mat.Append(m_worldBasis);
 	return mat;
 }
 
 void transform_t::SetMatrix(Matrix44 const & mat)
 {
+	//Matrix44 worldBasis = m_worldBasis;
+	//worldBasis.Append(mat);
+	
 	m_scale = mat.GetScale();
-	m_euler = mat.GetEulerAngles();
+	SetRotationEuler(mat.GetEulerAngles());
 	m_position = mat.GetPosition();
 
 }
@@ -36,20 +51,38 @@ Vector3 transform_t::GetPosition() const
 
 void transform_t::SetRotationEuler(Vector3 euler)
 {
-	m_euler = euler;
+	//set as yaw pitch and roll
+	SetRotationEuler(euler.y, euler.x, euler.z);
+}
+
+void transform_t::SetRotationEuler(float yaw, float pitch, float roll)
+{
+	m_yaw = yaw;
+	m_pitch = pitch;
+	m_roll = roll;
 }
 
 void transform_t::RotateByEuler(Vector3 euler)
 {
-	m_euler+=euler;
-	m_euler.x = ClampFloat( m_euler.x, -90.f, 90.f ); 
-	//m_euler.y = modf( m_euler.y, 2.0f * PI ); 
+	RotateByEuler(euler.y, euler.x, euler.z);
+	//m_euler+=euler;
+	//m_euler.x = ClampFloat( m_euler.x, -90.f, 90.f ); 
+	////m_euler.y = modf( m_euler.y, 2.0f * PI ); 
 
 }
 
-Vector3 transform_t::GetEulerAngles() const
+void transform_t::RotateByEuler(float yaw, float pitch, float roll)
 {
-	return m_euler;
+	m_yaw += yaw;
+	m_pitch += pitch;
+	m_roll += roll;
+
+	m_pitch = ClampFloat(m_pitch, -89.f, 89.f);
+}
+
+Vector3 transform_t::GetEulerAnglesYawPitchRoll() const
+{
+	return Vector3(m_yaw, m_pitch, m_roll);
 }
 
 void transform_t::SetScale(Vector3 s)
@@ -118,6 +151,18 @@ Vector3 Transform::GetLocalPosition() const
 	return m_transformStruct.GetPosition();
 }
 
+void Transform::SetRotationEuler(float yaw, float pitch, float roll)
+{
+	m_transformStruct.SetRotationEuler(yaw, pitch, roll);
+	SetMatrices();
+}
+
+void Transform::RotateByEuler(float yaw, float pitch, float roll)
+{
+	m_transformStruct.RotateByEuler(yaw, pitch, roll);
+	SetMatrices();
+}
+
 void Transform::SetRotationEuler(Vector3 euler)
 {
 	m_transformStruct.SetRotationEuler(euler);
@@ -131,9 +176,9 @@ void Transform::RotateByEuler(Vector3 euler)
 	SetMatrices();
 }
 
-Vector3 Transform::GetEulerAngles() const
+Vector3 Transform::GetEulerAnglesYawPitchRoll() const
 {
-	return m_transformStruct.GetEulerAngles();
+	return m_transformStruct.GetEulerAnglesYawPitchRoll();
 }
 
 void Transform::SetScale(Vector3 s)
@@ -179,17 +224,29 @@ void Transform::WorldLookAt(Vector3 target)
 
 Vector3 Transform::GetForward() const
 {
+#ifdef USE_X_FORWARD_Z_UP
+	return GetWorldMatrix().GetI().XYZ().GetNormalized();
+#else
 	return GetWorldMatrix().GetK().XYZ().GetNormalized();
+#endif
 }
 
 Vector3 Transform::GetRight() const
 {
+#ifdef USE_X_FORWARD_Z_UP
+	return GetWorldMatrix().GetJ().XYZ().GetNormalized() *-1.f;		//J is left
+#else
 	return GetWorldMatrix().GetI().XYZ().GetNormalized();
+#endif
 }
 
 Vector3 Transform::GetUp() const
 {
+#ifdef USE_X_FORWARD_Z_UP
+	return GetWorldMatrix().GetK().XYZ().GetNormalized();
+#else
 	return GetWorldMatrix().GetJ().XYZ().GetNormalized();
+#endif
 }
 
 void Transform::LookAt(const Vector3 & position, const Vector3 & target, const Vector3 & up)

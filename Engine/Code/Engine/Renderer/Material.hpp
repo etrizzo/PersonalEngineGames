@@ -38,6 +38,7 @@ public:
 	void RemoveProperty(const char* name); //removes existing property so we don't duplicate
 	void SetProperty(const char* name, float value);
 	void SetProperty(const char* name, RGBA value);
+	void SetProperty(const char* name, Vector2 value);
 
 
 

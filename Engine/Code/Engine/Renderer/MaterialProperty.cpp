@@ -35,3 +35,17 @@ void MaterialPropertyRGBA::Bind(unsigned int programHandle)
 		glUniform4fv(bind_point, 1, (GLfloat*) &floatVals);
 	}
 }
+
+MaterialPropertyVec2::MaterialPropertyVec2(std::string name, Vector2 val)
+	:MaterialProperty(name)
+{
+	m_value = val;
+}
+
+void MaterialPropertyVec2::Bind(unsigned int programHandle)
+{
+	int bind_point = glGetUniformLocation(programHandle, m_name.c_str());
+	if (bind_point >= 0){
+		glUniform2fv(bind_point, 1, (GLfloat*) &m_value);
+	}
+}

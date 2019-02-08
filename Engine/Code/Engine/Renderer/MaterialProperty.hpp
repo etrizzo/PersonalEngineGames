@@ -34,3 +34,12 @@ public:
 	virtual void Bind(unsigned int programHandle) override;
 	RGBA m_value;
 };
+
+class MaterialPropertyVec2 : public MaterialProperty
+{
+public:
+	explicit MaterialPropertyVec2(std::string name, Vector2 val);
+	virtual void Bind(unsigned int programHandle) override;
+	Vector2 m_value;
+
+};

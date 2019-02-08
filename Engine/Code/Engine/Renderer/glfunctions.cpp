@@ -127,9 +127,11 @@ PFNGLBINDBUFFERBASEPROC			glBindBufferBase		= nullptr;
 
 PFNGLPOLYGONMODEPROC		glPolygonMode			= nullptr;
 PFNGLCULLFACEPROC			glCullFace				= nullptr;
+PFNGLFRONTFACEPROC			glFrontFace				= nullptr;
 
 
 
 ////Uniform binding
 PFNGLUNIFORM1FVPROC		glUniform1fv	= nullptr;
+PFNGLUNIFORM2FVPROC		glUniform2fv	= nullptr;
 PFNGLUNIFORM4FVPROC		glUniform4fv	= nullptr;

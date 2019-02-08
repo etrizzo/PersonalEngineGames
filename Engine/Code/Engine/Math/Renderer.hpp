@@ -113,7 +113,6 @@ public:
 
 
 	void BindUniform(std::string uniformName, const float& value);
-	void BindUniform(std::string uniformName, const Vector2& value);
 
 	void BindRendererUniforms();
 	void BindRenderState(RenderState state);
@@ -153,13 +152,13 @@ public:
 	void DrawAABB2Outline(const AABB2& bounds, const RGBA& color);
 	void DrawTexturedAABB2( const AABB2& bounds, const Texture& texture, const Vector2& texCoordsAtMins, const Vector2& texCoordsAtMaxs, const RGBA& tint);
 	
-	void DrawCube(const Vector3& center, const Vector3& dimensions, const RGBA& color = RGBA::WHITE, AABB2 uvs = AABB2::ZERO_TO_ONE);
-	void DrawCube(const Vector3& center, const Vector3& dimensions, const RGBA& color, AABB2 UV_TOP, AABB2 UV_SIDE, AABB2 UV_BOTTOM = AABB2::ZERO_TO_ONE);
+	void DrawCube(const Vector3& center, const Vector3& dimensions, const RGBA& color = RGBA::WHITE, const Vector3& right = Vector3::X_AXIS, const Vector3& up = Vector3::Y_AXIS, const Vector3& forward = Vector3::Z_AXIS, AABB2 uvs = AABB2::ZERO_TO_ONE);
+	void DrawCube(const Vector3& center, const Vector3& dimensions, const RGBA& color, const Vector3& right, const Vector3& up, const Vector3& forward, AABB2 UV_TOP, AABB2 UV_SIDE, AABB2 UV_BOTTOM = AABB2::ZERO_TO_ONE);
 	void DrawSphere(const Vector3& center, const float& radius, const int& wedges, const int& slices, const RGBA& color = RGBA::WHITE, const AABB2& uvs = AABB2::ZERO_TO_ONE);
 	void DrawSphere(const Sphere& sphere, const RGBA& color = RGBA::WHITE, const AABB2& uvs = AABB2::ZERO_TO_ONE);
 	void DrawPlane(const Vector3& nearBottomLeft, const Vector3& nearBottomRight, const Vector3& farTopRight, const Vector3& farTopLeft, const RGBA& color = RGBA::WHITE, Vector2 uvMins = Vector2::ZERO, Vector2 uvMaxs = Vector2::ONE);
 	void DrawPlane(const Plane& plane, const RGBA& color = RGBA::WHITE, const Vector2& uvMins= Vector2::ZERO, const Vector2& uvMaxs= Vector2::ONE);
-	void DrawLine3D(const Vector3& start, const Vector3& end, const RGBA& startColor = RGBA::WHITE, const RGBA& endColor = RGBA::WHITE);
+	void DrawLine3D(const Vector3& start, const Vector3& end, const RGBA& startColor = RGBA::WHITE, const RGBA& endColor = RGBA::WHITE, float width = 1.f);
 	void DrawPoint(const Vector3& pos,float size, const Vector3& right, const Vector3& up, const Vector3& forward, RGBA rightColor , RGBA upColor, RGBA forwardColor);
 	void DrawPoint(const Vector3& pos, float size = 1.f, const Vector3& right = Vector3::X_AXIS, const Vector3& up = Vector3::Y_AXIS, const Vector3& forward = Vector3::Z_AXIS, const RGBA& color = RGBA::WHITE);
 
@@ -192,9 +191,9 @@ public:
 	void UseShaderProgram(ShaderProgram* shader);
 	void ReleaseShaderProgram();		//resets to default shader program
 
-	void ApplyEffect(std::string shaderRoot);
-	void ApplyEffect(ShaderProgram* program);		//backwards compatibility
-	void ApplyEffect(Material* material);
+	void ApplyEffect(std::string shaderRoot, const AABB2& uvs = AABB2::ZERO_TO_ONE);
+	void ApplyEffect(ShaderProgram* program, const AABB2& uvs = AABB2::ZERO_TO_ONE);		//backwards compatibility
+	void ApplyEffect(Material* material, const AABB2& uvs = AABB2::ZERO_TO_ONE);
 	void FinishEffects();
 
 	void EnableDepth( eCompare compare, bool should_write );
@@ -252,6 +251,7 @@ public:
 	void SetDepth(eCompare compare, bool should_write );
 	void SetFillMode(eFillMode fill = FILL_MODE_FILL);
 	void SetCullMode(eCullMode cull = CULLMODE_BACK);
+	void SetWindOrder(eWindOrder wind = WIND_COUNTER_CLOCKWISE);
 	void SetBlendMode(eBlendMode blend);
 	void SetAdditiveBlending();
 	void SetAlphaBlending();

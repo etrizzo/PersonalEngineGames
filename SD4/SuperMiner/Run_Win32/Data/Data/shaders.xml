@@ -1,0 +1,142 @@
+<!--
+<shader name="name" sort="0" cull="back|front|none" fill="solid|wire" frontface="ccw|cw" blend = "alpha|additive|multiply">
+	<program id="opt_program_id" define="semicolon;seperated;list">
+		<vertex file="shader/glsl/mvp_lit.vs"/>
+		<fragment file="shader/glsl/lit.fs"/>
+	</program>
+	<blend> (todo)
+		<color op="add|sub|rev_sub|min|max" src="one|zero|src_color|inv_src_color|src_alpha|inv_src_alpha|dest_color|inv_dest_color|dest_alpha|inv_dest_alpha|constant|inv_constant" dest="zero"/>
+		<alpha op="add|sub|rev_sub|min|max" src="one" dest="one"/>
+	</blend>
+	<depth write="true|false" test="less|never|equal|lequal|greater|gequal|not|always"/>
+</shader>
+-->
+
+
+<shader name="default_unlit" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="default" />
+	<depth write="true" test="less"/>
+</shader>
+
+<!-- lit -->
+
+<shader name="default_lit" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="lit" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="cel_shaded" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="cel_shaded" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="cel_shaded_fog" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="cel_shaded_fog" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="lit_fog" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="lit_fog" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="lit_alpha" sort="1" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="lit" />
+	<depth write="false" test="less"/>
+</shader>
+
+<shader name="lit_alpha_fog" sort="1" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="lit_fog" />
+	<depth write="false" test="less"/>
+</shader>
+
+<!-- variations on default shader -->
+
+<shader name="unlit_alpha" sort="1" cull="none" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="default" />
+	<depth write="false" test="less"/>
+</shader>
+
+<shader name="x_ray" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="default" />
+	<depth write="false" test="greater"/>
+</shader>
+
+<shader name="wireframe" cull="back" fill="wire" frontface="ccw" blend = "alpha">
+	<program id="default" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="skybox" cull="front" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="skybox" />
+	<depth write="false" test="always"/>
+</shader>
+
+<shader name="additive" sort="1" cull="none" fill="solid" frontface="ccw" blend = "additive">
+	<program id="default" />
+	<depth write="false" test="less"/>
+</shader>
+
+<!-- shaders with different programs -->
+
+<shader name="inverse" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="inverse" />
+	<depth write="false" test="less"/>
+</shader>
+
+
+<shader name="normal" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="normal" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="cutout" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="cutout" />
+	<depth write="true" test="less"/>
+</shader>
+<shader name="cutout_lit" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="cutout_lit" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="water" sort="1" cull="none" fill="solid" frontface="ccw" blend="alpha">
+	<program id="scrolling" />
+	<depth write="false" text="less" />
+</shader>
+
+
+<!-- lit debug modes -->
+<shader name="vertex_normal" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="normal" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="tangent" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="tangent" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="bitangent" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="bitangent" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="normal_map" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="normal_map" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="world_normal" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="world_normal" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="diffuse" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="diffuse" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="specular" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="specular" />
+	<depth write="true" test="less"/>
+</shader>

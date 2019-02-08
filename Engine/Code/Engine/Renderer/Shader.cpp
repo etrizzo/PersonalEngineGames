@@ -36,7 +36,7 @@ Shader::Shader(tinyxml2::XMLElement * shaderElement, Renderer* r)
 	std::string name	 = ParseXmlAttribute(*shaderElement, "name"			, "NO_NAME");
 	std::string cullStr  = ParseXmlAttribute(*shaderElement, "cull"			, "back");
 	std::string fillStr  = ParseXmlAttribute(*shaderElement, "fill"			, "solid");
-	std::string faceStr  = ParseXmlAttribute(*shaderElement, "frontFace"	, "ccw");
+	std::string faceStr  = ParseXmlAttribute(*shaderElement, "frontface"	, "ccw");
 	std::string blendStr = ParseXmlAttribute(*shaderElement, "blend"		, "alpha");
 	std::string litStr	 = ParseXmlAttribute(*shaderElement, "lit"			, "true");
 	m_sortLayer			 = ParseXmlAttribute(*shaderElement, "sort"			, 0);

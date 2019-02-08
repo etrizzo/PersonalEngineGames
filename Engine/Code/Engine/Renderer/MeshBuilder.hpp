@@ -45,7 +45,7 @@ public:
 	void AppendPlane2D(const AABB2& plane, const RGBA& color, const AABB2& uvs, float z = 0.f);
 
 	// CUBE
-	void AppendCube(Vector3 position, Vector3 size, RGBA color,  AABB2 UV_TOP = AABB2::ZERO_TO_ONE, AABB2 UV_SIDE = AABB2::ZERO_TO_ONE, AABB2 UV_BOTTOM = AABB2::ZERO_TO_ONE);
+	void AppendCube(Vector3 position, Vector3 size, RGBA color,  const Vector3& right, const Vector3& up, const Vector3& forward, AABB2 UV_TOP = AABB2::ZERO_TO_ONE, AABB2 UV_SIDE = AABB2::ZERO_TO_ONE, AABB2 UV_BOTTOM = AABB2::ZERO_TO_ONE);
 
 	// SPHERE
 	void AppendSphere(Vector3 center, float radius, int wedges, int slices, RGBA color, AABB2 uvs = AABB2::ZERO_TO_ONE);
@@ -78,10 +78,10 @@ private:
 
 
 
-SubMesh* CreateCube( Vector3 position, Vector3 size, RGBA color,  AABB2 UV_TOP = AABB2::ZERO_TO_ONE, AABB2 UV_SIDE = AABB2::ZERO_TO_ONE, AABB2 UV_BOTTOM = AABB2::ZERO_TO_ONE);
+SubMesh* CreateCube( Vector3 position, Vector3 size, RGBA color, const Vector3& right, const Vector3& up, const Vector3& forward, AABB2 UV_TOP = AABB2::ZERO_TO_ONE, AABB2 UV_SIDE = AABB2::ZERO_TO_ONE, AABB2 UV_BOTTOM = AABB2::ZERO_TO_ONE);
 SubMesh* CreateSphere(Vector3 position, float radius, int wedges, int slices, RGBA color, AABB2 uvs = AABB2::ZERO_TO_ONE);
 SubMesh* CreatePlane(const Vector3& center, const Vector3& up, const Vector3& right, const Vector2 & size, const RGBA & color, Vector2 uvMins, Vector2 uvMaxs);
 
-Mesh* CreateCubeMesh( Vector3 position, Vector3 size, RGBA color,  AABB2 UV_TOP = AABB2::ZERO_TO_ONE, AABB2 UV_SIDE = AABB2::ZERO_TO_ONE, AABB2 UV_BOTTOM = AABB2::ZERO_TO_ONE);
+Mesh* CreateCubeMesh( Vector3 position, Vector3 size, RGBA color, const Vector3& right, const Vector3& up, const Vector3& forward, AABB2 UV_TOP = AABB2::ZERO_TO_ONE, AABB2 UV_SIDE = AABB2::ZERO_TO_ONE, AABB2 UV_BOTTOM = AABB2::ZERO_TO_ONE);
 Mesh* CreateSphereMesh(Vector3 position, float radius, int wedges, int slices, RGBA color, AABB2 uvs = AABB2::ZERO_TO_ONE);
 Mesh* CreatePlaneMesh(const Vector3& center, const Vector3& up, const Vector3& right, const Vector2 & size, const RGBA & color, Vector2 uvMins, Vector2 uvMaxs);

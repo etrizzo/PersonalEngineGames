@@ -11,15 +11,18 @@ Camera::Camera()
 	//make debug mesh
 	float coreLength = .8f;
 	float barrelLength = .4f;
-	Vector3 barrelOffset = Vector3(0.f,0.f, coreLength * .5f + barrelLength * .5f );
-	Vector3 lensOffset = Vector3(0.f,0.f, barrelOffset.z + (barrelLength * .5f));
+	Vector3 barrelOffset = GetForward() * (.5f * coreLength + barrelLength * .5f); //Vector3(0.f,0.f, coreLength * .5f + barrelLength * .5f );
+	Vector3 lensOffset = GetForward() * ( barrelOffset.GetLength() + (barrelLength * .5f));
 	RGBA color = RGBA(255,255,255,128);
 	MeshBuilder mb = MeshBuilder();
 	Vector3 camPos = m_transform.GetWorldPosition();
+	Vector3 coreSize = (GetForward() * coreLength) + (GetRight() * coreLength * .7f) + (GetUp() * coreLength * .7f);
+	Vector3 barrelSize = (GetForward() * barrelLength) + (GetRight() * barrelLength * .5f) + (GetUp() * barrelLength * .5f);
+	Vector3 capSize = (GetForward() * barrelLength * .25f) + (GetRight() * barrelLength) + (GetUp() * barrelLength);
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendCube(camPos					, Vector3(coreLength*.7f	,coreLength*.7f		, coreLength			) , color);		//the core
-	mb.AppendCube(camPos + barrelOffset		, Vector3(barrelLength*.5f	,barrelLength*.5f	, barrelLength			) , color);		//the lens barrel (?)
-	mb.AppendCube(camPos + lensOffset		, Vector3(barrelLength		,barrelLength		, barrelLength * .25f	) , color);		//the lens cap
+	mb.AppendCube(camPos					, coreSize		, color, m_transform.GetRight(), m_transform.GetUp(), m_transform.GetForward());		//the core
+	mb.AppendCube(camPos + barrelOffset		, barrelSize	, color,  m_transform.GetRight(), m_transform.GetUp(), m_transform.GetForward());		//the lens barrel (?)
+	mb.AppendCube(camPos + lensOffset		, capSize		, color,  m_transform.GetRight(), m_transform.GetUp(), m_transform.GetForward());		//the lens cap
 	mb.End();
 	m_debugmesh = mb.CreateSubMesh(VERTEX_TYPE_3DPCU);
 }
@@ -45,9 +48,12 @@ Texture * Camera::GetDepthTarget()
 }
 
 
-void Camera::LookAt(Vector3 position, Vector3 target, Vector3 up)
+void Camera::LookAt(Vector3 position, Vector3 target, Vector3 up, const Matrix44& worldBasis)
 {
+	//Matrix44 lookat = Matrix44(worldBasis);
 	Matrix44 lookat = Matrix44::LookAt(position, target, up);
+	//lookat.Append(worldBasis);
+
 	m_transform.SetLocalMatrix(lookat);
 	//m_viewMatrix = m_cameraMatrix;
 	m_viewMatrix = InvertFast( lookat );
@@ -99,6 +105,12 @@ void Camera::Rotate(Vector3 eulerChange)
 	m_viewMatrix = InvertFast( m_transform.GetWorldMatrix() );
 }
 
+void Camera::Rotate(float yaw, float pitch, float roll)
+{
+	m_transform.RotateByEuler(yaw, pitch, roll);
+	m_viewMatrix = InvertFast(m_transform.GetWorldMatrix());
+}
+
 void Camera::RotateAroundX(float x)
 {
 	Rotate(Vector3(x, 0.f,0.f));
@@ -114,9 +126,9 @@ void Camera::RotateAroundZ(float z)
 	Rotate(Vector3(0.f,0.f,z));
 }
 
-void Camera::AddSkybox(const char* skyboxTexture)
+void Camera::AddSkybox(const char* skyboxTexture, const Vector3& right, const Vector3& up, const Vector3& forward)
 {
-	m_skybox = new Skybox(skyboxTexture);
+	m_skybox = new Skybox(skyboxTexture, right, up, forward);
 }
 
 

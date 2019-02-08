@@ -1,4 +1,5 @@
 #include "ObjLoader.hpp"
+#include "Game/EngineBuildPreferences.hpp"
 
 ObjLoader::ObjLoader(std::string fileName)
 {
@@ -50,9 +51,15 @@ void ObjLoader::AddPosition(std::string line)
 	Strings splitLine; 
 	Split(line, ' ', splitLine);
 	Vector3 pos;
+#if defined (USE_X_FORWARD_Z_UP)
+	pos.y = -1.f * (float) atof(splitLine[1].c_str());
+	pos.z = (float) atof(splitLine[2].c_str());
+	pos.x = (float) atof(splitLine[3].c_str());
+#else
 	pos.x = (float) atof(splitLine[1].c_str());
 	pos.y = (float) atof(splitLine[2].c_str());
 	pos.z = (float) atof(splitLine[3].c_str());
+#endif
 	m_positions.push_back(pos);
 
 }

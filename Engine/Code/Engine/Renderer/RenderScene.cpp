@@ -91,7 +91,7 @@ Light* RenderScene::AddNewLight(std::string type, Transform t, RGBA color)
 	if (type == "point"){
 		return AddNewPointLight(t.GetWorldPosition(), color);
 	} else if (type == "dir" || type == "directional"){
-		return AddNewDirectionalLight(t.GetWorldPosition(), color, t.GetEulerAngles());
+		return AddNewDirectionalLight(t.GetWorldPosition(), color, t.GetEulerAnglesYawPitchRoll());
 	} else if (type == "spot" || type == "cone"){
 		return AddNewSpotLight(t, color);
 	} else {

@@ -143,7 +143,7 @@ Vector3 DefaultSpawnVelocity(Transform* t)
 	float theta = GetRandomFloatInRange(0.f, 360.f);
 	float azimuth = GetRandomFloatInRange(0.f, 90.f);
 	Vector3 vel = SphericalToCartesian(1.f, theta, azimuth);
-	return (vel + Vector3::Y_AXIS) * 2.f; 
+	return (vel + t->GetUp()) * 2.f; 
 }
 
 RGBA DefaultSpawnColor()

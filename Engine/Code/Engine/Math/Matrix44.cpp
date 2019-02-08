@@ -1,5 +1,5 @@
 #include "Matrix44.hpp"
-
+#include "Game/EngineBuildPreferences.hpp"
 
 const Matrix44 Matrix44::IDENTITY = Matrix44();
 
@@ -348,17 +348,17 @@ Matrix44 Matrix44::MakeOrtho3D(const Vector3 & nearBottomLeft, const Vector3 & f
 {
 	Matrix44 newMatrix = Matrix44();
 	newMatrix.SetIdentity();
-	float* newVals = new float[16];
+	float newVals[16] = {0};
 	for (int i = 0; i < 16; i++){
 		newVals[i] = 0.f;
 	}
 	newVals[0] =	2.f / (farTopRight.x - nearBottomLeft.x);		//2 / r - l
 	newVals[5] =	2.f / (farTopRight.y - nearBottomLeft.y);		//2 / t - b
 	newVals[10] =	2.f / (farTopRight.z - nearBottomLeft.z);		//-2 / far - near?;
-	//newVals[12] =	-1.f * ((farTopRight.x + nearBottomLeft.x) / (farTopRight.x  - nearBottomLeft.x));
-	//newVals[13] =	-1.f * ((farTopRight.y + nearBottomLeft.y) / (farTopRight.y - nearBottomLeft.y));
-	//newVals[14] =	-1.f * ((farTopRight.z + nearBottomLeft.z) / (farTopRight.z - nearBottomLeft.z));
-	newVals[15] =	1.f;
+	newVals[12] =	-1.f * ((farTopRight.x + nearBottomLeft.x) / (farTopRight.x  - nearBottomLeft.x));
+	newVals[13] =	-1.f * ((farTopRight.y + nearBottomLeft.y) / (farTopRight.y - nearBottomLeft.y));
+	newVals[14] =	-1.f * ((farTopRight.z + nearBottomLeft.z) / (farTopRight.z - nearBottomLeft.z));
+	newVals[15] =	1.f; 
 	newMatrix.SetValues(newVals);
 	return newMatrix;
 }
@@ -377,15 +377,24 @@ Matrix44 Matrix44::MakePerspectiveProjection(float fov_degrees, float aspect, fl
 	return Matrix44( i, j, k, t ); 
 }
 
-Matrix44 Matrix44::LookAt(const Vector3 & position, const Vector3 & target, const Vector3 & up)
+Matrix44 Matrix44::LookAt(const Vector3 & position, const Vector3 & target, const Vector3 & up, bool isLeftHanded )
 {
 	Vector3 direction = target - position;
 	Vector3 newForward = direction.GetNormalized();
 	//figure out other 2 axes
 	Vector3 newRight = Cross(up, newForward);
+	if (!isLeftHanded)
+	{
+		newRight *= -1.f;
+	}
 	newRight.NormalizeAndGetLength();
 	Vector3 newUp = Cross(newForward, newRight).GetNormalized();
-	Matrix44 lookMatrix = Matrix44(newRight, newUp, newForward, position);
+	Matrix44 lookMatrix;
+#ifdef USE_X_FORWARD_Z_UP
+	lookMatrix = Matrix44(newForward, newRight, newUp, position);
+#else
+	lookMatrix = Matrix44(newRight, newUp, newForward, position);
+#endif
 	return lookMatrix;
 }
 

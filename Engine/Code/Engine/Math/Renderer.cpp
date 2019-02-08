@@ -356,8 +356,10 @@ void Renderer::BindGLFunctions()
 
 	GL_BIND_FUNCTION( glPolygonMode );
 	GL_BIND_FUNCTION( glCullFace );
+	GL_BIND_FUNCTION (glFrontFace);
 
 	GL_BIND_FUNCTION( glUniform1fv );
+	GL_BIND_FUNCTION( glUniform2fv );
 	GL_BIND_FUNCTION( glUniform4fv );
 }
 
@@ -534,6 +536,7 @@ void Renderer::BindRenderState(RenderState state)
 	SetCullMode(state.m_cullMode);
 	SetFillMode(state.m_fillMode);
 	SetBlendMode(state.m_blendMode);
+	SetWindOrder(state.m_frontFace);
 	SetDepth(state.m_depthCompare, state.m_depthWrite);
 }
 
@@ -953,7 +956,7 @@ void Renderer::ReleaseShaderProgram()
 	BindShaderProgram("default");
 }
 
-void Renderer::ApplyEffect(std::string shaderRoot)
+void Renderer::ApplyEffect(std::string shaderRoot, const AABB2& uvs)
 {
 	Material* mat = Material::GetMaterial(shaderRoot);
 	if (mat != nullptr)
@@ -965,8 +968,9 @@ void Renderer::ApplyEffect(std::string shaderRoot)
 	}
 }
 
-void Renderer::ApplyEffect(ShaderProgram * program)
+void Renderer::ApplyEffect(ShaderProgram * program, const AABB2& uvs)
 {
+	UNUSED(uvs);
 	//make sure you've got both targets
 	if (m_effectTarget == nullptr){
 		m_effectTarget = m_defaultColorTarget;
@@ -996,7 +1000,7 @@ void Renderer::ApplyEffect(ShaderProgram * program)
 
 }
 
-void Renderer::ApplyEffect(Material * material)
+void Renderer::ApplyEffect(Material * material, const AABB2& uvs)
 {
 	//make sure you've got both targets
 	if (m_effectTarget == nullptr){
@@ -1006,6 +1010,9 @@ void Renderer::ApplyEffect(Material * material)
 			m_effectScratch = Texture::CreateCompatible(m_effectTarget);
 		}
 	}
+
+	material->SetProperty("WORLD_UV_MINS", uvs.mins);
+	material->SetProperty("WORLD_UV_MAXS", uvs.maxs);
 
 	//Draw full screen quad using the program
 	m_effectCamera->SetColorTarget(m_effectScratch);
@@ -1434,15 +1441,15 @@ void Renderer::DrawTexturedAABB2(const AABB2 & bounds, const Texture & texture, 
 }
 
 
-void Renderer::DrawCube(const Vector3 & center, const Vector3 & dimensions, const RGBA & color, AABB2 uvs)
+void Renderer::DrawCube(const Vector3 & center, const Vector3 & dimensions, const RGBA & color, const Vector3& right, const Vector3& up, const Vector3& forward, AABB2 uvs)
 {
-	DrawCube(center, dimensions, color, uvs, uvs, uvs);
+	DrawCube(center, dimensions, color, right, up, forward, uvs, uvs, uvs);
 }
 
-void Renderer::DrawCube(const Vector3 & center, const Vector3 & dimensions, const RGBA & color, AABB2 UV_TOP, AABB2 UV_SIDE, AABB2 UV_BOTTOM)
+void Renderer::DrawCube(const Vector3 & center, const Vector3 & dimensions, const RGBA & color, const Vector3& right, const Vector3& up, const Vector3& forward, AABB2 UV_TOP, AABB2 UV_SIDE, AABB2 UV_BOTTOM)
 {
 	BindModel(Matrix44::IDENTITY);
-	SubMesh* cubeMesh = CreateCube(center, dimensions, color, UV_TOP, UV_SIDE, UV_BOTTOM);
+	SubMesh* cubeMesh = CreateCube(center, dimensions, color, right, up, forward, UV_TOP, UV_SIDE, UV_BOTTOM);
 	DrawMesh(cubeMesh);
 	delete(cubeMesh);
 }
@@ -1492,7 +1499,7 @@ void Renderer::DrawPlane(const Plane & plane, const RGBA & color, const Vector2 
 	delete(planeMesh);
 }
 
-void Renderer::DrawLine3D(const Vector3 & start, const Vector3 & end, const RGBA & startColor, const RGBA & endColor)
+void Renderer::DrawLine3D(const Vector3 & start, const Vector3 & end, const RGBA & startColor, const RGBA & endColor, float width)
 {
 	Vertex3D_PCU startVert = Vertex3D_PCU(start, startColor, Vector2(0.f,0.f));
 	Vertex3D_PCU endVert = Vertex3D_PCU(end, endColor, Vector2(1.f,1.f));
@@ -1995,6 +2002,21 @@ void Renderer::SetCullMode(eCullMode cull)
 	case CULLMODE_NONE:
 		glDisable(GL_CULL_FACE);
 		break;
+	}
+}
+
+void Renderer::SetWindOrder(eWindOrder wind)
+{
+	switch (wind) {
+	case WIND_COUNTER_CLOCKWISE:
+		//glEnable(GL_FRONT_FACE);
+		glFrontFace(GL_CCW);
+		break;
+	case WIND_CLOCKWISE:
+		//glEnable(GL_FRONT_FACE);
+		glFrontFace(GL_CW);
+		break;
+
 	}
 }
 

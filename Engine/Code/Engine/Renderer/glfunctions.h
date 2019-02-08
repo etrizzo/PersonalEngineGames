@@ -148,9 +148,11 @@ extern PFNGLBINDBUFFERBASEPROC		glBindBufferBase	;
 
 extern PFNGLPOLYGONMODEPROC			glPolygonMode	;
 extern PFNGLCULLFACEPROC			glCullFace		;
+extern PFNGLFRONTFACEPROC			glFrontFace		;
 
 
 
 ////setting uniforms
 extern PFNGLUNIFORM1FVPROC		glUniform1fv	;
+extern PFNGLUNIFORM2FVPROC		glUniform2fv	;
 extern PFNGLUNIFORM4FVPROC		glUniform4fv	;

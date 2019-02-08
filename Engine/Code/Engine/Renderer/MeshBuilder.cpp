@@ -1,11 +1,11 @@
 #include "MeshBuilder.hpp"
 
 
-SubMesh * CreateCube(Vector3 position, Vector3 size, RGBA color, AABB2 UV_TOP, AABB2 UV_SIDE, AABB2 UV_BOTTOM )
+SubMesh * CreateCube(Vector3 position, Vector3 size, RGBA color, const Vector3& right, const Vector3& up, const Vector3& forward, AABB2 UV_TOP, AABB2 UV_SIDE, AABB2 UV_BOTTOM )
 {
 	MeshBuilder mb;
 	mb.Begin( PRIMITIVE_TRIANGLES, true);
-	mb.AppendCube(position, size, color, UV_TOP, UV_SIDE, UV_BOTTOM); 		//could put all of this on the mesh builder, so that you can add a cube to the mesh builder and then add more to it.
+	mb.AppendCube(position, size, color, right, up, forward, UV_TOP, UV_SIDE, UV_BOTTOM); 		//could put all of this on the mesh builder, so that you can add a cube to the mesh builder and then add more to it.
 	mb.End();
 	return mb.CreateSubMesh(VERTEX_TYPE_LIT);
 }
@@ -28,11 +28,11 @@ SubMesh * CreatePlane(const Vector3& center, const Vector3& up, const Vector3& r
 	return mb.CreateSubMesh(VERTEX_TYPE_LIT);
 }
 
-Mesh * CreateCubeMesh(Vector3 position, Vector3 size, RGBA color, AABB2 UV_TOP, AABB2 UV_SIDE, AABB2 UV_BOTTOM)
+Mesh * CreateCubeMesh(Vector3 position, Vector3 size, RGBA color, const Vector3& right, const Vector3& up, const Vector3& forward, AABB2 UV_TOP, AABB2 UV_SIDE, AABB2 UV_BOTTOM)
 {
 	MeshBuilder mb;
 	mb.Begin( PRIMITIVE_TRIANGLES, true);
-	mb.AppendCube(position, size, color, UV_TOP, UV_SIDE, UV_BOTTOM); 		//could put all of this on the mesh builder, so that you can add a cube to the mesh builder and then add more to it.
+	mb.AppendCube(position, size, color, right, up, forward, UV_TOP, UV_SIDE, UV_BOTTOM); 		//could put all of this on the mesh builder, so that you can add a cube to the mesh builder and then add more to it.
 	mb.End();
 	return mb.CreateMesh(VERTEX_TYPE_LIT);
 }
@@ -271,18 +271,23 @@ void MeshBuilder::AppendPlane2D(const AABB2 & plane, const RGBA & color, const A
 }
 
 //assumes begin & end happen outside of the function somewhere
-void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 UV_TOP, AABB2 UV_SIDE, AABB2 UV_BOTTOM )
+void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, const Vector3& right, const Vector3& up, const Vector3& forward,  AABB2 UV_TOP, AABB2 UV_SIDE, AABB2 UV_BOTTOM )
 {
 
 	Vector3 halfDimensions = size * .5f;
-	Vector3 a = Vector3(position + Vector3(	-halfDimensions.x,	halfDimensions.y,	-halfDimensions.z));
-	Vector3 b = Vector3(position + Vector3(	halfDimensions.x,	halfDimensions.y,	-halfDimensions.z));
-	Vector3 c = Vector3(position - halfDimensions);
-	Vector3 d = Vector3(position + Vector3(	halfDimensions.x,	-halfDimensions.y,	-halfDimensions.z));
-	Vector3 e = Vector3(position + Vector3(	-halfDimensions.x,	halfDimensions.y,	halfDimensions.z));
-	Vector3 f = Vector3(position + halfDimensions);
-	Vector3 g = Vector3(position + Vector3(	-halfDimensions.x,	-halfDimensions.y,	halfDimensions.z));
-	Vector3 h =	Vector3(position + Vector3(   halfDimensions.x,	-halfDimensions.y,	halfDimensions.z));
+
+	Vector3 rightOffset		= Vector3(right.x * halfDimensions.x, right.y * halfDimensions.y, right.z * halfDimensions.z);
+	Vector3 upOffset		= Vector3(up.x * halfDimensions.x, up.y * halfDimensions.y, up.z * halfDimensions.z);
+	Vector3 forwardOffset	= Vector3(forward.x * halfDimensions.x, forward.y * halfDimensions.y, forward.z * halfDimensions.z);
+	
+	Vector3 a = position - rightOffset + upOffset - forwardOffset;
+	Vector3 b = position + rightOffset + upOffset - forwardOffset;
+	Vector3 c = position - rightOffset - upOffset - forwardOffset;
+	Vector3 d = position + rightOffset - upOffset - forwardOffset;
+	Vector3 e = position - rightOffset + upOffset + forwardOffset;
+	Vector3 f = position + rightOffset + upOffset + forwardOffset;
+	Vector3 g = position - rightOffset - upOffset + forwardOffset;
+	Vector3 h =	position + rightOffset - upOffset + forwardOffset;
 
 	
 	/* 
@@ -318,8 +323,8 @@ void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 U
 	|   |
 	c - d
 	*/
-	SetNormal(-1.f * Vector3::Z_AXIS);
-	SetTangent(1.f * Vector3::X_AXIS);
+	SetNormal(-1.f * forward);
+	SetTangent(1.f * right);
 	SetUV(SIDE_bl_UV);
 	unsigned int idx = PushVertex(c);
 
@@ -341,8 +346,8 @@ void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 U
 		|   |
 		h - g
 	*/
-	SetNormal(Vector3::Z_AXIS);
-	SetTangent(-1.f * Vector3::X_AXIS);
+	SetNormal(forward);
+	SetTangent(-1.f * right);
 	SetUV(SIDE_bl_UV);
 	idx = PushVertex(h);
 
@@ -364,8 +369,8 @@ void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 U
 	|   |
 	d - h
 	*/
-	SetNormal(Vector3::X_AXIS);
-	SetTangent(Vector3::Z_AXIS);
+	SetNormal(right);
+	SetTangent(forward);
 	SetUV(SIDE_bl_UV);
 	idx = PushVertex(d);
 
@@ -386,8 +391,8 @@ void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 U
 	|   |
 	g - c
 	*/
-	SetNormal(-1.f * Vector3::X_AXIS);
-	SetTangent(-1.f * Vector3::Z_AXIS);
+	SetNormal(-1.f * right);
+	SetTangent(-1.f * forward);
 	SetUV(SIDE_bl_UV);
 	idx = PushVertex(g);
 
@@ -408,8 +413,8 @@ void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 U
 	|   |
 	a - b
 	*/
-	SetNormal(Vector3::Y_AXIS);
-	SetTangent(Vector3::X_AXIS);
+	SetNormal(up);
+	SetTangent(right);
 	SetUV(TOP_bl_UV);
 	idx = PushVertex(a);
 
@@ -434,8 +439,8 @@ void MeshBuilder::AppendCube(Vector3 position, Vector3 size, RGBA color, AABB2 U
 	|   |
 	g - h
 	*/
-	SetNormal(-1.f * Vector3::Y_AXIS);
-	SetTangent( Vector3::X_AXIS);
+	SetNormal(-1.f * up);
+	SetTangent( right);
 	SetUV(BOTTOM_bl_UV);
 	idx = PushVertex(g);
 

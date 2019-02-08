@@ -221,9 +221,9 @@ void ForwardRenderPath::ClearForCamera(Camera * cam)
 	if (cam->m_skybox != nullptr){
 		RenderSkybox(cam);
 	} 
-	/*else {
+	else {
 		m_renderer->ClearScreen(cam->m_clearColor);
-	}*/
+	}
 }
 
 float ForwardRenderPath::GetLightFactor(Light * l, Vector3 position)

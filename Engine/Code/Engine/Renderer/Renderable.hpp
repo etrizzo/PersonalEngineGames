@@ -14,7 +14,7 @@ class Shader;
 class Renderable{
 public:
 	Renderable();
-	Renderable(eRenderablePrimatives primType, float size = 1.f);
+	Renderable(eRenderablePrimatives primType, float size = 1.f, const Vector3& right = Vector3::X_AXIS, const Vector3& up= Vector3::Y_AXIS, const Vector3& forward = Vector3::Z_AXIS, const AABB2& topUVs = AABB2::ZERO_TO_ONE, const AABB2& sideUVs= AABB2::ZERO_TO_ONE, const AABB2& bottomUVs= AABB2::ZERO_TO_ONE);
 	Renderable(std::string objFile, std::string material = "default");
 
 public:
