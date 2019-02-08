@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Core/EngineCommon.hpp"
+#include "Game/GameCommon.hpp"
 
 enum DebugRenderMode 
 {
@@ -200,7 +201,7 @@ public:
 	void MakeDebugRenderQuad( float lifetime, 
 		Vector3 center = Vector3::ZERO, 
 		Vector2 size = Vector2::HALF,
-		Vector3 right = Vector3::RIGHT, Vector3 up = Vector3::UP, 
+		Vector3 right = RIGHT, Vector3 up =  UP, 
 		RGBA startColor = RGBA::RED, RGBA endColor = RGBA::GREEN, 
 		DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH);
 
@@ -208,7 +209,7 @@ public:
 		float lifetime = 0.f, 
 		Vector3 centerPos = Vector3::ZERO, 
 		float scale = .1f, 
-		Vector3 up = Vector3::UP, Vector3 right = Vector3::RIGHT,
+		Vector3 up =  UP, Vector3 right = RIGHT,
 		RGBA const &start_color = RGBA::RED, 
 		RGBA const &end_color = RGBA::GREEN,
 		DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH);

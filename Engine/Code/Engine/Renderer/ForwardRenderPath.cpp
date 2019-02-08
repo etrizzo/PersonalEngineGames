@@ -148,47 +148,60 @@ void ForwardRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls, Camera* 
 	PROFILE_PUSH_FUNCTION_SCOPE();
 	Vector3 camPos = cam->GetPosition();
 	//sort by sort layer
-	for (int i = 1; i < (int) drawCalls.size(); i ++){
-		bool sorted = false;
-		for (int j = i; j < (int) drawCalls.size(); j++){
-			sorted = true;
-			DrawCall dc = drawCalls[j];
-			DrawCall prevDC = drawCalls[j-1];
-			if (dc.GetSortLayer() < prevDC.GetSortLayer()){
-				//swap l and prevLight
-				drawCalls[j] = prevDC;
-				drawCalls[j-1] = dc;
-				sorted = false;
-			}
-		}
-		if (sorted){
-			break;
+	std::sort(drawCalls.begin(), drawCalls.end(), CompareDrawCallsBySortLayer);
+
+	for (int i = 0; i < (int) drawCalls.size(); i++)
+	{
+		if (drawCalls[i].GetSortLayer() >= SORT_LAYER_ALPHA)
+		{
+			drawCalls[i].m_distanceToCamera = drawCalls[i].GetDistance(camPos);
+		} else {
+			drawCalls[i].m_distanceToCamera = 9999.f;
 		}
 	}
 
+	std::sort(drawCalls.begin(), drawCalls.end(), CompareAlphaDrawCallsCameraDistance);
+	//for (int i = 1; i < (int) drawCalls.size(); i ++){
+	//	bool sorted = false;
+	//	for (int j = 1; j < (int) drawCalls.size(); j++){
+	//		sorted = true;
+	//		DrawCall dc = drawCalls[j];
+	//		DrawCall prevDC = drawCalls[j-1];
+	//		if (dc.GetSortLayer() < prevDC.GetSortLayer()){
+	//			//swap l and prevLight
+	//			drawCalls[j] = prevDC;
+	//			drawCalls[j-1] = dc;
+	//			sorted = false;
+	//		}
+	//	}
+	//	if (sorted){
+	//		break;
+	//	}
+	//}
+
 	//sort alpha layer
-	for (int i = 1; i < (int) drawCalls.size(); i ++){
-		bool sorted = false;
-		if (i >= SORT_LAYER_ALPHA){
-			for (int j = i; j < (int) drawCalls.size(); j++){
-				sorted = true;
-				DrawCall dc = drawCalls[j];
-				DrawCall prevDC = drawCalls[j-1];
-				//sort alpha layer by distance to camera
-				if (dc.GetSortLayer() >= SORT_LAYER_ALPHA && prevDC.GetSortLayer() >= SORT_LAYER_ALPHA){
-					//sort by distance to camera
-					if (dc.GetDistance(camPos) > prevDC.GetDistance(camPos)){
-						drawCalls[j] = prevDC;
-						drawCalls[j-1] = dc;
-						sorted = false;
-					}
-				}
-			}
-			if (sorted){
-				break;
-			}
-		}
-	}
+	//for (int i = 1; i < (int) drawCalls.size(); i ++){
+	//	bool sorted = false;
+	//	if (i >= SORT_LAYER_ALPHA){
+	//		for (int j = 1; j < (int) drawCalls.size(); j++){
+	//			sorted = true;
+	//			DrawCall dc = drawCalls[j];
+	//			DrawCall prevDC = drawCalls[j-1];
+	//			//sort alpha layer by distance to camera
+	//			if (dc.GetSortLayer() >= SORT_LAYER_ALPHA && prevDC.GetSortLayer() >= SORT_LAYER_ALPHA){
+	//				//sort by distance to camera
+	//				if (dc.GetDistance(camPos) > prevDC.GetDistance(camPos)){
+	//					drawCalls[j] = prevDC;
+	//					drawCalls[j-1] = dc;
+	//					sorted = false;
+	//				}
+	//			}
+	//		}
+	//		if (sorted){
+	//			break;
+	//		}
+	//	}
+	//}
 }
 
 void ForwardRenderPath::SetFogColor(RGBA color)
@@ -311,4 +324,20 @@ void fogData_t::SetFogBuffer(RGBA color, float nearPlane, float farPlane, float 
 	fogFarPlane = farPlane;
 	fogNearFactor = nearFactor;
 	fogFarFactor = farFactor;
+}
+
+
+bool CompareDrawCallsBySortLayer(DrawCall i, DrawCall j)
+{
+	return i.GetSortLayer() < j.GetSortLayer();
+}
+
+bool CompareAlphaDrawCallsCameraDistance(DrawCall i, DrawCall j)
+{
+	if (i.GetSortLayer() >= SORT_LAYER_ALPHA && j.GetSortLayer() >= SORT_LAYER_ALPHA){
+		return i.m_distanceToCamera > j.m_distanceToCamera;
+	} else {
+		return false;
+	}
+
 }

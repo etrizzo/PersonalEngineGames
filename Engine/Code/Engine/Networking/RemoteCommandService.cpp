@@ -395,54 +395,46 @@ void RemoteCommandService::Update()
 
 }
 
-void RemoteCommandService::Render(Renderer* r, AABB2 screenBounds)
+void RemoteCommandService::Render(Renderer*, AABB2)
 {
 
 }
 
-bool RemoteCommandService::JoinRCS(std::string addr)
+bool RemoteCommandService::JoinRCS(std::string)
 {
-	UNUSED(addr);
 	return true;
 }
 
-bool RemoteCommandService::HostRCS(std::string port)
+bool RemoteCommandService::HostRCS(std::string )
 {
-	UNUSED(port);
 	return true;
 }
 
-void RemoteCommandService::SetShouldEcho(bool shouldEcho)
+void RemoteCommandService::SetShouldEcho(bool)
 {
-	UNUSED(shouldEcho);
+
 }
 
-void RemoteCommandService::SendMessageAll(std::string msgString, bool isEcho)
+void RemoteCommandService::SendMessageAll(std::string, bool)
 {
-	UNUSED(msgString);
-	UNUSED(isEcho);
+
 }
 
-void RemoteCommandService::SendMessageBroadcast(std::string msgString, bool isEcho)
+void RemoteCommandService::SendMessageBroadcast(std::string, bool)
 {
-	UNUSED(msgString);
-	UNUSED(isEcho);
 }
 
-void RemoteCommandService::SendAMessageToAHotSingleClientInYourArea(unsigned int connectionIndex, std::string msgString, bool isEcho)
+void RemoteCommandService::SendAMessageToAHotSingleClientInYourArea(unsigned int, std::string, bool)
 {
-	UNUSED(connectionIndex);
-	UNUSED(msgString);
-	UNUSED(isEcho);
 }
 
 void RemoteCommandService::ProcessNewConnections()
 {
 }
 
-void RemoteCommandService::SendEchoMessage(std::string msgString)
+void RemoteCommandService::SendEchoMessage(std::string)
 {
-	UNUSED(msgString);
+
 }
 
 #endif

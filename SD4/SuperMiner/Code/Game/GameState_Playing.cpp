@@ -27,7 +27,7 @@ GameState_Playing::GameState_Playing()
 	//m_scene->SetShadowCameraTransform(m_sun->m_transform);
 
 	m_scene->AddCamera(g_theGame->m_currentCamera);
-	g_theGame->m_mainCamera->AddSkybox("skybox.png", -RIGHT, UP, FORWARD);
+	g_theGame->m_mainCamera->AddSkybox("skybox.png", RIGHT, UP, FORWARD);
 	g_theGame->m_mainCamera->m_skybox->m_transform.RotateByEuler(0.f,0.f,90.f);
 	m_renderPath->SetFogColor(RGBA(40, 10, 90));
 }

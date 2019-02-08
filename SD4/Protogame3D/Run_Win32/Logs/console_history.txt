@@ -1,1 +1,2 @@
 quit
+debug_reattach_camera

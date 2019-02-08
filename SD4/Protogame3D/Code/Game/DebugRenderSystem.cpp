@@ -39,6 +39,7 @@ void DebugRenderSystem::DetachCamera()
 		m_isDetached = true;
 
 		m_camera = new PerspectiveCamera(m_gameCamera);
+		m_camera->SetPerspectiveOrtho(m_camera->m_fovDegrees, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.1f, 150.f);
 		m_camera->SetColorTarget( g_theRenderer->m_defaultColorTarget );
 		m_camera->SetDepthStencilTarget( g_theRenderer->m_defaultDepthTarget );
 		g_theGame->SetGameCamera(m_camera);
@@ -144,10 +145,10 @@ void DebugRenderSystem::HandleCameraInput()
 		m_camera->Translate(m_camera->GetForward() * ds * speed * -1.f);
 	}
 	if (g_theInput->IsKeyDown('E') || g_theInput->GetController(0)->IsButtonDown(XBOX_BUMPER_RIGHT)){
-		m_camera->Translate(Vector3::UP * ds* speed );		//going off of camera's up feels very weird when it's not perfectly upright
+		m_camera->Translate(UP * ds* speed );		//going off of camera's up feels very weird when it's not perfectly upright
 	}
 	if (g_theInput->IsKeyDown('Q') || g_theInput->GetController(0)->IsButtonDown(XBOX_BUMPER_LEFT)){
-		m_camera->Translate(Vector3::UP * ds * speed * -1.f);
+		m_camera->Translate(UP * ds * speed * -1.f);
 	}
 
 	Vector2 controllerTranslation = g_theInput->GetController(0)->GetLeftThumbstickCoordinates();
@@ -180,7 +181,7 @@ void DebugRenderSystem::AddCurrent3DTask()
 		MakeDebugRenderBasis(m_defaultLifetime, drawPos, 1.f, Matrix44::IDENTITY, m_defaultStartColor, m_defaultEndColor, m_currentMode);
 		break;
 	case RENDER_TASK_QUAD:
-		MakeDebugRenderQuad(m_defaultLifetime, drawPos, Vector2::ONE * .3f, Vector3::RIGHT, Vector3::UP, m_defaultStartColor, m_defaultEndColor, m_currentMode);
+		MakeDebugRenderQuad(m_defaultLifetime, drawPos, Vector2::ONE * .3f, RIGHT, UP, m_defaultStartColor, m_defaultEndColor, m_currentMode);
 		break;
 	case RENDER_TASK_SPHERE:
 		MakeDebugRenderSphere(m_defaultLifetime, drawPos, .5f, 10, 10, m_defaultStartColor, m_defaultEndColor, m_currentMode);
@@ -333,7 +334,7 @@ void DebugRenderSystem::MakeDebugRenderLineSegment(Vector3 const & p0, Vector3 c
 
 void DebugRenderSystem::MakeDebugRenderBasis(float lifetime, Vector3 position, float size, Matrix44 const & basis, RGBA const & start_color, RGBA const & end_color, DebugRenderMode const mode)
 {
-	DebugRenderTask_Basis* point = new DebugRenderTask_Basis(position, basis, size, lifetime, start_color, end_color, mode);
+	DebugRenderTask_Basis* point = new DebugRenderTask_Basis(position, basis, size, lifetime, mode);
 	m_tasks3D.push_back((DebugRenderTask*) point);
 }
 

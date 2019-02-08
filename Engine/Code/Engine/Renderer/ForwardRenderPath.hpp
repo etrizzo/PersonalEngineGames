@@ -50,3 +50,7 @@ private:
 	Texture* m_shadowDepthTarget;
 	Texture* m_shadowColorTarget;
 };
+
+
+bool CompareDrawCallsBySortLayer(DrawCall i, DrawCall j);
+bool CompareAlphaDrawCallsCameraDistance(DrawCall i, DrawCall j);

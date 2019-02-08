@@ -16,10 +16,6 @@ GameState_Playing::GameState_Playing()
 
 	m_couchMaterial = Material::GetMaterial("couch");
 
-	m_particleSystem = new ParticleSystem();
-	m_particleSystem->CreateEmitter(Vector3(0.f, 4.f, 0.f));
-	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
-
 
 	m_sun = m_scene->AddNewDirectionalLight(Vector3(-0, 20, -0.f), RGBA::WHITE.GetColorWithAlpha(180), Vector3(-35.f, -30.f, 0.f));	
 
@@ -27,7 +23,7 @@ GameState_Playing::GameState_Playing()
 	//m_scene->SetShadowCameraTransform(m_sun->m_transform);
 
 	m_scene->AddCamera(g_theGame->m_currentCamera);
-	g_theGame->m_mainCamera->AddSkybox("galaxy2.png");
+	g_theGame->m_mainCamera->AddSkybox("galaxy2.png", RIGHT, UP, FORWARD);
 	m_renderPath->SetFogColor(RGBA(40, 10, 90));
 }
 
@@ -54,6 +50,7 @@ void GameState_Playing::Update(float ds)
 	m_thaShip->Rotate(Vector3(0.f, rotation, 0.f));
 	m_thaOrb->Rotate(Vector3(0.f, rotation, 0.f));
 	m_player->Update();
+	m_particleSystem->Update(ds);
 	//Update spawners before the rest of entities bc it can add entities
 	for (Entity* entity : m_allEntities){
 		entity->Update();
@@ -241,6 +238,7 @@ void GameState_Playing::Startup()
 	m_particleSystem = new ParticleSystem();
 	m_particleSystem->CreateEmitter(Vector3(0.f, 10.f, 15.f));
 	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
+	m_particleSystem->m_emitters[0]->SetSpawnColor(RGBA::GetRandomRainbowColor);
 
 	m_scene->AddRenderable(m_particleSystem->m_emitters[0]->m_renderable);
 	m_scene->AddRenderable(m_thaShip->m_renderable);

@@ -23,6 +23,8 @@ public:
 	SubMesh* m_mesh;
 	Material* m_material;
 
+	float m_distanceToCamera = 9999.f;
+
 	unsigned int m_lightCount; 
 	 
 	Light* m_lights[MAX_LIGHTS]; 
