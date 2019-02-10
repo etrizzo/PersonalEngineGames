@@ -42,6 +42,10 @@ enum eDebugShaders{
 
 
 
+const static Vector3 RIGHT = Vector3::X_AXIS;
+const static Vector3 UP = Vector3::Y_AXIS;
+const static Vector3 FORWARD = Vector3::Z_AXIS;
+
 
 //determines if arrow keys or d pad buttons were pressed
 bool RightJustPressed();

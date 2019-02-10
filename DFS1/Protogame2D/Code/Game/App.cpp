@@ -28,7 +28,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 	float screenWidth = g_gameConfigBlackboard.GetValue("width", 1000.f);
 	float screenHeight = screenWidth / aspect;
 	std::string name = g_gameConfigBlackboard.GetValue("appName", "Win32 OpenGL Test App");
-	g_Window = new Window(name.c_str(), aspect, applicationInstanceHandle);
+	g_Window = new Window(name.c_str(), aspect, applicationInstanceHandle, g_gameConfigBlackboard.GetValue("windowHeight", .8f));
 
 	m_appTime = 0.f;
 	m_farTopRight = m_nearBottomLeft + Vector3(screenWidth,screenHeight, 100.f);

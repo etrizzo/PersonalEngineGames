@@ -26,15 +26,15 @@ Game::Game()
 	//m_gameTime = 0.f;
 
 	
-	m_mainCamera = new PerspectiveCamera();
+	m_mainCamera = new Camera();
 
 	// Setup what it will draw to
 	m_mainCamera->SetColorTarget( g_theRenderer->m_defaultColorTarget );
 	m_mainCamera->SetDepthStencilTarget( g_theRenderer->m_defaultDepthTarget );
 
-	m_mainCamera->SetProjectionOrtho(10.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), .1f, 100.f);
+	m_mainCamera->SetProjectionOrtho(10.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
 	//m_mainCamera->SetPerspectiveOrtho(70.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.1f, 150.f);
-	m_mainCamera->LookAt(Vector3(0.f, 3.f, -5.f), Vector3(0.f, 1.f, 0.f));
+	//m_mainCamera->LookAt(Vector3(0.f, 3.f, -5.f), Vector3(0.f, 1.f, 0.f));
 
 	m_uiCamera = new Camera();
 
@@ -48,7 +48,7 @@ Game::Game()
 	//m_uiCamera->LookAt( Vector3( 0.0f, 0.0f, -10.0f ), Vector3::ZERO ); 
 	m_uiCamera->SetProjectionOrtho(1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f,100.f);
 	Vector2 center = m_uiCamera->GetBounds().GetCenter();
-	m_uiCamera->LookAt( Vector3( center.x, center.y, -1.f ), Vector3(center.x, center.y, .5f)); 
+	//m_uiCamera->LookAt( Vector3( center.x, center.y, -1.f ), Vector3(center.x, center.y, .5f)); 
 
 	SetMainCamera();
 
@@ -62,7 +62,7 @@ Game::Game()
 
 void Game::PostStartup()
 {
-	m_currentMap = nullptr;
+	//m_currentMap = nullptr;
 	m_playState = new GameState_Playing();
 
 	m_debugRenderSystem = new DebugRenderSystem();
@@ -72,7 +72,7 @@ void Game::PostStartup()
 	//m_debugRenderSystem->DetachCamera();
 
 	m_currentState = new GameState_Attract();
-	m_currentMap = new Map("Heightmap.png", AABB2(-100.f, -100.f, 100.f, 100.f), -20.f, 2.f, IntVector2(10,10), 40.f);
+	//m_currentMap = new Map("Heightmap.png", AABB2(-100.f, -100.f, 100.f, 100.f), -20.f, 2.f, IntVector2(10,10), 40.f);
 
 
 	

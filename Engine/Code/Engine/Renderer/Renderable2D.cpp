@@ -9,26 +9,23 @@ Renderable2D::Renderable2D()
 {
 	m_mesh = new Mesh();
 	m_mb = new MeshBuilder();
-	m_materials.push_back(Material::GetMaterial("default"));
+	m_materials.push_back(Material::GetMaterial("default_unlit"));
 	//m_materials[0]->SetShader("default_lit");
 }
 
-Renderable2D::Renderable2D(eRenderablePrimatives primType, float size)
+Renderable2D::Renderable2D(eRenderablePrimatives primType, Vector2 size, RGBA color)
 {
 	m_mb = new MeshBuilder();
 	m_mb->Begin(PRIMITIVE_TRIANGLES, true);
 	switch(primType){
 	case RENDERABLE_PLANE:
-		m_mb->AppendPlane(Vector3::ZERO, Vector3::Y_AXIS, Vector3::X_AXIS, Vector2::ONE * size, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
+		m_mb->AppendPlane(Vector3::ZERO, Vector3::Y_AXIS, Vector3::X_AXIS, size, color, Vector2::ZERO, Vector2::ONE);
 		break;
-	//case RENDERABLE_CIRCLE:
-	//	mb.AppendSphere(Vector3::ZERO, size, 10.f, 10.f, RGBA::WHITE);
-	//	break;
 	}
 	m_mb->End();
 	m_mesh = m_mb->CreateMesh(VERTEX_TYPE_3DPCU);
 
-	m_materials.push_back(Material::GetMaterial("default_lit"));
+	m_materials.push_back(Material::GetMaterial("default_unlit"));
 }
 
 Renderable2D::~Renderable2D()

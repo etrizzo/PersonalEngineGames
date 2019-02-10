@@ -218,6 +218,10 @@ struct light_buffer_t
 	light_t m_lights[MAX_LIGHTS]; 
 };
 
+
+const static float s_goldenRatioConjugate = 0.618033988749895f;
+const static float s_goldenAngleDegrees = 137.5077640500378546463487f;
+
 typedef unsigned char byte_t;
 
 const unsigned long KB = 1024;

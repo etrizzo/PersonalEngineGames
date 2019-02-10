@@ -14,10 +14,12 @@ Entity::Entity()
 	m_renderable = new Renderable2D();
 }
 
-Entity::Entity(Vector3 position, std::string objFile, std::string materialFile)
+Entity::Entity(Vector2 position, Vector2 size, std::string texturePath, RGBA color)
 {
-	m_renderable = new Renderable2D();
-	m_renderable->SetPosition(position.XZ());
+	m_renderable = new Renderable2D(RENDERABLE_PLANE, size, color);
+	Texture* tex = g_theRenderer->CreateOrGetTexture(texturePath);
+	m_renderable->SetDiffuseTexture(tex, 0);
+	m_renderable->SetPosition(position);
 
 
 	m_spinDegreesPerSecond = 45.f;

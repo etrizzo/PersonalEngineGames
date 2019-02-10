@@ -29,7 +29,7 @@ public:
 	bool m_isPaused;
 	bool m_devMode;
 	//float m_gameTime;
-	Map* m_currentMap;
+	//Map* m_currentMap;
 	Camera* m_mainCamera;
 	Camera* m_uiCamera;
 	Camera* m_currentCamera;

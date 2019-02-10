@@ -60,6 +60,4 @@ protected:
 	//for objects drawn using drawmeshimmediate
 	Material* m_couchMaterial;
 
-	ParticleSystem* m_particleSystem;
-
 };

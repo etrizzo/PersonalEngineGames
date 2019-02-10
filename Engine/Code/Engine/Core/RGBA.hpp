@@ -43,6 +43,16 @@ public:
 	static RGBA GetRandomRainbowColor();
 	static RGBA GetRandomColor();
 	static RGBA GetRandomMutedColor();
+	//makes a random color and then mixes it with the start color
+	static RGBA GetRandomMixedColor(const RGBA& mixColor, float mixWeight = .5f);		
+	static RGBA GetRGBAFromHSV(float hue, float saturation, float value);
+	static RGBA GetRandomEarthTone();
+	static RGBA GetRandomPastelColor(float lightness = .5f);
+
+	static RGBA GetGoldenRatioColorSequence(float saturation, float value);
+
+	static float s_currentRatioNumber;
+	
 
 
 	const static RGBA WHITE;
@@ -63,6 +73,7 @@ public:
 };
 
 const RGBA Interpolate( const RGBA& start, const RGBA& end, float fractionTowardEnd );
+
 
 
 //static RGBA WHITE = RGBA(255,255,255,255);

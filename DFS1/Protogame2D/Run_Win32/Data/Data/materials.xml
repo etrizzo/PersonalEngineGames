@@ -34,9 +34,19 @@
 	</properties>
 </material>
 
-<material name="default_unlit" shader="default">
+<material name="default_unlit" shader="cutout">
 	<textures>
 		<texture type="diffuse" path="white" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+
+<material name="test" shader="cutout">
+	<textures>
+		<texture type="diffuse" path="TestTexture.png" />
 	</textures>
 	<properties>
 		<property type="RGBA" name="TINT" value="255,255,255,255"/>

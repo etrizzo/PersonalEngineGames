@@ -7,7 +7,7 @@ class Shader;
 class Renderable2D{
 public:
 	Renderable2D();
-	Renderable2D(eRenderablePrimatives primType, float size = 1.f);
+	Renderable2D(eRenderablePrimatives primType, Vector2 size = Vector2::ONE, RGBA color = RGBA::WHITE);
 	~Renderable2D();
 	//Renderable2D(AABB2 quad);
 	//Renderable2D(std::string objFile, std::string matFile = "default");

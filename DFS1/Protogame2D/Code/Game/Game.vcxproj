@@ -290,6 +290,7 @@
     <ClCompile Include="DebugRenderSystem.cpp" />
     <ClCompile Include="DebugRenderTask.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Flower.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameCommon.cpp" />
     <ClCompile Include="GameState.cpp" />
@@ -314,6 +315,7 @@
     <ClInclude Include="DebugRenderTask.hpp" />
     <ClInclude Include="EngineBuildPreferences.hpp" />
     <ClInclude Include="Entity.hpp" />
+    <ClInclude Include="Flower.hpp" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="GameCommon.hpp" />
     <ClInclude Include="GameState.hpp" />
@@ -327,7 +329,9 @@
     <ClInclude Include="TileDefinition.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="..\..\Run_Win32\Data\Data\GameConfig.xml" />
+    <Xml Include="..\..\Run_Win32\Data\Data\GameConfig.xml">
+      <SubType>Designer</SubType>
+    </Xml>
     <Xml Include="..\..\Run_Win32\Data\Data\Maps.xml" />
     <Xml Include="..\..\Run_Win32\Data\Data\Tiles.xml" />
   </ItemGroup>

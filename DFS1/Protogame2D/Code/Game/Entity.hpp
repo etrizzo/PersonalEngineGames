@@ -9,9 +9,10 @@ class Map;
 class Entity{
 public:
 	~Entity();									
-	Entity() ;									
+	Entity() ;					
+	Entity(Vector2 position, Vector2 size = Vector2::ONE, std::string texturePath = "white", RGBA color = RGBA::WHITE);
 	//Entity(Vector3 position, std::string objFile, std::string texturePath = "default");
-	Entity(Vector3 position, std::string objFile, std::string materialFile = "default");
+	//Entity(Vector3 position, std::string objFile, std::string materialFile = "default");
 
 	virtual void Update();
 

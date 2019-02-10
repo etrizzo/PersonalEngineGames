@@ -3,7 +3,7 @@
 
 class Player :public Entity{
 public:
-	Player(Vector3 position = Vector3::ZERO);
+	Player(Vector2 position);
 	~Player() {};
 
 	void Update() override;
@@ -11,14 +11,12 @@ public:
 
 	void HandleInput();
 
-	Vector2 m_positionXZ;
+	Vector2 m_position;
 	float m_speed			= 10.f;
 	float m_degPerSecond	= 30.f;
 	StopWatch m_rateOfFire;
 
 private:
-	void SetWorldPosition();
 
-	float GetHeightAtCurrentPos();
 
 };

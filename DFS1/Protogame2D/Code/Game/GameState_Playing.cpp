@@ -17,34 +17,61 @@ GameState_Playing::GameState_Playing()
 
 	m_couchMaterial = Material::GetMaterial("couch");
 
-	m_player = new Player(Vector3::ZERO);
+	m_player = new Player(Vector2(1.f,1.f));
 
-	//m_thaShip = new Entity(Vector3::ZERO, "scifi_fighter_mk6.obj");
-	//m_thaShip->SetDiffuseTexture("SciFi_Fighter-MK6-diffuse.png");
+	for (int i = 0; i < 28; i++)
+	{
+		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 7.f), Vector2::HALF * .5f, "white", RGBA::GetRandomEarthTone());
+		m_scene->AddRenderable(ent->m_renderable);
+	}
 
-	//m_thaMiku = new Entity(Vector3(0.f, 3.f, 10.f), "miku.obj", "miku.mtl");
-	//m_thaMiku->Rotate(Vector3(0.f,180.f,0.f));
-	//m_thaMiku->m_renderable->SetShader("lit_alpha", 0);
-	//m_thaMiku->m_renderable->SetShader("lit_alpha", 1);
-	//m_thaMiku->m_renderable->SetShader("default_lit", 2);
+	//Random HSV
+	for (int i = 0; i < 28; i++)
+	{
+		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 6.f), Vector2::HALF * .5f, "white", RGBA::GetRGBAFromHSV(GetRandomFloatZeroToOne(), .5f, .75f));
+		m_scene->AddRenderable(ent->m_renderable);
+	}
 
-	m_particleSystem = new ParticleSystem();
-	m_particleSystem->CreateEmitter(Vector3(0.f, 4.f, 0.f));
-	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
+	//sunflower
+	RGBA goodYellow = RGBA(240, 200, 60);
+	RGBA goodRed = RGBA(133, 24, 0);
+	for (int i = 0; i < 28; i++)
+	{
+		RGBA randomYellow = RGBA::GetRandomMixedColor(goodYellow, .8f);
+		RGBA randomRed = RGBA::GetRandomMixedColor(goodRed, .8f);
+		float perc = (float) i / 28.f;
+		float intValue = SmoothStep3(perc );
+		RGBA entColor = Interpolate(randomYellow, randomRed, intValue);
+		
+		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 5.f), Vector2::HALF * .5f, "white", entColor);
+		m_scene->AddRenderable(ent->m_renderable);
+	}
 
-	//m_scene->AddRenderable(m_particleSystem->m_emitters[0]->m_renderable);
+	//golden ratio
+	for (int i = 0; i < 28; i++)
+	{
+		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 4.f), Vector2::HALF * .5f, "white", RGBA::GetGoldenRatioColorSequence(.5f, .75f));
+		m_scene->AddRenderable(ent->m_renderable);
+	}
+
+	//pastels
+	for (int i = 0; i < 28; i++)
+	{
+		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 3.f), Vector2::HALF * .5f, "white", RGBA::GetRandomPastelColor());
+		m_scene->AddRenderable(ent->m_renderable);
+	}
+
+	for (int i = 0; i < 28; i++)
+	{
+		float perc = (float) i / 28.f;
+		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 2.f), Vector2::HALF * .5f, "white", RGBA::GetRGBAFromHSV(perc, 1.f, 1.f));
+		m_scene->AddRenderable(ent->m_renderable);
+	}
+	
+
 	m_scene->AddRenderable(m_player->m_renderable);
 
-
-	//m_scene->AddNewPointLight(Vector3::ZERO, RGBA::WHITE);
-	//m_scene->AddNewSpotLight(Vector3(0.f, 4.f, -5.f), RGBA::WHITE, 20.f, 23.f);		//camera light
-	//m_scene->AddNewSpotLight(Vector3(0.f, 5.f, 5.f), RGBA(255,255,128,255));			//orbiting light
-	//m_scene->AddNewPointLight(Vector3(0.f, 5.f, 15.f), RGBA(255, 128, 70,255));		//reddish point light
-	//m_scene->AddNewDirectionalLight(Vector3(-10.f, 0.f, -10.f), RGBA::WHITE, Vector3(0.f, -90.f, -10.f));		//bluish directional light
-
 	m_scene->AddCamera(g_theGame->m_currentCamera);
-	//g_theGame->m_mainCamera->m_transform.SetParent(&m_player->m_renderable->m_transform);
-	g_theGame->m_mainCamera->AddSkybox("skybox.png");
 }
 
 void GameState_Playing::Update(float ds)
@@ -52,20 +79,9 @@ void GameState_Playing::Update(float ds)
 	m_timeInState+=ds;
 
 	float deltaSeconds = ds;
-	if (!g_theGame->m_isPaused){
-		//the game stuff happens here
-		//g_theGame->m_gameTime+=deltaSeconds;
-
-
-		float degrees = 15.f * g_theGame->m_gameClock->GetCurrentSeconds(); 
-		//
-		Vector2 xz_pos = PolarToCartesian( 8.f, degrees ); 
-		Vector3 pos = Vector3( xz_pos.x, 5.f, xz_pos.y ); 
-	}
 
 	m_couchMaterial->SetProperty("SPECULAR_AMOUNT", m_specAmount);
 	m_couchMaterial->SetProperty("SPECULAR_POWER", m_specFactor);
-	m_particleSystem->Update(deltaSeconds);
 	m_player->Update();
 }
 
@@ -75,14 +91,7 @@ void GameState_Playing::RenderGame()
 	g_theRenderer->ClearDepth( 1.0f ); 
 	g_theRenderer->EnableDepth( COMPARE_LESS, true ); 
 
-	if (g_theGame->IsDevMode()){		//draw cube at origin
-		g_theRenderer->DrawCube(Vector3::ZERO,Vector3::ONE, RGBA::RED);
-	}
-
-	m_particleSystem->m_emitters[0]->CameraPreRender(g_theGame->m_currentCamera);
-	SetShader();
-
-	//m_thaShip->m_renderable->GetEditableMaterial()->SetProperty("TINT", RGBA::RED);
+	//SetShader();
 
 	g_theRenderer->BindModel(Matrix44::IDENTITY);
 
@@ -90,11 +99,6 @@ void GameState_Playing::RenderGame()
 
 
 	m_renderPath->Render(m_scene);
-
-	g_theRenderer->ReleaseTexture(0);
-	g_theRenderer->ReleaseTexture(1);
-
-	g_theRenderer->ReleaseShader();
 
 	g_theGame->m_debugRenderSystem->UpdateAndRender();
 	g_theRenderer->EnableDepth( COMPARE_LESS, true ); 
@@ -131,37 +135,6 @@ void GameState_Playing::HandleInput()
 	}
 	if (g_theInput->WasKeyJustReleased('T')){
 		g_theGame->m_gameClock->SetScale(1.f);
-	}
-
-	if (g_theInput->WasKeyJustPressed(VK_OEM_6)){
-		UpdateShader(1);
-	}
-	if (g_theInput->WasKeyJustPressed(VK_OEM_4)){
-		UpdateShader(-1);
-	}
-
-
-	//if (g_theInput->WasKeyJustPressed('L')){
-	//	AddNewPointLight( g_theGame->m_currentCamera->GetPosition() + g_theGame->m_currentCamera->GetForward(), RGBA::WHITE);
-	//}
-	float ds = g_theGame->GetDeltaSeconds();
-	float factorScale = 10.f;
-	if (g_theInput->IsKeyDown('K')){
-		m_specFactor+=(ds * factorScale);
-		m_specFactor = ClampFloat(m_specFactor, 1.f, 99.999f);
-	}
-	if (g_theInput->IsKeyDown('J')){
-		m_specFactor-=(ds * factorScale);
-		m_specFactor = ClampFloat(m_specFactor, 1.f, 99.999f);
-	}
-
-	if (g_theInput->IsKeyDown('M')){
-		m_specAmount+=ds;
-		m_specAmount = ClampFloat(m_specAmount, 0.f, 1.f);
-	}
-	if (g_theInput->IsKeyDown('N')){
-		m_specAmount-=ds;
-		m_specAmount = ClampFloat(m_specAmount, 0.f, 1.f);
 	}
 
 	if (!g_theGame->m_debugRenderSystem->m_isDetached){
@@ -273,7 +246,6 @@ void GameState_Playing::SetShader()
 
 	g_theRenderer->UseShader(shaderName);
 	m_player->m_renderable->SetShader(shaderName);
-	g_theGame->m_currentMap->m_renderable->SetShader(shaderName);
 	m_couchMaterial->SetShader(shaderName);
 }
 

@@ -1,6 +1,7 @@
 #include "RGBA.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Core/StringUtils.hpp"
+#include "Engine/Core/EngineCommon.hpp"
 #include <string>
 
 const RGBA RGBA::WHITE			= RGBA(255,255,255,255);
@@ -17,6 +18,8 @@ const RGBA RGBA::DARKGRAY		= RGBA(80,80,80,255);
 const RGBA RGBA::NICEBLACK		= RGBA(0,32,32,255);
 const RGBA RGBA::BLANCHEDALMOND	= RGBA(255,235,205,255);
 const RGBA RGBA::BEEFEE			= RGBA(190,239,238,255);
+
+float RGBA::s_currentRatioNumber = 0.f;
 
 
 
@@ -278,6 +281,92 @@ RGBA RGBA::GetRandomMutedColor()
 	return RGBA(r,g,b);
 }
 
+RGBA RGBA::GetRandomMixedColor(const RGBA & mixColor, float mixWeight)
+{
+	RGBA random = RGBA::GetRandomColor();
+	return Interpolate(random, mixColor, mixWeight);
+}
+
+RGBA RGBA::GetRGBAFromHSV(float hue, float saturation, float value)
+{
+	int hue_int = (int) (hue*6.f);
+	float f = hue*6.f - (float) hue_int;
+	float p = value * (1.f - saturation);
+	float q = value * (1.f - f*saturation);
+	float t = value * (1.f - (1.f - f) * saturation);
+
+	float r;
+	float g;
+	float b;
+
+	switch (hue_int)
+	{
+	case (0):
+		r = value;
+		g = t;
+		b = p;
+		break;
+	case(1):
+		r = q;
+		g = value;
+		b = p;
+		break;
+	case (2):
+		r = p;
+		g = value;
+		b = t;
+		break;
+	case(3):
+		r = p;
+		g = q;
+		b = value;
+		break;
+	case(4):
+		r = t;
+		g = p;
+		b = value;
+		break;
+	case(5):
+		r = value;
+		g = p;
+		b = q;
+		break;
+	default:
+		r = 1.f;
+		g = 1.f;
+		b = 1.f;
+		break;
+	}
+	RGBA returnVal = RGBA();
+	returnVal.SetAsFloats(r,g,b,1.f);
+	return returnVal;
+}
+
+RGBA RGBA::GetRandomEarthTone()
+{
+	return GetRGBAFromHSV(GetRandomFloatInRange(0.04f, .33f), GetRandomFloatInRange(.45f, .8f), GetRandomFloatInRange(.15f, .5f));
+}
+
+RGBA RGBA::GetRandomPastelColor(float lightness)
+{
+	return GetRandomMixedColor(RGBA::WHITE, lightness);
+}
+
+RGBA RGBA::GetGoldenRatioColorSequence(float saturation, float value)
+{
+	if (RGBA::s_currentRatioNumber == 0.f){
+		RGBA::s_currentRatioNumber = GetRandomFloatZeroToOne();
+	} else {
+		RGBA::s_currentRatioNumber += s_goldenRatioConjugate * .5f;
+	}
+	while (s_currentRatioNumber > 1.f){
+		RGBA::s_currentRatioNumber -= 1.f;
+	}
+	
+	return RGBA::GetRGBAFromHSV(RGBA::s_currentRatioNumber, saturation, value);
+
+}
+
 const RGBA Interpolate(const RGBA & start, const RGBA & end, float fractionTowardEnd)
 {
 
@@ -288,3 +377,4 @@ const RGBA Interpolate(const RGBA & start, const RGBA & end, float fractionTowar
 
 	return RGBA(r,g,b,a);
 }
+
