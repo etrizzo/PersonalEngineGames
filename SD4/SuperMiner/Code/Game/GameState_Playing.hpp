@@ -14,11 +14,13 @@ class SpotLight;
 class ParticleSystem;
 class ForwardRenderPath;
 class RenderScene;
+class World;
 
 class GameState_Playing: public GameState{
 public:
 	GameState_Playing();
 
+	World* m_world;
 	Player* m_player;
 	//Light* m_cameraLight;
 	//std::vector<Light*> m_lights = std::vector<Light*>();
@@ -67,15 +69,9 @@ protected:
 	float m_specFactor = 3.f;
 	int m_numActiveLights = 0;
 
-	eDebugShaders m_debugShader = SHADER_LIT;
-
 	void CheckForVictory();
 	void CheckForDefeat();
 	void SpawnPlayer(Vector3 pos);
-
-	void UpdateShader(int direction);
-	void SetShader();		//sets which shader to draw scene with
-	std::string GetShaderName() const;
 
 	void DeleteEntities();
 

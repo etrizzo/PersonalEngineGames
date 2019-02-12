@@ -450,20 +450,18 @@ void Renderer::DrawMeshImmediate( Vertex3D_PCU * verts, int numVerts, eDrawPrimi
 	//BindModel(Matrix44::IDENTITY);
 	BindModel(m_modelMatrix.m_top);
 	
-	DrawMesh(m_immediateMesh);
+	BindStateAndDrawMesh(m_immediateMesh);
 	//glDrawArrays( GetGLPrimitiveType(drawPrimitive), 0, numVerts );
 	//delete[] verts;
 	//delete m_immediateMesh;
 }
 
-void Renderer::DrawMesh(SubMesh * mesh)
+void Renderer::BindStateAndDrawMesh(SubMesh * mesh)
 {
 	PROFILE_PUSH_FUNCTION_SCOPE();
 	// Describe the buffer - first, figure out where the shader is expecting
 	// position to be.
 	BindRendererUniforms();
-	GL_CHECK_ERROR();
-	BindMeshToProgram(m_currentShader->m_program, mesh);
 	GL_CHECK_ERROR();
 	BindRenderState(m_currentShader->m_state);
 	GL_CHECK_ERROR();
@@ -473,7 +471,14 @@ void Renderer::DrawMesh(SubMesh * mesh)
 	GL_CHECK_ERROR();
 
 	//--------------------------------------------------------------------------------------------------------------
+	DrawMesh(mesh);
 
+}
+
+void Renderer::DrawMesh(SubMesh * mesh)
+{
+	BindMeshToProgram(m_currentShader->m_program, mesh);
+	GL_CHECK_ERROR();
 
 	GLenum primitive = GetGLPrimitiveType(mesh->GetPrimitiveType());
 	GL_CHECK_ERROR();
@@ -576,7 +581,7 @@ void Renderer::BindMeshToProgram(ShaderProgram * program, SubMesh * mesh)
 				ToGLType(attribute.m_type),  // what are they 
 				attribute.m_normalized,      // are they normalized 
 				vertex_stride,          // vertex size?
-				(GLvoid*)attribute.m_memberOffset // data offset from start
+				(GLvoid*) attribute.m_memberOffset // data offset from start
 				);                         // of vertex 
 		}
 	}
@@ -679,7 +684,7 @@ void Renderer::DrawSkybox(Skybox * skybox)
 	BindModel(skybox->m_transform.GetWorldMatrix());
 	BindTextureCube(skybox->m_texCube, 8);
 	GL_CHECK_ERROR();
-	DrawMesh(skybox->m_mesh->m_subMeshes[0]);
+	BindStateAndDrawMesh(skybox->m_mesh->m_subMeshes[0]);
 }
 
 void Renderer::BindProjection()
@@ -958,6 +963,7 @@ void Renderer::ReleaseShaderProgram()
 
 void Renderer::ApplyEffect(std::string shaderRoot, const AABB2& uvs)
 {
+	UNUSED(uvs);
 	Material* mat = Material::GetMaterial(shaderRoot);
 	if (mat != nullptr)
 	{
@@ -1356,7 +1362,7 @@ void Renderer::DrawDisc2(const Vector2 & center, const float & radius, const RGB
 
 	Vector2 currentPos;
 	for (int i = 0; i < segments + 1; i++){
-		Vector2 currentPos = PolarToCartesian(radius, currentAngle) + center;
+		currentPos = PolarToCartesian(radius, currentAngle) + center;
 		Vector2 nextPos = PolarToCartesian(radius, currentAngle + theta) + center;
 		//add a triangle :)
 		verts.push_back(Vertex3D_PCU(center, color, Vector2::ZERO));				//center
@@ -1450,7 +1456,7 @@ void Renderer::DrawCube(const Vector3 & center, const Vector3 & dimensions, cons
 {
 	BindModel(Matrix44::IDENTITY);
 	SubMesh* cubeMesh = CreateCube(center, dimensions, color, right, up, forward, UV_TOP, UV_SIDE, UV_BOTTOM);
-	DrawMesh(cubeMesh);
+	BindStateAndDrawMesh(cubeMesh);
 	delete(cubeMesh);
 }
 
@@ -1458,7 +1464,7 @@ void Renderer::DrawSphere(const Vector3 & center, const float & radius, const in
 {
 	BindModel(Matrix44::IDENTITY);
 	SubMesh* sphereMesh = CreateSphere(center, radius, wedges, slices, color, uvs);
-	DrawMesh(sphereMesh);
+	BindStateAndDrawMesh(sphereMesh);
 	delete(sphereMesh);
 }
 
@@ -1495,12 +1501,13 @@ void Renderer::DrawPlane(const Plane & plane, const RGBA & color, const Vector2 
 {
 	SubMesh* planeMesh = CreatePlane(plane.m_center, plane.m_up, plane.m_right, plane.m_size, color, uvMins, uvMaxs);
 	BindModel(m_modelMatrix.m_top);
-	DrawMesh(planeMesh);
+	BindStateAndDrawMesh(planeMesh);
 	delete(planeMesh);
 }
 
 void Renderer::DrawLine3D(const Vector3 & start, const Vector3 & end, const RGBA & startColor, const RGBA & endColor, float width)
 {
+	UNUSED(width);
 	Vertex3D_PCU startVert = Vertex3D_PCU(start, startColor, Vector2(0.f,0.f));
 	Vertex3D_PCU endVert = Vertex3D_PCU(end, endColor, Vector2(1.f,1.f));
 	Vertex3D_PCU verts[2] {startVert, endVert};
@@ -1807,7 +1814,7 @@ void Renderer::DrawText2D(const std::string & asciiText, const Vector2 & drawMin
 	}
 	mb.End();
 	SubMesh* mesh = mb.CreateSubMesh();
-	DrawMesh(mesh);
+	BindStateAndDrawMesh(mesh);
 	delete mesh;
 	//delete mb;
 	ReleaseTexture();

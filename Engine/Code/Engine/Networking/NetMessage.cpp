@@ -91,7 +91,7 @@ void NetMessage::MoveWriteHeadPastHeader()
 							//bytes for size	//header bytes
 	uint16_t sizeOfHeader = sizeof(uint16_t) + GetHeaderSize();
 	if (m_writeHead < sizeOfHeader){
-		uint16_t diff = sizeOfHeader - m_writeHead;
+		uint16_t diff = sizeOfHeader - (uint16_t) m_writeHead;
 		AdvanceWriteHead((size_t) diff);		//advance bytes for message ID & message size
 	}
 }
@@ -99,7 +99,7 @@ void NetMessage::MoveWriteHeadPastHeader()
 void NetMessage::WriteHeader()
 {
 	uint8_t id = m_definition->m_messageID;
-	unsigned int writeHead = GetWrittenByteCount();
+	unsigned int writeHead = (unsigned int) GetWrittenByteCount();
 	SetWriteHead(0);
 	Write((uint16_t) (GetHeaderSize() + m_msgSize), false);
 	Write(id, false);

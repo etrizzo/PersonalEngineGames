@@ -36,6 +36,7 @@ void NetSession::Startup()
 
 void NetSession::Host(char const * my_id, uint16_t port, uint16_t port_range)
 {
+	UNUSED(port_range);
 	if (m_state != SESSION_DISCONNECTED){
 		//Early out with warning if you're not in the `SESSION_DISCONNECTED`
 		return;
@@ -63,6 +64,7 @@ void NetSession::Host(char const * my_id, uint16_t port, uint16_t port_range)
 
 void NetSession::Join(char const * my_id, net_connection_info_t const & host_info)
 {
+	UNUSED(my_id);
 	int port = host_info.m_address.m_port;
 
 	m_joinRequestTimer = StopWatch();
@@ -136,8 +138,6 @@ unsigned int NetSession::GetNetTimeMS()
 	} else {
 		return m_currentClientTimeMS;
 	}
-
-	return 0;
 }
 
 void NetSession::Update()
@@ -222,7 +222,7 @@ NetConnection * NetSession::CreateConnection(net_connection_info_t const & info)
 	m_allConnections.push_back(newConnection);
 
 	if (info.m_sessionIndex != INVALID_CONNECTION_INDEX){		//if index is valid
-		BindConnection(m_boundConnections.size(), newConnection);
+		BindConnection((uint8_t) m_boundConnections.size(), newConnection);
 		//m_boundConnections.push_back(newConnection);
 	}
 
@@ -243,7 +243,7 @@ void NetSession::DestroyConnection(NetConnection * cp)
 	}
 
 	//remove bound connection if it's in there
-	for(int i = m_boundConnections.size() - 1; i >= 0; i--)
+	for(int i = (int) m_boundConnections.size() - 1; i >= 0; i--)
 	{
 		if (m_boundConnections[i] == cp){
 			RemoveAtFast(m_boundConnections, i);
@@ -251,7 +251,7 @@ void NetSession::DestroyConnection(NetConnection * cp)
 	}
 
 	//remove from the all connections list
-	for(int i = m_allConnections.size() - 1; i >= 0; i--)
+	for(int i = (int) m_allConnections.size() - 1; i >= 0; i--)
 	{
 		if (m_allConnections[i] == cp){
 			RemoveAtFast(m_allConnections, i);
@@ -260,7 +260,7 @@ void NetSession::DestroyConnection(NetConnection * cp)
 	
 
 	//remove any timestamped packets from this connection
-	for (int i = m_timeStampedPackets.size() - 1; i >= 0; i--){
+	for (int i = (int) m_timeStampedPackets.size() - 1; i >= 0; i--){
 		if (m_timeStampedPackets[i]->m_fromConnection == cp){
 			time_stamped_packet_t* packet = m_timeStampedPackets[i];
 			RemoveAtFast(m_timeStampedPackets, i);
@@ -505,7 +505,7 @@ void NetSession::ProcessHostTime(unsigned int hostTimeMS)
 		return;
 	} else {
 		//if it is more recent than last time update, process it.
-		m_lastReceivedHostTimeMS = hostTimeMS + (m_hostConnection->GetRTT() * .5f);
+		m_lastReceivedHostTimeMS = hostTimeMS + (unsigned int) (m_hostConnection->GetRTT() * .5f);
 		m_desiredClientTimeMS = m_lastReceivedHostTimeMS;
 		
 	}
@@ -553,14 +553,14 @@ void NetSession::RegisterMessage(int msgIndex, std::string name, NetSessionMessa
 		messageDef->m_messageID = (uint8_t) m_registeredMessages.size();
 		m_unassignedMessages.push_back(messageDef);
 	} else {
-		messageDef->m_messageID = msgIndex;
+		messageDef->m_messageID = (uint8_t) msgIndex;
 		m_fixedIndexMessages.push_back(messageDef);
 	}
 }
 
 void NetSession::SortMessageIDs()
 {
-	int numMessages = m_unassignedMessages.size() + m_fixedIndexMessages.size();
+	int numMessages = (int) m_unassignedMessages.size() + (int) m_fixedIndexMessages.size();
 	std::sort(m_unassignedMessages.begin(), m_unassignedMessages.end(), CompareDefinitionsByName);
 	m_registeredMessages.resize(numMessages);
 	int unassignedIndex = 0;
@@ -692,7 +692,7 @@ void NetSession::ProcessOutgoing()
 void NetSession::DestroyDisconnects()
 {
 	//remove any disconnects from this frame
-	for (int i = m_boundConnections.size() - 1; i >= 0; i--){
+	for (int i = (int) m_boundConnections.size() - 1; i >= 0; i--){
 		if (m_boundConnections[i]->IsDisconnected()){
 			DestroyConnection(m_boundConnections[i]);
 		}
@@ -700,7 +700,7 @@ void NetSession::DestroyDisconnects()
 
 	//if you or your host disconnect, remove all connections and disconnect
 	if (m_hostConnection == nullptr || m_myConnection == nullptr){
-		for (int i = m_boundConnections.size() - 1; i >= 0; i--){
+		for (int i = (int) m_boundConnections.size() - 1; i >= 0; i--){
 			DestroyConnection(m_boundConnections[i]);
 		}
 
@@ -720,10 +720,6 @@ void NetSession::ProcessMessage(NetMessage* message, NetConnection* from)
 	//get the appropriate callback from the map of registered callbacks
 	if (IsMessageRegistered(messageType)){
 		net_message_definition_t* definition = GetRegisteredMessageByID(messageType);
-		if (messageType != 0){
-			int x = 0;
-
-		}
 		if (definition== nullptr){
 			LogErrorf("No definition found for message index: %i", message->m_msgID);
 		} else {
@@ -1094,6 +1090,8 @@ bool OnJoinRequest(NetMessage msg, net_sender_t const & from)
 
 bool OnJoinDeny(NetMessage msg, net_sender_t const & from)
 {
+	UNUSED(msg);
+	UNUSED(from);
 	return false;
 }
 
@@ -1116,11 +1114,15 @@ bool OnJoinAccept(NetMessage msg, net_sender_t const & from)
 
 bool OnNewConnection(NetMessage msg, net_sender_t const & from)
 {
+	UNUSED(msg);
+	UNUSED(from);
 	return false;
 }
 
 bool OnJoinFinished(NetMessage msg, net_sender_t const & from)
 {
+	UNUSED(msg);
+	UNUSED(from);
 	return false;
 }
 
@@ -1131,7 +1133,7 @@ bool OnUpdateConnectionState(NetMessage msg, net_sender_t const & from)
 	uint8_t stateUint;
 	msg.Read(&indx);
 	msg.Read(&stateUint);
-	NetConnection* conn = from.m_connection->m_owningSession->GetConnection(indx);
+	//NetConnection* conn = from.m_connection->m_owningSession->GetConnection(indx);
 	//if (conn != nullptr){	
 	//	ConsolePrintf("Setting connection %i to state %i (from conn %i)", indx, stateUint, from.m_connection->m_info.m_sessionIndex );
 	//	from.m_connection->m_owningSession->GetConnection(indx)->m_state = (eConnectionState) stateUint;

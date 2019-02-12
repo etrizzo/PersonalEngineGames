@@ -9,6 +9,8 @@
 	<Characters>
 		<Character id = "*0*" title="villager"/>
 		<Character id = "*1*" title="player" />
+		<Character id = "*0*" title="loveintsrt"/>
+		<Character id = "*1*" title="enemy" />
 	</Characters>
 
 	<CharacterRequirements>

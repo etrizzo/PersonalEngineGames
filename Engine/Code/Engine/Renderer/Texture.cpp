@@ -85,7 +85,7 @@ void Texture::PopulateFromImage(const Image * image, bool setMips)
 	m_dimensions = image->GetDimensions();
 
 	if (m_dimensions.x == 0 && m_dimensions.y == 0){
-		TODO("Make an invalid texture");
+		//TODO("Make an invalid texture");
 		std::vector<RGBA> invalid = {RGBA::MAGENTA, RGBA::BLACK, RGBA::BLACK, RGBA::MAGENTA};
 		image = new Image(invalid, IntVector2(1,1));
 	}

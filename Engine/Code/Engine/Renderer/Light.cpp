@@ -199,7 +199,6 @@ light_t SpotLight::GetBuffer() const
 void SpotLight::RenderAsPoint(Renderer * r)
 {
 	RGBA color = m_lightColor.GetColorWithAlpha(100);
-	TODO("draw a cone lol");
 	r->UseShader("wireframe");
 	r->DrawCube(m_transform.GetWorldPosition(), Vector3::ONE * .3f, color);
 	r->DrawLine3D(m_transform.GetWorldPosition(), m_transform.GetWorldPosition() + m_transform.GetForward(), color, color);

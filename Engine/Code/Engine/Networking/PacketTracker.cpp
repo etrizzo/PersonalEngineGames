@@ -5,7 +5,7 @@ PacketTracker::PacketTracker(uint16_t ack, unsigned int sendTimeMS)
 	m_ack = ack;
 	m_sentMS = sendTimeMS;
 	for (int i = 0; i < MAX_RELIABLES_PER_PACKET; i++){
-		m_sentReliableIDs[i] = INVALID_RELIABLE_ID;
+		m_sentReliableIDs[i] = (uint16_t) INVALID_RELIABLE_ID;
 	}
 }
 
@@ -37,7 +37,7 @@ void PacketTracker::Reset()
 	//m_isValid = false;
 	m_numReliablesInPacket = 0;
 	for (int i = 0; i < MAX_RELIABLES_PER_PACKET; i++){
-		m_sentReliableIDs[i] = INVALID_RELIABLE_ID;
+		m_sentReliableIDs[i] = (uint16_t) INVALID_RELIABLE_ID;
 	}
 
 }

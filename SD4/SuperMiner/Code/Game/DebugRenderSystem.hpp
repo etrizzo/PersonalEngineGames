@@ -81,6 +81,8 @@ public:
 	PerspectiveCamera* m_camera;
 	PerspectiveCamera* m_gameCamera;
 	bool m_isDetached = false;
+	float m_cameraSpeed = 16.f;
+	float m_cameraShiftMultiplier = 4.f;
 
 	Vector3 m_currentCameraEuler = Vector3::ZERO;
 	bool m_isActive = false;

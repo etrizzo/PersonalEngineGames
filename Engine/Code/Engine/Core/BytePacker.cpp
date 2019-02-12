@@ -249,6 +249,7 @@ size_t BytePacker::WriteString(char const * str)
 	// toEndianness(str, GetEndianness())
 	// calls writebytes(str)
 	bool wrote = WriteBytes(sizeOfString, str + '\0', false);
+	UNUSED(wrote);
 	//for (size_t i = 0; i < sizeOfString; i++){
 	//	// write each byte individually for reasons???????? Endianness???????
 	//	wrote = WriteBytes(1, (void*) &str[i]);

@@ -1,6 +1,5 @@
 #include "Game/Player.hpp"
 #include "Game/Game.hpp"
-#include "Game/Map.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 
@@ -9,24 +8,12 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	float size = 1.f;
 	m_collider = Sphere(Vector3::ZERO, size);
 	m_renderable = new Renderable();//new Renderable(RENDERABLE_CUBE, 1.f);
-	m_turretRenderable = new Renderable();
 	//make tank
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
 	mb.AppendCube(Vector3::ZERO, Vector3(.8f, .3f, 1.f), RGBA::GREEN, RIGHT, UP, FORWARD);
 	mb.End();
 	m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
-
-	//make turret
-	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	Vector3 sphere = Vector3::ZERO - (Vector3::Y_AXIS * .08f);
-	mb.AppendSphere(sphere, .2f, 10, 10, RGBA::RED);
-	//mb.AppendCube(sphere, Vector3::ONE * .5f, RGBA::RED);
-	mb.AppendCube(FORWARD * .4f, Vector3(.1f, .1f, .8f), RGBA::RED, RIGHT, UP, FORWARD);
-	mb.End();
-	m_turretRenderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
-	m_turretRenderable->SetMaterial(Material::GetMaterial("cel_shaded_lit"));
-	
 	
 	Material* mat = Material::GetMaterial("couch_cel");
 	if (mat != nullptr){
@@ -50,24 +37,7 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	//set up auxilary transforms: camera target, turret renderable, barrel fire position, laser sight...
 	m_cameraTarget = new Transform();
 	m_cameraTarget->SetLocalPosition(Vector3::ZERO);
-	m_turretRenderable->SetPosition(Vector3::ZERO + GetUp() * .25f);
-	m_turretRenderable->m_transform.SetParent(&m_renderable->m_transform);
-	m_barrelPosition = new Transform();
-	m_barrelPosition->SetParent(&m_turretRenderable->m_transform);
-	m_barrelPosition->SetLocalPosition(Vector3(0.f, 0.f, .8f));
 
-	mb.Clear();
-	mb.Begin(PRIMITIVE_LINES, false);
-	mb.AppendLine(Vector3::ZERO, FORWARD * 15.f, RGBA::RED, RGBA(100,0,0,128));
-	mb.End();
-	m_laserSightRenderable = new Renderable();
-	m_laserSightRenderable->SetMesh(mb.CreateMesh());
-	m_laserSightRenderable->SetMaterial(Material::GetMaterial("default_alpha"));
-	m_laserSightRenderable->m_transform.SetParent(m_barrelPosition);
-
-
-	m_targetRenderable = new Renderable(RENDERABLE_PLANE, .15f);
-	m_targetRenderable->GetEditableMaterial()->SetProperty("TINT", RGBA::RED);
 
 	//m_turretRenderable->m_transform.SetParent(m_cameraTarget);
 
@@ -91,15 +61,8 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 
 Player::~Player()
 {
-	g_theGame->GetScene()->RemoveRenderable(m_laserSightRenderable);
-	g_theGame->GetScene()->RemoveRenderable(m_targetRenderable);
-	g_theGame->GetScene()->RemoveRenderable(m_turretRenderable);
-
 	delete m_cameraTarget;
-	delete m_turretRenderable;
-	delete m_laserSightRenderable;
-	delete m_targetRenderable;
-	delete m_barrelPosition;
+
 }
 
 void Player::Update()
@@ -107,13 +70,7 @@ void Player::Update()
 
 	float ds = g_theGame->GetDeltaSeconds();
 	m_ageInSeconds+=ds;
-	
-	SetWorldPosition();
-	
-	UpdateTarget();
-	
-	m_cameraTarget->SetLocalPosition(GetPosition() + GetUp() * .25f);
-	MoveTurretTowardTarget();
+
 }
 
 void Player::HandleInput()
@@ -189,8 +146,6 @@ void Player::HandleInput()
 
 	m_positionXZ+=movement;
 
-	m_positionXZ = ClampVector2(m_positionXZ, g_theGame->m_currentMap->m_extents.mins, g_theGame->m_currentMap->m_extents.maxs);
-	
 
 
 }
@@ -215,16 +170,11 @@ void Player::Respawn()
 void Player::RemoveRenderable()
 {
 	g_theGame->GetScene()->RemoveRenderable(m_renderable);
-	g_theGame->GetScene()->RemoveRenderable(m_laserSightRenderable);
-	g_theGame->GetScene()->RemoveRenderable(m_turretRenderable);
 }
 
 void Player::AddRenderable()
 {
 	g_theGame->GetScene()->AddRenderable(m_renderable);
-	g_theGame->GetScene()->AddRenderable(m_laserSightRenderable);
-	g_theGame->GetScene()->AddRenderable(m_targetRenderable);
-	g_theGame->GetScene()->AddRenderable(m_turretRenderable);
 }
 
 float Player::GetPercentageOfHealth() const
@@ -233,75 +183,4 @@ float Player::GetPercentageOfHealth() const
 	return t;
 }
 
-
-
-static Vector2 gPos = Vector2(0.0f, 0.0f); 
-
-void Player::SetWorldPosition()
-{
-
-	Vector3 pos = Vector3(m_positionXZ.x, GetHeightAtCurrentPos() + .3f, m_positionXZ.y);
-
-	Vector3 normal = g_theGame->m_currentMap->GetNormalAtPosition(m_positionXZ);
-	
-
-	//maintaining Forward:
-	Vector3 forward = GetForward(); 
-	Vector3 newUp = normal.GetNormalized();
-	Vector3 newRight = Cross(newUp, GetForward()).GetNormalized();
-	Vector3 newForward = Cross(newRight, newUp).GetNormalized();
-
-	Matrix44 mat = Matrix44(newRight, newUp, newForward, pos);
-
-	m_renderable->m_transform.SetLocalMatrix(mat);
-	m_collider.SetPosition(pos);
-
-
-	m_shadowCameraTransform->SetLocalPosition(pos + m_shadowCameraOffset);
-
-	//SetPosition(pos);
-}
-
-void Player::MoveTurretTowardTarget()
-{
-	//m_turretRenderable->m_transform.SetRotationEuler(Vector3::ZERO);
-	Transform* base = m_turretRenderable->m_transform.GetParent();
-	Vector3 localPos = base->WorldToLocal(m_target);
-	//m_turretRenderable->m_transform.LocalLookAt(localPos);
-
-	Matrix44 targetTransform = Matrix44::LookAt(m_turretRenderable->m_transform.GetLocalPosition(), localPos);
-	Matrix44 currentTransform = m_turretRenderable->m_transform.GetLocalMatrix();
-	//currentTransform.RotateDegrees3D(Vector3(0.f, 60.f, 0.f));
-
-	float turnThisFrame = m_degPerSecond * g_theGame->GetDeltaSeconds();
-	Matrix44 localMat = TurnToward(currentTransform, targetTransform, turnThisFrame);
-	m_turretRenderable->m_transform.SetLocalMatrix(localMat);
-	
-	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_turretRenderable->m_transform.GetWorldPosition(), 1.f, m_turretRenderable->m_transform.GetWorldMatrix(), RGBA::YELLOW);
-
-}
-
-void Player::UpdateTarget()
-{
-	//ray cast against the world from camera forward
-	Ray3D ray = Ray3D(g_theGame->m_mainCamera->GetPosition(), g_theGame->m_mainCamera->GetForward() );
-	
-	Contact3D contact;
-	if (g_theGame->m_currentMap->Raycast(contact, 1, ray, 1000.f)) {
-		//if we hit something, update target
-		m_target = contact.m_position;
-		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_barrelPosition->GetWorldPosition(), m_target, RGBA::RED.GetColorWithAlpha(128), RGBA::RED.GetColorWithAlpha(128));
-		g_theGame->m_debugRenderSystem->MakeDebugRenderQuad(0.f, m_target, Vector2::HALF * .2f, g_theGame->GetCurrentCameraRight(), g_theGame->GetCurrentCameraUp(), RGBA::RED, RGBA::RED, DEBUG_RENDER_IGNORE_DEPTH);
-		//g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_target, .1f);
-		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_target, m_target + contact.m_normal, RGBA::RED, RGBA::YELLOW);
-	} else {
-		m_target = ray.Evaluate(1000.f);
-		//g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(m_cameraTarget->GetWorldPosition(), m_target, RGBA::RED, RGBA::RED);
-	}
-}
-
-float Player::GetHeightAtCurrentPos()
-{
-	return g_theGame->m_currentMap->GetHeightAtCoord(m_positionXZ);
-}
 

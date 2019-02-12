@@ -11,9 +11,10 @@
 
 //const static Vector3 GRAVITY = Vector3(0.f, -9.8f, 0.f);
 
+#define USE_X_FORWARD_Z_UP
+
 #define AUDIO_ENABLED	// (If uncommented) Disables AudioSystem code and fmod linkage.
 #define PROFILING_ENABLED		// (If uncommented) Enables profiling in game code
-#define USE_X_FORWARD_Z_UP
 //#define RCS_ENABLED			// (If uncommented) Enables remote command service in dev console
 //#define LOGGING_ENABLED			// (If uncommented) Enables log system
 //#define NET_ENABLED				// (If uncommented) Enables networking system

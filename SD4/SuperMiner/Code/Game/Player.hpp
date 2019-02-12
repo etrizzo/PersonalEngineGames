@@ -21,19 +21,11 @@ public:
 	float m_degPerSecond	= 60.f;
 	StopWatch m_rateOfFire;
 	Transform* m_cameraTarget;
-	Renderable* m_turretRenderable;
-	Renderable* m_laserSightRenderable;
-	Renderable* m_targetRenderable;
-	Transform* m_barrelPosition;
+
 	Transform* m_shadowCameraTransform;
 	Vector3 m_shadowCameraOffset;
 	Vector3 m_target;
 
 private:
-	void SetWorldPosition();
-	void MoveTurretTowardTarget();
-	void UpdateTarget();
-
-	float GetHeightAtCurrentPos();
 
 };

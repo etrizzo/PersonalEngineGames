@@ -216,7 +216,7 @@ void ProfilerVisualizer::RenderGraph()
 	mb.End();
 
 	SubMesh* m = mb.CreateSubMesh(VERTEX_TYPE_3DPCU);
-	m_renderer->DrawMesh(m);
+	m_renderer->BindStateAndDrawMesh(m);
 	delete m;
 }
 

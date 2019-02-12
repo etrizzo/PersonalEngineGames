@@ -127,7 +127,6 @@
 	<textures>
 		<texture type="diffuse" path="Terrain_32x32.png" />
 	</textures>
-
 </material>
 
 

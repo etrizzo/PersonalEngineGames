@@ -28,8 +28,6 @@ public:
 	virtual void RunWorldPhysics();
 	virtual void RunEntityPhysics();
 
-	void RenderHealthBar();
-
 	void SetTransform(Transform newT);
 
 	void Translate(Vector3 translation);

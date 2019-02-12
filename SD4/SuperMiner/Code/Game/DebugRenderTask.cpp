@@ -101,14 +101,14 @@ void DebugRenderTask_Basis::Render()
 	RGBA forwardColor	= RGBA::BLUE;
 	if (m_info.m_mode == DEBUG_RENDER_XRAY || m_info.m_mode == DEBUG_RENDER_HIDDEN)
 	{
-		rightColor = rightColor.GetColorWithAlpha(128);
-		upColor = upColor.GetColorWithAlpha(128);
-		forwardColor = forwardColor.GetColorWithAlpha(128);
+		rightColor = rightColor.GetColorWithAlpha(80);
+		upColor = upColor.GetColorWithAlpha(80);
+		forwardColor = forwardColor.GetColorWithAlpha(80);
 	}
 
-	g_theRenderer->DrawLine3D(m_position, m_position + (m_right * m_size), rightColor);
-	g_theRenderer->DrawLine3D(m_position, m_position + (m_up * m_size),	upColor);
-	g_theRenderer->DrawLine3D(m_position, m_position + (m_forward * m_size),	forwardColor);
+	g_theRenderer->DrawLine3D(m_position, m_position + (m_right * m_size), rightColor, rightColor);
+	g_theRenderer->DrawLine3D(m_position, m_position + (m_up * m_size),	upColor, upColor);
+	g_theRenderer->DrawLine3D(m_position, m_position + (m_forward * m_size), forwardColor, forwardColor);
 
 	//g_theRenderer->DrawPoint(m_position, m_size, m_right, m_up, m_forward, right, up, forward);
 }

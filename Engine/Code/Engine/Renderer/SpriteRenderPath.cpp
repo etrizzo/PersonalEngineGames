@@ -70,7 +70,7 @@ void SpriteRenderPath::RenderSceneForCamera(Camera * cam, RenderScene2D * scene)
 		m_renderer->BindMaterial(dc.m_material);
 		m_renderer->BindModel(dc.m_model);
 		//m_renderer->BindLightUniforms(dc.m_lights);
-		m_renderer->DrawMesh(dc.m_mesh);
+		m_renderer->BindStateAndDrawMesh(dc.m_mesh);
 	}
 	PROFILE_POP();
 	TODO("Add post-processing to forward render path");

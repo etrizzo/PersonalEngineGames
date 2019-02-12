@@ -11,6 +11,7 @@
 #include "Engine/Core/ErrorWarningAssert.hpp"
 #include "Engine/Core/Image.hpp"
 #include "Engine/Core/Clock.hpp"
+#include "Engine/Renderer/Material.hpp"
 
 
 #define SMALL_VALUE .05f
@@ -25,34 +26,38 @@ extern InputSystem* g_theInput;
 extern AudioSystem* g_theAudio;
 //extern Window* g_theWindow;
 
-extern SpriteSheet* g_tileSpriteSheet;
+extern SpriteSheet* g_blockSpriteSheet;
 
-
-enum eDebugShaders{
-	SHADER_LIT,			//default
-	SHADER_NORMAL,
-	SHADER_TANGENT,
-	SHADER_BITANGENT,
-	SHADER_NORMALMAP,
-	SHADER_WORLDNORMAL,
-	SHADER_DIFFUSE,
-	SHADER_SPECULAR,
-	NUM_DEBUG_SHADERS
-};
 
 //vector definitions
 const static Vector3 RIGHT		= Vector3(0.f,-1.f, 0.f);
 const static Vector3 UP			= Vector3(0.f, 0.f, 1.f);
 const static Vector3 FORWARD	= Vector3(1.f, 0.f, 0.f);
 
-//const static Vector3 RIGHT		= Vector3(1.f, 0.f, 0.f);
-//const static Vector3 UP			= Vector3(0.f, 1.f, 0.f);
-//const static Vector3 FORWARD	= Vector3(0.f, 0.f, 1.f);
+constexpr int   CHUNK_BITS_X = 4;
+constexpr int   CHUNK_BITS_Y = 4;
+constexpr int   CHUNK_BITS_Z = 7;
+
+constexpr int   CHUNK_SIZE_X = (1 << CHUNK_BITS_X);
+constexpr int   CHUNK_SIZE_Y = (1 << CHUNK_BITS_Y);
+constexpr int   CHUNK_SIZE_Z = (1 << CHUNK_BITS_Z);
+constexpr int   CHUNK_LAYER_DIMS_XY = CHUNK_SIZE_X * CHUNK_SIZE_Y;
+constexpr int	BLOCKS_PER_CHUNK = CHUNK_SIZE_X  * CHUNK_SIZE_Y * CHUNK_SIZE_Z;
+
 
 //this is the matrix to apply to convert world coordinates to engine coordinates 
 const static Matrix44 g_worldToEngine = Matrix44(Vector3(0.f, 0.f, 1.f), 		//right
 							Vector3(-1.f, 0.f, 0.f), 		//up
 							Vector3(0.f, 1.f, 0.f));		//forward
+
+
+enum eBlockType : unsigned char{
+	BLOCK_AIR = 0,			//air is always 0!! we make assumptions on this.
+	BLOCK_GRASS,
+	BLOCK_STONE,
+	BLOCK_SNOW,
+	NUM_BLOCKS
+};
 
 //const static Matrix44 WORLD_BASIS = Matrix44(RIGHT, UP, FORWARD);
 

@@ -44,6 +44,7 @@ profileMeasurement_t::~profileMeasurement_t()
 	if (m_parent != nullptr){
 		m_parent->RemoveChild(this);
 	}
+
 }
 
 void profileMeasurement_t::AddChild(profileMeasurement_t * child)

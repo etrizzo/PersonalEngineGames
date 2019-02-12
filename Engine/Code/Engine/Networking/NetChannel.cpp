@@ -1,4 +1,5 @@
 #include "NetChannel.hpp"
+#include "Engine/Networking/NetMessage.hpp"
 
 NetChannel::~NetChannel()
 {

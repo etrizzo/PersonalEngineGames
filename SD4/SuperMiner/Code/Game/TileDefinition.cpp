@@ -7,7 +7,7 @@ TileDefinition::TileDefinition(tinyxml2::XMLElement* tileDefElement)
 {
 	m_name					= ParseXmlAttribute(*tileDefElement, "name", "NO_NAME");		
 	m_spriteCoords			= ParseXmlAttribute(*tileDefElement, "spriteCoords", IntVector2(0,0));
-	m_texCoords				= g_tileSpriteSheet->GetTexCoordsForSpriteCoords(m_spriteCoords);
+	m_texCoords				= g_blockSpriteSheet->GetTexCoordsForSpriteCoords(m_spriteCoords);
 	m_spriteTint			= ParseXmlAttribute(*tileDefElement, "spriteTint", RGBA::WHITE);
 	m_allowsWalking			= ParseXmlAttribute(*tileDefElement, "allowsWalking", false);
 	m_allowsSight			= ParseXmlAttribute(*tileDefElement, "allowsSight", false);
@@ -15,14 +15,14 @@ TileDefinition::TileDefinition(tinyxml2::XMLElement* tileDefElement)
 	m_allowsSwimming		= ParseXmlAttribute(*tileDefElement, "allowsSwimming", false);
 	m_isDestructible		= ParseXmlAttribute(*tileDefElement, "isDestructible", false);
 	m_maxHealth				= ParseXmlAttribute(*tileDefElement, "maxHealth", 1.f);
-	m_startingSpriteIndex	= GetIndexFromCoordinates(m_spriteCoords.x, m_spriteCoords.y, g_tileSpriteSheet->GetDimensions().x, g_tileSpriteSheet->GetDimensions().y);
+	m_startingSpriteIndex	= GetIndexFromCoordinates(m_spriteCoords.x, m_spriteCoords.y, g_blockSpriteSheet->GetDimensions().x, g_blockSpriteSheet->GetDimensions().y);
 }
 
 AABB2 TileDefinition::GetTexCoordsAtHealth(int health)
 {
 	float percentage = (float)health/(float)m_maxHealth;
 	int spriteIndex = Interpolate(m_startingSpriteIndex, m_startingSpriteIndex+3, 1-percentage);
-	return g_tileSpriteSheet->GetTexCoordsForSpriteIndex(spriteIndex);
+	return g_blockSpriteSheet->GetTexCoordsForSpriteIndex(spriteIndex);
 }
 
 TileDefinition * TileDefinition::GetTileDefinition(std::string name)

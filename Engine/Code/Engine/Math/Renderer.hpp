@@ -104,6 +104,7 @@ public:
 
 	GLenum GetGLPrimitiveType(eDrawPrimitiveType primType);
 	void DrawMeshImmediate(  Vertex3D_PCU* verts, int numVerts, eDrawPrimitiveType drawPrimitive, const int* indices = nullptr, int numIndices = 0);
+	void BindStateAndDrawMesh(SubMesh* mesh);		//was draw mesh
 	void DrawMesh(SubMesh* mesh);
 
 	void BeginFrame(const Vector2 & bottomLeft, const Vector2 & topRight, RGBA color);

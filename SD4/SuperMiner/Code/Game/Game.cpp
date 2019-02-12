@@ -1,12 +1,10 @@
 #include "Game.hpp"
 #include "Game/TileDefinition.hpp"
-#include "Game/Map.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Game/Player.hpp"
 #include "Engine/Renderer/Light.hpp"
 #include "Engine/Renderer/ParticleSystem.hpp"
-#include <map>
 #include "Engine/Networking/UDPTests.hpp"
 #include "Engine/Networking/NetSession.hpp"
 #include "Engine/Networking/NetConnection.hpp"
@@ -23,7 +21,7 @@ Game::Game()
 {
 	
 	m_tileTexture = g_theRenderer->CreateOrGetTexture("Terrain_32x32.png");
-	g_tileSpriteSheet = new SpriteSheet(*m_tileTexture, 32, 32);
+	g_blockSpriteSheet = new SpriteSheet(*m_tileTexture, 32, 32);
 	m_isPaused = false;
 	m_devMode = false;
 	//m_gameTime = 0.f;
@@ -49,7 +47,7 @@ Game::Game()
 	//newProj.Append(projection);
 	//m_mainCamera->m_projMatrix.Load(newProj);
 	m_mainCamera->m_projMatrix.m_top.Append(g_worldToEngine);
-	//m_mainCamera->Translate(Vector3(-4.f,0.f,0.f));
+	m_mainCamera->Translate(Vector3(-4.f,0.f, (float) CHUNK_SIZE_Z * .5f));
 
 	m_uiCamera = new Camera();
 

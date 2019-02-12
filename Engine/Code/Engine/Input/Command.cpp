@@ -156,11 +156,13 @@ void CommandPrintProfilerReport(Command & cmd)
 
 void CommandProfilePause(Command & cmd)
 {
+	UNUSED(cmd);
 	Profiler::GetInstance()->Pause();
 }
 
 void CommandProfileResume(Command & cmd)
 {
+	UNUSED(cmd);
 	Profiler::GetInstance()->Resume();
 }
 

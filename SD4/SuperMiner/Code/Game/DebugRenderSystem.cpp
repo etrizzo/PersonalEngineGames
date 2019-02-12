@@ -101,10 +101,12 @@ void DebugRenderSystem::HandleInput()
 
 void DebugRenderSystem::HandleCameraInput()
 {
-	float ds = m_debugRenderClock->GetDeltaSeconds();
 
-	float degPerSecond = 60.f;
-	//Vector3 rotation = Vector3::ZERO;
+	float speed = m_cameraSpeed;
+	if (g_theInput->IsKeyDown(VK_SHIFT)){
+		speed *= m_cameraShiftMultiplier;
+	}
+	float ds = m_debugRenderClock->GetDeltaSeconds();
 
 	float deltaYaw = 0.f;
 	float deltaPitch = 0.f;
@@ -138,9 +140,11 @@ void DebugRenderSystem::HandleCameraInput()
 */
 	m_camera->Rotate(deltaYaw, deltaPitch, 0.f);
 
+	Vector3 forward = m_camera->GetForward();
+	Vector3 forwardLockedVertical = Vector3(forward.x, forward.y, 0.f);
+	forwardLockedVertical.NormalizeAndGetLength();
 
 	//why are there 6 keys if there are only 4 directions
-	float speed = 4.f;
 	if (g_theInput->IsKeyDown('D')){
 		m_camera->Translate(m_camera->GetRight() * ds * speed);
 	}
@@ -148,10 +152,10 @@ void DebugRenderSystem::HandleCameraInput()
 		m_camera->Translate(m_camera->GetRight() * ds * speed * -1.f);
 	}
 	if (g_theInput->IsKeyDown('W')){
-		m_camera->Translate(m_camera->GetForward() * ds* speed );
+		m_camera->Translate(forwardLockedVertical * ds* speed );
 	}
 	if (g_theInput->IsKeyDown('S')){
-		m_camera->Translate(m_camera->GetForward() * ds * speed * -1.f);
+		m_camera->Translate(forwardLockedVertical * ds * speed * -1.f);
 	}
 	if (g_theInput->IsKeyDown('E') || g_theInput->GetController(0)->IsButtonDown(XBOX_BUMPER_RIGHT)){
 		m_camera->Translate(UP * ds* speed );		//going off of camera's up feels very weird when it's not perfectly upright
@@ -162,7 +166,7 @@ void DebugRenderSystem::HandleCameraInput()
 
 	Vector2 controllerTranslation = g_theInput->GetController(0)->GetLeftThumbstickCoordinates();
 
-	m_camera->Translate(m_camera->GetForward() * controllerTranslation.y * ds * speed);
+	m_camera->Translate(forwardLockedVertical * controllerTranslation.y * ds * speed);
 	m_camera->Translate(m_camera->GetRight() * controllerTranslation.x * ds * speed);
 
 	
@@ -427,7 +431,7 @@ void DebugRenderSystem::Render3D()
 			
 			g_theRenderer->UseShader("wireframe");
 			g_theRenderer->BindModel(m_gameCamera->m_transform.GetWorldMatrix());
-			g_theRenderer->DrawMesh(m_gameCamera->GetDebugMesh());
+			g_theRenderer->BindStateAndDrawMesh(m_gameCamera->GetDebugMesh());
 				
 			g_theRenderer->ReleaseShader();
 

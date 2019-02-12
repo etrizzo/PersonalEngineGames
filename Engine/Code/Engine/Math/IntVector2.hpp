@@ -25,6 +25,8 @@ public:
 	bool operator==( const IntVector2& compare ) const;				// vec2 == vec2
 	bool operator!=( const IntVector2& compare ) const;				// vec2 != vec2
 
+	bool operator<(const IntVector2& compare) const;
+
 	friend const IntVector2 operator*( int uniformScale, const IntVector2& vecToScale );	// float * vec2
 
 

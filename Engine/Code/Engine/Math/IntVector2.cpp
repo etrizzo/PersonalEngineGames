@@ -50,6 +50,21 @@ const IntVector2 IntVector2::operator-( const IntVector2& vecToSubtract ) const
 }
 
 
+bool IntVector2::operator<(const IntVector2& compare) const
+{
+	if (y < compare.y){
+		return true;
+	}
+	if (y == compare.y){
+		if (x < compare.x){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	return false;
+}
+
 //-----------------------------------------------------------------------------------------------
 const IntVector2 IntVector2::operator*( int uniformScale ) const
 {

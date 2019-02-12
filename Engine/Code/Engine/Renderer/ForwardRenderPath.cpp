@@ -89,7 +89,7 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 		m_renderer->BindMaterial(dc.m_material);
 		m_renderer->BindModel(dc.m_model);
 		m_renderer->BindLightUniforms(dc.m_lights);
-		m_renderer->DrawMesh(dc.m_mesh);
+		m_renderer->BindStateAndDrawMesh(dc.m_mesh);
 	}
 	PROFILE_POP();
 
@@ -311,7 +311,7 @@ void ForwardRenderPath::RenderShadowsForLight(Light * l, RenderScene * scene)
 		GL_CHECK_ERROR();
 		m_renderer->BindModel(dc.m_model);
 		GL_CHECK_ERROR();
-		m_renderer->DrawMesh(dc.m_mesh);
+		m_renderer->BindStateAndDrawMesh(dc.m_mesh);
 		GL_CHECK_ERROR();
 	}
 

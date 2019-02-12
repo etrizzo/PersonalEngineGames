@@ -260,7 +260,7 @@ bool NetConnection::ConfirmPacketReceived(uint16_t newReceivedAck)
 					//update received reliables
 					for (unsigned int i = 0; i < tracker->m_numReliablesInPacket; i++){
 						uint16_t reliableID = tracker->m_sentReliableIDs[i];
-						for (int unconfirmedIdx = m_unconfirmedReliableMessages.size() - 1; unconfirmedIdx >= 0; unconfirmedIdx--){
+						for (int unconfirmedIdx = (int) m_unconfirmedReliableMessages.size() - 1; unconfirmedIdx >= 0; unconfirmedIdx--){
 							NetMessage* unconfirmed = m_unconfirmedReliableMessages[unconfirmedIdx];
 							if (unconfirmed->m_reliableID == reliableID){
 								RemoveAtFast(m_unconfirmedReliableMessages, unconfirmedIdx);
@@ -365,7 +365,7 @@ uint16_t NetConnection::GetOldestUnconfirmedReliable() const
 	}
 	uint16_t id; 
 	if (oldest == nullptr){
-		id = INVALID_RELIABLE_ID;
+		id = (uint16_t) INVALID_RELIABLE_ID;
 	} else {
 		id = oldest->m_reliableID;
 	}
@@ -376,7 +376,7 @@ bool NetConnection::CanSendNewReliable() const
 {
 	uint16_t nextID = m_nextSentReliableID;
 	uint16_t oldestUnconfirmedID = GetOldestUnconfirmedReliable(); // probably just element [0]; 
-	if (oldestUnconfirmedID = INVALID_RELIABLE_ID){
+	if (oldestUnconfirmedID == (uint16_t) INVALID_RELIABLE_ID){
 		oldestUnconfirmedID = nextID;
 	}
 
@@ -403,12 +403,12 @@ void NetConnection::AddReceivedReliable(uint16_t newReliableID)
 	if (m_highestReceivedReliableID == INVALID_RELIABLE_ID){
 		m_highestReceivedReliableID = newReliableID;
 	} else {
-		m_highestReceivedReliableID = Max(newReliableID, m_highestReceivedReliableID);
+		m_highestReceivedReliableID = (uint16_t) Max(newReliableID, m_highestReceivedReliableID);
 	}
 	//hat problem - counting on the other person to only send you a reliable id if they've received everything before your reliable window
 	uint16_t minimum_id = newReliableID - RELIABLE_WINDOW + 1;
 
-	int backIndex = m_receivedReliableIDs.size() - 1;
+	int backIndex = (int) m_receivedReliableIDs.size() - 1;
 	int numRemoved = 0;
 	for(int i = backIndex; i >=0; i--){
 		uint16_t oldID = m_receivedReliableIDs[i];
@@ -503,7 +503,7 @@ void NetConnection::ProcessOutOfOrderMessagesForChannel(uint8_t channelIndex)
 	do{
 		messageToProcess = nullptr;
 		//if the out of order messages list contains the next expected message, pull it out
-		for (int i = channel->m_outOfOrderMessages.size() - 1; i >= 0; i--){
+		for (int i = (int) channel->m_outOfOrderMessages.size() - 1; i >= 0; i--){
 			if (channel->m_outOfOrderMessages[i]->m_sequenceID == channel->m_nextExpectedSequenceID){
 				messageToProcess = channel->m_outOfOrderMessages[i];
 				//ConsolePrintf("Removing message w/ sequence id %i from vector", channel->m_outOfOrderMessages[i]->m_sequenceID);
@@ -543,7 +543,7 @@ void NetConnection::AddOutOfOrderMessage(NetMessage * msg)
 	//	}
 	//}
 	if (channel != nullptr){
-		NetMessage* copy = new NetMessage(msg);
+		//NetMessage* copy = new NetMessage(msg);
 		//copy->WriteBytes(msg->GetWrittenByteCount(), msg->GetBuffer());
 		//uint8_t messageType;
 		//copy->Read(&messageType, false);

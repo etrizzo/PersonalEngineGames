@@ -1,6 +1,7 @@
 #include "Game/GameState_Playing.hpp"
 #include "Game/Game.hpp"
-#include "Game/Map.hpp"
+#include "Game/World.hpp"
+#include "Game/BlockDefinition.hpp"
 #include "Game/Player.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
@@ -56,10 +57,10 @@ void GameState_Playing::Update(float ds)
 	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, basis, 1.f, Matrix44::IDENTITY, DEBUG_RENDER_USE_DEPTH);
 
 
-	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_thaMiku->GetPosition(), 1.f, m_thaMiku->m_renderable->m_transform.GetLocalMatrix(), DEBUG_RENDER_HIDDEN);
+	/*g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_thaMiku->GetPosition(), 1.f, m_thaMiku->m_renderable->m_transform.GetLocalMatrix(), DEBUG_RENDER_HIDDEN);
 	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_thaShip->GetPosition(), 1.f, m_thaShip->m_renderable->m_transform.GetLocalMatrix(), DEBUG_RENDER_HIDDEN);
 	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_thaOrb->GetPosition(), 1.f, m_thaOrb->m_renderable->m_transform.GetLocalMatrix(), DEBUG_RENDER_HIDDEN);
-	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_particleSystem->m_emitters[0]->m_transform.GetLocalPosition(), 1.f, m_particleSystem->m_emitters[0]->m_transform.GetLocalMatrix(), DEBUG_RENDER_USE_DEPTH);
+	*///g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_particleSystem->m_emitters[0]->m_transform.GetLocalPosition(), 1.f, m_particleSystem->m_emitters[0]->m_transform.GetLocalMatrix(), DEBUG_RENDER_USE_DEPTH);
 
 	
 
@@ -69,12 +70,12 @@ void GameState_Playing::Update(float ds)
 
 	m_timeInState+=ds;
 
-	m_particleSystem->Update(ds);
+	/*m_particleSystem->Update(ds);*/
 
-	float rotation = 45.f * ds;
+	/*float rotation = 45.f * ds;
 	m_thaMiku->Rotate( rotation, 0.f, 0.f);
 	m_thaShip->Rotate( rotation, 0.f, 0.f);
-	m_thaOrb->Rotate(  rotation, 0.f, 0.f);
+	m_thaOrb->Rotate(  rotation, 0.f, 0.f);*/
 	//m_player->Update();
 	//Update spawners before the rest of entities bc it can add entities
 	for (Entity* entity : m_allEntities){
@@ -95,11 +96,9 @@ void GameState_Playing::RenderGame()
 	g_theRenderer->ClearDepth( 1.0f ); 
 	g_theRenderer->EnableDepth( COMPARE_LESS, true ); 
 
-	//if (g_theGame->IsDevMode()){		//draw cube at origin
-	//	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_scene->m_shadowCamera->m_transform.GetWorldPosition(), 5.f, m_scene->m_shadowCamera->m_transform.GetWorldMatrix());
-	//}
 
-	m_particleSystem->m_emitters[0]->CameraPreRender(g_theGame->m_currentCamera);
+
+	//m_particleSystem->m_emitters[0]->CameraPreRender(g_theGame->m_currentCamera);
 
 	g_theRenderer->BindModel(Matrix44::IDENTITY);
 
@@ -108,7 +107,9 @@ void GameState_Playing::RenderGame()
 
 
 	
-	m_renderPath->Render(m_scene);
+	m_renderPath->Render(m_scene);		//this clears to skybox! Warning!
+
+	m_world->Render();
 
 	g_theRenderer->ReleaseTexture(0);
 	g_theRenderer->ReleaseTexture(1);
@@ -143,12 +144,6 @@ void GameState_Playing::HandleInput()
 		g_theGame->m_gameClock->SetScale(1.f);
 	}
 
-	if (g_theInput->WasKeyJustPressed(VK_OEM_6)){
-		UpdateShader(1);
-	}
-	if (g_theInput->WasKeyJustPressed(VK_OEM_4)){
-		UpdateShader(-1);
-	}
 
 
 	if (g_theInput->WasKeyJustPressed('L')){
@@ -238,31 +233,44 @@ unsigned int GameState_Playing::GetNumActiveLights() const
 
 void GameState_Playing::Startup()
 {
-	m_thaShip = new Entity(Vector3(10.f, -10.f, -2.f), "scifi_fighter_mk6.obj", "ship");
-	
-	m_thaMiku = new Entity(Vector3(10.f, 0.f, 0.f), "miku.obj", "miku.mtl");
-	m_thaMiku->m_renderable->SetShader("lit_alpha", 0);
-	m_thaMiku->m_renderable->SetShader("lit_alpha", 1);
-	m_thaMiku->m_renderable->SetShader("default_lit", 2);
-	//m_thaMiku->Rotate(90.f, 0.f, 0.f);
+	//m_thaShip = new Entity(Vector3(10.f, -10.f, -2.f), "scifi_fighter_mk6.obj", "ship");
+	//
+	//m_thaMiku = new Entity(Vector3(10.f, 0.f, 0.f), "miku.obj", "miku.mtl");
+	//m_thaMiku->m_renderable->SetShader("lit_alpha", 0);
+	//m_thaMiku->m_renderable->SetShader("lit_alpha", 1);
+	//m_thaMiku->m_renderable->SetShader("default_lit", 2);
+	////m_thaMiku->Rotate(90.f, 0.f, 0.f);
 
-	m_thaOrb = new Entity();
-	m_thaOrb->m_renderable = new Renderable(RENDERABLE_CUBE, 3.f, RIGHT, UP, FORWARD, g_tileSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0)),  g_tileSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(3,3)),  g_tileSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(4,3)));
-	m_thaOrb->SetMaterial(Material::GetMaterial("block"));
-	m_thaOrb->SetPosition(Vector3(10.f, 10.f, 2.f));
+	//m_thaOrb = new Entity();
+	//m_thaOrb->m_renderable = new Renderable(RENDERABLE_CUBE, 3.f, RIGHT, UP, FORWARD, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(3,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(4,3)));
+	//m_thaOrb->SetMaterial(Material::GetMaterial("block"));
+	//m_thaOrb->SetPosition(Vector3(10.f, 10.f, 2.f));
 
-	m_particleSystem = new ParticleSystem();
-	m_particleSystem->CreateEmitter(Vector3(10.f, 0.f, 5.f));
-	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
-	m_particleSystem->m_emitters[0]->SetSpawnColor(RGBA::GetRandomRainbowColor);
+	//m_particleSystem = new ParticleSystem();
+	//m_particleSystem->CreateEmitter(Vector3(10.f, 0.f, 5.f));
+	//m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
+	//m_particleSystem->m_emitters[0]->SetSpawnColor(RGBA::GetRandomRainbowColor);
 
-	m_particleSystem->m_emitters[0]->m_renderable->SetMaterial(Material::GetMaterial("particle"));
+	//m_particleSystem->m_emitters[0]->m_renderable->SetMaterial(Material::GetMaterial("particle"));
 
-	m_scene->AddRenderable(m_particleSystem->m_emitters[0]->m_renderable);
-	m_scene->AddRenderable(m_thaShip->m_renderable);
-	m_scene->AddRenderable(m_thaMiku->m_renderable);
-	m_scene->AddRenderable(m_thaOrb->m_renderable);
+	//m_scene->AddRenderable(m_particleSystem->m_emitters[0]->m_renderable);
+	//m_scene->AddRenderable(m_thaShip->m_renderable);
+	//m_scene->AddRenderable(m_thaMiku->m_renderable);
+	//m_scene->AddRenderable(m_thaOrb->m_renderable);
 
+	new BlockDefinition(BLOCK_AIR, AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE);
+	new BlockDefinition(BLOCK_GRASS, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(3,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(4,3)));
+	new BlockDefinition(BLOCK_STONE, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)));
+	new BlockDefinition(BLOCK_SNOW, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)));
+
+
+	m_world = new World();
+
+	m_world->ActivateChunk(IntVector2(2,1));
+	m_world->ActivateChunk(IntVector2(2,2));
+	m_world->ActivateChunk(IntVector2(1,2));
+	m_world->ActivateChunk(IntVector2(0,0));
+	//m_world->ActivateChunk(IntVector2(1,1));
 }
 
 void GameState_Playing::CheckForVictory()
@@ -291,89 +299,10 @@ void GameState_Playing::SpawnPlayer(Vector3 pos)
 	m_player = new Player(this, pos);
 
 	m_scene->AddRenderable(m_player->m_renderable);
-	m_scene->AddRenderable(m_player->m_turretRenderable);
-	m_scene->AddRenderable(m_player->m_laserSightRenderable);
 
 	g_theGame->m_mainCamera->m_transform.SetParent(m_player->m_cameraTarget);
 }
 
-void GameState_Playing::UpdateShader(int direction)
-{
-	//m_debugShader= eDebugShaders(ClampInt(m_debugShader + direction, 0, NUM_DEBUG_SHADERS - 1));
-	int newShader = m_debugShader + direction + NUM_DEBUG_SHADERS;
-	m_debugShader= eDebugShaders(newShader % NUM_DEBUG_SHADERS);
-
-}
-
-void GameState_Playing::SetShader()
-{
-	std::string shaderName = "invalid";
-	switch (m_debugShader){
-	case SHADER_LIT:
-		shaderName = "default_lit";
-		break;
-	case SHADER_NORMAL		:
-		shaderName = "vertex_normal";
-		break;
-	case SHADER_TANGENT		:
-		shaderName = "tangent";
-		break;
-	case SHADER_BITANGENT	:
-		shaderName = "bitangent";
-		break;
-	case SHADER_NORMALMAP	:
-		shaderName = "normal_map";
-		break;
-	case SHADER_WORLDNORMAL	:
-		shaderName = "world_normal";
-		break;
-	case SHADER_DIFFUSE		:
-		shaderName = "diffuse";
-		break;
-	case SHADER_SPECULAR	:
-		shaderName = "specular";
-		break;
-	}
-	
-	g_theGame->m_debugRenderSystem->MakeDebugRender2DText(shaderName.c_str());
-
-	g_theRenderer->UseShader(shaderName);
-	m_player->m_renderable->SetShader(shaderName);
-	g_theGame->m_currentMap->m_renderable->SetShader(shaderName);
-	m_couchMaterial->SetShader(shaderName);
-}
-
-std::string GameState_Playing::GetShaderName() const
-{
-	switch (m_debugShader){
-	case SHADER_LIT:
-		return "default_lit";
-		break;
-	case SHADER_NORMAL		:
-		return "vertex_normal";
-		break;
-	case SHADER_TANGENT		:
-		return "tangent";
-		break;
-	case SHADER_BITANGENT	:
-		return "bitangent";
-		break;
-	case SHADER_NORMALMAP	:
-		return "normal_map";
-		break;
-	case SHADER_WORLDNORMAL	:
-		return "world_normal";
-		break;
-	case SHADER_DIFFUSE :
-		return "diffuse";
-		break;
-	case SHADER_SPECULAR :
-		return "specular";
-		break;
-
-	}
-	return "NO_SHADER";
-}
 
 void GameState_Playing::DeleteEntities()
 {

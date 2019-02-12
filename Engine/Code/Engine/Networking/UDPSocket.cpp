@@ -61,7 +61,7 @@ size_t UDPSocket::SendTo(NetAddress const & addr, void const * data, size_t cons
 		(int) byte_count,			// bytes to send
 		0 ,							// Unused flags
 		(sockaddr*) &sock_addr,		// address we're sending to
-		sock_addr_len );
+		(int) sock_addr_len );
 
 	if (sent > 0){
 		if (sent != byte_count){
@@ -75,8 +75,6 @@ size_t UDPSocket::SendTo(NetAddress const & addr, void const * data, size_t cons
 		}
 		return 0U;
 	}
-
-	return 0U;
 }
 
 size_t UDPSocket::ReceiveFrom(NetAddress * out_addr, void * buffer, size_t const max_read_size)

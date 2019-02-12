@@ -278,7 +278,7 @@ RGBA RGBA::GetRandomMutedColor()
 		}
 	}
 	
-	return RGBA(r,g,b);
+	return RGBA((unsigned char) r, (unsigned char) g, (unsigned char) b);
 }
 
 RGBA RGBA::GetRandomMixedColor(const RGBA & mixColor, float mixWeight)

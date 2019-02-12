@@ -1,7 +1,6 @@
 #include "Entity.hpp"
 #include "Game/Game.hpp"
 #include "Game/Tile.hpp"
-#include "Game/Map.hpp"
 #include "Engine/Renderer/ObjLoader.hpp"
 
 Entity::~Entity()
@@ -27,7 +26,7 @@ Entity::Entity(Vector3 position, std::string objFile, std::string materialFile)
 
 	m_noClipMode = false;
 
-	TODO("Expand sphere with object as it gets loaded in");
+	TODO("Set collision sphere on mesh entities to be the bounds of the mesh");
 	m_collider = Sphere(position, 1.f);
 
 }
@@ -81,42 +80,14 @@ void Entity::RunCorrectivePhysics()
 
 void Entity::RunWorldPhysics()
 {
-	UNIMPLEMENTED();
+	
 }
 
 void Entity::RunEntityPhysics()
 {
-	UNIMPLEMENTED();
+	
 }
 
-
-void Entity::RenderHealthBar()
-{
-	UNIMPLEMENTED();
-	// 	float percentFull = (float) m_health / (float) m_maxHealth;
-	// 	//if (percentFull < 1.f){
-	// 	g_theRenderer->PushAndTransform2(m_position + Vector2(0.f, .5f), 0.f, .4f);
-	// 	Vector2 mins = Vector2(-1.f, 0.f);
-	// 	Vector2 maxs = Vector2(1.f, .3f);
-	// 	AABB2 boundsBorder = AABB2(mins, maxs);
-	// 	g_theRenderer->DrawAABB2(boundsBorder, RGBA(0,0,0));	//draw black outline
-	// 
-	// 	g_theRenderer->PushAndTransform2(Vector2(0.f, .1f), 0.f, .9f);
-	// 	AABB2 boundsBackground = AABB2(mins, Vector2(maxs.x, maxs.y-.15f));
-	// 	g_theRenderer->DrawAABB2(boundsBackground, RGBA(255,0,0));// draw red background;
-	// 	Vector2 maxsPercentage = Vector2(RangeMapFloat(percentFull,0.f,1.f,-1.f,1.f), maxs.y-.15f);
-	// 	AABB2 boundsHealth = AABB2(mins, maxsPercentage);
-	// 	g_theRenderer->DrawAABB2(boundsHealth, RGBA(0,255,0));
-	// 	g_theRenderer->Pop2();
-	// 	g_theRenderer->Pop2();
-	//}
-
-
-
-
-
-
-}
 
 void Entity::SetTransform(Transform newT)
 {

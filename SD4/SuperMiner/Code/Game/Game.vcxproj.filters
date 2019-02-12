@@ -31,9 +31,6 @@
     <ClCompile Include="TileDefinition.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
     <ClCompile Include="MapDefinition.cpp">
       <Filter>General</Filter>
     </ClCompile>
@@ -61,6 +58,15 @@
     <ClCompile Include="Chunk.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="BlockDefinition.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -82,9 +88,6 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="TileDefinition.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.hpp">
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="MapDefinition.hpp">
@@ -112,6 +115,15 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="Chunk.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="World.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockDefinition.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

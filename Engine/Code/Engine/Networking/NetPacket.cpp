@@ -7,7 +7,7 @@ NetPacket::NetPacket()
 
 void NetPacket::WriteHeader(packet_header_t const & header)
 {
-	unsigned int writeHead = GetWrittenByteCount();
+	unsigned int writeHead = (unsigned int) GetWrittenByteCount();
 	SetWriteHead(0);
 	WriteBytes(sizeof(packet_header_t), &header, true);
 	SetWriteHead(writeHead);
@@ -44,7 +44,7 @@ bool NetPacket::ReadMessage(NetMessage * outMsg)
 
 bool NetPacket::HasRoomForMessage(NetMessage * msg)
 {
-	unsigned int msgSize = msg->GetWrittenByteCount() + msg->GetHeaderSize();
+	unsigned int msgSize = (unsigned int) msg->GetWrittenByteCount() + (unsigned int) msg->GetHeaderSize();
 	if (msgSize + m_writeHead >= m_maxSize){
 		return false;
 	} else {

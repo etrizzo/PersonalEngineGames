@@ -51,7 +51,7 @@ void UDPTest::Update()
 
 		//processing message
 		if (read > 0U) {
-			unsigned int max_bytes = Min(read, (size_t) 128);
+			unsigned int max_bytes = (unsigned int) Min(read, (size_t) 128);
 			unsigned int string_size = max_bytes * 2U + 3U;
 			char* outbuffer = new char[string_size];
 			sprintf_s (outbuffer, 3U, "0x");

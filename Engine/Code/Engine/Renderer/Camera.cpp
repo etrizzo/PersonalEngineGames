@@ -48,7 +48,7 @@ Texture * Camera::GetDepthTarget()
 }
 
 
-void Camera::LookAt(Vector3 position, Vector3 target, Vector3 up, const Matrix44& worldBasis)
+void Camera::LookAt(Vector3 position, Vector3 target, Vector3 up)
 {
 	//Matrix44 lookat = Matrix44(worldBasis);
 	Matrix44 lookat = Matrix44::LookAt(position, target, up);
