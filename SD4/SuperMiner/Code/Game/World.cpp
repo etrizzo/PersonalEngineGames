@@ -9,6 +9,10 @@ World::World()
 
 void World::Update()
 {
+	for (std::pair<IntVector2, Chunk*> chunkPair : World::s_chunks)
+	{
+		chunkPair.second->Update();
+	}
 }
 
 void World::Render()
@@ -16,8 +20,6 @@ void World::Render()
 	TODO("Establish best render order for chunks here");
 
 	//set render state for all the chunks - we don't want to bind anything between them
-
-
 	g_theRenderer->BindMaterial(m_chunkMaterial);
 	g_theRenderer->BindModel(Matrix44::IDENTITY);
 	g_theRenderer->BindRendererUniforms();		//binds the camera for this frame

@@ -7,10 +7,11 @@ class Chunk{
 public:
 	Chunk(IntVector2 chunkCoords);
 
+	void Update();
+	void Render() const;
+
 	void GenerateBlocks();
 	void CreateMesh();
-
-	void Render() const;
 
 	static int GetBlockIndexForBlockCoordinates(const IntVector3& blockCoords);
 	static IntVector3 GetBlockCoordinatesForBlockIndex(int blockIndex);

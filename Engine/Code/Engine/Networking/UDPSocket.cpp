@@ -64,7 +64,7 @@ size_t UDPSocket::SendTo(NetAddress const & addr, void const * data, size_t cons
 		(int) sock_addr_len );
 
 	if (sent > 0){
-		if (sent != byte_count){
+		if (sent != (int) byte_count){
 			ConsolePrintf(RGBA::RED, "Didn't send entire message");
 			return 0U;
 		}

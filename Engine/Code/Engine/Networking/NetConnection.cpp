@@ -386,7 +386,7 @@ bool NetConnection::CanSendNewReliable() const
 
 void NetConnection::MarkMessageAsSentForFirstTime(NetMessage * msg)
 {
-	for (int i = 0; i < m_unsentReliableMessages.size(); i++){
+	for (int i = 0; i < (int) m_unsentReliableMessages.size(); i++){
 		if (m_unsentReliableMessages[i] == msg){
 			m_unsentReliableMessages[i] = nullptr;	//remove from unsent list
 		}

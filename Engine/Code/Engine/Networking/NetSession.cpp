@@ -332,7 +332,7 @@ void NetSession::RenderInfo(AABB2 screenBounds, Renderer* renderer)
 	textBox.Translate(newLine);
 
 	//render each BOUND connection info
-	for(int i = 0; i < m_boundConnections.size(); i++){
+	for(int i = 0; i < (int) m_boundConnections.size(); i++){
 		if (m_boundConnections[i] != nullptr){
 			NetConnection* connection = m_boundConnections[i];
 			std::string localString = "  ";
@@ -476,7 +476,7 @@ NetConnection * NetSession::GetConnection(uint8_t idx) const
 
 NetConnection * NetSession::GetConnectionByAddress(NetAddress addr) const
 {
-	for (int i = 0; i < m_boundConnections.size(); i++){
+	for (int i = 0; i < (int) m_boundConnections.size(); i++){
 		if (m_boundConnections[i] != nullptr){
 			if (m_boundConnections[i]->GetAddress() == addr){
 				return m_boundConnections[i];
@@ -579,12 +579,11 @@ void NetSession::SortMessageIDs()
 		}
 		m_registeredMessages[i]->m_messageID = (uint8_t) i;
 	}
-	int x = 0;
 }
 
 bool NetSession::IsMessageRegistered(std::string name)
 {
-	for (int i = 0; i < m_registeredMessages.size(); i++){
+	for (int i = 0; i < (int) m_registeredMessages.size(); i++){
 		if (m_registeredMessages[i]->m_messageName == name){
 			return true;
 		}
@@ -594,7 +593,7 @@ bool NetSession::IsMessageRegistered(std::string name)
 
 bool NetSession::IsMessageRegistered(uint16_t id)
 {
-	for (int i = 0; i < m_registeredMessages.size(); i++){
+	for (int i = 0; i < (int) m_registeredMessages.size(); i++){
 		if (m_registeredMessages[i]->m_messageID == id){
 			return true;
 		}
@@ -604,7 +603,7 @@ bool NetSession::IsMessageRegistered(uint16_t id)
 
 net_message_definition_t* NetSession::GetRegisteredMessageByName(std::string name)
 {
-	for (int i = 0; i < m_registeredMessages.size(); i++){
+	for (int i = 0; i < (int) m_registeredMessages.size(); i++){
 		if (m_registeredMessages[i]->m_messageName == name){
 			return m_registeredMessages[i];
 		}
@@ -614,7 +613,7 @@ net_message_definition_t* NetSession::GetRegisteredMessageByName(std::string nam
 
 net_message_definition_t * NetSession::GetRegisteredMessageByID(uint8_t id)
 {
-	for (int i = 0; i < m_registeredMessages.size(); i++){
+	for (int i = 0; i < (int) m_registeredMessages.size(); i++){
 		if (m_registeredMessages[i]->m_messageID == id){
 			return m_registeredMessages[i];
 		}
@@ -680,7 +679,7 @@ void NetSession::ProcessOutgoing()
 	// for every net conneciton, see if it has any messages to send
 	// and send all messages queued during the frame using your socket
 	// basically queueing all messages for a frame and then sending it?
-	for (int i = 0; i < m_boundConnections.size(); i++){
+	for (int i = 0; i < (int) m_boundConnections.size(); i++){
 		if (m_boundConnections[i] != nullptr && m_boundConnections[i]->IsConnected()){
 			if (m_boundConnections[i]->CanSendToConnection()){
 				SendPacketsForConnection(i);
@@ -1128,6 +1127,7 @@ bool OnJoinFinished(NetMessage msg, net_sender_t const & from)
 
 bool OnUpdateConnectionState(NetMessage msg, net_sender_t const & from)
 {
+	UNUSED(from);
 	//eConnectionState newState;
 	uint8_t indx;
 	uint8_t stateUint;

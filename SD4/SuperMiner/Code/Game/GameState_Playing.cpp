@@ -15,18 +15,6 @@ GameState_Playing::GameState_Playing()
 	m_scene = new RenderScene(g_theRenderer);
 
 
-	m_couchMaterial = Material::GetMaterial("couch");
-
-	m_particleSystem = new ParticleSystem();
-	m_particleSystem->CreateEmitter(Vector3(0.f, 4.f, 0.f));
-	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
-
-
-	m_sun = m_scene->AddNewDirectionalLight(Vector3(-0, 20, -0.f), RGBA::WHITE.GetColorWithAlpha(180), Vector3(-35.f, -30.f, 0.f));	
-
-	//m_sun->SetUsesShadows(true);
-	//m_scene->SetShadowCameraTransform(m_sun->m_transform);
-
 	m_scene->AddCamera(g_theGame->m_currentCamera);
 	g_theGame->m_mainCamera->AddSkybox("skybox.png", RIGHT, UP, FORWARD);
 	g_theGame->m_mainCamera->m_skybox->m_transform.RotateByEuler(0.f,0.f,90.f);
@@ -56,28 +44,8 @@ void GameState_Playing::Update(float ds)
 	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, basis, 1.f, Matrix44::IDENTITY, DEBUG_RENDER_HIDDEN);
 	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, basis, 1.f, Matrix44::IDENTITY, DEBUG_RENDER_USE_DEPTH);
 
-
-	/*g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_thaMiku->GetPosition(), 1.f, m_thaMiku->m_renderable->m_transform.GetLocalMatrix(), DEBUG_RENDER_HIDDEN);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_thaShip->GetPosition(), 1.f, m_thaShip->m_renderable->m_transform.GetLocalMatrix(), DEBUG_RENDER_HIDDEN);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_thaOrb->GetPosition(), 1.f, m_thaOrb->m_renderable->m_transform.GetLocalMatrix(), DEBUG_RENDER_HIDDEN);
-	*///g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, m_particleSystem->m_emitters[0]->m_transform.GetLocalPosition(), 1.f, m_particleSystem->m_emitters[0]->m_transform.GetLocalMatrix(), DEBUG_RENDER_USE_DEPTH);
-
-	
-
-	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, Vector3(3.f, 1.f, 1.f), 1.f, Matrix44::IDENTITY, DEBUG_RENDER_USE_DEPTH);
-
-	//g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, g_theGame->m_mainCamera->GetPosition(), 1.f, g_theGame->m_mainCamera->m_transform.GetLocalMatrix());
-
 	m_timeInState+=ds;
 
-	/*m_particleSystem->Update(ds);*/
-
-	/*float rotation = 45.f * ds;
-	m_thaMiku->Rotate( rotation, 0.f, 0.f);
-	m_thaShip->Rotate( rotation, 0.f, 0.f);
-	m_thaOrb->Rotate(  rotation, 0.f, 0.f);*/
-	//m_player->Update();
-	//Update spawners before the rest of entities bc it can add entities
 	for (Entity* entity : m_allEntities){
 		entity->Update();
 	}
@@ -96,16 +64,7 @@ void GameState_Playing::RenderGame()
 	g_theRenderer->ClearDepth( 1.0f ); 
 	g_theRenderer->EnableDepth( COMPARE_LESS, true ); 
 
-
-
-	//m_particleSystem->m_emitters[0]->CameraPreRender(g_theGame->m_currentCamera);
-
 	g_theRenderer->BindModel(Matrix44::IDENTITY);
-
-	//set shadow camera's position for this frame
-	//m_scene->SetShadowCameraTransform(*m_player->m_shadowCameraTransform);
-
-
 	
 	m_renderPath->Render(m_scene);		//this clears to skybox! Warning!
 
@@ -233,31 +192,6 @@ unsigned int GameState_Playing::GetNumActiveLights() const
 
 void GameState_Playing::Startup()
 {
-	//m_thaShip = new Entity(Vector3(10.f, -10.f, -2.f), "scifi_fighter_mk6.obj", "ship");
-	//
-	//m_thaMiku = new Entity(Vector3(10.f, 0.f, 0.f), "miku.obj", "miku.mtl");
-	//m_thaMiku->m_renderable->SetShader("lit_alpha", 0);
-	//m_thaMiku->m_renderable->SetShader("lit_alpha", 1);
-	//m_thaMiku->m_renderable->SetShader("default_lit", 2);
-	////m_thaMiku->Rotate(90.f, 0.f, 0.f);
-
-	//m_thaOrb = new Entity();
-	//m_thaOrb->m_renderable = new Renderable(RENDERABLE_CUBE, 3.f, RIGHT, UP, FORWARD, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(3,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(4,3)));
-	//m_thaOrb->SetMaterial(Material::GetMaterial("block"));
-	//m_thaOrb->SetPosition(Vector3(10.f, 10.f, 2.f));
-
-	//m_particleSystem = new ParticleSystem();
-	//m_particleSystem->CreateEmitter(Vector3(10.f, 0.f, 5.f));
-	//m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
-	//m_particleSystem->m_emitters[0]->SetSpawnColor(RGBA::GetRandomRainbowColor);
-
-	//m_particleSystem->m_emitters[0]->m_renderable->SetMaterial(Material::GetMaterial("particle"));
-
-	//m_scene->AddRenderable(m_particleSystem->m_emitters[0]->m_renderable);
-	//m_scene->AddRenderable(m_thaShip->m_renderable);
-	//m_scene->AddRenderable(m_thaMiku->m_renderable);
-	//m_scene->AddRenderable(m_thaOrb->m_renderable);
-
 	new BlockDefinition(BLOCK_AIR, AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE);
 	new BlockDefinition(BLOCK_GRASS, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(3,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(4,3)));
 	new BlockDefinition(BLOCK_STONE, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)));
@@ -266,10 +200,11 @@ void GameState_Playing::Startup()
 
 	m_world = new World();
 
-	m_world->ActivateChunk(IntVector2(2,1));
-	m_world->ActivateChunk(IntVector2(2,2));
+	m_world->ActivateChunk(IntVector2(0,3));
+	m_world->ActivateChunk(IntVector2(0,2));
 	m_world->ActivateChunk(IntVector2(1,2));
 	m_world->ActivateChunk(IntVector2(0,0));
+	m_world->ActivateChunk(IntVector2(-1,2));
 	//m_world->ActivateChunk(IntVector2(1,1));
 }
 

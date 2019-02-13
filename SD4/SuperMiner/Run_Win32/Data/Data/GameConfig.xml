@@ -1,7 +1,7 @@
 <GameConfig
 	
-  appName="Protogame3D"
-	windowAspect="1.7"
+  appName="SuperMiner"
+	windowAspect="1.77"
   windowHeight=".9"
   width="10"
 	isFullscreen="false"

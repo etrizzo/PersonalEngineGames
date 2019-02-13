@@ -807,6 +807,8 @@ void Renderer::BeginFrame(const Vector3 & nearBottomLeft, const Vector3 & farTop
 	BindRendererUniforms();
 	BindRenderState(m_currentShader->m_state);
 	BindFrameUniforms();
+
+	
 }
 
 void Renderer::BindFrameUniforms()
@@ -894,6 +896,7 @@ void Renderer::BindShader(Shader * shader)
 		// Now that it is described and bound, draw using our program
 		glUseProgram( program_handle ); 
 	}
+	BindRenderState(m_currentShader->m_state);
 }
 
 void Renderer::ReleaseShader()

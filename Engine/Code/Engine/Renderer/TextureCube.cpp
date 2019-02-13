@@ -166,7 +166,6 @@ bool TextureCube::MakeFromImage(Image & image)
 	}
 
 	m_size = size; 
-	TODO("Determine format but actually");
 	m_format = TEXTURE_FORMAT_RGBA8;	
 	//Image copy = Image(image.GetTexels(), image.GetDimensions());
 

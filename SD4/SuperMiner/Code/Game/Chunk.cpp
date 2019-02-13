@@ -25,7 +25,7 @@ void Chunk::GenerateBlocks()
 				//later choose different things for different heights u kno
 				if ((float) z < heightMapped )
 				{
-					if (z < heightMapped - 8.f){
+					if (z < heightMapped - 3.f){
 						m_blocks[blockIndex].SetType(BLOCK_STONE);
 					} else {
 						m_blocks[blockIndex].SetType(BLOCK_GRASS);
@@ -52,10 +52,14 @@ void Chunk::CreateMesh()
 	m_gpuMesh = m_cpuMesh.CreateMesh(VERTEX_TYPE_3DPCU);
 }
 
+void Chunk::Update()
+{
+}
+
 void Chunk::Render() const
 {
 	if (m_gpuMesh != nullptr){
-		g_theRenderer->BindStateAndDrawMesh(m_gpuMesh->m_subMeshes[0]);
+		g_theRenderer->DrawMesh(m_gpuMesh->m_subMeshes[0]);
 	}
 }
 

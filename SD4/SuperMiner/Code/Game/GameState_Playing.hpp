@@ -75,16 +75,5 @@ protected:
 
 	void DeleteEntities();
 
-	//default junk
-	Entity* m_thaShip;
-	Entity* m_thaMiku;
-	Entity* m_thaOrb;
-	Light* m_cameraLight;
-	Light* m_orbitLight;
-
-	//for objects drawn using drawmeshimmediate
-	Material* m_couchMaterial;
-
-	ParticleSystem* m_particleSystem;
 
 };
