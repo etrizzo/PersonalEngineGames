@@ -90,6 +90,7 @@ public:
 
 	//looks backwards from the end node and adds nodes to edges that don't have an end
 	void AddEndingsToEachBranch();
+	void RemoveBranchesWithNoEnding();
 
 	//by default, adds 1/4 * (numNodes) branches
 	void IdentifyBranchesAndAdd(int numBranchesToAdd = -1);

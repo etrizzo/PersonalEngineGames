@@ -682,7 +682,9 @@ void StoryGraph::AddEndingsToEachBranch()
 {
 	bool allPathsHaveEndings = false;
 
-	while (!allPathsHaveEndings){
+	int maxAdds = 6;
+	int addedNodes = 0;
+	while (!allPathsHaveEndings && addedNodes < maxAdds){
 		allPathsHaveEndings = true;
 		//look at all incoming edges to the end node
 		for(StoryEdge* incomingEdge : m_endNode->m_inboundEdges)
@@ -696,11 +698,69 @@ void StoryGraph::AddEndingsToEachBranch()
 				StoryNode* newNode = AddEventNodeAtEdge(incomingEdge);
 				if (newNode !=nullptr){
 					AddOutcomeNodesToEventNode(newNode);
+					addedNodes++;
 				}
 				break;
 			} else {
 				int x = 0;
 			}
+		}
+	}
+
+	RemoveBranchesWithNoEnding();
+}
+
+void StoryGraph::RemoveBranchesWithNoEnding()
+{
+	bool allPathsHaveEndings = false;
+	while (!allPathsHaveEndings){
+		allPathsHaveEndings = true;
+		//look at all incoming edges to the end node
+		StoryNode* nodeToDelete = nullptr;
+		for(StoryEdge* incomingEdge : m_endNode->m_inboundEdges)
+		{
+			//if you find a node before the end node that doesn't end the act, need to add to it
+			nodeToDelete = incomingEdge->GetStart();
+			//StoryData* nodeToDelete = incomingEdge->GetStart()->m_data;
+			if (!nodeToDelete->m_data->DoesNodeEndAct())
+			{
+				allPathsHaveEndings = false;
+				break;
+			} else {
+				nodeToDelete = nullptr;
+			}
+		}
+		if (nodeToDelete != nullptr)
+		{
+			//remove this node and all nodes before it that don't have any other outgoing edges
+			std::vector<StoryNode*> branchToDelete = std::vector<StoryNode*>();
+			std::queue<StoryNode*> nodesToCheck = std::queue<StoryNode*>();
+
+			nodesToCheck.push(nodeToDelete);
+
+			//check every node that DEFINITELY ends at a dead-end (i.e., their only outbound edge goes to the false-end node we found earlier.
+			while (!nodesToCheck.empty())
+			{
+				StoryNode* check = nodesToCheck.back();
+				nodesToCheck.pop();
+				for (StoryEdge* edge : check->m_inboundEdges)
+				{
+					StoryNode* inNode = edge->GetStart();
+					if (inNode->m_outboundEdges.size() < 2){
+						nodesToCheck.push(inNode);
+					}
+				}
+				branchToDelete.push_back(check);
+			}
+
+			//Delete all the nodes we found that are end-less
+
+			for(int i = 0; i < branchToDelete.size(); i++)
+			{
+				StoryNode* toDelete = branchToDelete[i];
+				RemoveAndDeleteNode(toDelete);
+			}
+
 		}
 	}
 }
