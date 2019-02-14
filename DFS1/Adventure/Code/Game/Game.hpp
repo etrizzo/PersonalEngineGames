@@ -50,12 +50,16 @@ public:
 
 	Vector2 m_normalizedMousePos;
 
+	Strings m_villagerNames;
+	Strings m_villageNames;
 
 	DebugRenderSystem* m_debugRenderSystem;
 
 	Vector2 GetPlayerPosition() const;
 
 	void PostStartup();
+	void LoadVillagerNames();
+	void LoadVillageNames();
 
 	void Update	(float deltaSeconds);
 	void HandleInput();

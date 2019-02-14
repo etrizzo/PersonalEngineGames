@@ -289,24 +289,6 @@ StoryNode * StoryGraph::AddEventNodeAtEdge(StoryEdge * edge)
 	while (tries < maxTries && !added){
 		//reroll if you get a duplicate node.
 		StoryDataDefinition* sourceNode = StoryGraph::GetEventNodeWithWeights(edge->GetCost(), 3.f);
-		//bool alreadyUsed = true;
-		//int rerollRepeatTries = 0;
-		//while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
-		//	if (Contains(m_usedPlotNodes, sourceNode)){
-		//		alreadyUsed = true;
-		//		if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
-		//			if (rerollRepeatTries < (float) MAX_REPEAT_REROLLS * .5f){
-		//				sourceNode = StoryGraph::GetEventNodeWithWeights(edge->GetCost(), 3.f);
-		//			} else {
-		//				sourceNode = StoryGraph::GetEventNodeWithWeights(edge->GetCost(), 1.f);
-		//			}
-		//		} else {
-		//			alreadyUsed = false;		//let it slide based on chance
-		//		}
-		//	} else {
-		//		alreadyUsed = false;
-		//	}
-		//}
 
 		//try to add the node
 		if (StoryRequirementsMet(sourceNode, edge)){
@@ -314,7 +296,7 @@ StoryNode * StoryGraph::AddEventNodeAtEdge(StoryEdge * edge)
 			std::vector<Character*> charsForNode = GetCharactersForNode(sourceNode, edge);
 			//if you found characters for the node, add the node.
 			if (charsForNode.size() != 0){
-				addedNode = CreateAndAddEventNodeAtEdge(sourceNode, edge, charsForNode);
+				addedNode = CreateAndAddEventNodeAtEdge(sourceNode, edge, charsForNode);		//always does it
 				if (addedNode != nullptr){
 					added = true;
 				} else {
@@ -558,6 +540,8 @@ bool StoryGraph::CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition * dataDefinit
 	//at this point, we need to know what characters will be set for this node set.
 	StoryNode* startNode = edgeToAddAt->GetStart();
 	StoryNode* endNode = edgeToAddAt->GetEnd();
+	StoryData* newData = nullptr;
+	StoryNode* newNode = nullptr;
 	bool addedAnyNodes = false;
 	for (int i = 0; i < dataDefinition->m_actions.size(); i++){
 		//check random chance to just ignore this action
@@ -566,9 +550,9 @@ bool StoryGraph::CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition * dataDefinit
 		} else {
 			//add a node for this action
 			StoryNode* possibleEnd = endNode;
-			StoryData* newData = new StoryData(dataDefinition, i);
+			newData = new StoryData(dataDefinition, i);
 			newData->SetCharacters(charactersForNode);
-			StoryNode* newNode = new StoryNode(newData);
+			newNode = new StoryNode(newData);
 			//add the action at this edge.
 
 			//not sure what to do with cost...
@@ -607,6 +591,11 @@ bool StoryGraph::CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition * dataDefinit
 						edge->GetCost()->UpdateFromNode(newNode->m_data);
 					}
 				}
+			} else {
+				delete newNode;
+				delete newData;
+				newNode = nullptr;
+				newData = nullptr;
 			}
 		}
 	}
@@ -678,13 +667,15 @@ bool StoryGraph::AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToA
 	return added;
 }
 
-void StoryGraph::AddEndingsToEachBranch()
+bool StoryGraph::AddEndingsToEachBranch()
 {
 	bool allPathsHaveEndings = false;
 
 	int maxAdds = 6;
 	int addedNodes = 0;
-	while (!allPathsHaveEndings && addedNodes < maxAdds){
+	int tries = 0;
+	while (!allPathsHaveEndings && addedNodes < maxAdds && tries < 50){
+		tries++;
 		allPathsHaveEndings = true;
 		//look at all incoming edges to the end node
 		for(StoryEdge* incomingEdge : m_endNode->m_inboundEdges)
@@ -700,14 +691,15 @@ void StoryGraph::AddEndingsToEachBranch()
 					AddOutcomeNodesToEventNode(newNode);
 					addedNodes++;
 				}
+				
 				break;
-			} else {
-				int x = 0;
-			}
+			} 
 		}
+		
 	}
 
 	RemoveBranchesWithNoEnding();
+	return !CheckForEmptyGraph();
 }
 
 void StoryGraph::RemoveBranchesWithNoEnding()
@@ -762,6 +754,15 @@ void StoryGraph::RemoveBranchesWithNoEnding()
 			}
 
 		}
+	}
+}
+
+bool StoryGraph::CheckForEmptyGraph()
+{
+	if (m_graph.m_nodes.size() <= 1){
+		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -876,6 +877,9 @@ void StoryGraph::AddNodeAtEdge(StoryNode * newNode, StoryEdge * existingEdge)
 	}
 
 	UpdateDepths();
+	SetNodePositionsByDepth();
+
+	
 }
 
 void StoryGraph::SetBranchChance(float branchChance)
@@ -1024,18 +1028,18 @@ Vector2 StoryGraph::CalculateNodePull(StoryNode * node) const
 	Vector2 direction = Vector2::ZERO;
 	Vector2 nodePos = node->m_data->GetPosition();
 	int numNodesConnectedTo = 0;
-	for (StoryNode* graphNode : m_graph.m_nodes){
-		if (graphNode != node ){
-			Vector2 graphNodePos = graphNode->m_data->GetPosition();
-			Vector2 difference = graphNodePos - nodePos;
-			float length = difference.GetLength();
-			if ( length > MAX_NODE_DISTANCE){
-				//difference.y = (difference.y * 1.1f);
-				direction += difference;
-				numNodesConnectedTo++;
-			}
-		}
-	}
+	//for (StoryNode* graphNode : m_graph.m_nodes){
+	//	if (graphNode != node ){
+	//		Vector2 graphNodePos = graphNode->m_data->GetPosition();
+	//		Vector2 difference = graphNodePos - nodePos;
+	//		float length = difference.GetLength();
+	//		if ( length > MAX_NODE_DISTANCE){
+	//			//difference.y = (difference.y * 1.1f);
+	//			direction += difference;
+	//			numNodesConnectedTo++;
+	//		}
+	//	}
+	//}
 
 
 	for (StoryEdge* edge : node->m_outboundEdges){
@@ -1269,6 +1273,7 @@ StoryNode * StoryGraph::AddStart(StoryData* data)
 		node = m_graph.GetNode(data->GetName());
 	}
 	m_startNode = node;
+	m_startNode->m_data->SetPosition(START_NODE_POSITION);
 	return m_startNode;
 }
 
@@ -1278,6 +1283,7 @@ StoryNode * StoryGraph::AddStart(StoryNode * startNode)
 		m_graph.AddNode(startNode);
 	}
 	m_startNode = startNode;
+	m_startNode->m_data->SetPosition(START_NODE_POSITION);
 	return m_startNode;
 }
 
@@ -1290,6 +1296,7 @@ StoryNode * StoryGraph::AddEnd(StoryData* data)
 		node = m_graph.GetNode(data->GetName());
 	}
 	m_endNode = node;
+	m_endNode->m_data->SetPosition(END_NODE_POSITION);
 	return m_endNode;
 }
 
@@ -1299,12 +1306,22 @@ StoryNode * StoryGraph::AddEnd(StoryNode * endNode)
 		m_graph.AddNode(endNode);
 	}
 	m_endNode = endNode;
+	m_endNode->m_data->SetPosition(END_NODE_POSITION);
 	return m_endNode;
 }
 
 void StoryGraph::Clear()
 {
-	TODO("define whether directed graph should delete its nodes...")
+	TODO("define whether directed graph should delete its nodes...");
+	for (int i = 0; i < (int) m_graph.m_nodes.size(); i++){
+		delete m_graph.m_nodes[i];
+		m_graph.m_nodes[i] = nullptr;
+	}
+	for (int i = 0; i < (int) m_graph.m_edges.size(); i++){
+		delete m_graph.m_edges[i];
+		m_graph.m_edges[i] = nullptr;
+	}
+
 	m_graph.Clear();
 	m_pathFound.clear();
 
@@ -1591,6 +1608,29 @@ void StoryGraph::UpdateDepths()
 		node->ResetDepth();
 	}
 	m_startNode->SetDepthRecursively(0);
+}
+
+void StoryGraph::SetNodePositionsByDepth()
+{
+	int maxDepth = 0;
+	for(StoryNode* node : m_graph.m_nodes){
+		if (node->m_depth > maxDepth){
+			maxDepth = node->m_depth;
+		}
+	}
+
+	for(StoryNode* node : m_graph.m_nodes){
+		if (node != m_startNode && node != m_endNode){
+			float depth = (float) node->m_depth;
+			float perc = depth / (float) maxDepth;
+
+			Vector2 startToEnd = m_endNode->m_data->m_graphPosition - m_startNode->m_data->m_graphPosition;
+			Vector2 displacement = perc * startToEnd;
+			displacement.y = GetRandomFloatInRange(-.2f, .2f);
+
+			node->m_data->m_graphPosition = m_startNode->m_data->m_graphPosition + displacement;
+		}
+	}
 }
 
 std::vector<Character*> StoryGraph::ClearCharacterArray(int numCharacters)

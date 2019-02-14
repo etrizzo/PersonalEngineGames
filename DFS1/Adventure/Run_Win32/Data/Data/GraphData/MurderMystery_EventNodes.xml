@@ -97,6 +97,52 @@
 			<Character index="1">
 				<Requirement tag="isAlive" target="true"/>
 				<Requirement tag="isInnocent" target="false" />
+				<Requirement tag="wasInvestigated" target="false" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="murderOcurred" target="true" />
+			<Requirement tag="killerFound" target="false" />
+			<Requirement tag="storyOver" target="false" />
+			<Requirement tag="Investigator" target="none" type="character"/>
+		</StoryRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="Investigator" target="*0*" type="character" effectType="story"/>
+				<TagChange tag="Suspect" target="*1*" type="character" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+
+		<CharacterEffects>
+			<EffectSet>
+				<TagChange character="0" tag = "isInvestigating" target="true" />
+				<TagChange character="0" tag = "investigationTarget" target="*1*" type="character"/>
+			</EffectSet>
+		</CharacterEffects>
+	</EventNode>
+
+
+
+	<EventNode name="InvestigateSuspectAgain">
+		<Action text="*0* doubts *1*'s innocence and re-investigates." />	
+		<Act name="Murder" />
+		<Characters>
+			<Character id = "*0*" title="investigator"/>
+			<Character id = "*1*" title="suspect" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+			</Character>
+
+			<Character index="1">
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isInnocent" target="false" />
+				<Requirement tag="isProbablyInnocent" target="true" />
+				<Requirement tag="wasInvestigated" target="true" />
 			</Character>
 		</CharacterRequirements>
 

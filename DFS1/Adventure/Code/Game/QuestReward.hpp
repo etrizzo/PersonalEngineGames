@@ -38,5 +38,4 @@ public:
 	QuestReward_Ally(const tinyxml2::XMLElement* questRewardElement);
 
 	void GiveReward(Quest* quest) override;
-	Stats* m_statsToGive;
 };

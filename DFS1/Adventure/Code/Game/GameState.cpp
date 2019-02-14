@@ -357,7 +357,7 @@ void GameState_Victory::HandleInput()
 
 GameState_Defeat::GameState_Defeat(GameState* encounter)
 {
-	m_encounterGameState == encounter;
+	m_encounterGameState = encounter;
 	//if (g_theGame != nullptr){
 	//	m_soundtrackID = g_theGame->m_victoryMusicID;
 	//	m_soundtrackPlayback = g_theAudio->PlaySound(m_soundtrackID);

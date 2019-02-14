@@ -64,6 +64,5 @@ void QuestReward_Ally::GiveReward(Quest* quest)
 {
 	if (quest != nullptr){
 		g_theGame->m_party->AddActorToParty(quest->m_questGiver);
-		//quest->m_questGiver->SetFollowTarget(g_theGame->m_party->GetPlayerCharacter());
 	}
 }

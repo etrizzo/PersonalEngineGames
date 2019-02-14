@@ -5,44 +5,10 @@
 #include "Game/ActionDefinition.hpp"
 #include "Game/StoryData.hpp"
 
-//StoryDataDefinition::StoryDataDefinition(std::string name, float value)
-//{
-//	m_name = name;
-//	m_value = value;
-//	//m_action = name;
-//}
-
 StoryDataDefinition::StoryDataDefinition( eNodeType type)
 {
 	m_type = type;
 }
-
-//StoryDataDefinition::StoryDataDefinition(StoryDataDefinition * clone)
-//{
-//
-//	//test bits
-//	m_name	= clone->m_name;
-//	m_value		= clone->m_value;
-//
-//	//actual members
-//	m_id						= clone->m_id;
-//	m_actions					= clone->m_actions;
-//	//m_characterReqs	= clone->m_characterReqs;
-//	//m_storyReqs						= clone->m_storyReqs;
-//	//m_effectSet						= new EffectSet(clone->m_effectSet, this);
-//
-//	m_numCharacters			= clone->m_numCharacters;
-//	m_characters			= std::vector<Character*>();
-//	//m_characterReqs			= std::vector<CharacterRequirementSet*>();
-//
-//	m_type = clone->m_type;
-//	for (unsigned int i = 0; i < m_numCharacters; i++){
-//		m_characters.push_back(nullptr);
-//		//m_characterReqs.push_back(clone->m_characterReqs[i]->Clone());
-//		//m_characterReqs[i]->SetAllRequirementsStoryDataDefinition(this);
-//	}
-//	m_graphPosition =  Vector2(GetRandomFloatInRange(.4f, .6f), GetRandomFloatInRange(.4f, .6f));
-//}
 
 StoryDataDefinition::~StoryDataDefinition()
 {
@@ -202,28 +168,6 @@ void StoryDataDefinition::InitAsEventNode(tinyxml2::XMLElement * nodeElement)
 
 std::string StoryDataDefinition::GetName() const
 {
-	//if (AreAllCharactersSet()){
-	//	if (m_actionWithCharacters == ""){
-	//		//set the action string with the set characters
-	//		Strings splitString;
-	//		Split(m_action, '*', splitString);
-	//		if (splitString.size() == 1){
-	//			m_actionWithCharacters = m_action;
-	//			return m_actionWithCharacters;
-	//		}
-	//		for (int i = 0; i < (int) splitString.size(); i++){
-	//			if (i % 2 != 0){
-	//				//if odd index, this is NOT inside *'s, so add it as usual to character string 
-	//				m_actionWithCharacters +=  splitString[i];
-	//			} else {
-	//				//if even index, you're inside a ** pair - parse to index
-	//				int charIndex = ParseStringInt(splitString[i]);
-	//				m_actionWithCharacters += m_characters[charIndex]->GetName();
-	//			}
-	//		}
-	//	}
-	//	return m_actionWithCharacters;
-	//}
 	std::string text = "";
 	for (ActionDefinition* actionDef : m_actions){
 		text+=actionDef->m_baseText;
@@ -276,16 +220,27 @@ bool StoryDataDefinition::DoesCharacterMeetSlotRequirementsAtEdge(Character * ch
 		if (charReqs != nullptr){
 			bool meetsFutureConditions = charReqs->DoesCharacterMeetAllRequirements(character, resultState);
 			if (meetsFutureConditions){
-				delete resultingState;
+				//delete resultingState;
+				delete resultState;
+				resultState = nullptr;
+				resultingState = nullptr;
 				return true;
 			}
 		} else {
 			//if there are no requirements for this character on the end node, it's chill
-			delete resultingState;
+			//delete resultingState;
+			delete resultState;
+			resultState = nullptr;
+			resultingState = nullptr;
 			return true;
 		}
 	}
-
+	/*if (resultingState != nullptr){
+		delete resultingState;
+	}*/
+	if (resultState != nullptr){
+		delete resultState;
+	}
 	return false;
 	//return true;
 }

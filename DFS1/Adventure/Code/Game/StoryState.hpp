@@ -9,6 +9,7 @@ public:
 	StoryState(float cost, int numCharacters);
 	StoryState(const StoryState& copy);
 	StoryState(){};
+	~StoryState();
 
 	void UpdateFromNode(StoryData* data);
 	void UpdateFromNodeDefinition(StoryDataDefinition* dataDef);		//only updates story state with what is concrete

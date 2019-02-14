@@ -50,6 +50,11 @@ public:
 	// SPHERE
 	void AppendSphere(Vector3 center, float radius, int wedges, int slices, RGBA color, AABB2 uvs = AABB2::ZERO_TO_ONE);
 
+
+	void AppendCircle(Vector2 center, float radius, int wedges, RGBA color, AABB2 uvs = AABB2::ZERO_TO_ONE);
+	
+	void AppendTriangle(Vector2 v1, Vector2 v2, Vector2 v3, RGBA color, AABB2 uvs = AABB2::ZERO_TO_ONE);
+
 	//ARRAY OF VERTS
 	void AppendVertices(std::vector<Vertex3D_PCU> verts, Transform t);
 

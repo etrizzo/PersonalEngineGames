@@ -14,10 +14,6 @@ TagSet::TagSet(const TagSet & copy)
 	}
 }
 
-TagSet::~TagSet()
-{
-	
-}
 
 int TagSet::GetNumTagSet() const
 {

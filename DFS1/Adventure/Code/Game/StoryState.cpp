@@ -24,6 +24,14 @@ StoryState::StoryState(const StoryState & copy)
 	m_storyTags = copy.m_storyTags;
 }
 
+StoryState::~StoryState()
+{
+	for (CharacterState* state : m_characterStates){
+		delete state;
+	}
+	m_characterStates.clear();
+}
+
 void StoryState::UpdateFromNode(StoryData * data)
 {
 	TODO("update effect nodes");

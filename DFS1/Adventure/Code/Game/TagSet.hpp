@@ -8,7 +8,7 @@ public:
 	TagSet(){ m_tags = std::vector<TagPair>();};
 	TagSet(const std::string& commaSeparatedTagNames);
 	TagSet( const TagSet& copy);
-	~TagSet();
+
 
 	int GetNumTagSet() const;
 	std::string GetTagsAsString() const;

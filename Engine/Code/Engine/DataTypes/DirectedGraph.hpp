@@ -104,7 +104,6 @@ public:
 
 	std::vector<Node<T, C>*> m_nodes;
 	std::vector<DirectedEdge<T, C>*> m_edges;
-
 };
 
 

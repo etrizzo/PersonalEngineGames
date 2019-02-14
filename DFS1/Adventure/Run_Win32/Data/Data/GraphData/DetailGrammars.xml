@@ -36,7 +36,7 @@
 				</EffectSet>
 			</Action>
 
-			<Action text="*0* loses the fight and flees." chance=".3">
+			<Action text="*0* loses the fight and flees for home." chance=".3" endsAct="true">
 				<Modifier character = "0" multiplier = "1.5"> 
 					<CharacterRequirements>
 						<Requirement trait="Bravery" maxValue="30"/>
@@ -56,7 +56,7 @@
 				</EffectSet>
 			</Action>
 
-			<Action text="*0* loses the fight and dies." chance=".1">
+			<Action text="*0* loses the fight and dies." chance=".1" endsAct="true">
 				<Modifier character = "0" multiplier = "1.5"> 
 					<CharacterRequirements>
 						<Requirement trait="Bravery" maxValue="30"/>
@@ -111,7 +111,8 @@
 		</StoryEffects>
 	</OutcomeNode>
 
-	<OutcomeNode name="GetLostCave" chanceToPlace=".2">>
+<!--
+	<OutcomeNode name="GetLostCave" chanceToPlace=".4">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -131,8 +132,20 @@
 				</EffectSet>
 			</Action>
 
+			<Action text="*0* stumbles into the darkest part of the cave" >
+				<Modifier character="0" multiplier = "1">
+					<CharacterRequirements>
+						<Requirement tag="hasNightVision" target="false" />
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*0*" tag="isLost" target="true" />
+					<TagChange character="*0*" tag="inDarkArea" target="true" />
+				</EffectSet>
+			</Action>
+
 			<Action text="*0* enters the darkest part of the cave" >
-				<Modifier character="0" multiplier = "0">
+				<Modifier character="0" multiplier = "1">
 					<CharacterRequirements>
 						<Requirement tag="hasNightVision" target="false" />
 					</CharacterRequirements>
@@ -148,9 +161,94 @@
 		<StoryEffects>
 		</StoryEffects>
 	</OutcomeNode>
+-->
+
+	<OutcomeNode name="CrossroadOutcome">
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<StoryRequirement tag="atCrossroad" weight="10.0"/>
+				<Requirement tag="isAlive" target="true" />
+			</Character>
+		</CharacterRequirements>
 
 
-	<OutcomeNode name="FindWayAndStay" chanceToPlace=".3">>
+		<Actions>
+			<Action text="*0* confidently takes the dark path" chance=".01">
+				<Modifier character = "0" multiplier = "95.00"> 
+					<CharacterRequirements>
+						<Requirement tag="hasDarkVision" target="true"/>
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*0*" tag="isLost" target="false" />
+					<TagChange character="*0*" tag="inDarkArea" target="true" />
+				</EffectSet>
+			</Action>
+			<Action text="*0* risks the dark path and gets lost." chance=".2">
+				<EffectSet>
+					<TagChange character="*0*" tag="isLost" target="true" />
+					<TagChange character="*0*" tag="inDarkArea" target="true" />
+				</EffectSet>
+			</Action>
+			<Action text ="*0* takes the lit path" chance=".8">
+				<EffectSet>
+					<TagChange character="*0*" tag="inDarkArea" target="false" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="atCrossroad" target="none" type="character" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+
+	</OutcomeNode>
+
+
+
+	<OutcomeNode name="ExitOutcome">
+		<Characters>
+			<Character id = "*0*" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<StoryRequirement tag="foundExit" weight="10.0"/>
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="isFighting" target="false" />
+			</Character>
+		</CharacterRequirements>
+
+
+		<Actions>
+			
+			<Action text="*0* leaves the cave" chance=".8" endsAct = "true">
+				<EffectSet>
+					<TagChange character="*0*" tag="inCave" target="false" />
+					<TagChange character="*0*" tag="onQuest" target="false" />
+				</EffectSet>
+			</Action>
+			<Action text="*0* decides to keep exploring" chance=".2">
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="foundExit" target="none" type="character" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+
+	</OutcomeNode>
+
+
+
+
+	<OutcomeNode name="FindWayAndStay" chanceToPlace=".5">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -188,12 +286,12 @@
 		</CharacterRequirements>
 	</OutcomeNode>
 
-	<OutcomeNode name="StarveWhileLost" chanceToPlace=".05">>
+	<OutcomeNode name="StarveWhileLost" chanceToPlace=".3">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
 		<Actions>
-			<Action text="*0* starves to death while lost." chanceToPlace=".1">
+			<Action text="*0* starves to death while lost." chanceToPlace=".1" endsAct="true">
 				<EffectSet>
 					<TagChange character="*0*" tag="isAlive" target="false" />
 				</EffectSet>

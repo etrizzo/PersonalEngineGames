@@ -10,10 +10,10 @@ class Character;
 #define NODE_FONT_SIZE (.0083f)
 #define EDGE_FONT_SIZE (.01f)
 #define EDGE_ARROW_SIZE (.02f)
-#define PULL_WEIGHT (0.1f)
-#define PUSH_WEIGHT (.99f)
+#define PULL_WEIGHT (0.2f)
+#define PUSH_WEIGHT (.9f)
 #define MIN_NODE_DISTANCE (.175f)
-#define MAX_NODE_DISTANCE (.4f)
+#define MAX_NODE_DISTANCE (.3f)
 #define NUM_NODE_ITERATIONS (2000)
 #define MIN_DISTANCE_TO_MOVE (.06f)
 #define REROLL_REPEAT_PLOT_NODE_CHANCE (.95f)
@@ -88,9 +88,12 @@ public:
 	StoryNode* CreateAndAddEventNodeAtEdge(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode);
 	bool AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToAdd, bool branchToFutureNodesIfNecessary);
 
-	//looks backwards from the end node and adds nodes to edges that don't have an end
-	void AddEndingsToEachBranch();
+	//looks backwards from the end node and adds nodes to edges that don't have an end.
+	// returns true if successful, returns false if the graph was unsalvagable (indicating that whoever called this should regenerate).
+	bool AddEndingsToEachBranch();
 	void RemoveBranchesWithNoEnding();
+	//if no paths had an ending and the graph is now just an end node, this will return true
+	bool CheckForEmptyGraph();
 
 	//by default, adds 1/4 * (numNodes) branches
 	void IdentifyBranchesAndAdd(int numBranchesToAdd = -1);
@@ -189,6 +192,7 @@ protected:
 	void RenderNode(StoryNode* node, Vector2 position, RGBA color = RGBA::BLANCHEDALMOND) const;
 	void RenderEdge(StoryEdge* edge, RGBA color = RGBA::WHITE) const;
 	void UpdateDepths();
+	void SetNodePositionsByDepth();
 
 	std::vector<Character*> ClearCharacterArray(int numCharacters);
 	bool AreAllCharactersSet(const std::vector<Character*>& chars) const;

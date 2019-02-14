@@ -7,6 +7,7 @@ class CharacterState{
 public:
 	CharacterState(Character* parent);
 	CharacterState(CharacterState* previousState);
+	~CharacterState();
 
 	std::string ToString() const;
 

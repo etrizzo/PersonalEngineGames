@@ -526,6 +526,47 @@ void MeshBuilder::AppendSphere(Vector3 center, float radius, int wedges, int sli
 }
 
 
+void MeshBuilder::AppendCircle(Vector2 center, float radius, int wedges, RGBA color, AABB2 uvs /*= AABB2::ZERO_TO_ONE*/)
+{
+	float theta = (360.f /  wedges);
+	Vector2 edgeStart;
+	Vector2 edgeEnd;
+	for (int i = 0; i < wedges; i++)
+	{
+		float degreesStart = (theta * i);
+		float degreesEnd = (theta * (i + 1));
+		edgeStart = center + Vector2(CosDegreesf(degreesStart) * radius, SinDegreesf(degreesStart) * radius);
+		edgeEnd = center + Vector2(CosDegreesf(degreesEnd) * radius, SinDegreesf(degreesEnd) * radius);
+		AppendTriangle(center, edgeStart, edgeEnd, color, uvs);
+	}
+}
+
+void MeshBuilder::AppendTriangle(Vector2 v1, Vector2 v2, Vector2 v3, RGBA color, AABB2 uvs /*= AABB2::ZERO_TO_ONE*/)
+{
+	Vector3 normal = Vector3(0.f, 0.f, -1.f);
+	Vector3 tangent = Vector3(v2) - Vector3(v1);		//bullshit
+
+	SetColor(color);
+
+	SetUV(uvs.mins);
+	SetNormal(normal);
+	SetTangent(tangent);
+	int idx = PushVertex(Vector3(v1));
+
+	SetUV(Vector2(uvs.maxs.x, uvs.mins.y));
+	SetNormal(normal);
+	SetTangent(tangent);
+	PushVertex(Vector3(v2));
+
+	SetUV(uvs.maxs);
+	SetNormal(normal);
+	SetTangent(tangent);
+	PushVertex(Vector3(v3));
+
+
+	AddTriIndices(idx + 0, idx + 1, idx + 2);
+}
+
 void MeshBuilder::AppendVertices(std::vector<Vertex3D_PCU> verts, Transform t)
 {
 	//vertsVector.clear();

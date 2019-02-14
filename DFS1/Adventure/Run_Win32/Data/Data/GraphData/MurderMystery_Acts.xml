@@ -1,0 +1,10 @@
+<Act name="introduction">
+	<Characters number="any">
+	</Characters>
+	<StoryRequirements>
+		<!-- none -->
+	</StoryRequirements>
+</Act>
+
+<Act name="investigation_solo">
+</Act>

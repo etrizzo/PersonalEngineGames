@@ -112,11 +112,51 @@ Vector2 Game::GetPlayerPosition() const
 
 void Game::PostStartup()
 {
+	LoadVillagerNames();
+	LoadVillageNames();
 	m_graph = StoryGraph();
 	
 
 	InitGraphMurder();
 	GenerateGraph();
+}
+
+void Game::LoadVillagerNames()
+{
+	FILE *fp = nullptr;
+	fopen_s( &fp, "Data/Data/VillagerNames.txt", "r" );
+	char lineCSTR [1000];
+	std::string line;
+	int MAX_LINE_LENGTH = 1000;
+
+	ASSERT_OR_DIE(fp != nullptr, "NO VILLAGER NAME FILE FOUND");
+	while (fgets( lineCSTR, MAX_LINE_LENGTH, fp ) != NULL)
+	{
+		line = "";
+		line.append(lineCSTR);
+		Strip(line, '\n');
+		m_villagerNames.push_back(line);
+	}
+	int x = 0;
+}
+
+void Game::LoadVillageNames()
+{
+	FILE *fp = nullptr;
+	fopen_s( &fp, "Data/Data/VillageNames.txt", "r" );
+	char lineCSTR [1000];
+	std::string line;
+	int MAX_LINE_LENGTH = 1000;
+
+	ASSERT_OR_DIE(fp != nullptr, "NO VILLAGE NAME FILE FOUND");
+	while (fgets( lineCSTR, MAX_LINE_LENGTH, fp ) != NULL)
+	{
+		line = "";
+		line.append(lineCSTR);
+		Strip(line, '\n');
+		m_villageNames.push_back(line);
+	}
+	int x = 0;
 }
 
 void Game::Update(float deltaSeconds)
@@ -602,9 +642,13 @@ void Game::ResetGraphData()
 
 void Game::GenerateGraph()
 {
-	srand(1);
-	m_graph.RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
-	m_graph.AddEndingsToEachBranch();
+	//srand(1);
+	bool generated = false;
+	while (!generated){
+		ClearGraph();
+		m_graph.RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
+		generated = m_graph.AddEndingsToEachBranch();
+	}
 }
 
 void Game::ClearGraph()

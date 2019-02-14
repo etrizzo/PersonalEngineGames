@@ -13,6 +13,10 @@ CharacterState::CharacterState(CharacterState * previousState)
 	m_tags = TagSet(previousState->m_tags);
 }
 
+CharacterState::~CharacterState()
+{
+}
+
 std::string CharacterState::ToString() const
 {
 	std::string toString = Stringf("Character: %s\n%s\n==========================\n", m_character->GetName().c_str(), m_tags.GetTagsAsString().c_str());
