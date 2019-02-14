@@ -182,8 +182,7 @@ void Game::AddStars()
 				float zOnTime =  m_gameTime* SCREEN_MAX * .1f;
 				float perlinVal = Compute3dPerlinNoise(xPos, yPos, zOnTime, SCREEN_MAX * .5f);		//perlin noise waves cale should be about half the screen size
 				if (perlinVal > -0.5f){
-					float chanceForStars = (perlinVal + 1 ) * .6666f;	//fast range map for known range
-					
+					float chanceForStars = (perlinVal + 1 ) * .6666f;	//fast range map for known range [-.5,1.5] to [0,1]
 					//check square of range-mapped perlin val to get much more spawns in high value areas, but some spawn in most areas
 					if (CheckRandomChance(chanceForStars * chanceForStars)){
 						AddNewStar(tileArea, chanceForStars * chanceForStars * chanceForStars);

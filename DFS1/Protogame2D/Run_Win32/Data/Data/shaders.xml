@@ -64,7 +64,7 @@
 	<depth write="true" test="less"/>
 </shader>
 
-<shader name="cutout" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+<shader name="cutout" cull="none" fill="solid" frontface="ccw" blend = "alpha">
 	<program id="cutout" />
 	<depth write="true" test="less"/>
 </shader>

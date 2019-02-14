@@ -11,6 +11,7 @@ class SpotLight;
 class ParticleSystem;
 class SpriteRenderPath;
 class RenderScene2D;
+class Flower;
 
 class GameState_Playing: public GameState{
 public:
@@ -47,6 +48,7 @@ public:
 
 
 protected:
+	Flower* m_flower = nullptr;
 	float m_specAmount = .5f;
 	float m_specFactor = 3.f;
 	int m_numActiveLights = 0;
