@@ -10,6 +10,7 @@
 #include "Game/ClothingSetDefinition.hpp"
 #include "Game/Quest.hpp"
 #include "Game/Party.hpp"
+#include "Game/Village.hpp"
 
 #define SPEED_RATIO (.15f)
 
@@ -64,6 +65,8 @@ Actor::Actor(ActorDefinition * definition, Map * entityMap, Vector2 initialPos, 
 	if (m_faction == "evil"){
 		EquipItemsInInventory();
 	}
+
+	m_name = m_definition->GetRandomActorNameAndCrossOff();
 }
 
 Actor::~Actor()
@@ -237,10 +240,15 @@ void Actor::RenderFaceInBox(AABB2 faceBox, RGBA tint)
 {
 	g_theRenderer->DrawAABB2(faceBox, RGBA(160,200, 220, 200));
 	g_theRenderer->DrawAABB2Outline(faceBox, RGBA::WHITE);
-	//faceBox.AddPaddingToSides(-.05f,-.05f);
-	//faceBox.TrimToAspectRatio(GetAspectRatio());
-	//float height = faceBox.GetHeight();
-	faceBox.TrimToSquare();
+
+
+	AABB2 nameBox;
+	AABB2 portraitBox;
+	faceBox.SplitAABB2Horizontal(.15f, portraitBox, nameBox);
+
+	//draw the portrait
+	portraitBox = faceBox;
+	portraitBox.TrimToSquare();
 
 	Texture* portraitTexture = m_currentLook->GetPortraitTexture();
 	//draw the portrait in layers - for each slot, check how many layers that slot has
@@ -249,10 +257,13 @@ void Actor::RenderFaceInBox(AABB2 faceBox, RGBA tint)
 			if (m_currentLook->m_portraitLayers[slot].size() > i){
 				PortraitLayer* layer = m_currentLook->m_portraitLayers[slot][i];
 				AABB2 layerTexCoords = layer->m_uvs;
-				g_theRenderer->DrawTexturedAABB2(faceBox, *portraitTexture, layerTexCoords.mins, layerTexCoords.maxs, layer->m_tint);
+				g_theRenderer->DrawTexturedAABB2(portraitBox, *portraitTexture, layerTexCoords.mins, layerTexCoords.maxs, layer->m_tint);
 			}
 		}
 	}
+
+
+	
 }
 
 void Actor::RenderEquippedWeaponInBox(AABB2 weaponBox, RGBA tint)
@@ -470,6 +481,11 @@ void Actor::SpeakToOtherActor()
 	if (closestActor != nullptr){
 		closestActor->Speak();
 	}
+}
+
+void Actor::SetVillage(Village * newVillage)
+{
+	m_village = newVillage;
 }
 
 void Actor::TakeDamage(int dmg)

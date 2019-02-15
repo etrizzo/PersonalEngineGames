@@ -33,6 +33,10 @@ ActorDefinition::ActorDefinition(tinyxml2::XMLElement * actorElement): EntityDef
 	m_startingFaction = ParseXmlAttribute(*actorElement, "faction", "evil");
 	m_isAggressive = ParseXmlAttribute(*actorElement, "aggressive", false);
 
+	m_nameSourceFile = ParseXmlAttribute(*actorElement, "namesFile", m_nameSourceFile);
+	ReadActorNamesFromSourceFile();
+	LoadUnusedActorNamesFromBaseAndShuffle();
+
 	std::string behavior = ParseXmlAttribute(*actorElement, "defaultBehavior", "Wander");
 	m_defaultBehavior = GetBehaviorFromString(behavior);
 
@@ -71,6 +75,19 @@ DialogueSetDefinition * ActorDefinition::GetRandomDialogueDefinition() const
 	}
 	int index = GetRandomIntLessThan(m_dialogueDefinitions.size());
 	return m_dialogueDefinitions[index];
+}
+
+std::string ActorDefinition::GetRandomActorNameAndCrossOff()
+{
+	if (m_unusedActorNames.size() == 0){
+		LoadUnusedActorNamesFromBaseAndShuffle();
+		if (m_unusedActorNames.size() == 0){
+			return "NoName";
+		}
+	}
+	std::string nameToUse = m_unusedActorNames.back();
+	m_unusedActorNames.pop_back();
+	return nameToUse;
 }
 
 ActorDefinition * ActorDefinition::GetActorDefinition(std::string definitionName)
@@ -119,6 +136,36 @@ void ActorDefinition::ParseLayer(tinyxml2::XMLElement * layer, RENDER_SLOT slot)
 		ASSERT_OR_DIE(name != "NO_TEXTURE", "Must specify layer texture");
 		m_layerTextures[slot] = Texture::CreateOrGetTexture(name);
 		//m_spriteSetDefs[slot]->SetSpriteSheetTexture(name);
+	}
+}
+
+void ActorDefinition::ReadActorNamesFromSourceFile()
+{
+	FILE *fp = nullptr;
+	fopen_s( &fp, m_nameSourceFile.c_str(), "r" );
+	char lineCSTR [1000];
+	std::string line;
+	int MAX_LINE_LENGTH = 1000;
+
+	ASSERT_OR_DIE(fp != nullptr, "NO VILLAGE NAME FILE FOUND");
+	while (fgets( lineCSTR, MAX_LINE_LENGTH, fp ) != NULL)
+	{
+		line = "";
+		line.append(lineCSTR);
+		Strip(line, '\n');
+		m_actorNames.push_back(line);
+	}
+}
+
+void ActorDefinition::LoadUnusedActorNamesFromBaseAndShuffle()
+{
+	//copy base actor names into the vector of unused village names
+	m_unusedActorNames = Strings(m_actorNames);
+
+	//shuffle the list
+	for (int i = 0; i < m_unusedActorNames.size(); i++){
+		int randomSwapIndex = GetRandomIntLessThan(m_unusedActorNames.size());
+		std::swap(m_unusedActorNames[i], m_unusedActorNames[randomSwapIndex]);
 	}
 }
 

@@ -16,6 +16,7 @@ class ItemDefinition;
 class Decoration;
 class DecorationDefinition;
 class DialogueSet;
+class Village;
 
 const float RAYCAST_STEPS_PER_TILE = 100.f;
 const bool USE_ALL_ENTITIES = false;
@@ -129,6 +130,8 @@ public:
 	Decoration* SpawnNewDecoration(std::string itemName, Vector2 spawnPosition);
 	Decoration* SpawnNewDecoration(DecorationDefinition* itemDef, Vector2 spawnPosition);
 
+	Village* SpawnNewVillage(std::string villageDefName, int numResidentsToSpawn);
+
 	Actor* GetActorOfType(ActorDefinition* actorDef);
 
 	void AddEntityToMap(Entity* entity);
@@ -156,6 +159,7 @@ public:
 
 	DialogueSet* m_activeDialogueSet;
 
+	std::vector<Village*> m_allVillages;
 
 	std::vector<Entity*> m_allEntities;
 	std::vector<Actor*> m_allActors;

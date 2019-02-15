@@ -97,6 +97,7 @@ eAIBehavior GetBehaviorFromString(std::string behavior);
 
 RGBA GetRandomLipColor();
 RGBA GetRandomEyeColor();
+RGBA GetRandomHairColor();
 
 
 class Renderer;

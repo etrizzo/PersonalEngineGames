@@ -318,7 +318,8 @@ void ClothingSetDefinition::ParseHairs(tinyxml2::XMLElement * setElement)
 			Texture* torsoTexture = ParseXmlAttribute(*hairElement, "texture", (Texture*) nullptr);
 			std::string colorType = ParseXmlAttribute(*hairElement, "color", "NONE");
 			//get callback function for tint of this layer
-			SpawnColorCB cb = GetColorCallbackFromXML(colorType);
+			//SpawnColorCB cb = GetColorCallbackFromXML(colorType);
+			SpawnColorCB cb = GetRandomHairColor;
 			RGBA tint = RGBA::WHITE ;
 			if (cb != nullptr){
 				tint = cb();

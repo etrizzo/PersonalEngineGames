@@ -14,6 +14,8 @@ class AreaMask{
 public:
 	AreaMask(){};
 	AreaMask(float centerDensity, float edgeDensity, float feather);
+	
+	virtual AreaMask* Clone() const = 0;
 
 	float m_centerDensity = 1.f;
 	float m_edgeDensity = 1.f;
@@ -32,6 +34,7 @@ public:
 	virtual int GetHeight() const;
 	virtual IntVector2 GetMins() const;
 	virtual IntVector2 GetMaxs() const;
+	virtual IntVector2 GetCenter() const;
 
 	void SetDensity(float centerDensity = 1.f, float edgeDensity = 1.f, float featherRate = 1.f);
 
@@ -48,6 +51,8 @@ class AreaMask_Rectangle : public AreaMask{
 public:
 	AreaMask_Rectangle() {};
 	AreaMask_Rectangle(IntVector2 center, IntVector2 halfDimensions, float centerDensity = 1.f, float edgeDensity = 1.f, float featherRate = 1.f);
+
+	AreaMask* Clone() const		override;
 
 	IntVector2 m_center = IntVector2(0,0);
 	IntVector2 m_halfDims = IntVector2(0,0);
@@ -66,13 +71,17 @@ public:
 
 	IntVector2 GetMins() const override	;
 	IntVector2 GetMaxs() const override	;
+	IntVector2 GetCenter() const override ;
 
 	AreaMask* GetSubArea(FloatRange centerRange, FloatRange sizeRange) const override;
 };
 
 class AreaMask_Circle : public AreaMask{
 public:
+	AreaMask_Circle() {};
 	AreaMask_Circle(IntVector2 center, int radius, float centerDensity = 1.f, float edgeDensity = 1.f, float featherRate = 1.f);
+
+	AreaMask* Clone() const		override;
 
 	IntVector2 m_center = IntVector2(0,0);
 	int m_radius;
@@ -86,6 +95,7 @@ public:
 
 	IntVector2 GetMins() const override	;
 	IntVector2 GetMaxs() const override	;
+	IntVector2 GetCenter() const override ;
 
 	AreaMask* GetSubArea(FloatRange centerRange, FloatRange sizeRange) const override;
 
@@ -93,11 +103,13 @@ public:
 
 class AreaMask_Perlin : public AreaMask{
 public:
+	AreaMask_Perlin() {};
 	AreaMask_Perlin(FloatRange acceptableRange, IntVector2 mapMins, IntVector2 mapMaxs, unsigned int seed = 1, float scale = 20.f, unsigned int numOctaves = 1, float octavePersistence = .5f, float octaveScale = 2.f);
 
+	AreaMask* Clone() const		override;
 	
-	IntRange m_xRange;
-	IntRange m_yRange;
+	IntRange m_xRange = IntRange(0);
+	IntRange m_yRange = IntRange(0);
 	float m_noiseScale;
 	unsigned int m_numOctaves;
 	float m_octavePersistence;

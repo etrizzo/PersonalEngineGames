@@ -1,20 +1,20 @@
 <Quests>
-	<Quest name="KillGoblins" mainQuest="false" giverType="Ally" giverSpawnTag="Village" giverSpawnTile="Grass" sequential="true" text = "Goblin Hunting">
+	<Quest name="KillOrcs" mainQuest="false" giverType="Ally" giverSpawnTag="Village" giverSpawnTile="Grass" sequential="true" text = "Orc Hunting">
 		<Reward type="gainAlly" />
 		<Steps>
 			<SpeakToActor actorToSpeakTo="giver"/>
-			<KillActor actorToKill="Goblin" numToKill="2~3" />
+			<KillActor actorToKill="Orc" numToKill="2~3" />
 			<SpeakToActor actorToSpeakTo="giver"/>
 			<CollectItem itemToCollect="Leather Hat" numToCollect="1" keepItem="false" />
 			<SpeakToActor actorToSpeakTo="giver" requiresItem="Leather Hat" takesItem="true" />
 		</Steps>
 		<DialogueSets>
 			<Dialogues>
-      			<Dialogue content="There are too many goblins around!" />
+      			<Dialogue content="There are too many orcs around!" />
       			<Dialogue content="Can you kill some for us?" />
     		</Dialogues>
     		<Dialogues>
-      			<Dialogue content="Thanks for killing those goblins!" />
+      			<Dialogue content="Thanks for killing those orcs!" />
       			<Dialogue content="I want to come with you..." />
       			<Dialogue content="But I don't have any good adventure hats..." />
       			<Dialogue content="Can you get me a leather cap?" />

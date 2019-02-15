@@ -1,0 +1,25 @@
+<Villages>
+	<Village definitionName="HumanVillage" nameFile="Data/Data/VillageNames.txt">
+		<Residents number="5~7">
+			<Actor name="Villager" />
+		</Residents>
+		<StorySets>
+			<StorySet dataSet="Data/Data/GraphData/VillageDataset.xml"/>
+		</StorySets>
+		<Factions>
+			<Faction name="good" />
+		</Factions>
+	</Village>
+
+
+	<Village definitionName="OrcVillage" nameFile="Data/Data/VillageNames.txt">
+		<Residents number="5~7">
+			<Actor name="Orc" />
+		</Residents>
+		<Story dataSet="Data/Data/GraphData/Village.xml"/>
+		<Factions>
+			<Faction name="evil" />
+		</Factions>
+	</Village>
+
+</Villages>

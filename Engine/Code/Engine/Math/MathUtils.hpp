@@ -178,6 +178,8 @@ float	SmoothStop3( float t ); // 3rd-degree smooth start (a.k.a. “cubic ease out
 float	SmoothStop4( float t ); // 4th-degree smooth start (a.k.a. “quartic ease out”)
 float	SmoothStep3( float t ); // 3rd-degree smooth start/stop (a.k.a. “smoothstep”)
 
+float	InAndOut2( float t);	//smooth sin wave - 1 and .5, 0 at 0 and 1
+
 float Mix(float a, float b, float weightB);
 float Crossfade(float a, float b, float t);
 

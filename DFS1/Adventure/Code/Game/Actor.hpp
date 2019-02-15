@@ -7,6 +7,7 @@
 class ActorDefinition;
 class Item;
 class Quest;
+class Village;
 
 
 
@@ -48,10 +49,15 @@ public:
 	void Speak();
 	void SpeakToOtherActor();
 
+	void SetVillage(Village* newVillage);
+
 	virtual void TakeDamage(int dmg);
 
 	void EquipOrUnequipItem(Item* itemToEquip);
 	bool IsItemEquipped(Item* item) const;
+	
+	std::string m_name = "TankiStanki";
+	Village* m_village = nullptr;
 
 	Renderable2D* m_healthRenderable;
 	AABB2 m_healthBox;

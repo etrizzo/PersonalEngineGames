@@ -16,7 +16,8 @@
 #include "Game/Adventure.hpp"
 #include "Game/DialogueSet.hpp"
 #include "Game/Party.hpp"
-
+#include "Game/Village.hpp"
+#include "Game/VillageDefinition.hpp"
 
 
 Map::~Map()
@@ -48,6 +49,7 @@ Map::Map(std::string name, MapDefinition* mapDef, int difficulty)
 	m_allPortals = std::vector<Portal*>();
 	m_allItems = std::vector<Item*>();
 	m_allDecorations = std::vector<Decoration*>();
+	m_allVillages = std::vector<Village*>();
 	//m_camera = new Camera2D(0.f, ZOOM_FACTOR);
 	g_theGame->m_camera->m_transform.SetLocalPosition(Vector3::ZERO);
 	g_theGame->m_camera->m_orthographicSize = ZOOM_FACTOR;
@@ -209,6 +211,11 @@ void Map::Update(float deltaSeconds)
 	CheckEntityInteractions();
 	//PROFILE_POP();
 	ResetPortals();
+
+	//lmao
+	for (Village* village : m_allVillages){
+		village->UpdateVillageStory();
+	}
 
 }
 
@@ -1020,6 +1027,15 @@ Decoration * Map::SpawnNewDecoration(DecorationDefinition * decoDef, Vector2 spa
 	m_allDecorations.push_back(newDecoration);
 	m_scene->AddRenderable(newDecoration->m_renderable);
 	return newDecoration;
+}
+
+Village * Map::SpawnNewVillage(std::string villageDefName, int numResidentsToSpawn)
+{
+	VillageDefinition* villageDef = VillageDefinition::GetVillageDefinition(villageDefName);
+
+	Village* newVillage = new Village(villageDef, this, numResidentsToSpawn);
+	m_allVillages.push_back(newVillage);
+	return newVillage;
 }
 
 Actor * Map::GetActorOfType(ActorDefinition * actorDef)

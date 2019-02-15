@@ -287,6 +287,12 @@ RGBA RGBA::GetRandomMixedColor(const RGBA & mixColor, float mixWeight)
 	return Interpolate(random, mixColor, mixWeight);
 }
 
+RGBA RGBA::GetRGBAFromHSVWhereHueIsDegrees(float hue0to360, float saturation, float value)
+{
+	float hueZeroToOne = hue0to360 * (1.f / 360.f);
+	return RGBA::GetRGBAFromHSV(hueZeroToOne, saturation, value);
+}
+
 RGBA RGBA::GetRGBAFromHSV(float hue, float saturation, float value)
 {
 	int hue_int = (int) (hue*6.f);

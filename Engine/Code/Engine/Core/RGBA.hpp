@@ -45,7 +45,8 @@ public:
 	static RGBA GetRandomMutedColor();
 	//makes a random color and then mixes it with the start color
 	static RGBA GetRandomMixedColor(const RGBA& mixColor, float mixWeight = .5f);		
-	static RGBA GetRGBAFromHSV(float hue, float saturation, float value);
+	static RGBA GetRGBAFromHSVWhereHueIsDegrees(float hue0to360, float saturation, float value);
+	static RGBA GetRGBAFromHSV(float hue0to1, float saturation, float value);
 	static RGBA GetRandomEarthTone();
 	static RGBA GetRandomPastelColor(float lightness = .5f);
 

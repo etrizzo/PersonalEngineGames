@@ -220,6 +220,12 @@
     <ClCompile Include="GameState_Encounter.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="Village.cpp">
+      <Filter>General\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="VillageDefinition.cpp">
+      <Filter>General\Maps</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -413,6 +419,12 @@
     </ClInclude>
     <ClInclude Include="GameState_Encounter.hpp">
       <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Village.hpp">
+      <Filter>General\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="VillageDefinition.hpp">
+      <Filter>General\Maps</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -344,6 +344,8 @@
     <ClCompile Include="TileEdgeDefinition.cpp" />
     <ClCompile Include="TileNeighborSet.cpp" />
     <ClCompile Include="VictoryCondition.cpp" />
+    <ClCompile Include="Village.cpp" />
+    <ClCompile Include="VillageDefinition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Engine\Code\Engine\Engine.vcxproj">
@@ -415,6 +417,8 @@
     <ClInclude Include="TileEdgeDefinition.hpp" />
     <ClInclude Include="TileNeighborSet.hpp" />
     <ClInclude Include="VictoryCondition.hpp" />
+    <ClInclude Include="Village.hpp" />
+    <ClInclude Include="VillageDefinition.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

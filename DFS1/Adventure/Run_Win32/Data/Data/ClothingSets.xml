@@ -215,15 +215,10 @@
 		</Bodys>
 
 		<Torsos>
-			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirt_m.png" color="randomBright"/>
-			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirtbelt_m.png" color="randomBright"/>
-			<Torso texture="HUMANOIDS/CHEST/Men/chest_tunic_m.png" color="randomMuted"/>
 			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirt_m.png" color="randomMuted"/>
 			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirtbelt_m.png" color="randomMuted"/>
 			<Torso texture="HUMANOIDS/CHEST/Men/chest_tunic_m.png" color="randomMuted"/>
-			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirt_m.png" color="randomMuted"/>
-			<Torso texture="HUMANOIDS/CHEST/Men/chest_shirtbelt_m.png" color="randomMuted"/>
-			<Torso texture="HUMANOIDS/CHEST/Men/chest_tunic_m.png" color="randomMuted"/>
+			
 		</Torsos>
 
 		<Legs>

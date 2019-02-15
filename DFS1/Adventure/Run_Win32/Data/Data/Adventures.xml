@@ -1,10 +1,10 @@
 <AdventureDefinitions>
 
   <AdventureDefinition name="Balrog" title="Kill the Balrog">
-    <StartConditions startMap="Large Map" startOnTileType="Grass"/>
+    <StartConditions startMap="Zoo" startOnTileType="Grass"/>
     <Quests>
       
-      <Quest name="KillGoblins" />
+      <Quest name="KillOrcs" />
       <Quest name="CollectCrystals" />
 
       <Quest name="KillBalrog" />
@@ -55,7 +55,7 @@
 
 <!--
     <Map name="The Island" mapDefinition="Island">
-      <Actor type="Goblin" onTileType="Sand"/>
+      <Actor type="Orc" onTileType="Sand"/>
     </Map>
   -->
     

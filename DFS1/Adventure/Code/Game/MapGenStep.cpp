@@ -1,4 +1,5 @@
 #include "MapGenStep.hpp"
+#include "Game/Village.hpp"
 
 MapGenStep::MapGenStep(const tinyxml2::XMLElement & genStepXmlElement)
 	:m_subAreaCenter(.5f),
@@ -149,6 +150,9 @@ MapGenStep * MapGenStep::CreateMapGenStep(const tinyxml2::XMLElement & genStepXm
 	}
 	if (genName == "SpawnDecoration"){
 		newMapGenStep = (MapGenStep*) new MapGenStep_SpawnDecoration(genStepXmlElement);
+	}
+	if (genName == "SpawnVillage"){
+		newMapGenStep = (MapGenStep*) new MapGenStep_SpawnVillage(genStepXmlElement);
 	}
 	if (genName == "SetSubArea"){
 		newMapGenStep = (MapGenStep*) new MapGenStep_SetSubArea(genStepXmlElement);
@@ -895,3 +899,30 @@ void MapGenStep_SpawnDecoration::RunAsMutate(Map & map)
 	}
 }
 
+MapGenStep_SpawnVillage::MapGenStep_SpawnVillage(const tinyxml2::XMLElement & generationStepElement)
+	: MapGenStep(generationStepElement)
+{
+	m_villageDefinitionName = ParseXmlAttribute(generationStepElement, "type", m_villageDefinitionName);
+	m_numResidents			= ParseXmlAttribute(generationStepElement, "numResidents", m_numResidents);
+}
+
+void MapGenStep_SpawnVillage::Run(Map & map)
+{
+	//marks the current area as a village and adds it to the maps vector of villages
+	//villages internally handle spawning actors now
+
+	//create the village
+	Village* newVillage = map.SpawnNewVillage(m_villageDefinitionName, m_numResidents.GetRandomInRange());
+	
+	//tag the tiles with the village name.
+	int mapWidth = map.GetWidth();
+	int mapHeight = map.GetHeight();
+	for (int tileX = 0; tileX < mapWidth; tileX++){
+		for (int tileY = 0; tileY < mapHeight; tileY++){
+			if (m_mask->CanDrawOnPoint(tileX, tileY)){
+				Tile* tile = map.TileAt(tileX, tileY);
+				tile->AddTag(newVillage->m_villageName);
+			}
+		}
+	}
+}

@@ -84,6 +84,15 @@ public:
 	std::string m_spawnTag				= "";
 };
 
+//marks the current area as a village and adds it to the maps vector of villages
+//villages internally handle spawning actors now
+class MapGenStep_SpawnVillage: public MapGenStep{
+public:
+	MapGenStep_SpawnVillage(const tinyxml2::XMLElement& generationStepElement);
+	void Run(Map& map);
+	std::string m_villageDefinitionName		= "NO_DEFINITION";
+	IntRange m_numResidents					= IntRange(0);
+};
 
 class MapGenStep_FromFile: public MapGenStep{
 public:

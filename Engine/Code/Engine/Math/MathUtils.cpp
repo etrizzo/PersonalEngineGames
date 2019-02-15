@@ -512,6 +512,12 @@ float SmoothStep3(float t)
 	return Crossfade(SmoothStart3(t), SmoothStop3(t), t);
 }
 
+float InAndOut2(float t)
+{
+	float val = SinDegreesf(t * 180.f);
+	return val * val;
+}
+
 float Crossfade(float a, float b, float t)
 {
 	return (a + (t * (b - a)));

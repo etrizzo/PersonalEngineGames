@@ -1,17 +1,28 @@
 <MapDefinitions>
-  <MapDefinition name="Zoo" defaultTile="Sand" width="80~90" soundtrack="Caketown 1.mp3">
+  <MapDefinition name="Zoo" defaultTile="Grass" width="80~90" soundtrack="Caketown 1.mp3">
     <GenerationSteps>
       <!--
      <FillAndEdge edgeTile="Dirt" fillTile="Grass" subAreaCenter=".3~.8" subAreaSize=".2~.4" type="rectangle" />
        -->
       <SetSubArea subAreaSize="-0.2~1.5" type="perlin" noiseScale="20" centerDensity="1" edgeDensity="1" feather="1"/>
-        <FillAndEdge edgeTile="Dirt" fillTile="Sand" edgeThickness="1"/> 
-        <FillAndEdge edgeTile="Sand" fillTile="Grass" edgeThickness="2" edgeDensity=".9" feather=".6"/> 
+        <FillAndEdge edgeTile="Sand" fillTile="Grass" edgeThickness="3"/> 
 
         
         <SetSubArea subAreaSize="0.5~1.0" type="perlin" noiseScale="20" inheritSeed ="true" feather=".05" />
-          <FillAndEdge edgeTile="LightFlowers" fillTile="LightFlowers" />
+          <FillAndEdge edgeTile="LightFlowers" fillTile="LightFlowers" edgeDensity=".2" centerDensity="1"/>
         <EndSubArea />
+
+        <SetSubArea subAreaCenter=".2~.3" subAreaSize=".2~.25" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
+          <SubMap map="SmallVillage"/>
+          <SpawnVillage type="HumanVillage" numResidents="5~7" baseTile="Grass"/>
+      <EndSubArea />
+
+      <SetSubArea subAreaCenter=".6~.8" subAreaSize=".2~.25" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
+          <SubMap map="SmallVillage"/>
+          <SpawnVillage type="OrcVillage" numResidents="3~5" baseTile="Grass"/>
+      <EndSubArea />
+
+    
       
       <EndSubArea />
     </GenerationSteps>
@@ -41,7 +52,7 @@
       <CellularAutomata ifType="Lava" changeToType="DarkDirt" ifNeighborType="Water" feather=".01"/>
 
       <SpawnDecoration type="DeadTree" spawnType="mutate" onTile="Dirt" chanceToSpawn=".05f" centerDensity=".2f" edgeDensity=".01" feather=".3"/>
-      <SpawnActor type="Goblin" iterations="20~30" onTile="Dirt" />
+      <SpawnActor type="Orc" iterations="20~30" onTile="Dirt" />
       <SpawnItem type="Crystal" iterations="4~6" onTile="Dirt" />
     </GenerationSteps>
   </MapDefinition>
@@ -96,7 +107,7 @@
       <CellularAutomata ifType="LightFlowers" changeToType="Water" ifNeighborType="Water" ifNeighborCount="4~8" chanceToMutate=".8" />
       <CellularAutomata ifType="LightFlowers" changeToType="Sand" ifNeighborType="Water" ifNeighborCount="4~8" chanceToMutate=".8" />
 
-      <SpawnActor type="Goblin" noNoZone="Village" iterations="30"/>      <!-- zac did this -->
+      <SpawnActor type="Orc" noNoZone="Village" iterations="30"/>      <!-- zac did this -->
       <SubMap map="SmoothTerrain" />
       <FillAndEdge edgeTile="StoneBrickWall" edgeThickness="1"/> 
     </GenerationSteps>
@@ -141,9 +152,10 @@
         <Paths floor="DirtPath" straightChance=".05"/>
       </RoomsAndPaths>
       <CellularAutomata ifType="DirtPath" ifNeighborType="Water" changeToType="WeatheredWood"/>
-      <SpawnActor type="Villager" iterations="3~5" onTile="Grass"/>
       <!--
-      <SpawnActor type="Goblin" />
+      <SpawnActor type="Villager" iterations="3~5" onTile="Grass"/>
+      
+      <SpawnActor type="Orc" />
       <SpawnActor type="Ally" onTile="Grass"/>
        -->
       <SpawnItem type="Leather Chestpiece" onTileType="Wood"/>
@@ -193,7 +205,7 @@
       <Mutate ifType="DarkDirt" toType="Stone" chanceToMutate=".55"/>
       <Conway iterations="3~4" liveTile="DarkDirt" deadTile="Stone" birthLimit="4" deathLimit="3" />
       <CellularAutomata iterations="2" ifType="Stone" ifNeighborType="DarkDirt" changeToType="DarkDirt" ifNeighborCount="5~8"/>
-      <SpawnActor type="Goblin" iterations="8~10"/>
+      <SpawnActor type="Orc" iterations="8~10"/>
       <SpawnItem type ="Platemail Helmet" iterations="1~2"/>
       <SpawnItem type="Crystal" iterations="4~6" onTile="DarkDirt" />
     </GenerationSteps>

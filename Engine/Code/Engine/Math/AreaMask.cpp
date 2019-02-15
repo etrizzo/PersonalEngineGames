@@ -33,6 +33,12 @@ IntVector2 AreaMask::GetMaxs() const
 	return IntVector2();
 }
 
+IntVector2 AreaMask::GetCenter() const
+{
+	Vector2 midpoint = (GetMins().GetVector2() + GetMaxs().GetVector2()) * .5f;
+	return IntVector2((int) midpoint.x, (int) midpoint.y);
+}
+
 bool AreaMask::CanDrawOnPoint(int x, int y) const
 {
 	float chanceToDraw = GetChanceAtPoint(x,y);
@@ -76,6 +82,24 @@ AreaMask_Rectangle::AreaMask_Rectangle(IntVector2 center, IntVector2 dimensions,
 	m_yRange = IntRange(m_center.y - m_halfDims.y, m_center.y + m_halfDims.y);
 }
 
+AreaMask* AreaMask_Rectangle::Clone() const
+{
+	AreaMask_Rectangle* copy = new AreaMask_Rectangle();
+	//default area mask stuff
+	copy->m_seed = m_seed;
+	copy->m_centerDensity = m_centerDensity;
+	copy->m_edgeDensity = m_edgeDensity;
+	copy->m_featherRate = m_featherRate;
+
+	//rectangle stuff
+	copy->m_center = m_center;
+	copy->m_halfDims = m_halfDims;
+	copy->m_xRange = m_xRange;
+	copy->m_yRange = m_yRange;
+
+	return (AreaMask*) copy;
+}
+
 IntVector2 AreaMask_Rectangle::GetRandomPointInArea() const
 {
 	return IntVector2(m_xRange.GetRandomInRange(), m_yRange.GetRandomInRange());
@@ -86,7 +110,10 @@ AreaMask::AreaMask(float centerDensity, float edgeDensity, float feather)
 	m_centerDensity = centerDensity;
 	m_edgeDensity = edgeDensity;
 	m_featherRate = feather;
+	
 }
+
+
 
 bool AreaMask::IsPointInside(IntVector2 xyCoords) const
 {
@@ -111,6 +138,11 @@ IntVector2 AreaMask_Rectangle::GetMins() const
 IntVector2 AreaMask_Rectangle::GetMaxs() const
 {
 	return m_center + m_halfDims;
+}
+
+IntVector2 AreaMask_Rectangle::GetCenter() const
+{
+	return m_center;
 }
 
 float AreaMask_Rectangle::GetDistanceFromEdge(int x, int y) const
@@ -189,6 +221,22 @@ AreaMask_Circle::AreaMask_Circle(IntVector2 center, int radius,  float centerDen
 	m_radius = radius;
 }
 
+AreaMask* AreaMask_Circle::Clone() const
+{
+	AreaMask_Circle* copy = new AreaMask_Circle();
+	//default area mask stuff
+	copy->m_seed = m_seed;
+	copy->m_centerDensity = m_centerDensity;
+	copy->m_edgeDensity = m_edgeDensity;
+	copy->m_featherRate = m_featherRate;
+
+	//circle stuff
+	copy->m_center = m_center;
+	copy->m_radius = m_radius;
+
+	return (AreaMask*) copy;
+}
+
 IntVector2 AreaMask_Circle::GetRandomPointInArea() const
 {
 	int x = GetRandomIntInRange((int) (-m_radius * .5f), (int) (m_radius * .5f));
@@ -235,6 +283,11 @@ IntVector2 AreaMask_Circle::GetMaxs() const
 	return  m_center + IntVector2(m_radius, m_radius);
 }
 
+IntVector2 AreaMask_Circle::GetCenter() const
+{
+	return m_center;
+}
+
 AreaMask * AreaMask_Circle::GetSubArea(FloatRange centerRange, FloatRange sizeRange) const
 {
 	int diameter =  m_radius * 2;
@@ -274,6 +327,27 @@ AreaMask_Perlin::AreaMask_Perlin(FloatRange acceptableRange, IntVector2 mapMins,
 }
 
 
+
+AreaMask* AreaMask_Perlin::Clone() const
+{
+	AreaMask_Perlin* copy = new AreaMask_Perlin();
+	//default area mask stuff
+	copy->m_seed = m_seed;
+	copy->m_centerDensity = m_centerDensity;
+	copy->m_edgeDensity = m_edgeDensity;
+	copy->m_featherRate = m_featherRate;
+	
+	//perlin mask stuff
+	copy->m_acceptableRange = m_acceptableRange;
+	copy->m_xRange = m_xRange;
+	copy->m_yRange = m_yRange;
+	copy->m_noiseScale = m_noiseScale;
+	copy->m_numOctaves = m_numOctaves;
+	copy->m_octavePersistence = m_octavePersistence;
+	copy->m_octaveScale = m_octaveScale;
+
+	return (AreaMask*) copy;
+}
 
 IntVector2 AreaMask_Perlin::GetRandomPointInArea() const
 {

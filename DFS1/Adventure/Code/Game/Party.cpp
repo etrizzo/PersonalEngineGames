@@ -196,9 +196,25 @@ void Party::RenderPartyMemberUI(Actor* actor, AABB2 memberBox)
 	memberBox.SplitAABB2Vertical(height / width, faceBox, healthBox);
 	AABB2 weaponBox = faceBox.GetPercentageBox(.7f, .7f, 1.f, 1.f);
 
-	healthBox.AddPaddingToSides(-height * .2f, -height * .3f);
+	healthBox.AddPaddingToSides(-height * .2f, -height * .1f);
+
+	AABB2 healthBarBox;
+	AABB2 nameBox;
+	healthBox.SplitAABB2Horizontal(.6f, nameBox, healthBarBox);
 	
 	actor->RenderFaceInBox(faceBox);
 	actor->RenderEquippedWeaponInBox(weaponBox);
-	actor->RenderHealthInBox(healthBox);
+
+	float nameHeight = nameBox.GetHeight() * .75f;
+	float nameLength = actor->m_name.size() * nameHeight * 1.1f;
+	//draw the name
+	nameBox.maxs.x = nameBox.mins.x + nameLength;	//shrink horizontally
+	g_theRenderer->DrawAABB2(nameBox, RGBA::NICEBLACK.GetColorWithAlpha(200));
+	g_theRenderer->DrawAABB2Outline(nameBox, RGBA::WHITE);
+	float namePadding = nameBox.GetHeight() * -.1f;
+	nameBox.AddPaddingToSides(namePadding,namePadding);
+	g_theRenderer->DrawTextInBox2D(actor->m_name, nameBox, Vector2::HALF, nameHeight, TEXT_DRAW_SHRINK_TO_FIT);
+
+	healthBarBox.AddPaddingToSides(0.f, -healthBarBox.GetHeight() * .1f);
+	actor->RenderHealthInBox(healthBarBox);
 }

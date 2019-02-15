@@ -40,13 +40,16 @@ void DialogueSet::Render(const AABB2 & box)
 		AABB2 portraitBox = AABB2(wholeBox);
 		AABB2 dialogueBox = AABB2(wholeBox);
 		//get a square for the dialogue
-		portraitBox.mins.x = wholeBox.maxs.x - wholeBox.GetHeight();
-		dialogueBox.maxs.x = portraitBox.mins.x;
+		portraitBox.maxs.x = wholeBox.mins.x + wholeBox.GetHeight();
+		dialogueBox.mins.x = portraitBox.maxs.x;
 		//wholeBox.SplitAABB2Vertical(.85f, dialogueBox, portraitBox);
 		//render the text
-		m_activeDialogue->Render(dialogueBox);
+		m_activeDialogue->Render(dialogueBox, m_speaker->m_name);
 		//render the portrait
 		m_speaker->RenderFaceInBox(portraitBox);
+
+		
+
 	}
 	
 }

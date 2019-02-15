@@ -15,6 +15,8 @@
 #include "Engine/Renderer/Camera.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Game/QuestDefinition.hpp"
+#include "Game/VillageDefinition.hpp"
+#include "Game/Village.hpp"
 
 #include "Game/Map.hpp"
 #include "Game/Party.hpp"
@@ -67,6 +69,7 @@ Game::Game()
 		LoadEntityDefinitions();
 		LoadQuestDefinitions();
 		LoadAdventureDefinitions();
+		LoadVillageDefinitions();
 	}
 
 	m_screenWidth = 10;
@@ -112,8 +115,6 @@ Vector2 Game::GetPlayerPosition() const
 
 void Game::PostStartup()
 {
-	LoadVillagerNames();
-	LoadVillageNames();
 	m_graph = StoryGraph();
 	
 
@@ -121,43 +122,7 @@ void Game::PostStartup()
 	GenerateGraph();
 }
 
-void Game::LoadVillagerNames()
-{
-	FILE *fp = nullptr;
-	fopen_s( &fp, "Data/Data/VillagerNames.txt", "r" );
-	char lineCSTR [1000];
-	std::string line;
-	int MAX_LINE_LENGTH = 1000;
 
-	ASSERT_OR_DIE(fp != nullptr, "NO VILLAGER NAME FILE FOUND");
-	while (fgets( lineCSTR, MAX_LINE_LENGTH, fp ) != NULL)
-	{
-		line = "";
-		line.append(lineCSTR);
-		Strip(line, '\n');
-		m_villagerNames.push_back(line);
-	}
-	int x = 0;
-}
-
-void Game::LoadVillageNames()
-{
-	FILE *fp = nullptr;
-	fopen_s( &fp, "Data/Data/VillageNames.txt", "r" );
-	char lineCSTR [1000];
-	std::string line;
-	int MAX_LINE_LENGTH = 1000;
-
-	ASSERT_OR_DIE(fp != nullptr, "NO VILLAGE NAME FILE FOUND");
-	while (fgets( lineCSTR, MAX_LINE_LENGTH, fp ) != NULL)
-	{
-		line = "";
-		line.append(lineCSTR);
-		Strip(line, '\n');
-		m_villageNames.push_back(line);
-	}
-	int x = 0;
-}
 
 void Game::Update(float deltaSeconds)
 {
@@ -568,6 +533,18 @@ void Game::LoadQuestDefinitions()
 	for (tinyxml2::XMLElement* questDefElement = root->FirstChildElement("Quest"); questDefElement != NULL; questDefElement = questDefElement->NextSiblingElement("Quest")){
 		QuestDefinition* newDefinition = new QuestDefinition(questDefElement);
 		QuestDefinition::s_definitions.insert(std::pair<std::string, QuestDefinition*>(newDefinition->m_name, newDefinition));
+	}
+}
+
+void Game::LoadVillageDefinitions()
+{
+	tinyxml2::XMLDocument questDefDoc;
+	questDefDoc.LoadFile("Data/Data/Villages.xml");
+
+	tinyxml2::XMLElement* root = questDefDoc.FirstChildElement("Villages");
+	for (tinyxml2::XMLElement* villageDefElement = root->FirstChildElement("Village"); villageDefElement != NULL; villageDefElement = villageDefElement->NextSiblingElement("Village")){
+		VillageDefinition* newDefinition = new VillageDefinition(villageDefElement);
+		VillageDefinition::s_definitions.insert(std::pair<std::string, VillageDefinition*>(newDefinition->m_definitionName, newDefinition));
 	}
 }
 
