@@ -1,2 +1,2 @@
-# SpecialTopics
-Summer mod @ guildhall - tank gamez
+# Personal Engine
+This repository hosts my personal engine - Cheeseboard Engine - which was made using C++ and OpenGL. Also in this repository are a number of projects created in my time at Guildhall and maintained afterwards. Please visit my website, <a href="emilyrizzo.com"> https://emilyrizzo.com </a> to view in depth discussion about some of the projects in this repository, under "Individual Projects."
