@@ -36,11 +36,15 @@ const static Vector3 FORWARD	= Vector3(1.f, 0.f, 0.f);
 
 const static RGBA s_blockNorthSouthColor	= RGBA(200,200,200,255);
 const static RGBA s_blockEastWestColor		= RGBA(225,225,225,255);
-const static RGBA s_blockTopBottomColor		= RGBA::WHITE;
+const static RGBA s_blockTopBottomColor		= RGBA(255,255,255,255);
+
+
+const static IntVector2 EAST	= IntVector2(1,0);
+const static IntVector2 NORTH	= IntVector2(0,1);
 
 constexpr int   CHUNK_BITS_X = 4;
 constexpr int   CHUNK_BITS_Y = 4;
-constexpr int   CHUNK_BITS_Z = 4;
+constexpr int   CHUNK_BITS_Z = 5;
 
 constexpr int   CHUNK_SIZE_X = (1 << CHUNK_BITS_X);
 constexpr int   CHUNK_SIZE_Y = (1 << CHUNK_BITS_Y);

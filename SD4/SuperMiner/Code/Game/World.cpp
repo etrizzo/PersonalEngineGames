@@ -51,11 +51,27 @@ void World::SetActivationRadius(float newRadius)
 
 void World::ActivateChunk(const IntVector2& chunkCoords)
 {
+	//1. New Chunk
 	Chunk* newChunk = new Chunk(chunkCoords);			//create
+	//2. Generate or load
+	TODO("Load chunks from disk");
 	newChunk->GenerateBlocks();							//generate blocks
-	newChunk->CreateMesh();								//create GPU mesh
 
+	//6. Add new chunk to the world's static map OF chunks
 	m_chunks.insert(std::pair<IntVector2, Chunk*>(chunkCoords, newChunk));		//add to the world's map of chonks
+
+	//7. link up with neighbors.
+	SyncChunkWithNeighbors(newChunk);
+
+	//3. Construct mesh
+	//newChunk->CreateMesh();								//create GPU mesh
+
+	//4. Create mesh
+
+	//5. Update chunk state/status. Is chunk missing? Is the VBO built? Is the state activated?
+
+	
+	
 }
 
 void World::DeactivateChunk(Chunk* chunkToDeactivate)
@@ -75,6 +91,15 @@ bool World::IsChunkActive(const IntVector2 & chunkCoords)
 {
 	auto foundChunk = m_chunks.find(chunkCoords);
 	return foundChunk != m_chunks.end();
+}
+
+Chunk * World::GetChunkAtCoordinates(const IntVector2 & chunkCoords)
+{
+	auto foundChunk = m_chunks.find(chunkCoords);
+	if (foundChunk == m_chunks.end()){
+		return nullptr;
+	}
+	return foundChunk->second;
 }
 
 IntVector2 World::GetChunkCoordinatesFromWorldCoordinates(const Vector3 & worldPos) const
@@ -104,6 +129,7 @@ void World::UpdateChunks()
 void World::ManageChunks()
 {
 	TryToActivateChunks();
+	TryToBuildChunkMesh();
 	TryToDeactivateChunks();
 }
 
@@ -146,6 +172,51 @@ void World::TryToDeactivateChunks()
 	if (chunkToDeactivate != nullptr){
 		DeactivateChunk(chunkToDeactivate);
 	}
+}
+
+void World::TryToBuildChunkMesh()
+{
+	IntVector2 playerChunk = g_theGame->GetPlayer()->GetCurrentChunkCoordinates();
+	for (int i = 0; i < m_chunkActivationOffsetsSortedByDistance.size(); i++)
+	{
+		IntVector2 nextOffset = m_chunkActivationOffsetsSortedByDistance[i];
+		Chunk* chunk = GetChunkAtCoordinates(playerChunk + nextOffset);
+		if (chunk != nullptr && chunk->ShouldChunkRebuildMesh()){
+			//the chunk is active but has no mesh
+			chunk->CreateMesh();
+			return;
+		}
+	}
+}
+
+void World::SyncChunkWithNeighbors(Chunk * chunk)
+{
+	IntVector2 chunkCoords = chunk->GetChunkCoords();
+	Chunk* east = GetChunkAtCoordinates(chunkCoords + EAST);
+	chunk->m_eastNeighbor = east;
+	if (east != nullptr){
+		east->m_westNeighbor = chunk;
+	}
+
+	Chunk* west = GetChunkAtCoordinates(chunkCoords - EAST);
+	chunk->m_westNeighbor = west;
+	if (west != nullptr){
+		west->m_eastNeighbor = chunk;
+	}
+
+	Chunk* north = GetChunkAtCoordinates(chunkCoords + NORTH);
+	chunk->m_northNeighbor = north;
+	if (north != nullptr){
+		north->m_southNeighbor = chunk;
+	}
+
+	Chunk* south = GetChunkAtCoordinates(chunkCoords - NORTH);
+	chunk->m_southNeighbor = south;
+	if (south != nullptr)
+	{
+		south->m_northNeighbor = chunk;
+	}
+
 }
 
 float World::GetChunkDistanceFromPlayerSquared(Chunk * chunk) const

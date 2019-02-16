@@ -55,6 +55,22 @@ void Chunk::CreateMesh()
 	}
 	m_cpuMesh.End();
 	m_gpuMesh = m_cpuMesh.CreateMesh(VERTEX_TYPE_3DPCU);
+	m_isGPUMeshDirty = false;
+}
+
+bool Chunk::DoesChunkHaveAllNeighbors() const
+{
+	return (m_eastNeighbor != nullptr) && (m_westNeighbor != nullptr) && (m_northNeighbor != nullptr) && (m_southNeighbor != nullptr);
+}
+
+bool Chunk::ShouldChunkRebuildMesh() const
+{
+	return DoesChunkHaveAllNeighbors() && (m_isGPUMeshDirty || !DoesChunkHaveMesh());
+}
+
+bool Chunk::DoesChunkHaveMesh() const
+{
+	return m_gpuMesh != nullptr;
 }
 
 IntVector2 Chunk::GetChunkCoords()
@@ -70,6 +86,9 @@ void Chunk::Render() const
 {
 	if (m_gpuMesh != nullptr){
 		g_theRenderer->DrawMesh(m_gpuMesh->m_subMeshes[0]);
+	} else {
+		AABB2 bounds = AABB2(GetBounds().mins.XY(), GetBounds().maxs.XY());
+		g_theRenderer->DrawAABB2(bounds, RGBA::MAGENTA);
 	}
 }
 
@@ -104,6 +123,13 @@ IntVector3 Chunk::GetBlockCoordinatesForBlockIndex(int blockIndex)
 	// this ends up being 0b00001111, always for pow of 2
 
 	return IntVector3(x,y,z);
+}
+
+AABB3 Chunk::GetBounds() const
+{
+	Vector3 mins = Vector3((float) m_chunkCoords.x * CHUNK_SIZE_X, (float) m_chunkCoords.y * CHUNK_SIZE_Y, 0.f);
+	Vector3 maxs = mins  + Vector3(CHUNK_SIZE_X, CHUNK_SIZE_Y, CHUNK_SIZE_Z);
+	return AABB3(mins, maxs);
 }
 
 void Chunk::AddVertsForBlockAtIndex(int blockIndex)

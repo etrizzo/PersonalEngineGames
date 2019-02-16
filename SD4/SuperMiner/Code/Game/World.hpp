@@ -21,6 +21,8 @@ public:
 
 	bool IsChunkActive(const IntVector2& chunkCoords);
 
+	Chunk* GetChunkAtCoordinates(const IntVector2& chunkCoords);
+
 	IntVector2 GetChunkCoordinatesFromWorldCoordinates(const Vector3& worldPos) const;
 
 private:
@@ -35,7 +37,10 @@ private:
 
 	void TryToActivateChunks();
 	void TryToDeactivateChunks();
+	void TryToBuildChunkMesh();
 
+
+	void SyncChunkWithNeighbors(Chunk* chunk);
 	float GetChunkDistanceFromPlayerSquared(Chunk* chunk) const;
 	//bool ShouldDeactivateChunk(Chunk* chunk) const;
 	

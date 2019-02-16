@@ -16,12 +16,22 @@ public:
 	void GenerateBlocks();
 	void CreateMesh();
 
+	bool DoesChunkHaveAllNeighbors() const;
+	bool ShouldChunkRebuildMesh() const;
+	bool DoesChunkHaveMesh() const;
+
 	IntVector2 GetChunkCoords();
 
 	static int GetBlockIndexForBlockCoordinates(const IntVector3& blockCoords);
 	static IntVector3 GetBlockCoordinatesForBlockIndex(int blockIndex);
 
-	
+	AABB3 GetBounds() const;
+
+
+	Chunk* m_eastNeighbor  = nullptr;
+	Chunk* m_westNeighbor  = nullptr;
+	Chunk* m_southNeighbor = nullptr;
+	Chunk* m_northNeighbor = nullptr;
 
 private:
 	Block m_blocks[BLOCKS_PER_CHUNK];
@@ -34,7 +44,7 @@ private:
 	Mesh*       m_gpuMesh = nullptr;      //by value or a pointer?
 
 	//we'll probably want to know when the mesh is out of date
-	bool m_isVBODirty = true; //isGPUMeshDirty;
+	bool m_isGPUMeshDirty = true; //isGPUMeshDirty;
 
 	//does all checks for HSR and air blocks and stuff and adds it to the cpuMesh
 	void AddVertsForBlockAtIndex(int blockIndex);
