@@ -70,7 +70,7 @@ GameState_Playing::GameState_Playing()
 	//}
 	
 
-	m_flower = new Flower(Vector2::ONE * 2.f, 5.f);
+	m_flower = new Flower(Vector2::ONE * 3.f, 4.f);
 	m_scene->AddRenderable(m_flower->m_renderable);
 
 	m_scene->AddRenderable(m_player->m_renderable);

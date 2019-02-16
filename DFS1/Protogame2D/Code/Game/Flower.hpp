@@ -9,11 +9,15 @@ public:
 	void GenerateFlower();
 
 private:
-	
+	void GetFlowerColors();
 
 	void GenerateCenter();
 	void GeneratePetals();
 	void AddPetal(RGBA baseColor, Vector2 forward);
+	void AddStripedPetal(RGBA baseColor, Vector2 forward);
+	void AddRoundedPetal(RGBA baseColor, Vector2 forward);
+
+	FloatRange m_sizeRange = FloatRange(1.f);
 
 	float m_size = 1.f;
 	int m_numPetals = 24;
@@ -23,6 +27,7 @@ private:
 	MeshBuilder m_cpuMesh;
 	int m_centerWedges = 15;
 	RGBA m_petalColor = RGBA(255, 204, 0);
+	RGBA m_petalStripeColor;
 	RGBA m_darkPetalColor;
 	RGBA m_centerColor = RGBA(97,19,9);
 };
