@@ -154,7 +154,7 @@ bool IntVector2::operator!=( const IntVector2& compare ) const
 
 float IntVector2::GetLengthSquared() const
 {
-	return (x * x) + (y * y);
+	return (float) ((x * x) + (y * y));
 }
 
 Vector2 IntVector2::GetVector2() const

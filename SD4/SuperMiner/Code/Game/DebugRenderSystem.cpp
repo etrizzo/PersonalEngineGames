@@ -39,7 +39,7 @@ void DebugRenderSystem::DetachCamera()
 		m_isDetached = true;
 
 		m_camera = new PerspectiveCamera(m_gameCamera);
-		m_camera->SetPerspectiveOrtho(m_camera->m_fovDegrees,  g_gameConfigBlackboard.GetValue("windowAspect", 1.f), .1f, 150.f);		//should maybe just hardcode in farz but this seems like a nice correlation
+		m_camera->SetPerspectiveOrtho(m_camera->m_fovDegrees,  g_gameConfigBlackboard.GetValue("windowAspect", 1.f), .1f, 450.f);		//should maybe just hardcode in farz but this seems like a nice correlation
 		m_camera->m_projMatrix.m_top.Append(g_worldToEngine);
 
 		m_camera->SetColorTarget( g_theRenderer->m_defaultColorTarget );

@@ -1,1 +1,2 @@
+debug_reattach_camera
 debug_detach_camera

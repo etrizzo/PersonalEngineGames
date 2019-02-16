@@ -15,6 +15,8 @@ bool GLCheckError( char const *file, int line )
 		return true; 
 	}
 #endif
+	UNUSED(file);
+	UNUSED(line);
 	return false; 
 }
 

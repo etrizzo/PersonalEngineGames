@@ -136,7 +136,7 @@ void World::ManageChunks()
 void World::TryToActivateChunks()
 {
 	IntVector2 playerChunk = g_theGame->GetPlayer()->GetCurrentChunkCoordinates();
-	for (int i = 0; i < m_chunkActivationOffsetsSortedByDistance.size(); i++)
+	for (int i = 0; i < (int) m_chunkActivationOffsetsSortedByDistance.size(); i++)
 	{
 		IntVector2 nextOffset = m_chunkActivationOffsetsSortedByDistance[i];
 		if (!IsChunkActive(playerChunk + nextOffset)){
@@ -177,7 +177,7 @@ void World::TryToDeactivateChunks()
 void World::TryToBuildChunkMesh()
 {
 	IntVector2 playerChunk = g_theGame->GetPlayer()->GetCurrentChunkCoordinates();
-	for (int i = 0; i < m_chunkActivationOffsetsSortedByDistance.size(); i++)
+	for (int i = 0; i < (int) m_chunkActivationOffsetsSortedByDistance.size(); i++)
 	{
 		IntVector2 nextOffset = m_chunkActivationOffsetsSortedByDistance[i];
 		Chunk* chunk = GetChunkAtCoordinates(playerChunk + nextOffset);

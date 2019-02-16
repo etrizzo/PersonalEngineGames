@@ -9,6 +9,20 @@ Chunk::Chunk(IntVector2 chunkCoords)
 
 Chunk::~Chunk()
 {
+	//unlink neighbors
+	if (m_eastNeighbor != nullptr){
+		m_eastNeighbor->m_westNeighbor = nullptr;
+	}
+	if (m_westNeighbor != nullptr){
+		m_westNeighbor->m_eastNeighbor = nullptr;
+	}
+	if (m_northNeighbor != nullptr){
+		m_northNeighbor->m_southNeighbor = nullptr;
+	}
+	if (m_southNeighbor != nullptr){
+		m_southNeighbor->m_northNeighbor = nullptr;
+	}
+	//delete mesh
 	delete m_gpuMesh;
 }
 
@@ -128,7 +142,7 @@ IntVector3 Chunk::GetBlockCoordinatesForBlockIndex(int blockIndex)
 AABB3 Chunk::GetBounds() const
 {
 	Vector3 mins = Vector3((float) m_chunkCoords.x * CHUNK_SIZE_X, (float) m_chunkCoords.y * CHUNK_SIZE_Y, 0.f);
-	Vector3 maxs = mins  + Vector3(CHUNK_SIZE_X, CHUNK_SIZE_Y, CHUNK_SIZE_Z);
+	Vector3 maxs = mins  + Vector3((float) CHUNK_SIZE_X,(float) CHUNK_SIZE_Y,(float) CHUNK_SIZE_Z);
 	return AABB3(mins, maxs);
 }
 
