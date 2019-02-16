@@ -31,7 +31,7 @@ void GameState_Playing::EnterState()
 
 		//start up playing state
 		Startup();
-		g_theGame->m_debugRenderSystem->DetachCamera();
+		//g_theGame->m_debugRenderSystem->DetachCamera();
 	}
 }
 
@@ -49,6 +49,8 @@ void GameState_Playing::Update(float ds)
 	for (Entity* entity : m_allEntities){
 		entity->Update();
 	}
+
+	m_world->Update();
 
 	DeleteEntities();
 	CheckForVictory();
@@ -111,7 +113,7 @@ void GameState_Playing::HandleInput()
 
 	if (!g_theGame->m_debugRenderSystem->m_isDetached){
 		if (!m_gameLost){
-			//m_player->HandleInput();
+			m_player->HandleInput();
 		}
 	}
 }
@@ -196,15 +198,16 @@ void GameState_Playing::Startup()
 	new BlockDefinition(BLOCK_GRASS, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(3,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(4,3)));
 	new BlockDefinition(BLOCK_STONE, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)));
 	new BlockDefinition(BLOCK_SNOW, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)));
-
+	
 
 	m_world = new World();
+	SpawnPlayer(Vector3(-4.f,0.f, (float) CHUNK_SIZE_Z * .5f));
 
-	m_world->ActivateChunk(IntVector2(0,3));
-	m_world->ActivateChunk(IntVector2(0,2));
-	m_world->ActivateChunk(IntVector2(1,2));
-	m_world->ActivateChunk(IntVector2(0,0));
-	m_world->ActivateChunk(IntVector2(-1,2));
+	//m_world->ActivateChunk(IntVector2(0,3));
+	//m_world->ActivateChunk(IntVector2(0,2));
+	//m_world->ActivateChunk(IntVector2(1,2));
+	//m_world->ActivateChunk(IntVector2(0,0));
+	//m_world->ActivateChunk(IntVector2(-1,2));
 	//m_world->ActivateChunk(IntVector2(1,1));
 }
 
@@ -235,6 +238,7 @@ void GameState_Playing::SpawnPlayer(Vector3 pos)
 
 	m_scene->AddRenderable(m_player->m_renderable);
 
+	g_theGame->m_mainCamera->Translate(pos);
 	g_theGame->m_mainCamera->m_transform.SetParent(m_player->m_cameraTarget);
 }
 

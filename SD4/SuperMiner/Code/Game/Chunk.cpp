@@ -124,22 +124,22 @@ void Chunk::AddVertsForBlockAtIndex(int blockIndex)
 		//m_cpuMesh.AppendCube(center, Vector3::ONE, RGBA::WHITE, RIGHT, UP, FORWARD, blockDef->m_topUVs, blockDef->m_sideUVs, blockDef->m_bottomUVs);
 		
 		//Add verts for top (abfe)					//up	//right
-		m_cpuMesh.AppendPlane(center + topOffset, FORWARD, RIGHT, Vector2::HALF, RGBA::WHITE, blockDef->m_topUVs.mins, blockDef->m_topUVs.maxs);
+		m_cpuMesh.AppendPlane(center + topOffset, FORWARD, RIGHT, Vector2::HALF, s_blockTopBottomColor, blockDef->m_topUVs.mins, blockDef->m_topUVs.maxs);
 
 		//add verts for right (dhfb)
-		m_cpuMesh.AppendPlane(center + rightOffset, UP, FORWARD, Vector2::HALF, RGBA::WHITE, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		m_cpuMesh.AppendPlane(center + rightOffset, UP, FORWARD, Vector2::HALF, s_blockNorthSouthColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 
 		//add verts for left (gcae)
-		m_cpuMesh.AppendPlane(center - rightOffset, UP, -FORWARD, Vector2::HALF, RGBA::WHITE, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		m_cpuMesh.AppendPlane(center - rightOffset, UP, -FORWARD, Vector2::HALF, s_blockNorthSouthColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 
 		//add verts for front (hgef)
-		m_cpuMesh.AppendPlane(center + forwardOffset, UP, -RIGHT, Vector2::HALF, RGBA::WHITE, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		m_cpuMesh.AppendPlane(center + forwardOffset, UP, -RIGHT, Vector2::HALF, s_blockEastWestColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 
 		//add verts for back (cdba)
-		m_cpuMesh.AppendPlane(center - forwardOffset, UP, RIGHT, Vector2::HALF, RGBA::WHITE, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		m_cpuMesh.AppendPlane(center - forwardOffset, UP, RIGHT, Vector2::HALF, s_blockEastWestColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 
 		//add verts for bottom (hgcd)
-		m_cpuMesh.AppendPlane(center - topOffset, -FORWARD, -RIGHT, Vector2::HALF, RGBA::WHITE, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		m_cpuMesh.AppendPlane(center - topOffset, -FORWARD, -RIGHT, Vector2::HALF, s_blockTopBottomColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 	}
 }
 

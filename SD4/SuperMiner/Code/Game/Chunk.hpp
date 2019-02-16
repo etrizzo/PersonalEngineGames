@@ -3,6 +3,8 @@
 #include "Game/Block.hpp"
 class Map;
 
+
+
 class Chunk{
 public:
 	Chunk(IntVector2 chunkCoords);
@@ -15,6 +17,8 @@ public:
 
 	static int GetBlockIndexForBlockCoordinates(const IntVector3& blockCoords);
 	static IntVector3 GetBlockCoordinatesForBlockIndex(int blockIndex);
+
+	
 
 private:
 	Block m_blocks[BLOCKS_PER_CHUNK];

@@ -1,6 +1,7 @@
 #include "Entity.hpp"
 #include "Game/Game.hpp"
 #include "Game/Tile.hpp"
+#include "Game/World.hpp"
 #include "Engine/Renderer/ObjLoader.hpp"
 
 Entity::~Entity()
@@ -86,6 +87,11 @@ void Entity::RunWorldPhysics()
 void Entity::RunEntityPhysics()
 {
 	
+}
+
+IntVector2 Entity::GetCurrentChunkCoordinates() const
+{
+	return g_theGame->GetWorld()->GetChunkCoordinatesFromWorldCoordinates(GetPosition());
 }
 
 

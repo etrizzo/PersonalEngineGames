@@ -41,13 +41,13 @@ Game::Game()
 
 	
 
-	m_mainCamera->SetPerspectiveOrtho(70.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.1f, 150.f);
+	m_mainCamera->SetPerspectiveOrtho(70.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.1f, 450.f);
 	Matrix44 projection = m_mainCamera->m_projMatrix.GetTop();
 	//Matrix44 newProj = Matrix44(g_worldToEngine);
 	//newProj.Append(projection);
 	//m_mainCamera->m_projMatrix.Load(newProj);
 	m_mainCamera->m_projMatrix.m_top.Append(g_worldToEngine);
-	m_mainCamera->Translate(Vector3(-4.f,0.f, (float) CHUNK_SIZE_Z * .5f));
+	//m_mainCamera->Translate(Vector3(-4.f,0.f, (float) CHUNK_SIZE_Z * .5f));
 
 	m_uiCamera = new Camera();
 
@@ -181,6 +181,14 @@ Player * Game::GetPlayer() const
 		return m_playState->m_player;
 	}
 	return nullptr;
+}
+
+World * Game::GetWorld() const
+{
+	if (m_playState == nullptr){
+		return nullptr;
+	}
+	return m_playState->m_world;
 }
 
 

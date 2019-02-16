@@ -11,7 +11,7 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	//make tank
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendCube(Vector3::ZERO, Vector3(.8f, .3f, 1.f), RGBA::GREEN, RIGHT, UP, FORWARD);
+	mb.AppendCube(Vector3(-1.f, 0.f, 0.f), Vector3::ONE * .5f, RGBA::GREEN, RIGHT, UP, FORWARD);
 	mb.End();
 	m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
 	
@@ -35,8 +35,6 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	m_positionXZ = position.XZ();
 
 	//set up auxilary transforms: camera target, turret renderable, barrel fire position, laser sight...
-	m_cameraTarget = new Transform();
-	m_cameraTarget->SetLocalPosition(Vector3::ZERO);
 
 
 	//m_turretRenderable->m_transform.SetParent(m_cameraTarget);
@@ -46,12 +44,15 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	m_health = 50;
 	m_maxHealth = m_health;
 
-	m_shadowCameraTransform = new Transform();
+	m_cameraTarget = new Transform();
+	m_cameraTarget->SetParent(&m_renderable->m_transform);
+
+	/*m_shadowCameraTransform = new Transform();
 	Vector3 lightEuler = g_theGame->m_playState->m_sun->m_transform.GetEulerAnglesYawPitchRoll();
 	Vector3 sunDirection = g_theGame->m_playState->m_sun->m_transform.GetForward();
 	m_shadowCameraOffset = sunDirection * -25.f;
 	m_shadowCameraTransform->SetRotationEuler(lightEuler);
-	m_shadowCameraTransform->SetLocalPosition(position + m_shadowCameraOffset);
+	m_shadowCameraTransform->SetLocalPosition(position + m_shadowCameraOffset);*/
 
 
 
@@ -61,7 +62,6 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 
 Player::~Player()
 {
-	delete m_cameraTarget;
 
 }
 
@@ -77,74 +77,71 @@ void Player::HandleInput()
 {
 	float ds = g_theGame->GetDeltaSeconds();
 
-	if (g_theInput->IsKeyDown(VK_SPACE) || g_theInput->IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
-		if (m_rateOfFire.CheckAndReset()){
-			g_theAudio->PlayOneOffSoundFromGroup("laser1");
-		}
+	float speed = m_speed;
+	if (g_theInput->IsKeyDown(VK_SHIFT)){
+		speed *= m_shiftMultiplier;
 	}
 
-	Vector3 camRotation = Vector3::ZERO;
+	float deltaYaw = 0.f;
+	float deltaPitch = 0.f;
+
+	Vector2 mouseDirection = g_theInput->GetMouseDirection();
+	mouseDirection *= .5f;
+
 
 	if (g_theInput->IsKeyDown(VK_UP)){
-		camRotation.x += 1.f;
+		deltaPitch -= 1.f;			// positive deltaPitch is from z towards x
 	}
 	if (g_theInput->IsKeyDown(VK_DOWN)){
-		camRotation.x -=1.f;
+		deltaPitch +=1.f;
 	}
 	if (g_theInput->IsKeyDown(VK_RIGHT)){
-		camRotation.y += 1.f;
+		deltaYaw -= 1.f;		//positive yaw is from right to left
 	}
 	if (g_theInput->IsKeyDown(VK_LEFT)){
-		camRotation.y -=1.f;
+		deltaYaw +=1.f;		
 	}
+
+	deltaPitch += 1.f * mouseDirection.y;		//up and down is  deltaPitch
+	deltaYaw += -1.f * mouseDirection.x;				//left and right is yaw
 
 	Vector2 controllerRotation = g_theInput->GetController(0)->GetRightThumbstickCoordinates();
-	camRotation+=Vector3(controllerRotation.y, controllerRotation.x, 0.f);
+	deltaYaw += -1.f * controllerRotation.x;
+	deltaPitch += -1.f * controllerRotation.y;
 
-	Vector2 mouseMovement = g_theInput->GetMouseDirection()  * .2f;
-	camRotation+=Vector3(-mouseMovement.y, mouseMovement.x, 0.f);
+	/*deltaYaw *= degPerSecond * ds;
+	deltaPitch *= degPerSecond * ds;
+	*/
+	Rotate(deltaYaw, deltaPitch, 0.f);
 
-	m_cameraTarget->RotateByEuler(camRotation * m_degPerSecond * ds);
-
-	Vector3 tankRotation = Vector3::ZERO;
-
-	if (g_theInput->IsKeyDown('E')){
-		tankRotation.y += 1.f;
-	}
-	if (g_theInput->IsKeyDown('Q')){
-		tankRotation.y -=1.f;
-	}
-
-	m_renderable->m_transform.RotateByEuler(tankRotation * m_degPerSecond * ds);
-
-	Vector2 movement = Vector2::ZERO;
-
+	Vector3 forward = GetForward();
+	Vector3 forwardLockedVertical = Vector3(forward.x, forward.y, 0.f);
+	forwardLockedVertical.NormalizeAndGetLength();
 
 	//why are there 6 keys if there are only 4 directions
-	//float speed = 10.f;
 	if (g_theInput->IsKeyDown('D')){
-		//Translate(GetRight() * ds * m_speed);
-		movement+= GetRight().XZ() * ds * m_speed;
+		Translate(GetRight() * ds * speed);
 	}
 	if (g_theInput->IsKeyDown('A')){
-		//Translate(GetRight() * ds * m_speed * -1.f);
-		movement+= GetRight().XZ() * ds * m_speed * -1.f;
+		Translate(GetRight() * ds * speed * -1.f);
 	}
 	if (g_theInput->IsKeyDown('W')){
-		//Translate(GetForward() * ds* m_speed );
-		movement+= GetForward().XZ() * ds * m_speed;
+		Translate(forwardLockedVertical * ds* speed );
 	}
 	if (g_theInput->IsKeyDown('S')){
-		movement+= GetForward().XZ() * ds * m_speed * -1.f;
+		Translate(forwardLockedVertical * ds * speed * -1.f);
 	}
-
+	if (g_theInput->IsKeyDown('E') || g_theInput->GetController(0)->IsButtonDown(XBOX_BUMPER_RIGHT)){
+		Translate(UP * ds* speed );		//going off of camera's up feels very weird when it's not perfectly upright
+	}
+	if (g_theInput->IsKeyDown('Q') || g_theInput->GetController(0)->IsButtonDown(XBOX_BUMPER_LEFT)){
+		Translate(UP * ds * speed * -1.f);
+	}
 
 	Vector2 controllerTranslation = g_theInput->GetController(0)->GetLeftThumbstickCoordinates();
 
-	movement+= (GetForward().XZ() * controllerTranslation.y * ds * m_speed);
-	movement+=(GetRight().XZ() * controllerTranslation.x * ds * m_speed);
-
-	m_positionXZ+=movement;
+	Translate(forwardLockedVertical * controllerTranslation.y * ds * speed);
+	Translate(GetRight() * controllerTranslation.x * ds * speed);
 
 
 

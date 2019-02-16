@@ -78,6 +78,7 @@ public:
 	float GetDeltaSeconds();
 	Vector2 GetPlayerPositionXZ() const;
 	Player* GetPlayer() const;
+	World* GetWorld() const;
 
 	AABB2 SetMainCamera();
 	AABB2 SetUICamera();

@@ -29,7 +29,7 @@ public:
 
 	friend const IntVector2 operator*( int uniformScale, const IntVector2& vecToScale );	// float * vec2
 
-
+	float GetLengthSquared() const;
 	Vector2 GetVector2() const;
 	void SetFromText(const char* text);
 

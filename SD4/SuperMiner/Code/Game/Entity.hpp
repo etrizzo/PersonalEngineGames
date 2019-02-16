@@ -28,6 +28,8 @@ public:
 	virtual void RunWorldPhysics();
 	virtual void RunEntityPhysics();
 
+	IntVector2 GetCurrentChunkCoordinates() const;
+
 	void SetTransform(Transform newT);
 
 	void Translate(Vector3 translation);

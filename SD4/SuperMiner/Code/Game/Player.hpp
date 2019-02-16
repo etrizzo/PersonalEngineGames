@@ -17,14 +17,13 @@ public:
 	float GetPercentageOfHealth() const;
 
 	Vector2 m_positionXZ;
-	float m_speed			= 5.f;
+	float m_speed				= 16.f;
+	float m_shiftMultiplier		= 4.f;
 	float m_degPerSecond	= 60.f;
 	StopWatch m_rateOfFire;
-	Transform* m_cameraTarget;
 
-	Transform* m_shadowCameraTransform;
-	Vector3 m_shadowCameraOffset;
-	Vector3 m_target;
+
+	Transform* m_cameraTarget;
 
 private:
 
