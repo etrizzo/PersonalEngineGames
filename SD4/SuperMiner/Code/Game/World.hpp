@@ -13,11 +13,11 @@ public:
 	void Render();
 
 	void SetActivationRadius(float newRadius);
-	inline float GetActivationRadius() const { return m_chunkActivationRadius; }
+	inline float GetActivationRadius() const { return m_chunkActivationRadiusChunkDistance; }
 	
 
 	void ActivateChunk(const IntVector2& chunkCoords);
-	void DeactivateChunk(const IntVector2& chunkCoords);
+	void DeactivateChunk(Chunk* chunkToDeactivate);
 
 	bool IsChunkActive(const IntVector2& chunkCoords);
 
@@ -35,8 +35,12 @@ private:
 
 	void TryToActivateChunks();
 	void TryToDeactivateChunks();
+
+	float GetChunkDistanceFromPlayerSquared(Chunk* chunk) const;
+	//bool ShouldDeactivateChunk(Chunk* chunk) const;
 	
-	float m_chunkActivationRadius = 5.f;		//int?
+	float m_chunkActivationRadiusChunkDistance = 5.f;		//int?
+	float m_chunkDeactivationRadiusChunkDistance = 7.f;
 public:
 	
 	std::vector<IntVector2> m_chunkActivationOffsetsSortedByDistance;

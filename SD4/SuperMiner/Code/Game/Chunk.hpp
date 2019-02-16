@@ -8,12 +8,15 @@ class Map;
 class Chunk{
 public:
 	Chunk(IntVector2 chunkCoords);
+	~Chunk();
 
 	void Update();
 	void Render() const;
 
 	void GenerateBlocks();
 	void CreateMesh();
+
+	IntVector2 GetChunkCoords();
 
 	static int GetBlockIndexForBlockCoordinates(const IntVector3& blockCoords);
 	static IntVector3 GetBlockCoordinatesForBlockIndex(int blockIndex);

@@ -7,7 +7,11 @@ World::World()
 {
 	m_chunkMaterial = Material::GetMaterial("block");
 	ASSERT_OR_DIE(m_chunkMaterial != nullptr, "No block material loaded in material data");
-	SetActivationRadius(g_gameConfigBlackboard.GetValue("activationRadius", m_chunkActivationRadius));
+	float activationRadiusInBlocks = g_gameConfigBlackboard.GetValue("activationRadius", 100.f);
+	float deactivationRadiusInBlocks = g_gameConfigBlackboard.GetValue("deactivationRadius", 120.f);
+	m_chunkActivationRadiusChunkDistance = activationRadiusInBlocks / (float) CHUNK_SIZE_X;
+	m_chunkDeactivationRadiusChunkDistance = deactivationRadiusInBlocks / (float) CHUNK_SIZE_X;
+	SetActivationRadius(m_chunkActivationRadiusChunkDistance);
 }
 
 void World::Update()
@@ -41,7 +45,7 @@ void World::Render()
 
 void World::SetActivationRadius(float newRadius)
 {
-	m_chunkActivationRadius = newRadius;
+	m_chunkActivationRadiusChunkDistance = newRadius;
 	SetChunkActivationCheatSheet();
 }
 
@@ -54,8 +58,17 @@ void World::ActivateChunk(const IntVector2& chunkCoords)
 	m_chunks.insert(std::pair<IntVector2, Chunk*>(chunkCoords, newChunk));		//add to the world's map of chonks
 }
 
-void World::DeactivateChunk(const IntVector2 & chunkCoords)
+void World::DeactivateChunk(Chunk* chunkToDeactivate)
 {
+	// 1. Unlink yourself from your neighbors
+	TODO("Unlink from your neighbors");
+	// 2. De-register yourself from the world
+	m_chunks.erase(chunkToDeactivate->GetChunkCoords());
+	// 3. Release/destroy VBO ID on the GPU (in deconstructor for now)
+	// 4. Save chunk to disk
+	TODO("Save chunks to disk if changed");
+	//5. Delete chunk
+	delete chunkToDeactivate;
 }
 
 bool World::IsChunkActive(const IntVector2 & chunkCoords)
@@ -90,6 +103,12 @@ void World::UpdateChunks()
 
 void World::ManageChunks()
 {
+	TryToActivateChunks();
+	TryToDeactivateChunks();
+}
+
+void World::TryToActivateChunks()
+{
 	IntVector2 playerChunk = g_theGame->GetPlayer()->GetCurrentChunkCoordinates();
 	for (int i = 0; i < m_chunkActivationOffsetsSortedByDistance.size(); i++)
 	{
@@ -101,18 +120,45 @@ void World::ManageChunks()
 	}
 }
 
-void World::TryToActivateChunks()
-{
-}
-
 void World::TryToDeactivateChunks()
 {
+	float furthestDistance = -1.f;
+	Chunk* chunkToDeactivate = nullptr;
+	float deactivateRadiusSquared = m_chunkDeactivationRadiusChunkDistance * m_chunkDeactivationRadiusChunkDistance;
+
+	for (std::pair<IntVector2, Chunk*> chunkPair : m_chunks){
+		float distSquaredFromPlayer = GetChunkDistanceFromPlayerSquared(chunkPair.second);
+		if (distSquaredFromPlayer > deactivateRadiusSquared){
+			if (furthestDistance < 0.f){
+				//this is the first one out of the radius we've found
+				furthestDistance = distSquaredFromPlayer;
+				chunkToDeactivate = chunkPair.second;
+			} else {
+				if (furthestDistance < distSquaredFromPlayer){
+					//we've found a further one
+					furthestDistance = distSquaredFromPlayer;
+					chunkToDeactivate = chunkPair.second;
+				}
+			}
+		}
+	}
+
+	if (chunkToDeactivate != nullptr){
+		DeactivateChunk(chunkToDeactivate);
+	}
+}
+
+float World::GetChunkDistanceFromPlayerSquared(Chunk * chunk) const
+{
+	IntVector2 chunkCoords = chunk->GetChunkCoords();
+	IntVector2 playerCoords = g_theGame->GetPlayer()->GetCurrentChunkCoordinates();
+	return (chunkCoords - playerCoords).GetLengthSquared();
 }
 
 void World::SetChunkActivationCheatSheet()
 {
 	m_chunkActivationOffsetsSortedByDistance = std::vector<IntVector2>();
-	int radius = (int) m_chunkActivationRadius;
+	int radius = (int) m_chunkActivationRadiusChunkDistance;
 	int radiusSquared = radius * radius;
 	IntVector2 origin = IntVector2(0,0);
 	for (int x = -radius; x < radius; x++)

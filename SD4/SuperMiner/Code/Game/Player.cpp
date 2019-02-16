@@ -11,7 +11,7 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	//make tank
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendCube(Vector3(-1.f, 0.f, 0.f), Vector3::ONE * .5f, RGBA::GREEN, RIGHT, UP, FORWARD);
+	mb.AppendCube(Vector3(0.f, 0.f, 0.f), Vector3::ONE * .5f, RGBA::GREEN, RIGHT, UP, FORWARD);
 	mb.End();
 	m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
 	

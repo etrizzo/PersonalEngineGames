@@ -238,7 +238,7 @@ void GameState_Playing::SpawnPlayer(Vector3 pos)
 
 	m_scene->AddRenderable(m_player->m_renderable);
 
-	g_theGame->m_mainCamera->Translate(pos);
+	//g_theGame->m_mainCamera->Translate(pos);
 	g_theGame->m_mainCamera->m_transform.SetParent(m_player->m_cameraTarget);
 }
 

@@ -7,6 +7,11 @@ Chunk::Chunk(IntVector2 chunkCoords)
 	m_cpuMesh = MeshBuilder();
 }
 
+Chunk::~Chunk()
+{
+	delete m_gpuMesh;
+}
+
 void Chunk::GenerateBlocks()
 {
 	for (int z = 0; z < CHUNK_SIZE_Z; z++)
@@ -50,6 +55,11 @@ void Chunk::CreateMesh()
 	}
 	m_cpuMesh.End();
 	m_gpuMesh = m_cpuMesh.CreateMesh(VERTEX_TYPE_3DPCU);
+}
+
+IntVector2 Chunk::GetChunkCoords()
+{
+	return m_chunkCoords;
 }
 
 void Chunk::Update()
