@@ -1,0 +1,46 @@
+<DataSets>
+	<DataSet name="VillageStory">
+		<Acts>
+			<File name="Data/Data/GraphData/MurderMystery_Acts.xml" />
+		</Acts>
+		<Characters>
+			<File name="Data/Data/GraphData/MurderMystery_Characters.xml" />
+		</Characters>
+		<EventNodes>
+			<File name="Data/Data/GraphData/MurderMystery_EventNodes.xml" />
+		</EventNodes>
+		<OutcomeNodes>
+			<File name="Data/Data/GraphData/MurderMystery_OutcomeNodes.xml" />
+		</OutcomeNodes>
+	</DataSet>
+	
+	<DataSet name="MurderMystery">
+		<Acts>
+			<File name="Data/Data/GraphData/MurderMystery_Acts.xml" />
+		</Acts>
+		<Characters>
+			<File name="Data/Data/GraphData/MurderMystery_Characters.xml" />
+		</Characters>
+		<EventNodes>
+			<File name="Data/Data/GraphData/MurderMystery_EventNodes.xml" />
+		</EventNodes>
+		<OutcomeNodes>
+			<File name="Data/Data/GraphData/MurderMystery_OutcomeNodes.xml" />
+		</OutcomeNodes>
+	</DataSet>
+
+	<DataSet name="Default">
+		<Acts>
+			<File name="Data/Data/GraphData/MurderMystery_Acts.xml" />
+		</Acts>
+		<Characters>
+			<File name="Data/Data/GraphData/Characters.xml" />
+		</Characters>
+		<EventNodes>
+			<File name="Data/Data/GraphData/PlotGrammars.xml" />
+		</EventNodes>
+		<OutcomeNodes>
+			<File name="Data/Data/GraphData/DetailGrammars.xml" />
+		</OutcomeNodes>
+	</DataSet>
+</DataSets>

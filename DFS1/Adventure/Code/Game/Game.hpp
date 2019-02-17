@@ -103,15 +103,13 @@ public:
 	StoryGraph m_graph;
 	bool m_thesisMode;
 
+	
+
 	void InitGraphDefault();
 	void InitGraphMurder();
 	void InitGraphDialogue();
 
-	void ReadPlotNodes(std::string filePath);
-	void ReadOutcomeNodes(std::string filePath);
-	void ReadCharacters(std::string filePath);
 	void InitCharacterArray();
-	void ResetGraphData();
 
 	void GenerateGraph();
 	void ClearGraph();
@@ -136,6 +134,8 @@ private:
 	void LoadAdventureDefinitions();
 	void LoadQuestDefinitions();
 	void LoadVillageDefinitions();
+
+	void LoadGraphDatasets();
 
 	int m_screenWidth = 10;
 

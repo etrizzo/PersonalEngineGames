@@ -5,73 +5,35 @@
 #include "Game/CharacterRequirementSet.hpp"
 #include "Game/ActionDefinition.hpp"
 
-std::vector<StoryDataDefinition*> StoryGraph::s_eventNodes = std::vector<StoryDataDefinition*>();
-std::vector<StoryDataDefinition*> StoryGraph::s_outcomeNodes = std::vector<StoryDataDefinition*>();
-
 StoryGraph::StoryGraph()
 {
 
 }
 
-void StoryGraph::ClearGraphData()
-{
-	s_eventNodes.clear();
-	s_outcomeNodes.clear();
-	m_characters.clear();
-	m_allCharacters.clear();
-}
 
-void StoryGraph::ReadEventNodesFromXML(std::string filePath)
+void StoryGraph::LoadDataSet(std::string setName)
 {
-	tinyxml2::XMLDocument nodeDoc;
-//	std::string filePath = "Data/Data/" + fileName;
-	nodeDoc.LoadFile(filePath.c_str());
-	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("EventNode"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("EventNode")){
-		StoryDataDefinition* data = new StoryDataDefinition( PLOT_NODE);
-		data->InitFromXML(nodeElement);
-		s_eventNodes.push_back(data);
-	}
-	
-}
-
-void StoryGraph::ReadDetailNodesFromXML(std::string filePath)
-{
-	tinyxml2::XMLDocument nodeDoc;
-	//	std::string filePath = "Data/Data/" + fileName;
-	nodeDoc.LoadFile(filePath.c_str());
-	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("OutcomeNode"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("OutcomeNode")){
-		StoryDataDefinition* data = new StoryDataDefinition( DETAIL_NODE);
-		data->InitFromXML(nodeElement);
-		s_outcomeNodes.push_back(data);
-	}
-}
-
-void StoryGraph::ReadCharactersFromXML(std::string filePath)
-{
-	tinyxml2::XMLDocument charDoc;
-	//	std::string filePath = "Data/Data/" + fileName;
-	charDoc.LoadFile(filePath.c_str());
-	for (tinyxml2::XMLElement* charElement = charDoc.FirstChildElement("Character"); charElement != NULL; charElement = charElement->NextSiblingElement("Character")){
-		Character* newChar = new Character();
-		newChar->InitFromXML(charElement);
-		m_allCharacters.push_back(newChar);
+	m_dataSet = DataSet::GetDataSet(setName);
+	if (m_dataSet == nullptr)
+	{
+		ConsolePrintf(RGBA::RED, "No dataset found: %s", setName.c_str());
 	}
 }
 
 void StoryGraph::SelectCharactersForGraph()
 {
-	int numChars = g_gameConfigBlackboard.GetValue("numCharacters", (int) m_allCharacters.size());
-	if (numChars >= m_allCharacters.size()){
-		for(Character* character : m_allCharacters){
+	int numChars = g_gameConfigBlackboard.GetValue("numCharacters", (int) m_dataSet->m_characters.size());
+	if (numChars >=  m_dataSet->m_characters.size()){
+		for(Character* character :  m_dataSet->m_characters){
 			m_characters.push_back(character);
 		}
 	} else {
 		//select randomly
 		int numSelected = 0;
 		while (numSelected < numChars){
-			int idx = GetRandomIntLessThan(m_allCharacters.size());
-			if (!Contains(m_characters, m_allCharacters[idx])){
-				m_characters.push_back(m_allCharacters[idx]);
+			int idx = GetRandomIntLessThan( m_dataSet->m_characters.size());
+			if (!Contains(m_characters,  m_dataSet->m_characters[idx])){
+				m_characters.push_back( m_dataSet->m_characters[idx]);
 				numSelected++;
 			}
 		}
@@ -173,12 +135,12 @@ void StoryGraph::GenerateSkeleton(int numPlotNodes)
 	StoryData* newData = nullptr;
 	while(GetNumNodes() < numPlotNodes){
 		//re-roll if you get a duplicate node.
-		StoryDataDefinition* sourceNode = StoryGraph::GetRandomEventNode();
+		StoryDataDefinition* sourceNode = m_dataSet->GetRandomEventNode();
 		bool alreadyUsed = false;
 		if (Contains(m_usedPlotNodes, sourceNode)){
 			alreadyUsed = true;
 			if (CheckRandomChance(REROLL_REPEAT_PLOT_NODE_CHANCE)){
-				sourceNode =  StoryGraph::GetRandomEventNode();
+				sourceNode =  m_dataSet->GetRandomEventNode();
 			}
 		}
 
@@ -198,43 +160,8 @@ void StoryGraph::GenerateSkeleton(int numPlotNodes)
 			}
 		}
 	}
-
-	//IdentifyBranchesAndAdd(2);
 }
 
-//void StoryGraph::AddPlotNodes(int numPlotNodes)
-//{
-//	int numAdded = 0;
-//	StoryNode* addNode = nullptr;
-//	StoryData* newData = nullptr;
-//	while(numAdded < numPlotNodes){
-//		//re-roll if you get a duplicate node.
-//		StoryDataDefinition* sourceNode = StoryGraph::GetRandomPlotNode();
-//		bool alreadyUsed = false;
-//		if (Contains(m_usedPlotNodes, sourceNode)){
-//			alreadyUsed = true;
-//			if (CheckRandomChance(REROLL_REPEAT_PLOT_NODE_CHANCE)){
-//				sourceNode =  StoryGraph::GetRandomPlotNode();
-//			}
-//		}
-//
-//		//clone data
-//		newData = new StoryData(sourceNode);
-//		addNode = new StoryNode(newData);
-//		//try to add the cloned data, if it doesn't work, clean up
-//		if (!AddPlotNode(addNode)){
-//			delete newData;
-//			delete addNode;
-//			newData = nullptr;
-//			addNode = nullptr;
-//		} else {
-//			if (!alreadyUsed){
-//				//add node to used plot node list
-//				m_usedPlotNodes.push_back(sourceNode);
-//			}
-//		}
-//	}
-//}
 
 StoryNode * StoryGraph::AddSingleEventNode()
 {
@@ -244,14 +171,14 @@ StoryNode * StoryGraph::AddSingleEventNode()
 	StoryData* newData = nullptr;
 	while(!added){
 		//re-roll if you get a duplicate node.
-		StoryDataDefinition* sourceNode = StoryGraph::GetRandomEventNode();
+		StoryDataDefinition* sourceNode = m_dataSet->GetRandomEventNode();
 		bool alreadyUsed = true;
 		int rerollRepeatTries = 0;
 		while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
 			if (Contains(m_usedPlotNodes, sourceNode)){
 				alreadyUsed = true;
 				if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
-					sourceNode = StoryGraph::GetRandomEventNode();
+					sourceNode = m_dataSet->GetRandomEventNode();
 				} else {
 					alreadyUsed = false;		//let it slide based on chance
 				}
@@ -288,7 +215,7 @@ StoryNode * StoryGraph::AddEventNodeAtEdge(StoryEdge * edge)
 	StoryNode* addedNode = nullptr;
 	while (tries < maxTries && !added){
 		//reroll if you get a duplicate node.
-		StoryDataDefinition* sourceNode = StoryGraph::GetEventNodeWithWeights(edge->GetCost(), 3.f);
+		StoryDataDefinition* sourceNode = m_dataSet->GetEventNodeWithWeights(edge->GetCost(), 3.f);
 
 		//try to add the node
 		if (StoryRequirementsMet(sourceNode, edge)){
@@ -370,7 +297,7 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 	int tries = 0;
 	while (tries < maxTries && !added){
 		//reroll if you get a duplicate node.
-		StoryDataDefinition* sourceNode = StoryGraph::GetOutcomeNodeWithWeights(edge->GetCost(), 3.f);
+		StoryDataDefinition* sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), 3.f);
 		bool alreadyUsed = true;
 		int rerollRepeatTries = 0;
 		while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
@@ -378,9 +305,9 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 				alreadyUsed = true;
 				if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
 					if (rerollRepeatTries < (float) MAX_REPEAT_REROLLS * .5f){
-						sourceNode = StoryGraph::GetOutcomeNodeWithWeights(edge->GetCost(), 3.f);
+						sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), 3.f);
 					} else {
-						sourceNode = StoryGraph::GetOutcomeNodeWithWeights(edge->GetCost(), 1.f);
+						sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), 1.f);
 					}
 				} else {
 					alreadyUsed = false;		//let it slide based on chance
@@ -674,7 +601,7 @@ bool StoryGraph::AddEndingsToEachBranch()
 	int maxAdds = 6;
 	int addedNodes = 0;
 	int tries = 0;
-	while (!allPathsHaveEndings && addedNodes < maxAdds && tries < 50){
+	while (!allPathsHaveEndings && addedNodes < maxAdds && tries < 20){
 		tries++;
 		allPathsHaveEndings = true;
 		//look at all incoming edges to the end node
@@ -1650,141 +1577,6 @@ bool StoryGraph::AreAllCharactersSet(const std::vector<Character*>& chars) const
 		}
 	}
 	return true;
-}
-
-StoryDataDefinition * StoryGraph::GetRandomEventNode()
-{
-	int i = GetRandomIntLessThan(StoryGraph::s_eventNodes.size());
-	return StoryGraph::s_eventNodes[i];
-}
-
-StoryDataDefinition * StoryGraph::GetRandomOutcomeNode()
-{
-	int i = GetRandomIntLessThan(StoryGraph::s_outcomeNodes.size());
-	return StoryGraph::s_outcomeNodes[i];
-}
-
-StoryDataDefinition * StoryGraph::GetOutcomeNodeWithWeights(StoryState * edge, float minFitness)
-{
-	std::vector<StoryDataDefinition*> fitNodes = std::vector<StoryDataDefinition*>();
-	std::vector<StoryDataDefinition*> defaultNodes = std::vector<StoryDataDefinition*>();
-	for(StoryDataDefinition* data : StoryGraph::s_outcomeNodes){
-		float fitness = CalculateEdgeFitnessForData(edge, data);
-		if (fitness >= minFitness){
-			if (fitness >= 1.f){
-				//try to populate the array with the most fit nodes being more likely
-				int intFitness = (int) fitness;
-				for (int i = 0; i < intFitness; i++){
-					fitNodes.push_back(data);
-				}
-			} else {
-				//by default the node is added once to the array
-				fitNodes.push_back(data);
-			}
-		} else {
-			if (fitness >= 1.f){
-				//try to populate the array with the most fit nodes being more likely
-				int intFitness = (int) fitness;
-				for (int i = 0; i < intFitness; i++){
-					defaultNodes.push_back(data);
-				}
-			} else {
-				//by default the node is added once to the array
-				defaultNodes.push_back(data);
-			}
-		}
-	}
-
-	StoryDataDefinition* chosenNode = nullptr;
-	do 
-	{
-		if (fitNodes.size() > 0){
-			int i = GetRandomIntLessThan(fitNodes.size());
-			chosenNode = fitNodes[i];
-		} else {
-			int i = GetRandomIntLessThan(defaultNodes.size());
-			chosenNode = defaultNodes[i];
-		}
-	} while (!CheckRandomChance(chosenNode->m_chanceToPlaceData));
-	return chosenNode;
-}
-
-StoryDataDefinition * StoryGraph::GetEventNodeWithWeights(StoryState * edge, float minFitness)
-{
-	std::vector<StoryDataDefinition*> fitNodes = std::vector<StoryDataDefinition*>();
-	std::vector<StoryDataDefinition*> defaultNodes = std::vector<StoryDataDefinition*>();
-	for(StoryDataDefinition* data : StoryGraph::s_eventNodes){
-		float fitness = CalculateEdgeFitnessForData(edge, data);
-		if (fitness >= minFitness){
-			if (fitness >= 1.f){
-				//try to populate the array with the most fit nodes being more likely
-				int intFitness = (int) fitness;
-				for (int i = 0; i < intFitness; i++){
-					fitNodes.push_back(data);
-				}
-			} else {
-				//by default the node is added once to the array
-				fitNodes.push_back(data);
-			}
-		} else {
-			if (fitness >= 1.f){
-				//try to populate the array with the most fit nodes being more likely
-				int intFitness = (int) fitness;
-				for (int i = 0; i < intFitness; i++){
-					defaultNodes.push_back(data);
-				}
-			} else {
-				//by default the node is added once to the array
-				defaultNodes.push_back(data);
-			}
-		}
-	}
-
-	StoryDataDefinition* chosenNode = nullptr;
-	do 
-	{
-		if (fitNodes.size() > 0){
-			int i = GetRandomIntLessThan(fitNodes.size());
-			chosenNode = fitNodes[i];
-		} else {
-			int i = GetRandomIntLessThan(defaultNodes.size());
-			chosenNode = defaultNodes[i];
-		}
-	} while (!CheckRandomChance(chosenNode->m_chanceToPlaceData));
-	return chosenNode;
-}
-
-float StoryGraph::CalculateEdgeFitnessForData(StoryState * edge, StoryDataDefinition * data)
-{
-	float fitness = 0.f;
-	for (CharacterState* charState : edge->m_characterStates){
-		Character* character = charState->m_character;
-		CharacterRequirementSet* reqs = data->GetRequirementsForCharacter(character);
-		if (reqs != nullptr){
-			//if the edges' character has requirements already established in this node, check them.
-			float charFitnessForRequirements = reqs->GetCharacterFitness(character, edge);
-			fitness+=charFitnessForRequirements;
-			//if (reqs->DoesCharacterMeetRequirements(charState)){
-			//	//if any character doesn't meet the requirements, return false.
-			//	fitness+= 1.f;
-			//} else {
-			//	fitness-= 1.f;
-			//}
-		} else {
-			//it technically works so like +1 i guess
-			fitness+=1.f;
-		}
-	}
-	
-	//also want to check story requirements....
-	if(data->m_storyReqs->DoesEdgeMeetAllRequirements(edge)){
-		fitness+= (float) data->m_storyReqs->m_requirements.size();
-	} else {
-		fitness = 0.f;
-	}
-	
-	//if no characters violated requirements, return true.
-	return fitness;
 }
 
 StoryState* ShortestPathHeuristic(StoryEdge * edge)

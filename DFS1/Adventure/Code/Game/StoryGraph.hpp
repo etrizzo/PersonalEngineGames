@@ -1,5 +1,5 @@
 #pragma once;
-#include "Game/StoryData.hpp"
+#include "Game/DataSet.hpp"
 
 class Character;
 
@@ -35,11 +35,7 @@ public:
 	Initialization Functions
 	===========================
 	*/
-	void ClearGraphData();
-	void ReadEventNodesFromXML(std::string filePath);
-	void ReadDetailNodesFromXML(std::string filePath);
-	void ReadCharactersFromXML(std::string filePath);
-
+	void LoadDataSet(std::string setName);
 	void SelectCharactersForGraph();
 
 	
@@ -162,6 +158,8 @@ public:
 	std::vector<Character*> GetCharactersForNode(StoryDataDefinition* nodeDefinition, StoryEdge* atEdge);
 
 protected:
+	DataSet* m_dataSet		= nullptr;
+
 	StoryNode* m_startNode							= nullptr;
 	StoryNode* m_endNode							= nullptr;
 
@@ -169,7 +167,7 @@ protected:
 	StoryEdge* GetEdgeForNewEventNode()	const;
 
 	DirectedGraph<StoryData*, StoryState*> m_graph	= DirectedGraph<StoryData*, StoryState*>();
-	std::vector<Character*> m_allCharacters			= std::vector<Character*>();
+	
 	std::vector<Character*> m_characters			= std::vector<Character*>();
 
 	std::vector<StoryNode*> m_pathFound				= std::vector<StoryNode*>();
@@ -217,14 +215,7 @@ protected:
 	std::vector<StoryDataDefinition*> m_usedPlotNodes;
 	std::vector<StoryDataDefinition*> m_usedDetailNodes;
 public:
-	static std::vector<StoryDataDefinition*> s_eventNodes;
-	static std::vector<StoryDataDefinition*> s_outcomeNodes;
-	static StoryDataDefinition* GetRandomEventNode();
-	static StoryDataDefinition* GetRandomOutcomeNode();
-
-	static StoryDataDefinition* GetOutcomeNodeWithWeights(StoryState* edge, float minFitness = 2.f);
-	static StoryDataDefinition* GetEventNodeWithWeights(StoryState* edge, float minFitness = 2.f);
-	static float CalculateEdgeFitnessForData(StoryState* edge, StoryDataDefinition* data);
+	
 };
 
 

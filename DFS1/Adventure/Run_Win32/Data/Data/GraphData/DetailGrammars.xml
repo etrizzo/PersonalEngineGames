@@ -21,11 +21,6 @@
 
 		<Actions>
 			<Action text="*0* wins the fight." chance=".6">
-				<Modifier character = "0" multiplier = "1.5"> 
-					<CharacterRequirements>
-						<Requirement trait="Bravery" minValue="70"/>
-					</CharacterRequirements>
-				</Modifier>
 				<Modifier character="0" multiplier="1.5">\
 					<CharacterRequirements>
 						<Requirement tag="isWounded" target="true" multiplier=".9" />
@@ -37,11 +32,6 @@
 			</Action>
 
 			<Action text="*0* loses the fight and flees for home." chance=".3" endsAct="true">
-				<Modifier character = "0" multiplier = "1.5"> 
-					<CharacterRequirements>
-						<Requirement trait="Bravery" maxValue="30"/>
-					</CharacterRequirements>
-				</Modifier>
 				<Modifier character="0" multiplier="1.5">
 					<CharacterRequirements>
 						<Requirement tag="isWounded" target="true" multiplier="1.5" />
@@ -57,11 +47,6 @@
 			</Action>
 
 			<Action text="*0* loses the fight and dies." chance=".1" endsAct="true">
-				<Modifier character = "0" multiplier = "1.5"> 
-					<CharacterRequirements>
-						<Requirement trait="Bravery" maxValue="30"/>
-					</CharacterRequirements>
-				</Modifier>
 				<Modifier character="0" multiplier="1.5">
 					<CharacterRequirements>
 						<Requirement tag="isWounded" target="true" multiplier="1.5" />

@@ -72,6 +72,8 @@ Game::Game()
 		LoadVillageDefinitions();
 	}
 
+	LoadGraphDatasets();
+
 	m_screenWidth = 10;
 	m_camera = new Camera();
 	m_camera->SetColorTarget( g_theRenderer->m_defaultColorTarget );
@@ -548,16 +550,25 @@ void Game::LoadVillageDefinitions()
 	}
 }
 
+void Game::LoadGraphDatasets()
+{
+	tinyxml2::XMLDocument questDefDoc;
+	questDefDoc.LoadFile("Data/Data/GraphData/DataSets.xml");
+
+	tinyxml2::XMLElement* root = questDefDoc.FirstChildElement("DataSets");
+	for (tinyxml2::XMLElement* dataElement = root->FirstChildElement("DataSet"); dataElement != NULL; dataElement = dataElement->NextSiblingElement("DataSet")){
+		DataSet* newSet = new DataSet(dataElement);
+		DataSet::s_dataSets.insert(std::pair<std::string, DataSet*>(newSet->m_name, newSet));
+	}
+}
+
 
 void Game::InitGraphDefault()
 {
 
 	ClearGraph();
 
-	ResetGraphData();
-	ReadPlotNodes("Data/Data/GraphData/PlotGrammars.xml");
-	ReadOutcomeNodes("Data/Data/GraphData/DetailGrammars.xml");
-	ReadCharacters("Data/Data/GraphData/Characters.xml");
+	m_graph.LoadDataSet("Default");
 	InitCharacterArray();
 
 	m_graph.GenerateStartAndEnd();
@@ -568,10 +579,7 @@ void Game::InitGraphMurder()
 {
 	ClearGraph();
 
-	ResetGraphData();
-	ReadPlotNodes("Data/Data/GraphData/MurderMystery_EventNodes.xml");
-	ReadOutcomeNodes("Data/Data/GraphData/MurderMystery_OutcomeNodes.xml");
-	ReadCharacters("Data/Data/GraphData/MurderMystery_Characters.xml");
+	m_graph.LoadDataSet("MurderMystery");
 	InitCharacterArray();
 
 	m_graph.GenerateStartAndEnd();
@@ -582,39 +590,17 @@ void Game::InitGraphDialogue()
 {
 	ClearGraph();
 
-	ResetGraphData();
-	ReadPlotNodes("Data/Data/GraphData/Dialogue_EventNodes.xml");
-	ReadOutcomeNodes("Data/Data/GraphData/Dialogue_OutcomeNodes.xml");
-	ReadCharacters("Data/Data/GraphData/Dialogue_Characters.xml");
+	m_graph.LoadDataSet("VillageStory");
 	InitCharacterArray();
 
 	m_graph.GenerateStartAndEnd();
 	ConsolePrintf("Dialogue data loaded.");
 }
 
-void Game::ReadPlotNodes(std::string filePath)
-{
-	m_graph.ReadEventNodesFromXML(filePath);
-}
-
-void Game::ReadOutcomeNodes(std::string filePath)
-{
-	m_graph.ReadDetailNodesFromXML(filePath);
-}
-
-void Game::ReadCharacters(std::string filePath)
-{
-	m_graph.ReadCharactersFromXML(filePath);
-}
 
 void Game::InitCharacterArray()
 {
 	m_graph.SelectCharactersForGraph();
-}
-
-void Game::ResetGraphData()
-{
-	m_graph.ClearGraphData();
 }
 
 void Game::GenerateGraph()

@@ -1,14 +1,14 @@
 <DataSet name="VillageStory">
 	<Acts>
-		<File name="MurderMystery_Acts.xml" />
+		<File name="Data/Data/GraphData/MurderMystery_Acts.xml" />
 	</Acts>
 	<Characters>
-		<File name="MurderMystery_Characters.xml" />
+		<File name="Data/Data/GraphData/MurderMystery_Characters.xml" />
 	</Characters>
 	<EventNodes>
-		<File name="MurderMystery_EventNodes.xml" />
+		<File name="Data/Data/GraphData/MurderMystery_EventNodes.xml" />
 	</EventNodes>
 	<OutcomeNodes>
-		<File name="MurderMystery_OutcomeNodes.xml" />
+		<File name="Data/Data/GraphData/MurderMystery_OutcomeNodes.xml" />
 	</OutcomeNodes>
 </DataSet>

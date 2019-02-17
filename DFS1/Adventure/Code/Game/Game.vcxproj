@@ -296,6 +296,7 @@
     <ClCompile Include="ClothingLayer.cpp" />
     <ClCompile Include="ClothingSet.cpp" />
     <ClCompile Include="ClothingSetDefinition.cpp" />
+    <ClCompile Include="DataSet.cpp" />
     <ClCompile Include="DebugRenderSystem.cpp" />
     <ClCompile Include="DebugRenderTask.cpp" />
     <ClCompile Include="Decoration.cpp" />
@@ -369,6 +370,7 @@
     <ClInclude Include="ClothingLayer.hpp" />
     <ClInclude Include="ClothingSet.hpp" />
     <ClInclude Include="ClothingSetDefinition.hpp" />
+    <ClInclude Include="DataSet.hpp" />
     <ClInclude Include="DebugRenderSystem.hpp" />
     <ClInclude Include="DebugRenderTask.hpp" />
     <ClInclude Include="Decoration.hpp" />
