@@ -117,9 +117,7 @@ Vector2 Game::GetPlayerPosition() const
 
 void Game::PostStartup()
 {
-	m_graph = StoryGraph();
-	
-
+	m_graph = new StoryGraph();
 	InitGraphMurder();
 	GenerateGraph();
 }
@@ -568,10 +566,10 @@ void Game::InitGraphDefault()
 
 	ClearGraph();
 
-	m_graph.LoadDataSet("Default");
+	m_graph->LoadDataSet("Default");
 	InitCharacterArray();
 
-	m_graph.GenerateStartAndEnd();
+	m_graph->GenerateStartAndEnd();
 	ConsolePrintf("Default data loaded.");
 }
 
@@ -579,10 +577,10 @@ void Game::InitGraphMurder()
 {
 	ClearGraph();
 
-	m_graph.LoadDataSet("MurderMystery");
+	m_graph->LoadDataSet("MurderMystery");
 	InitCharacterArray();
 
-	m_graph.GenerateStartAndEnd();
+	m_graph->GenerateStartAndEnd();
 	ConsolePrintf("Murder mystery data loaded.");
 }
 
@@ -590,17 +588,17 @@ void Game::InitGraphDialogue()
 {
 	ClearGraph();
 
-	m_graph.LoadDataSet("VillageStory");
+	m_graph->LoadDataSet("VillageStory");
 	InitCharacterArray();
 
-	m_graph.GenerateStartAndEnd();
+	m_graph->GenerateStartAndEnd();
 	ConsolePrintf("Dialogue data loaded.");
 }
 
 
 void Game::InitCharacterArray()
 {
-	m_graph.SelectCharactersForGraph();
+	m_graph->SelectCharactersForGraph();
 }
 
 void Game::GenerateGraph()
@@ -609,24 +607,24 @@ void Game::GenerateGraph()
 	bool generated = false;
 	while (!generated){
 		ClearGraph();
-		m_graph.RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
-		generated = m_graph.AddEndingsToEachBranch();
+		m_graph->RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
+		generated = m_graph->AddEndingsToEachBranch();
 	}
 }
 
 void Game::ClearGraph()
 {
-	m_graph.Clear();
+	m_graph->Clear();
 }
 
 void Game::GeneratePlotNodes(int numToGenerate)
 {
-	m_graph.GenerateSkeleton(numToGenerate);
+	m_graph->GenerateSkeleton(numToGenerate);
 }
 
 void Game::GenerateDetailNodes(int numToGenerate)
 {
-	m_graph.AddDetailNodesToDesiredSize(numToGenerate + m_graph.GetNumNodes());
+	m_graph->AddDetailNodesToDesiredSize(numToGenerate + m_graph->GetNumNodes());
 }
 
 void Game::GenerateNodePairs(int numToGenerate)
@@ -638,8 +636,8 @@ void Game::GenerateNodePairs(int numToGenerate)
 
 void Game::AddPlotAndOutcomeNodeInPair()
 {
-	StoryNode* newNode = m_graph.AddSingleEventNode();
-	m_graph.AddOutcomeNodesToEventNode(newNode);
+	StoryNode* newNode = m_graph->AddSingleEventNode();
+	m_graph->AddOutcomeNodesToEventNode(newNode);
 }
 
 

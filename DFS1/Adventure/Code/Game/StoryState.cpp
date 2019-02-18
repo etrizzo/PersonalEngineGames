@@ -3,13 +3,14 @@
 #include "Game/Action.hpp"
 #include "Game/StoryDataDefinition.hpp"
 
-StoryState::StoryState(float cost, int numCharacters)
+StoryState::StoryState(float cost, int numCharacters, StoryGraph* graph)
 {
 	m_cost = cost;
 	m_characterStates = std::vector<CharacterState*>();
-	
-	for (int i = 0; i < numCharacters; i++){
-		m_characterStates.push_back(new CharacterState(g_theGame->m_graph.GetCharacter(i)));
+	if (graph != nullptr){
+		for (int i = 0; i < numCharacters; i++){
+			m_characterStates.push_back(new CharacterState(graph->GetCharacter(i)));
+		}
 	}
 }
 
@@ -114,7 +115,7 @@ std::string StoryState::GetDevString() const
 CharacterState* StoryState::GetCharacterStateForCharacter(Character * character)
 {
 	for (CharacterState* state : m_characterStates){
-		if (state->m_character == character){
+		if (state->m_character->GetName() == character->GetName()){
 			return state;
 		}
 	}

@@ -100,7 +100,7 @@ public:
 	/*=========
 	Thesis Stuff
 	==========*/
-	StoryGraph m_graph;
+	StoryGraph* m_graph;
 	bool m_thesisMode;
 
 	

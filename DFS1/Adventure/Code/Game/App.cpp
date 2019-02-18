@@ -364,7 +364,7 @@ void CommandSetSeed(Command & cmd)
 void CommandPrintGraph(Command & cmd)
 {
 	UNUSED(cmd);
-	std::string graphString = g_theGame->m_graph.ToString();
+	std::string graphString = g_theGame->m_graph->ToString();
 	ConsolePrintf(graphString.c_str());
 }
 
@@ -384,28 +384,28 @@ void CommandFindPath(Command & cmd)
 		srand(randoSeed);
 		ConsolePrintf("Calculating path with seed %i", randoSeed);
 	}
-	//g_theGame->m_graph.FindPath(RandomPathHeuristic);
-	g_theGame->m_graph.FindPath(CalculateChanceHeuristic);
+	//g_theGame->m_graph->FindPath(RandomPathHeuristic);
+	g_theGame->m_graph->FindPath(CalculateChanceHeuristic);
 }
 
 
 void CommandPrintStory(Command& cmd)
 {
 	UNUSED(cmd);
-	g_theGame->m_graph.PrintPath();
+	g_theGame->m_graph->PrintPath();
 }
 
 void CommandFindBranches(Command & cmd)
 {
 	UNUSED(cmd);
-	g_theGame->m_graph.IdentifyBranchesAndAdd();
+	g_theGame->m_graph->IdentifyBranchesAndAdd();
 }
 
 void CommandSetBranchChance(Command & cmd)
 {
 	UNUSED(cmd);
 	float chance = cmd.GetNextFloat();
-	g_theGame->m_graph.SetBranchChance(chance);
+	g_theGame->m_graph->SetBranchChance(chance);
 	ConsolePrintf(RGBA::YELLOW, "Changed branch chance on generation to %.2f", chance);
 }
 
@@ -413,7 +413,7 @@ void CommandResetGraph(Command & cmd)
 {
 	UNUSED(cmd);
 	g_theGame->ClearGraph();
-	g_theGame->m_graph.GenerateStartAndEnd();
+	g_theGame->m_graph->GenerateStartAndEnd();
 }
 
 void CommandGenerateSkeleton(Command & cmd)
@@ -465,7 +465,7 @@ void CommandReadDefaultData(Command & cmd)
 	g_theGame->ReadCharacters("Data/Data/Characters.xml");
 	g_theGame->InitCharacterArray();
 
-	g_theGame->m_graph.GenerateStartAndEnd();*/
+	g_theGame->m_graph->GenerateStartAndEnd();*/
 	ConsolePrintf("Default data loaded.");
 }
 
@@ -481,7 +481,7 @@ void CommandReadMurderData(Command & cmd)
 	g_theGame->ReadCharacters("Data/Data/MurderMystery_Characters.xml");
 	g_theGame->InitCharacterArray();
 
-	g_theGame->m_graph.GenerateStartAndEnd();*/
+	g_theGame->m_graph->GenerateStartAndEnd();*/
 	ConsolePrintf("Murder mystery data loaded.");
 }
 

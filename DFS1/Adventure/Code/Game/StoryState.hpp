@@ -3,10 +3,11 @@
 
 class StoryData;
 class StoryDataDefinition;
+class StoryGraph;
 
 class StoryState{
 public:
-	StoryState(float cost, int numCharacters);
+	StoryState(float cost, int numCharacters, StoryGraph* graph);
 	StoryState(const StoryState& copy);
 	StoryState(){};
 	~StoryState();

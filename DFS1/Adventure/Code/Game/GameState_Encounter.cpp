@@ -126,7 +126,7 @@ void GameState_Encounter::HandleInput()
 	}
 
 	if (g_theInput->WasKeyJustPressed(VK_F7)){
-		g_theGame->TransitionToState(new GameState_Graph(this));
+		g_theGame->TransitionToState(new GameState_Graph(this, true));
 	}
 
 }

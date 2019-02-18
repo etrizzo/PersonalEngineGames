@@ -14,12 +14,13 @@ Village::Village(VillageDefinition * definition, Map * map, int numActorsToSpawn
 	m_center = m_map->m_generationMask->GetCenter();
 	//copy the area in case we wanna do stuff with it later (village owns this mask)
 	m_area = m_map->m_generationMask->Clone();
+	m_villageGraph = new StoryGraph();
 
 	SpawnResidents(numActorsToSpawn);		//creates the actors
 	ReadGraphData();						//load the graph data
 	ConnectResidentsToGraphCharacters();	//sync graph characters with the residents of the villages
 	GenerateGraph();						//Actually generate the nodes of the graph
-	SetResidentDialogues();					//Set the residents dialogues based on the graph state
+	SetResidentDialogues();					//Set the residents' dialogs based on the graph state
 }
 
 Village::~Village()
@@ -56,14 +57,23 @@ void Village::SpawnResidents(int numToSpawn)
 
 void Village::ReadGraphData()
 {
+	std::string dataSet = m_definition->GetRandomDataSetName();
+	m_villageGraph->LoadDataSet(dataSet);
 }
 
 void Village::ConnectResidentsToGraphCharacters()
 {
+	m_villageGraph->SelectCharactersForGraph();
 }
 
 void Village::GenerateGraph()
 {
+	bool generated = false;
+	while (!generated){
+		m_villageGraph->Clear();
+		m_villageGraph->RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
+		generated = m_villageGraph->AddEndingsToEachBranch(10);
+	}
 }
 
 void Village::SetResidentDialogues()

@@ -74,7 +74,7 @@ TileDefinition * TileNeighborSet::FindEdgeTileDefinition()
 	if (highestCountDef != nullptr && highestCountDef->m_isTerrain){
 		m_edgeToLookFor = highestCountDef;
 	} else {
-		highestCountDef == nullptr;
+		highestCountDef = nullptr;
 	}
 	return highestCountDef;
 }

@@ -24,6 +24,7 @@ public:
 	std::string GetRandomFaction() const;
 	ActorDefinition* GetRandomResidentDefinition() const;
 	std::string GetRandomVillageNameAndCrossOff();
+	std::string GetRandomDataSetName() const;
 	
 
 	static std::map< std::string, VillageDefinition* >			s_definitions;

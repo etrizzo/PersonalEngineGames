@@ -29,7 +29,7 @@ VillageDefinition::VillageDefinition(tinyxml2::XMLElement * villageElement)
 	if (storysetElement != nullptr){
 		tinyxml2::XMLElement* storyElement = storysetElement->FirstChildElement("StorySet");
 		while(storyElement != nullptr){
-			std::string setFile  = ParseXmlAttribute(*storyElement, "dataSet", "NO_FILE");
+			std::string setFile  = ParseXmlAttribute(*storyElement, "dataSet", "NO_DATASET");
 			m_dataSetForGraphFilenames.push_back(setFile);
 			storyElement = storyElement->NextSiblingElement("StoryElement");
 		}
@@ -77,6 +77,11 @@ std::string VillageDefinition::GetRandomVillageNameAndCrossOff()
 	std::string nameToUse = m_unusedVillageNames.back();
 	m_unusedVillageNames.pop_back();
 	return nameToUse;
+}
+
+std::string VillageDefinition::GetRandomDataSetName() const
+{
+	return m_dataSetForGraphFilenames[GetRandomIntLessThan(m_dataSetForGraphFilenames.size())];
 }
 
 VillageDefinition * VillageDefinition::GetVillageDefinition(std::string definitionName)

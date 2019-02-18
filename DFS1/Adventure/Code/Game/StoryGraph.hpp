@@ -86,7 +86,7 @@ public:
 
 	//looks backwards from the end node and adds nodes to edges that don't have an end.
 	// returns true if successful, returns false if the graph was unsalvagable (indicating that whoever called this should regenerate).
-	bool AddEndingsToEachBranch();
+	bool AddEndingsToEachBranch(int maxTries = 20);
 	void RemoveBranchesWithNoEnding();
 	//if no paths had an ending and the graph is now just an end node, this will return true
 	bool CheckForEmptyGraph();

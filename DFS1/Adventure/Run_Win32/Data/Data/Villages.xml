@@ -4,7 +4,7 @@
 			<Actor name="Villager" />
 		</Residents>
 		<StorySets>
-			<StorySet dataSet="Data/Data/GraphData/VillageDataset.xml"/>
+			<StorySet dataSet="VillageStory"/>
 		</StorySets>
 		<Factions>
 			<Faction name="good" />
@@ -16,7 +16,9 @@
 		<Residents number="5~7">
 			<Actor name="Orc" />
 		</Residents>
-		<Story dataSet="Data/Data/GraphData/Village.xml"/>
+		<StorySets>
+			<StorySet dataSet="VillageStory"/>
+		</StorySets>
 		<Factions>
 			<Faction name="evil" />
 		</Factions>

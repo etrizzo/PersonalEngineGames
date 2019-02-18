@@ -51,5 +51,5 @@ bool TagPair::ReadValueAsBool(bool failValue)
 
 Character * TagPair::ReadValueAsCharacter(Character * failValue)
 {
-	return g_theGame->m_graph.GetCharacterByName(m_tagValue);
+	return g_theGame->m_graph->GetCharacterByName(m_tagValue);
 }

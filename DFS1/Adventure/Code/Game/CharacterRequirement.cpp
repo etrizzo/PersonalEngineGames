@@ -30,6 +30,9 @@ CharacterRequirement * CharacterRequirement_Tag::Clone() const
 bool CharacterRequirement_Tag::PassesRequirement(Character* character, StoryState* edgeState)
 {
 	CharacterState* charState = edgeState->GetCharacterStateForCharacter(character);
+	if (charState == nullptr){
+		int x = 0;
+	}
 	if (m_tag.GetType() == "character"){
 		std::string characterName = m_parentData->ReadCharacterNameFromDataString(m_tag.GetValue());
 		if (characterName == "NO_CHARACTER_FOUND" ){

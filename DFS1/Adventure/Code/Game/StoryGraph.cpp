@@ -22,6 +22,7 @@ void StoryGraph::LoadDataSet(std::string setName)
 
 void StoryGraph::SelectCharactersForGraph()
 {
+	m_characters.clear();
 	int numChars = g_gameConfigBlackboard.GetValue("numCharacters", (int) m_dataSet->m_characters.size());
 	if (numChars >=  m_dataSet->m_characters.size()){
 		for(Character* character :  m_dataSet->m_characters){
@@ -286,7 +287,7 @@ void StoryGraph::GenerateStartAndEnd()
 	if (m_startNode == nullptr && m_endNode == nullptr){
 		AddStart(new StoryNode(new StoryData("START")));
 		AddEnd(new StoryNode(new StoryData("END")));
-		AddEdge(m_startNode, m_endNode, new StoryState(1.f, m_characters.size()));
+		AddEdge(m_startNode, m_endNode, new StoryState(1.f, m_characters.size(), this));
 	}
 	
 }
@@ -594,14 +595,14 @@ bool StoryGraph::AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToA
 	return added;
 }
 
-bool StoryGraph::AddEndingsToEachBranch()
+bool StoryGraph::AddEndingsToEachBranch(int maxTries)
 {
 	bool allPathsHaveEndings = false;
 
 	int maxAdds = 6;
 	int addedNodes = 0;
 	int tries = 0;
-	while (!allPathsHaveEndings && addedNodes < maxAdds && tries < 20){
+	while (!allPathsHaveEndings && addedNodes < maxAdds && tries < maxTries){
 		tries++;
 		allPathsHaveEndings = true;
 		//look at all incoming edges to the end node
@@ -768,7 +769,7 @@ StoryEdge* StoryGraph::CheckReachableNodesForBranch(std::vector<StoryNode*> reac
 		if (true){
 			TODO("Check for cycles properly");
 			if (!m_graph.ContainsEdge(startingNode, reachable) && !m_graph.ContainsEdge(reachable, startingNode)){
-				StoryState* newState = new StoryState(GetRandomFloatInRange(0.f, 5.f), GetNumCharacters());
+				StoryState* newState = new StoryState(GetRandomFloatInRange(0.f, 5.f), GetNumCharacters(), this);
 				added = m_graph.AddEdge(startingNode, reachable, newState);
 				return added;
 			}
@@ -1586,7 +1587,7 @@ StoryState* ShortestPathHeuristic(StoryEdge * edge)
 
 StoryState * RandomPathHeuristic(StoryEdge * edge)
 {
-	return new StoryState(GetRandomFloatInRange(0.f, 10.f), 1);
+	return new StoryState(GetRandomFloatInRange(0.f, 10.f), 1, nullptr);
 }
 
 StoryState * CalculateChanceHeuristic(StoryEdge * edge)
@@ -1604,5 +1605,6 @@ StoryState * CalculateChanceHeuristic(StoryEdge * edge)
 	}
 	edge->GetCost()->m_cost = cost;
 	//edge->GetCost()->m_characterStates.size();
-	return new StoryState(cost, edge->GetCost()->m_characterStates.size());
+	TODO("Fix story state on heuristic to use the right graph");
+	return new StoryState(cost, edge->GetCost()->m_characterStates.size(), nullptr) ;
 }
