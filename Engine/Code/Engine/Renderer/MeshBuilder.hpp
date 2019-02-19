@@ -10,6 +10,7 @@ public:
 	~MeshBuilder();
 
 	void Clear();
+	void ReserveVerts(int numVertsToReserve);
 
 	void SetUV(Vector2 uv);
 	void SetColor(RGBA color);

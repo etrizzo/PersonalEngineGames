@@ -14,6 +14,7 @@ GameState_Graph::GameState_Graph(GameState*  encounter, bool isEncounter)
 	{
 		m_encounterMap = ((GameState_Encounter*) encounter)->m_currentAdventure->m_currentMap;
 	}
+	m_currentAdventure = encounter->m_currentAdventure;
 }
 
 GameState_Graph::~GameState_Graph()
@@ -90,6 +91,14 @@ void GameState_Graph::RenderGraph() const
 	//std::string graphText = m_currentGraph.ToString();
 	//g_theRenderer->DrawTextInBox2D(graphText, bounds, Vector2(0.f, 1.f), .01f, TEXT_DRAW_SHRINK_TO_FIT);
 	m_currentGraph->RenderGraph();
+
+	for (Village* village : m_encounterMap->m_allVillages)
+	{
+		if (village->m_villageGraph == m_currentGraph)
+		{
+			m_currentGraph->RenderEdge(village->m_currentEdge, RGBA::MAGENTA);
+		}
+	}
 }
 
 void GameState_Graph::UpdateGraph()

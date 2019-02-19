@@ -121,13 +121,13 @@
 
 		<Hairs>
 			<!-- portrait coords are front, back is 1 below it -->
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_ponytail_f.png"  color="randomMuted" portraitCoords="1,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_unkempt_f.png" color="randomMuted" portraitCoords="7,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_ponytail_f.png"  color="randomHair" portraitCoords="1,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_unkempt_f.png" color="randomHair" portraitCoords="7,3"/>
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_longbangs_f.png" portraitTint="45,40,40,255" portraitCoords="3,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_shortbangs_f.png" color="randomMuted" portraitCoords="5,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_loose.png" color="randomMuted" portraitCoords="4,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_long_f.png" color="randomMuted" portraitCoords="2,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_shoulder_f.png" color="randomMuted" portraitCoords="6,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_shortbangs_f.png" color="randomHair" portraitCoords="5,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_loose.png" color="randomHair" portraitCoords="4,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_long_f.png" color="randomHair" portraitCoords="2,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_shoulder_f.png" color="randomHair" portraitCoords="6,3"/>
 		</Hairs>
 
 		<Portrait numFeatures="0~3" lipColorChance=".8">
@@ -228,14 +228,14 @@
 
 		<Hairs>
 			<!-- portrait coords are front, back is 1 below it -->
-			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_bedhead_m.png" color="randomMuted" portraitCoords="11,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_long_m.png" color="randomMuted" portraitCoords="12,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_messy_m.png" color="randomMuted" portraitCoords="10,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_parted_m.png" color="randomMuted" portraitCoords="13,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_shorthawk_m.png" color="randomMuted" portraitCoords="14,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_bedhead_m.png" color="randomHair" portraitCoords="11,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_long_m.png" color="randomHair" portraitCoords="12,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_messy_m.png" color="randomHair" portraitCoords="10,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_parted_m.png" color="randomHair" portraitCoords="13,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/Men/hair_shorthawk_m.png" color="randomHair" portraitCoords="14,3"/>
 		</Hairs>
 
-		<Portrait numFeatures="0~3" lipColorChance=".1">
+		<Portrait numFeatures="0~3" lipColorChance=".05">
 			<Face name="wide" portraitCoords="10,8" />
 			<Face name="round_m" portraitCoords="11,8" />
 			<Face name="square_m" portraitCoords="12,8" />
@@ -329,13 +329,13 @@
 
 		<Hairs>
 			<!-- portrait coords are front, back is 1 below it -->
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_ponytail_f.png"  color="randomMuted" portraitCoords="1,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_unkempt_f.png" color="randomMuted" portraitCoords="7,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_ponytail_f.png"  color="randomHair" portraitCoords="1,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_unkempt_f.png" color="randomHair" portraitCoords="7,3"/>
 			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_longbangs_f.png" portraitTint="45,40,40,255" portraitCoords="3,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_loose.png" color="randomMuted" portraitCoords="4,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_long_f.png" color="randomMuted" portraitCoords="2,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_shoulder_f.png" color="randomMuted" portraitCoords="6,3"/>
-			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_shortbangs_f.png" color="randomMuted" portraitCoords="5,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_loose.png" color="randomHair" portraitCoords="4,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_long_f.png" color="randomHair" portraitCoords="2,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_shoulder_f.png" color="randomHair" portraitCoords="6,3"/>
+			<Hair texture="HUMANOIDS/HEAD/HAIR/hair_shortbangs_f.png" color="randomHair" portraitCoords="5,3"/>
 		</Hairs>
 
 		<Portrait numFeatures="0~3" lipColorChance=".5">

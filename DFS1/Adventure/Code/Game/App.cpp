@@ -178,6 +178,7 @@ void App::RegisterCommands()
 	CommandRegister("read_murder_data", CommandReadMurderData, "reads the murder mystery data set into the graph and resets it.");
 	CommandRegister("read_dialogue_data", CommandReadDialogueData, "reads the dialogue data set into the graph and resets it.");
 
+	CommandRegister("progress_story", CommandProgressStory, "Progresses the story graph for all villages");
 }
 void App::HandleInput()
 {
@@ -490,4 +491,10 @@ void CommandReadDialogueData(Command & cmd)
 	UNUSED(cmd);
 	g_theGame->InitGraphDialogue();
 	ConsolePrintf("Dialogue data loaded.");
+}
+
+void CommandProgressStory(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->ProgressStories();
 }

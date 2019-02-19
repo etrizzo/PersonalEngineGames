@@ -73,6 +73,11 @@ void MeshBuilder::Clear()
 	m_indices.clear();
 }
 
+void MeshBuilder::ReserveVerts(int numVertsToReserve)
+{
+	m_vertices.reserve(numVertsToReserve);
+}
+
 void MeshBuilder::SetUV(Vector2 uv)
 {
 	m_stamp.m_uvs = uv;
@@ -96,14 +101,14 @@ void MeshBuilder::SetTangent(Vector3 tangent)
 unsigned int MeshBuilder::PushVertex(Vector3 position)
 {
 	m_stamp.m_position = position;
-	m_vertices.push_back(m_stamp);
+	m_vertices.emplace_back(m_stamp);
 
 	return (unsigned int) m_vertices.size() - 1;
 }
 
 unsigned int MeshBuilder::PushIndex(unsigned int index)
 {
-	m_indices.push_back(index);
+	m_indices.emplace_back(index);
 
 	return (unsigned int) m_indices.size() - 1;
 }

@@ -36,7 +36,7 @@ public:
 	===========================
 	*/
 	void LoadDataSet(std::string setName);
-	void SelectCharactersForGraph();
+	void SelectCharactersForGraph(int numCharacters = 0);
 
 	
 	/*
@@ -115,6 +115,8 @@ public:
 	Character* GetCharacter(unsigned int index) const;
 	Character* GetCharacterByName(std::string name) const;
 	unsigned int GetNumCharacters() const;
+	StoryNode* GetStart() const			{ return m_startNode; }
+	StoryNode* GetEnd() const			{ return m_endNode; }
 
 
 	/*
@@ -157,6 +159,9 @@ public:
 	bool TryToSetCharactersForNode(StoryNode* node, StoryEdge* atEdge);
 	std::vector<Character*> GetCharactersForNode(StoryDataDefinition* nodeDefinition, StoryEdge* atEdge);
 
+	std::vector<Character*> m_characters			= std::vector<Character*>();
+
+	void RenderEdge(StoryEdge* edge, RGBA color = RGBA::WHITE) const;
 protected:
 	DataSet* m_dataSet		= nullptr;
 
@@ -168,7 +173,7 @@ protected:
 
 	DirectedGraph<StoryData*, StoryState*> m_graph	= DirectedGraph<StoryData*, StoryState*>();
 	
-	std::vector<Character*> m_characters			= std::vector<Character*>();
+	
 
 	std::vector<StoryNode*> m_pathFound				= std::vector<StoryNode*>();
 	std::string m_pathString						= "";
@@ -188,7 +193,7 @@ protected:
 	Vector2 CalculateNodePull(StoryNode* node) const;
 	Vector2 CalculateNodePush(StoryNode* node) const;
 	void RenderNode(StoryNode* node, Vector2 position, RGBA color = RGBA::BLANCHEDALMOND) const;
-	void RenderEdge(StoryEdge* edge, RGBA color = RGBA::WHITE) const;
+	
 	void UpdateDepths();
 	void SetNodePositionsByDepth();
 

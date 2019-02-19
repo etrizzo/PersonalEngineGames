@@ -1,4 +1,5 @@
 #include "Character.hpp"
+#include "Game/Actor.hpp"
 
 Character::Character()
 {
@@ -24,5 +25,14 @@ bool Character::HasTag(TagPair tag)
 
 std::string Character::GetName() const
 {
+	if (m_actor != nullptr)
+	{
+		return m_actor->m_name;
+	}
 	return m_name;
+}
+
+void Character::SetActor(Actor * actor)
+{
+	m_actor = actor;
 }

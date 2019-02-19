@@ -14,7 +14,7 @@ public:
 	Village(VillageDefinition* definition, Map* map, int numActorsToSpawn);
 	~Village();
 
-	void UpdateVillageStory();
+	void ProgressVillageStory();
 
 	std::string m_villageName;
 	VillageDefinition* m_definition;
@@ -26,6 +26,8 @@ public:
 
 	std::vector<Actor*> m_residents;	//villagers also should have a ref to their village 
 	StoryGraph* m_villageGraph;
+
+	StoryEdge* m_currentEdge;
 
 private:
 	void SpawnResidents(int numToSpawn);

@@ -71,6 +71,8 @@ public:
 	void RunPhysics();
 	void CheckEntityInteractions();
 
+	void ProgressVillageStories();
+
 	void Render();
 	void PostRender();
 	void RenderQuestIcons();

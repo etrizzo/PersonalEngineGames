@@ -326,7 +326,7 @@ void Entity::Translate(Vector2 offset)
 	m_renderable->m_transform.TranslateLocal(offset);
 }
 
-std::string Entity::GetName() const
+std::string Entity::GetDefinitionName() const
 {
 	return m_definition->m_name;
 }

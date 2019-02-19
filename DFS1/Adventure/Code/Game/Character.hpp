@@ -3,6 +3,7 @@
 #include "Game/TagSet.hpp"
 
 
+class Actor;
 
 class Character{
 public:
@@ -12,11 +13,13 @@ public:
 	bool HasTag(TagPair tag);
 
 	std::string GetName() const;
-
+	void SetActor(Actor* actor);
 
 	TagSet m_tags;
+	
 
 protected:
+	Actor* m_actor = nullptr;
 	std::string m_name;
 	// traits
 

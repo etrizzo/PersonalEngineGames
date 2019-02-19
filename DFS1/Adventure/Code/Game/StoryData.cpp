@@ -130,7 +130,7 @@ bool StoryData::AreAllCharactersSet() const
 {
 	for (Character* character : m_characters){
 		if (character == nullptr){
-			return nullptr;
+			return false;
 		}
 	}
 	return true;

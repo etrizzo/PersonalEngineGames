@@ -50,7 +50,7 @@ public:
 	void Rotate(float offset);
 	void Translate(Vector2 offset);
 
-	std::string GetName() const;
+	std::string GetDefinitionName() const;
 	float GetAspectRatio() const;
 	Vector2 GetPivot()	const;
 

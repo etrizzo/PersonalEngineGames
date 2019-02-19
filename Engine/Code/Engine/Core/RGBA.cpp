@@ -218,6 +218,10 @@ RGBA RGBA::GetRandomColor()
 
 RGBA RGBA::GetRandomMutedColor()
 {
+	if (CheckRandomChance(.8f))
+	{
+		return GetRGBAFromHSV(GetRandomFloatZeroToOne(), GetRandomFloatInRange(0.f,.5f), GetRandomFloatInRange(.2f, .8f));
+	}
 	int r =  GetRandomIntInRange(55, 255);
 	int g =  GetRandomIntInRange(55, 255);
 	int b =  GetRandomIntInRange(55, 255);

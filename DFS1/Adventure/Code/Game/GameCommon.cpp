@@ -63,7 +63,7 @@ RGBA GetRandomHairColor()
 	float chance = GetRandomFloatZeroToOne();
 	if (chance < .6f){
 		//have a natural hair color
-		return RGBA::GetRGBAFromHSVWhereHueIsDegrees(GetRandomFloatInRange(23.f,50.f), GetRandomFloatInRange(0.5f, .8f), GetRandomFloatZeroToOne());
+		return RGBA::GetRGBAFromHSVWhereHueIsDegrees(GetRandomFloatInRange(23.f,50.f), GetRandomFloatInRange(0.5f, .8f), GetRandomFloatInRange(.2f, .9f));
 	} else {
 		return RGBA::GetRandomMutedColor();
 	} 

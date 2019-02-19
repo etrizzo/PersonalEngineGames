@@ -119,7 +119,7 @@ void Game::PostStartup()
 {
 	m_graph = new StoryGraph();
 	InitGraphMurder();
-	GenerateGraph();
+	//GenerateGraph();
 }
 
 
@@ -364,7 +364,7 @@ void Game::ShowActorStats()
 {
 	if (m_currentState->m_currentAdventure != nullptr){
 		for (Actor* actor : m_currentState->m_currentAdventure->m_currentMap->m_allActors){
-			ConsolePrintf(RGBA::GREEN, actor->GetName().c_str());
+			ConsolePrintf(RGBA::GREEN, actor->GetDefinitionName().c_str());
 			std::string healthString = "  HEALTH: " + std::to_string(actor->m_health);
 			ConsolePrintf(RGBA::YELLOW, healthString.c_str());
 			for (int i = STAT_STRENGTH; i < NUM_STAT_IDS; i++){
@@ -593,6 +593,11 @@ void Game::InitGraphDialogue()
 
 	m_graph->GenerateStartAndEnd();
 	ConsolePrintf("Dialogue data loaded.");
+}
+
+void Game::ProgressStories()
+{
+	m_currentState->m_currentAdventure->m_currentMap->ProgressVillageStories();
 }
 
 

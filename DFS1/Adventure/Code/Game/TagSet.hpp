@@ -21,7 +21,8 @@ public:
 	bool HasTag(TagPair tag);
 	bool HasTagWithValue(const std::string& tagName, const std::string& value);
 	bool ContainsTagWithAnyValue(const std::string& tagName, const std::string & tagType);
-
-protected:
+	
 	std::vector<TagPair> m_tags;
+protected:
+	
 };

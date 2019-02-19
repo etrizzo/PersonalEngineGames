@@ -20,6 +20,9 @@ SpawnColorCB GetColorCallbackFromXML(std::string text)
 	if (text == "randomEye"){
 		return GetRandomEyeColor;
 	}
+	if (text == "randomHair"){
+		return GetRandomHairColor;
+	}
 	return nullptr;
 }
 
@@ -319,7 +322,7 @@ void ClothingSetDefinition::ParseHairs(tinyxml2::XMLElement * setElement)
 			std::string colorType = ParseXmlAttribute(*hairElement, "color", "NONE");
 			//get callback function for tint of this layer
 			//SpawnColorCB cb = GetColorCallbackFromXML(colorType);
-			SpawnColorCB cb = GetRandomHairColor;
+			SpawnColorCB cb = GetColorCallbackFromXML(colorType);
 			RGBA tint = RGBA::WHITE ;
 			if (cb != nullptr){
 				tint = cb();

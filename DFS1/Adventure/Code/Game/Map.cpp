@@ -212,10 +212,7 @@ void Map::Update(float deltaSeconds)
 	//PROFILE_POP();
 	ResetPortals();
 
-	//lmao
-	for (Village* village : m_allVillages){
-		village->UpdateVillageStory();
-	}
+	
 
 }
 
@@ -324,6 +321,14 @@ void Map::CheckEntityInteractions()
 		}
 	}
 
+}
+
+void Map::ProgressVillageStories()
+{
+	//lmao
+	for (Village* village : m_allVillages){
+		village->ProgressVillageStory();
+	}
 }
 
 void Map::RemoveDoomedEntities()

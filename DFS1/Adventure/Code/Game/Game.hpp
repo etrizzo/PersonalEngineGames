@@ -108,6 +108,8 @@ public:
 	void InitGraphDefault();
 	void InitGraphMurder();
 	void InitGraphDialogue();
+	
+	void ProgressStories();
 
 	void InitCharacterArray();
 

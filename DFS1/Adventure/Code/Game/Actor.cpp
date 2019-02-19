@@ -139,6 +139,27 @@ void Actor::HandleInput()
 	
 }
 
+void Actor::AssignStoryCharacter(Character * newChar)
+{
+	m_storyCharacter = newChar;
+	
+	m_storyCharacter->SetActor(this);
+}
+
+void Actor::SetDialogFromState()
+{
+	std::string tagString = m_tags.GetTagsAsString();
+	std::string storyString = "I am a: " + m_roleInStory;
+
+	while (!m_dialogue->m_dialogues.empty())
+	{
+		//delete m_dialogue->m_dialogues.back();
+		m_dialogue->m_dialogues.pop();
+	}
+	//m_dialogue->Reset();
+	m_dialogue->m_dialogues.push(new Dialogue(tagString + "\n" + storyString));
+}
+
 void Actor::EquipItemsInInventory()
 {
 	for (Item* item : m_inventory){
@@ -689,15 +710,15 @@ void Actor::Wander(float deltaSeconds)
 	if (diff < 5.f ){
 		Translate(m_facing * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * SPEED_RATIO))); 
 	}
-	if (diff > 5.f && diff < 10.5f){
+	if (diff > 5.f && diff < 7.5f){
 		if (m_moving){
 			m_moving = false;
 		}
 	}
-	if (diff > 10.5f){
+	if (diff > 7.5f){
 		m_moving = true;
-		//m_facing = Vector2::MakeDirectionAtDegrees(GetRandomFloatInRange(-180.f,180.f));
-		m_facing = m_facing - (2 * m_facing);
+		m_facing = Vector2::MakeDirectionAtDegrees(GetRandomFloatInRange(-180.f,180.f));
+		//m_facing = m_facing - (2 * m_facing);
 		m_timeLastUpdatedDirection = m_ageInSeconds;
 	}
 }

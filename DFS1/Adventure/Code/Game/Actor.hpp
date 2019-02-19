@@ -3,6 +3,7 @@
 #include "Game/Stats.hpp"
 #include "Game/ClothingSet.hpp"
 #include "Game/DialogueSet.hpp"
+#include "Game/TagSet.hpp"
 
 class ActorDefinition;
 class Item;
@@ -20,6 +21,9 @@ public:
 	void Update(float deltaSeconds);
 	void Render();
 	void HandleInput();
+
+	void AssignStoryCharacter(Character* newChar);
+	void SetDialogFromState();
 
 	void EquipItemsInInventory();
 	void AssignAsQuestGiver(Quest* questToGive);
@@ -58,6 +62,7 @@ public:
 	
 	std::string m_name = "TankiStanki";
 	Village* m_village = nullptr;
+	Character* m_storyCharacter = nullptr;
 
 	Renderable2D* m_healthRenderable;
 	AABB2 m_healthBox;
@@ -86,6 +91,8 @@ public:
 	float m_lastFoundTarget = 0.f;
 	float m_targetUpdateRate = 3.f;
 
+	TagSet m_tags;
+	std::string m_roleInStory;
 
 	DialogueSet* m_dialogue;
 	Quest* m_questGiven = nullptr;

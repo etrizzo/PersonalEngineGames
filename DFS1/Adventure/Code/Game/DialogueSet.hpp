@@ -14,6 +14,7 @@ public:
 	//resets dialogue to the definition's dialogue
 	void Reset();
 
+	bool m_hasDefinition = true;
 	Actor* m_speaker = nullptr;
 	DialogueSetDefinition* m_definition = nullptr;
 	Dialogue* m_activeDialogue = nullptr;

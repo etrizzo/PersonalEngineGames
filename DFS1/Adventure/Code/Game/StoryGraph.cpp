@@ -20,18 +20,20 @@ void StoryGraph::LoadDataSet(std::string setName)
 	}
 }
 
-void StoryGraph::SelectCharactersForGraph()
+void StoryGraph::SelectCharactersForGraph(int numCharacters)
 {
 	m_characters.clear();
-	int numChars = g_gameConfigBlackboard.GetValue("numCharacters", (int) m_dataSet->m_characters.size());
-	if (numChars >=  m_dataSet->m_characters.size()){
+	if (numCharacters == 0){
+		numCharacters = g_gameConfigBlackboard.GetValue("numCharacters", (int) m_dataSet->m_characters.size());
+	}
+	if (numCharacters >=  m_dataSet->m_characters.size()){
 		for(Character* character :  m_dataSet->m_characters){
 			m_characters.push_back(character);
 		}
 	} else {
 		//select randomly
 		int numSelected = 0;
-		while (numSelected < numChars){
+		while (numSelected < numCharacters){
 			int idx = GetRandomIntLessThan( m_dataSet->m_characters.size());
 			if (!Contains(m_characters,  m_dataSet->m_characters[idx])){
 				m_characters.push_back( m_dataSet->m_characters[idx]);

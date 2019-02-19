@@ -153,7 +153,7 @@ MenuState_Inventory::MenuState_Inventory(GameState_Paused * pauseState, AABB2 bo
 	AABB2 unequippedBox = m_bounds.GetPercentageBox(.55f, .1f, .95f, .8f);
 	m_menu = new Menu(unequippedBox);
 	for (unsigned int i = 0; i < g_theGame->m_party->m_inventory.size(); i++){
-		m_menu->AddOption(g_theGame->m_party->m_inventory[i]->GetName().c_str(), i);
+		m_menu->AddOption(g_theGame->m_party->m_inventory[i]->GetDefinitionName().c_str(), i);
 	}
 }
 

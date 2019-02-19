@@ -5,7 +5,7 @@
      <FillAndEdge edgeTile="Dirt" fillTile="Grass" subAreaCenter=".3~.8" subAreaSize=".2~.4" type="rectangle" />
        -->
       <SetSubArea subAreaSize="-0.2~1.5" type="perlin" noiseScale="20" centerDensity="1" edgeDensity="1" feather="1"/>
-        <FillAndEdge edgeTile="Sand" fillTile="Grass" edgeThickness="3"/> 
+        <FillAndEdge edgeTile="Sand" fillTile="Grass" edgeThickness="5"/> 
 
         
         <SetSubArea subAreaSize="0.5~1.0" type="perlin" noiseScale="20" inheritSeed ="true" feather=".05" />
@@ -19,7 +19,7 @@
 
       <SetSubArea subAreaCenter=".6~.8" subAreaSize=".2~.25" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
           <SubMap map="SmallVillage"/>
-          <SpawnVillage type="OrcVillage" numResidents="3~5" baseTile="Grass"/>
+          <SpawnVillage type="HumanVillage" numResidents="5~7" baseTile="Grass"/>
       <EndSubArea />
 
     
