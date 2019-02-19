@@ -221,6 +221,7 @@ void MeshBuilder::AppendPlane(const Vector3& center, const Vector3& up, const Ve
 	Vector2 tl_UV = Vector2(uvMins.x, uvMaxs.y);
 	Vector2 tr_UV = uvMaxs;
 
+	
 	SetNormal(normal);
 	SetTangent(right);
 	SetUV(bl_UV);
@@ -237,6 +238,38 @@ void MeshBuilder::AppendPlane(const Vector3& center, const Vector3& up, const Ve
 
 	AddTriIndices(idx + 0, idx + 1, idx + 2);
 	AddTriIndices(idx + 2, idx + 1, idx + 3);
+	
+/*
+//stained glass looque
+	SetNormal(normal);
+	SetTangent(right);
+	SetUV(bl_UV);
+	unsigned int idx = PushVertex(nearBottomLeft);
+
+	SetUV(br_UV);
+	PushVertex(nearBottomRight);
+
+	SetUV(tl_UV);
+	PushVertex(farTopLeft);
+
+	AddTriIndices(idx + 0, idx + 1, idx + 2);
+
+	if (CheckRandomChance(.8f))
+	{
+		SetColor(RGBA::GetRandomMixedColor(color, .8f));
+	}
+
+	SetUV(tl_UV);
+	idx = PushVertex(farTopLeft);
+
+	SetUV(br_UV);
+	PushVertex(nearBottomRight);
+
+	SetUV(tr_UV);
+	PushVertex(farTopRight);
+
+	AddTriIndices(idx + 0, idx + 1, idx + 2);
+	*/
 
 }
 

@@ -39,7 +39,7 @@ void Flower::GetFlowerColors()
 	float randomChance = GetRandomFloatZeroToOne();
 	if (randomChance < 0.2f){
 	//get some yellow ass flowers
-		m_petalColor = RGBA::GetRGBAFromHSV(GetRandomFloatInRange(.108f, .16f), GetRandomFloatInRange(.6f, 1.f), GetRandomFloatInRange(.9f, 1.f));
+		m_petalColor = RGBA::GetRGBAFromHSVWhereHueIsDegrees(GetRandomFloatInRange(27.f, 50.f), GetRandomFloatInRange(.95f, 1.0f), GetRandomFloatInRange(.8f, 1.f));
 		if (CheckRandomChance(0.0f))
 		{
 			m_petalStripeColor = m_petalColor;
@@ -47,9 +47,9 @@ void Flower::GetFlowerColors()
 			m_petalStripeColor = RGBA::GetRGBAFromHSV(GetRandomFloatInRange(0.f, .02f), GetRandomFloatInRange(.8f, 1.f), GetRandomFloatInRange(.4f, .6f));
 			//m_petalStripeColor = RGBA::BLACK;
 		}
-		m_darkPetalColor = RGBA::GetRGBAFromHSV(GetRandomFloatInRange(.08f, .13f), GetRandomFloatInRange(.8f, 1.f), GetRandomFloatInRange(.3f, .5f));	//redder and lower value than base color
+		m_darkPetalColor = RGBA::GetRGBAFromHSV(GetRandomFloatInRange(.06f, .1f), GetRandomFloatInRange(.8f, 1.f), GetRandomFloatInRange(.3f, .5f));	//redder and lower value than base color
 		m_centerColor = RGBA::GetRGBAFromHSV(GetRandomFloatInRange(0.01f, .05f), GetRandomFloatInRange(.8f, .95f), GetRandomFloatInRange(.2f, .4f));
-	} else if (randomChance < 0.4f){
+	} else if (randomChance < .4f){
 		//pink w/ yellow center
 		m_petalColor = RGBA::GetRGBAFromHSVWhereHueIsDegrees(GetRandomFloatInRange(310.f, 360.f), GetRandomFloatInRange(.3f, 1.f), GetRandomFloatInRange(.8f, 1.f));
 		if (CheckRandomChance(.8f))
@@ -91,7 +91,15 @@ void Flower::GetFlowerColors()
 void Flower::GenerateCenter()
 {
 	//float ratio = GetRandomFloatInRange(.3f, .4f);
-	float ratio = GetRandomFloatInRange(.2f, .35f);
+	float ratio;
+	if (CheckRandomChance(.5f))
+	{
+		//big boi
+		ratio = GetRandomFloatInRange(.3f, .45f);
+	} else {
+		//little circle
+		ratio = GetRandomFloatInRange(.15f,.3f);
+	}
 	int numTriangles = GetRandomIntInRange(200,500);
 	
 	float theta = GetRandomFloatInRange(0.f, 360.f);
@@ -136,7 +144,7 @@ void Flower::GeneratePetals()
 	for (int i = 0; i < m_numPetals; i++)
 	{
 		float perc = (float) i / (float) m_numPetals;
-		RGBA interpColor = Interpolate(m_petalColor, m_darkPetalColor, SmoothStop4(perc));
+		RGBA interpColor = Interpolate(m_petalColor, m_darkPetalColor, SmoothStep3(perc));
 		AddPetal(RGBA::GetRandomMixedColor(interpColor, .85f), forward);
 		//AddStripedPetal(RGBA::GetRandomMixedColor(interpColor, .85f), forward);
 		orientation+= s_goldenAngleDegrees;

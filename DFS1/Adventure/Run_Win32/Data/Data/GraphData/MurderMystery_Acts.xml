@@ -7,4 +7,9 @@
 </Act>
 
 <Act name="investigation_solo">
+	<Characters number="1">
+	</Characters>
+	<StoryRequirements>
+		<Requirement tag="murderOccured" target="true" />
+	</StoryRequirements>
 </Act>

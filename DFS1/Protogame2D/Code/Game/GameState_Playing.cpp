@@ -55,12 +55,12 @@ GameState_Playing::GameState_Playing()
 	//	m_scene->AddRenderable(ent->m_renderable);
 	//}
 
-	////pastels
-	//for (int i = 0; i < 28; i++)
-	//{
-	//	Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 3.f), Vector2::HALF * .5f, "white", RGBA::GetRandomPastelColor());
-	//	m_scene->AddRenderable(ent->m_renderable);
-	//}
+	//pastels
+	/*for (int i = 0; i < 28; i++)
+	{
+		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 3.f), Vector2::HALF * .5f, "white", RGBA::GetRandomMixedColor(RGBA(149,200,45), .8f));
+		m_scene->AddRenderable(ent->m_renderable);
+	}*/
 
 	//for (int i = 0; i < 28; i++)
 	//{
