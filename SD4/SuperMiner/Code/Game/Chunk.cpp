@@ -38,8 +38,8 @@ void Chunk::GenerateBlocks()
 				//scoot over to the chunks position for the noise computation
 				int worldX = x + (m_chunkCoords.x * CHUNK_SIZE_X);
 				int worldY = y + (m_chunkCoords.y * CHUNK_SIZE_Y);
-				float height = Compute2dPerlinNoise((float) worldX, (float) worldY, (float) CHUNK_LAYER_DIMS_XY );
-				float heightMapped = RangeMapFloat(height, -1.f, 1.f, 0.f, (float) CHUNK_SIZE_Z);		//range map perlin noise from -1 to 1 into [0,128]
+				float height = Compute2dPerlinNoise((float) worldX, (float) worldY,  300.f, 3);
+				float heightMapped = RangeMapFloat(height, -1.f, 1.f, SEA_LEVEL, (float) CHUNK_SIZE_Z * .6f);		//range map perlin noise from -1 to 1 into [0,128]
 				int blockIndex = Chunk::GetBlockIndexForBlockCoordinates(IntVector3(x,y,z));
 
 				//later choose different things for different heights u kno
@@ -62,6 +62,7 @@ void Chunk::CreateMesh()
 {
 	m_cpuMesh.Clear();
 	m_cpuMesh.Begin(PRIMITIVE_TRIANGLES, true);
+	m_cpuMesh.ReserveVerts(CHUNK_LAYER_DIMS_XY * 4.f * 6.f);		//~ 2 faces for the top and bottom of a chunk 
 
 	//loop through ur blocks
 	for (int blockIndex = 0; blockIndex < BLOCKS_PER_CHUNK; blockIndex++)
@@ -139,6 +140,14 @@ IntVector3 Chunk::GetBlockCoordinatesForBlockIndex(int blockIndex)
 	// this ends up being 0b00001111, always for pow of 2
 
 	return IntVector3(x,y,z);
+}
+
+int Chunk::GetBlockIndexFromWorldPosition(const Vector3 & worldPos) const
+{
+	Vector3 chunkWorldOffset = Vector3((float) m_chunkCoords.x * CHUNK_SIZE_X, (float) m_chunkCoords.y * CHUNK_SIZE_Y, 0.f);
+	Vector3 chunkPos = worldPos - chunkWorldOffset;
+	IntVector3 blockCoords = IntVector3((int) floorf(chunkPos.x), (int) floorf(chunkPos.y), (int) floorf(chunkPos.z));
+	return GetBlockIndexForBlockCoordinates(blockCoords);
 }
 
 AABB3 Chunk::GetBounds() const

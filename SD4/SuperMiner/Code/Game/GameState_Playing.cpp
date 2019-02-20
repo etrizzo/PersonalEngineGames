@@ -38,19 +38,16 @@ void GameState_Playing::EnterState()
 void GameState_Playing::Update(float ds)
 {
 	PROFILE_PUSH_FUNCTION_SCOPE();
-	Vector3 basis = Vector3::ZERO;
 	
-	//draw the basis at the origin
-	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, basis, 1.f, Matrix44::IDENTITY, DEBUG_RENDER_HIDDEN);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, basis, 1.f, Matrix44::IDENTITY, DEBUG_RENDER_USE_DEPTH);
-
+	
 	m_timeInState+=ds;
 
 	for (Entity* entity : m_allEntities){
 		entity->Update();
 	}
-
+	m_player->Update();
 	m_world->Update();
+	
 
 	DeleteEntities();
 	CheckForVictory();

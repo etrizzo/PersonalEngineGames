@@ -6,6 +6,7 @@
 
 const Vector3 Vector3::ZERO		= Vector3(0.f,0.f,0.f);
 const Vector3 Vector3::ONE		= Vector3(1.f,1.f,1.f);
+const Vector3 Vector3::HALF		= Vector3(.5f,.5f,.5f);
 const Vector3 Vector3::Y_AXIS	= Vector3(0.f,1.f,0.f);
 const Vector3 Vector3::X_AXIS	= Vector3(1.f, 0.f, 0.f);
 const Vector3 Vector3::Z_AXIS	= Vector3(0.f,0.f,1.f);

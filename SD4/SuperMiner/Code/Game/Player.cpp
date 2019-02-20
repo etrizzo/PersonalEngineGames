@@ -1,5 +1,6 @@
 #include "Game/Player.hpp"
 #include "Game/Game.hpp"
+#include "Game/World.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 
@@ -29,9 +30,6 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	m_noClipMode = false;
 
 
-	m_rateOfFire = StopWatch();
-	m_rateOfFire.SetTimer(.3f);
-
 	m_positionXZ = position.XZ();
 
 	//set up auxilary transforms: camera target, turret renderable, barrel fire position, laser sight...
@@ -47,15 +45,6 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	m_cameraTarget = new Transform();
 	m_cameraTarget->SetParent(&m_renderable->m_transform);
 
-	/*m_shadowCameraTransform = new Transform();
-	Vector3 lightEuler = g_theGame->m_playState->m_sun->m_transform.GetEulerAnglesYawPitchRoll();
-	Vector3 sunDirection = g_theGame->m_playState->m_sun->m_transform.GetForward();
-	m_shadowCameraOffset = sunDirection * -25.f;
-	m_shadowCameraTransform->SetRotationEuler(lightEuler);
-	m_shadowCameraTransform->SetLocalPosition(position + m_shadowCameraOffset);*/
-
-
-
 	SetPosition(position);
 	SetScale(Vector3(size,size,size));
 }
@@ -70,6 +59,9 @@ void Player::Update()
 
 	float ds = g_theGame->GetDeltaSeconds();
 	m_ageInSeconds+=ds;
+	if (!g_theGame->IsDevMode()){
+		m_digRaycast = m_playState->m_world->Raycast(m_cameraTarget->GetWorldPosition(), m_cameraTarget->GetForward(), 8.f);
+	}
 
 }
 

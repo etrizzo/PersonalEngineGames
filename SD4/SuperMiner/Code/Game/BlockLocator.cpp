@@ -7,6 +7,16 @@ BlockLocator::BlockLocator(int blockIndex, Chunk* chunk)
 	m_chunk = chunk;
 }
 
+bool BlockLocator::operator==(const BlockLocator& other)
+{
+	return (m_chunk == other.m_chunk) && (m_blockIndex == other.m_blockIndex);
+}
+
+bool BlockLocator::operator!=(const BlockLocator& other)
+{
+	return (m_chunk != other.m_chunk) || (m_blockIndex != other.m_blockIndex);
+}
+
 Block & BlockLocator::GetBlock() const
 {
 	if (m_chunk == nullptr)
@@ -21,6 +31,27 @@ BlockDefinition * BlockLocator::GetBlockType() const
 {
 	return GetBlock().GetType();
 }
+
+
+AABB3 BlockLocator::GetBlockBounds() const
+{
+	return AABB3(GetBlockCenterWorldPosition(), .5f, .5f, .5f);
+}
+
+Vector3 BlockLocator::GetBlockCenterWorldPosition() const
+{
+	if (m_chunk != nullptr)
+	{
+		IntVector3 localBlockCoords = m_chunk->GetBlockCoordinatesForBlockIndex(m_blockIndex);
+		IntVector3 worldBlockCoords = localBlockCoords + IntVector3(m_chunk->GetChunkCoords().x, m_chunk->GetChunkCoords().y, 0);
+		Vector3 blockCenter = worldBlockCoords.GetVector3() + Vector3::HALF;
+		return blockCenter;
+	}
+	return Vector3::ZERO;
+}
+
+
+
 
 BlockLocator BlockLocator::GetEast() const
 {

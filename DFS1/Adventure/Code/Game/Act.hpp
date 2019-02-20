@@ -7,8 +7,10 @@ class Act
 public:
 	Act();
 
-
+	//Adds a start or end node to connect to this act and updates them as well
 	bool ConnectToAct(Act* newAct);
+
+	void GenerateEventAndOutcomePair();
 	
 	std::vector<StoryNode*> m_nodes;		//these are references to nodes/edges that exist in the storygraph
 	std::vector<StoryEdge*> m_edges;

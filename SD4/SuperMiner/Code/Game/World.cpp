@@ -2,13 +2,15 @@
 #include "Game/Chunk.hpp"
 #include "Game/Game.hpp"
 #include "Game/Player.hpp"
+#include "Game/RaycastResult.hpp"
+#include "Game/DebugRenderSystem.hpp"
 
 World::World()
 {
 	m_chunkMaterial = Material::GetMaterial("block");
 	ASSERT_OR_DIE(m_chunkMaterial != nullptr, "No block material loaded in material data");
 	float activationRadiusInBlocks = g_gameConfigBlackboard.GetValue("activationRadius", 100.f);
-	float deactivationRadiusInBlocks = g_gameConfigBlackboard.GetValue("deactivationRadius", 120.f);
+	float deactivationRadiusInBlocks = activationRadiusInBlocks + 25.f;
 	m_chunkActivationRadiusChunkDistance = activationRadiusInBlocks / (float) CHUNK_SIZE_X;
 	m_chunkDeactivationRadiusChunkDistance = deactivationRadiusInBlocks / (float) CHUNK_SIZE_X;
 	SetActivationRadius(m_chunkActivationRadiusChunkDistance);
@@ -93,7 +95,7 @@ bool World::IsChunkActive(const IntVector2 & chunkCoords)
 	return foundChunk != m_chunks.end();
 }
 
-Chunk * World::GetChunkAtCoordinates(const IntVector2 & chunkCoords)
+Chunk * World::GetChunkAtCoordinates(const IntVector2 & chunkCoords) const
 {
 	auto foundChunk = m_chunks.find(chunkCoords);
 	if (foundChunk == m_chunks.end()){
@@ -104,14 +106,115 @@ Chunk * World::GetChunkAtCoordinates(const IntVector2 & chunkCoords)
 
 IntVector2 World::GetChunkCoordinatesFromWorldCoordinates(const Vector3 & worldPos) const
 {
-	IntVector3 blockPositionWorld = IntVector3((int) floorf(worldPos.x), (int) floorf(worldPos.y), (int) floorf(worldPos.z));
+	float floatX = worldPos.x / (float) CHUNK_SIZE_X;
+	float floatY = worldPos.y / (float) CHUNK_SIZE_Y;
+	int x = (int) floorf(floatX);
+	int y = (int) floorf(floatY);
+	/*IntVector3 blockPositionWorld = IntVector3((int) floorf(worldPos.x), (int) floorf(worldPos.y), (int) floorf(worldPos.z));
 	int x = blockPositionWorld.x / CHUNK_SIZE_X;
-	int y = blockPositionWorld.y / CHUNK_SIZE_Y;
+	int y = blockPositionWorld.y / CHUNK_SIZE_Y;*/
 	return IntVector2(x,y);
+}
+
+BlockLocator World::GetBlockLocatorAtWorldPosition(const Vector3 & worldPos) const
+{
+	IntVector2 chunkCoords = GetChunkCoordinatesFromWorldCoordinates(worldPos);
+	int index = 0;
+	Chunk* chunk = GetChunkAtCoordinates(chunkCoords);
+	if (chunk != nullptr){
+		index = chunk->GetBlockIndexFromWorldPosition(worldPos);
+	}
+	return BlockLocator(index, chunk);
+}
+
+RaycastResult World::Raycast(const Vector3 & start, const Vector3 & forwardNormal, float maxDistance) const
+{
+	int numSteps = (int) (maxDistance  * (1.f / RAYCAST_STEP_SIZE));
+	Vector3 step = (forwardNormal * RAYCAST_STEP_SIZE);
+	BlockLocator prevBlock = GetBlockLocatorAtWorldPosition(start);
+	BlockLocator nextBlock = prevBlock;
+
+	if (prevBlock.IsBlockFullyOpaque())
+	{
+		//we started in a solid block
+		RaycastResult result;
+		result.m_ray = Ray3D(start, forwardNormal);
+		result.m_maxDistance = maxDistance;
+		result.m_impactPosition = start;
+		result.m_endPosition = start + (forwardNormal * maxDistance);
+		result.m_impactFraction = 0.f;
+		result.m_impactDistance = 0.f;
+		result.m_impactBlock = BlockLocator(nextBlock.m_blockIndex, nextBlock.m_chunk);
+		result.m_impactNormal = -forwardNormal;
+		return result;
+	}
+
+	for (int i = 0; i < numSteps; i++)
+	{
+		Vector3 raycastPosition = start + (step * (float) i);
+		nextBlock = GetBlockLocatorAtWorldPosition(raycastPosition);
+		if (nextBlock != prevBlock)
+		{
+			if(nextBlock.IsBlockFullyOpaque())
+			{
+				//we have a hit, return a raycastresult
+				RaycastResult result;
+				result.m_ray = Ray3D(start, forwardNormal);
+				result.m_maxDistance = maxDistance;
+				result.m_impactPosition = raycastPosition;
+				result.m_endPosition = start + (forwardNormal * maxDistance);
+				result.m_impactFraction = (float) i / (float) numSteps;
+				result.m_impactDistance = result.m_impactFraction * maxDistance;
+				result.m_impactBlock = BlockLocator(nextBlock.m_blockIndex, nextBlock.m_chunk);
+				result.m_impactNormal = (Chunk::GetBlockCoordinatesForBlockIndex(nextBlock.m_blockIndex)- Chunk::GetBlockCoordinatesForBlockIndex(prevBlock.m_blockIndex)).GetVector3();
+				return result;
+			} else {
+				//advance thy raycast
+				prevBlock = nextBlock;
+			}
+		}
+	}
+	RaycastResult result;
+	result.m_ray = Ray3D(start, forwardNormal);
+	result.m_maxDistance = maxDistance;
+	result.m_endPosition = start + (forwardNormal * maxDistance);
+	result.m_impactPosition = result.m_endPosition;
+	result.m_impactFraction = 1.f;
+	result.m_impactDistance = maxDistance;
+	result.m_impactBlock = BlockLocator(nextBlock.m_blockIndex, nextBlock.m_chunk);
+	result.m_impactNormal = Vector3::ZERO;
+	return result;
 }
 
 void World::UpdateDebugStuff()
 {
+	Vector3 basis = Vector3::ZERO;
+
+	//draw the basis at the origin
+	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, basis, 1.f, Matrix44::IDENTITY, DEBUG_RENDER_HIDDEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, basis, 1.f, Matrix44::IDENTITY, DEBUG_RENDER_USE_DEPTH);
+	
+	//draw the debug raycast
+	RaycastResult dig = g_theGame->GetPlayer()->m_digRaycast;
+	if (g_theGame->IsDevMode()){
+		RGBA xrayColor = RGBA::RED;
+		RGBA visibleColor = RGBA::YELLOW;
+		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(dig.m_ray.m_position, dig.m_endPosition, xrayColor, xrayColor, 0.f,xrayColor, xrayColor, DEBUG_RENDER_HIDDEN);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(dig.m_ray.m_position, dig.m_impactPosition, visibleColor, visibleColor, 0.f, visibleColor, visibleColor, DEBUG_RENDER_USE_DEPTH);
+	}
+
+	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, dig.m_impactPosition, RGBA::BLACK, RGBA::BLACK, DEBUG_RENDER_HIDDEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, dig.m_impactPosition, RGBA::WHITE, RGBA::WHITE, DEBUG_RENDER_USE_DEPTH);
+
+	
+	if (dig.DidImpact())
+	{
+		//draw the face you hit
+		Vector3 blockCenter = dig.m_impactBlock.GetBlockCenterWorldPosition();
+		Vector3 halfNormal	= dig.m_impactNormal * .5f;
+		Vector3 quadRight = Cross(dig.m_impactNormal, UP);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderQuad(0.f, blockCenter - halfNormal, Vector2::HALF * .95f, quadRight, UP, RGBA::GREEN, RGBA::GREEN, DEBUG_RENDER_IGNORE_DEPTH);
+	}
 }
 
 void World::UpdateBlockPlacementAndDigging()

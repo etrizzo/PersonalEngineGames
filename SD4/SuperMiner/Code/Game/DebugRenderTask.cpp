@@ -65,11 +65,9 @@ DebugRenderTask_Point::DebugRenderTask_Point(Vector3 pos, float lifetime, RGBA s
 
 void DebugRenderTask_Point::Render()
 {
-	Vector3 right = Vector3(1.f, 0.f, 1.f).GetNormalized();
-	Vector3 forward = Vector3(-1.f, 0.f, 1.f).GetNormalized();
 
 	RGBA color = Interpolate(m_info.m_startColor, m_info.m_endColor, m_info.m_age / m_info.m_lifetime);
-	g_theRenderer->DrawPoint(m_position, .1f, right, UP, forward, color);
+	g_theRenderer->DrawPoint(m_position, .1f, RIGHT, UP, FORWARD, color);
 
 	//g_theRenderer->DrawPoint(m_position, 1.f,RIGHT, UP, Vector3::FORWARD, RGBA::WHITE);
 	

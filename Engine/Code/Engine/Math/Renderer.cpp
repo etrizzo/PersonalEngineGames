@@ -1521,6 +1521,28 @@ void Renderer::DrawLine3D(const Vector3 & start, const Vector3 & end, const RGBA
 void Renderer::DrawPoint(const Vector3 & pos, float size, const Vector3 & right, const Vector3 & up, const Vector3 & forward, RGBA rightColor, RGBA upColor, RGBA forwardColor)
 {
 	ReleaseTexture();
+
+	Vector3 halfRight = right * .5f * size;
+	Vector3 halfUp = up * .5f * size;
+	Vector3 halfForward = forward * .5f * size;
+	//make a cube and draw from corners
+	Vector3 nearbotleft = pos - halfRight - halfUp - halfForward;
+	Vector3 fartopright = pos + halfRight + halfUp + halfForward;
+
+	Vector3 nearbotright = pos + halfRight - halfUp - halfForward;
+	Vector3 fartopleft = pos - halfRight +halfUp + halfForward;
+
+	Vector3 neartopleft = pos - halfRight + halfUp - halfForward;
+	Vector3 farbotright = pos + halfRight - halfUp + halfForward;
+
+	Vector3 neartopright = pos + halfRight + halfUp - halfForward;
+	Vector3 farbotleft = pos - halfRight - halfUp + halfForward;
+	
+	DrawLine3D(fartopright, nearbotleft, rightColor, rightColor);
+	DrawLine3D(nearbotright, fartopleft, rightColor, rightColor);
+	DrawLine3D(neartopleft, farbotright, rightColor, rightColor);
+	DrawLine3D(neartopright, farbotleft, rightColor, rightColor);
+/*
 	Vector3 point_left = pos - (right * size);
 	Vector3 point_right = pos + (right * size);
 	Vector3 point_down = pos - (up * size);
@@ -1529,7 +1551,7 @@ void Renderer::DrawPoint(const Vector3 & pos, float size, const Vector3 & right,
 	Vector3 point_far = pos + (forward * size);
 	DrawLine3D(point_left,point_right, rightColor, rightColor);
 	DrawLine3D(point_down,point_up, upColor, upColor);
-	DrawLine3D(point_near,point_far, forwardColor, forwardColor);
+	DrawLine3D(point_near,point_far, forwardColor, forwardColor);*/
 }
 
 

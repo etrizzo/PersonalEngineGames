@@ -132,6 +132,9 @@
     <ClInclude Include="BlockLocator.hpp">
       <Filter>General</Filter>
     </ClInclude>
+    <ClInclude Include="RaycastResult.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\..\Run_Win32\Data\Data\GameConfig.xml">

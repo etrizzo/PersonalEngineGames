@@ -46,7 +46,7 @@ const static IntVector2 NORTH	= IntVector2(0,1);
 
 constexpr int   CHUNK_BITS_X = 4;
 constexpr int   CHUNK_BITS_Y = 4;
-constexpr int   CHUNK_BITS_Z = 5;
+constexpr int   CHUNK_BITS_Z = 7;
 
 constexpr int   CHUNK_SIZE_X = (1 << CHUNK_BITS_X);
 constexpr int   CHUNK_SIZE_Y = (1 << CHUNK_BITS_Y);
@@ -56,8 +56,11 @@ constexpr int	BLOCKS_PER_CHUNK = CHUNK_SIZE_X  * CHUNK_SIZE_Y * CHUNK_SIZE_Z;
 
 constexpr int	CHUNK_MASK_X = CHUNK_SIZE_X - 1;
 constexpr int	CHUNK_MASK_Y = (CHUNK_SIZE_Y - 1) << CHUNK_BITS_X;
-constexpr int	CHUNK_MASK_Z = (CHUNK_SIZE_Z - 1) << (CHUNK_BITS_X + CHUNK_BITS_Z);
+constexpr int	CHUNK_MASK_Z = (CHUNK_SIZE_Z - 1) << (CHUNK_BITS_X + CHUNK_BITS_Y);
 
+constexpr float	SEA_LEVEL = (float) CHUNK_SIZE_Z * .33f;
+
+constexpr float RAYCAST_STEP_SIZE = .05f;
 
 //this is the matrix to apply to convert world coordinates to engine coordinates 
 const static Matrix44 g_worldToEngine = Matrix44(Vector3(0.f, 0.f, 1.f), 		//right

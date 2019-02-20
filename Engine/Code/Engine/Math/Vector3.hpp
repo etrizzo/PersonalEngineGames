@@ -51,6 +51,7 @@ public: // NOTE: this is one of the few cases where we break both the "m_" namin
 
 	const static Vector3 ZERO;
 	const static Vector3 ONE;
+	const static Vector3 HALF;
 	
 	const static Vector3 X_AXIS;
 	const static Vector3 Y_AXIS;

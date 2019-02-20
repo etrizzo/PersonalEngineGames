@@ -27,6 +27,8 @@ public:
 	inline static int GetBlockZCoordinate(int blockIndex);
 	static int GetBlockIndexForBlockCoordinates(const IntVector3& blockCoords);
 	static IntVector3 GetBlockCoordinatesForBlockIndex(int blockIndex);
+	
+	int GetBlockIndexFromWorldPosition(const Vector3& worldPos) const;
 
 	AABB3 GetBounds() const;
 	Block& GetBlock(int blockIndex);

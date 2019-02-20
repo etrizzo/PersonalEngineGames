@@ -1,5 +1,6 @@
 #pragma once
 #include "Game/GameCommon.hpp"
+#include "Game/RaycastResult.hpp"
 
 class Chunk;
 
@@ -21,9 +22,14 @@ public:
 
 	bool IsChunkActive(const IntVector2& chunkCoords);
 
-	Chunk* GetChunkAtCoordinates(const IntVector2& chunkCoords);
+	Chunk* GetChunkAtCoordinates(const IntVector2& chunkCoords) const;
 
 	IntVector2 GetChunkCoordinatesFromWorldCoordinates(const Vector3& worldPos) const;
+
+	BlockLocator GetBlockLocatorAtWorldPosition(const Vector3& worldPos) const;
+
+	//physics
+	RaycastResult Raycast(const Vector3& start, const Vector3& forwardNormal, float maxDistance) const;
 
 private:
 	//initialization
@@ -34,6 +40,7 @@ private:
 	void UpdateBlockPlacementAndDigging();
 	void UpdateChunks();
 	void ManageChunks();
+
 
 	void TryToActivateChunks();
 	void TryToDeactivateChunks();

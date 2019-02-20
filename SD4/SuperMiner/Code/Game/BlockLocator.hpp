@@ -12,9 +12,14 @@ public:
 	Chunk* m_chunk;
 	int m_blockIndex;
 
+	bool operator==(const BlockLocator& other);
+	bool operator!=(const BlockLocator& other);
+
 	Block& GetBlock() const;
 	BlockDefinition* GetBlockType() const;
-	bool IsBlockFullyOpaque() const			{ return GetBlock().IsFullyOpaque(); }
+	inline bool IsBlockFullyOpaque() const;			
+	AABB3 GetBlockBounds() const;
+	Vector3 GetBlockCenterWorldPosition() const;
 
 	//Functions that get make block locators for your neighbors
 	BlockLocator GetEast() const;
@@ -32,3 +37,9 @@ public:
 	void MoveUp();
 	void MoveDown();
 };
+
+bool BlockLocator::IsBlockFullyOpaque() const
+{
+	return GetBlock().IsFullyOpaque();
+}
+

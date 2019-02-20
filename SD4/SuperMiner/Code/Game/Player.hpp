@@ -1,5 +1,6 @@
 #pragma once
 #include "Game/Entity.hpp"
+#include "Game/RaycastResult.hpp"
 
 class Player :public Entity{
 public:
@@ -20,8 +21,8 @@ public:
 	float m_speed				= 16.f;
 	float m_shiftMultiplier		= 4.f;
 	float m_degPerSecond	= 60.f;
-	StopWatch m_rateOfFire;
 
+	RaycastResult m_digRaycast;
 
 	Transform* m_cameraTarget;
 
