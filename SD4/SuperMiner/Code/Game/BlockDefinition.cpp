@@ -2,9 +2,10 @@
 
 std::vector<BlockDefinition*> BlockDefinition::s_blockDefinitions = std::vector<BlockDefinition*>();
 
-BlockDefinition::BlockDefinition(eBlockType ID, AABB2 topUV, AABB2 sideUV, AABB2 botUVs)
+BlockDefinition::BlockDefinition(eBlockType ID, bool isFullyOpaque, AABB2 topUV, AABB2 sideUV, AABB2 botUVs)
 {
 	m_blockID = ID;
+	m_isFullyOpaque = isFullyOpaque;
 	m_topUVs = topUV;
 	m_sideUVs = sideUV;
 	m_bottomUVs = botUVs;

@@ -194,12 +194,6 @@ unsigned int GameState_Playing::GetNumActiveLights() const
 
 void GameState_Playing::Startup()
 {
-	new BlockDefinition(BLOCK_AIR, AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE);
-	new BlockDefinition(BLOCK_GRASS, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(3,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(4,3)));
-	new BlockDefinition(BLOCK_STONE, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)));
-	new BlockDefinition(BLOCK_SNOW, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)));
-	
-
 	m_world = new World();
 	SpawnPlayer(Vector3(-4.f,0.f, (float) CHUNK_SIZE_Z * .5f));
 

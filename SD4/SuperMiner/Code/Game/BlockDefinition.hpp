@@ -4,9 +4,12 @@
 class BlockDefinition
 {
 public:
-	BlockDefinition(eBlockType ID, AABB2 topUV, AABB2 sideUV, AABB2 botUVs);
+	BlockDefinition(eBlockType ID, bool isFullyOpaque, AABB2 topUV, AABB2 sideUV, AABB2 botUVs);
 
+	bool IsFullyOpaque() const		{ return m_isFullyOpaque; };
+	
 	eBlockType m_blockID = BLOCK_AIR;
+	bool m_isFullyOpaque = true;
 
 	AABB2 m_topUVs;
 	AABB2 m_sideUVs;

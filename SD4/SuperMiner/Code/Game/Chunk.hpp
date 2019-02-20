@@ -22,10 +22,14 @@ public:
 
 	IntVector2 GetChunkCoords();
 
+	inline static int GetBlockXCoordinate(int blockIndex);
+	inline static int GetBlockYCoordinate(int blockIndex);
+	inline static int GetBlockZCoordinate(int blockIndex);
 	static int GetBlockIndexForBlockCoordinates(const IntVector3& blockCoords);
 	static IntVector3 GetBlockCoordinatesForBlockIndex(int blockIndex);
 
 	AABB3 GetBounds() const;
+	Block& GetBlock(int blockIndex);
 
 
 	Chunk* m_eastNeighbor  = nullptr;
@@ -52,3 +56,28 @@ private:
 	Vector3 GetCenterPointForBlockInWorldCoordinates(int blockIndex);
 
 };
+
+
+bool IsBlockIndexOnEastEdge(int blockIndex);
+bool IsBlockIndexOnWestEdge(int blockIndex);
+bool IsBlockIndexOnSouthEdge(int blockIndex);
+bool IsBlockIndexOnNorthEdge(int blockIndex);
+bool IsBlockIndexOnBottomEdge(int blockIndex);
+bool IsBlockIndexOnTopEdge(int blockIndex);
+
+
+
+int Chunk::GetBlockXCoordinate(int blockIndex)
+{
+	return blockIndex & (CHUNK_MASK_X);
+}
+
+int Chunk::GetBlockYCoordinate(int blockIndex)
+{
+	return (blockIndex & CHUNK_MASK_Y) >> CHUNK_BITS_X;
+}
+
+int Chunk::GetBlockZCoordinate(int blockIndex)
+{
+	return  blockIndex >> (CHUNK_BITS_X + CHUNK_BITS_Y);
+}

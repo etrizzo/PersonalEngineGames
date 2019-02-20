@@ -3,11 +3,13 @@
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Game/Player.hpp"
+#include "Game/BlockDefinition.hpp"
 #include "Engine/Renderer/Light.hpp"
 #include "Engine/Renderer/ParticleSystem.hpp"
 #include "Engine/Networking/UDPTests.hpp"
 #include "Engine/Networking/NetSession.hpp"
 #include "Engine/Networking/NetConnection.hpp"
+
 
 
 Game::~Game()
@@ -76,6 +78,13 @@ void Game::PostStartup()
 {
 	PROFILE_LOG_SCOPE_FUNCTION();
 	m_soundTrackID = g_theAudio->CreateOrGetSound("Data/Audio/OrbitalColossus.mp3");
+
+	new BlockDefinition(BLOCK_AIR,		false,  AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE);
+	new BlockDefinition(BLOCK_GRASS,	true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(3,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(4,3)));
+	new BlockDefinition(BLOCK_STONE,	true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)));
+	new BlockDefinition(BLOCK_SNOW,		true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)));
+
+
 
 	m_currentMap = nullptr;
 	m_playState = new GameState_Playing();

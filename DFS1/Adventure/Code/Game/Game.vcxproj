@@ -280,6 +280,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Act.cpp" />
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="ActionDefinition.cpp" />
     <ClCompile Include="ActionModifier.cpp" />
@@ -354,6 +355,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Act.hpp" />
     <ClInclude Include="Action.hpp" />
     <ClInclude Include="ActionDefinition.hpp" />
     <ClInclude Include="ActionModifier.hpp" />

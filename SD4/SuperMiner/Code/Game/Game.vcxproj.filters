@@ -67,6 +67,9 @@
     <ClCompile Include="BlockDefinition.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="BlockLocator.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -124,6 +127,9 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="BlockDefinition.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockLocator.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,4 +1,5 @@
-#include "Block.hpp"
+#include "Game/Block.hpp"
+#include "Game/BlockDefinition.hpp"
 
 Block::Block()
 {
@@ -15,4 +16,14 @@ Block::Block(eBlockType blockType)
 void Block::SetType(eBlockType newType)
 {
 	m_blockID = newType;
+}
+
+BlockDefinition * Block::GetType() const
+{
+	return BlockDefinition::GetBlockDefinitionFromID(m_blockID);
+}
+
+bool Block::IsFullyOpaque() const
+{
+	return GetType()->IsFullyOpaque();
 }

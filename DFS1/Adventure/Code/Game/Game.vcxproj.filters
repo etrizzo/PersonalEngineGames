@@ -229,6 +229,9 @@
     <ClCompile Include="DataSet.cpp">
       <Filter>General\StoryGraph</Filter>
     </ClCompile>
+    <ClCompile Include="Act.cpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -430,6 +433,9 @@
       <Filter>General\Maps</Filter>
     </ClInclude>
     <ClInclude Include="DataSet.hpp">
+      <Filter>General\StoryGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="Act.hpp">
       <Filter>General\StoryGraph</Filter>
     </ClInclude>
   </ItemGroup>

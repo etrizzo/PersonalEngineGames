@@ -289,6 +289,7 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BlockDefinition.cpp" />
+    <ClCompile Include="BlockLocator.cpp" />
     <ClCompile Include="Chunk.cpp" />
     <ClCompile Include="DebugRenderSystem.cpp" />
     <ClCompile Include="DebugRenderTask.cpp" />
@@ -315,6 +316,7 @@
     <ClInclude Include="App.hpp" />
     <ClInclude Include="Block.hpp" />
     <ClInclude Include="BlockDefinition.hpp" />
+    <ClInclude Include="BlockLocator.hpp" />
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="DebugRenderSystem.hpp" />
     <ClInclude Include="DebugRenderTask.hpp" />

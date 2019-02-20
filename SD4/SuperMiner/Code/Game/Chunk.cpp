@@ -1,5 +1,6 @@
 #include "Game/Chunk.hpp"
 #include "Game/BlockDefinition.hpp"
+#include "Game/BlockLocator.hpp"
 
 Chunk::Chunk(IntVector2 chunkCoords)
 {
@@ -92,6 +93,8 @@ IntVector2 Chunk::GetChunkCoords()
 	return m_chunkCoords;
 }
 
+
+
 void Chunk::Update()
 {
 }
@@ -129,11 +132,10 @@ IntVector3 Chunk::GetBlockCoordinatesForBlockIndex(int blockIndex)
 	//	111 1111 1111 1111
 	//	         ^ybits
 
-	constexpr int X_MASK = CHUNK_SIZE_X - 1;
-	constexpr int Y_MASK = CHUNK_SIZE_Y - 1;
-	int z = blockIndex >>(CHUNK_BITS_X + CHUNK_BITS_Y);
-	int y = (blockIndex >> (CHUNK_BITS_X)) & (Y_MASK);
-	int x = blockIndex & (X_MASK);
+	
+	int z = GetBlockZCoordinate(blockIndex);
+	int y = GetBlockYCoordinate(blockIndex);
+	int x = GetBlockXCoordinate(blockIndex);
 	// this ends up being 0b00001111, always for pow of 2
 
 	return IntVector3(x,y,z);
@@ -144,6 +146,11 @@ AABB3 Chunk::GetBounds() const
 	Vector3 mins = Vector3((float) m_chunkCoords.x * CHUNK_SIZE_X, (float) m_chunkCoords.y * CHUNK_SIZE_Y, 0.f);
 	Vector3 maxs = mins  + Vector3((float) CHUNK_SIZE_X,(float) CHUNK_SIZE_Y,(float) CHUNK_SIZE_Z);
 	return AABB3(mins, maxs);
+}
+
+Block & Chunk::GetBlock(int blockIndex)
+{
+	return m_blocks[blockIndex];
 }
 
 void Chunk::AddVertsForBlockAtIndex(int blockIndex)
@@ -173,23 +180,37 @@ void Chunk::AddVertsForBlockAtIndex(int blockIndex)
 
 		//m_cpuMesh.AppendCube(center, Vector3::ONE, RGBA::WHITE, RIGHT, UP, FORWARD, blockDef->m_topUVs, blockDef->m_sideUVs, blockDef->m_bottomUVs);
 		
-		//Add verts for top (abfe)					//up	//right
-		m_cpuMesh.AppendPlane(center + topOffset, FORWARD, RIGHT, Vector2::HALF, s_blockTopBottomColor, blockDef->m_topUVs.mins, blockDef->m_topUVs.maxs);
+		BlockLocator me(blockIndex, this);
 
-		//add verts for right (dhfb)
-		m_cpuMesh.AppendPlane(center + rightOffset, UP, FORWARD, Vector2::HALF, s_blockNorthSouthColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		if (!me.GetUp().IsBlockFullyOpaque()){
+			//Add verts for top (abfe)					//up	//right
+			m_cpuMesh.AppendPlane(center + topOffset, FORWARD, RIGHT, Vector2::HALF, s_blockTopBottomColor, blockDef->m_topUVs.mins, blockDef->m_topUVs.maxs);
+		}
 
-		//add verts for left (gcae)
-		m_cpuMesh.AppendPlane(center - rightOffset, UP, -FORWARD, Vector2::HALF, s_blockNorthSouthColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		if (!me.GetSouth().IsBlockFullyOpaque()){
+			//add verts for right (dhfb)
+			m_cpuMesh.AppendPlane(center + rightOffset, UP, FORWARD, Vector2::HALF, s_blockNorthSouthColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		}
 
-		//add verts for front (hgef)
-		m_cpuMesh.AppendPlane(center + forwardOffset, UP, -RIGHT, Vector2::HALF, s_blockEastWestColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		if (!me.GetNorth().IsBlockFullyOpaque()){
+			//add verts for left (gcae)
+			m_cpuMesh.AppendPlane(center - rightOffset, UP, -FORWARD, Vector2::HALF, s_blockNorthSouthColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		}
 
-		//add verts for back (cdba)
-		m_cpuMesh.AppendPlane(center - forwardOffset, UP, RIGHT, Vector2::HALF, s_blockEastWestColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		if (!me.GetEast().IsBlockFullyOpaque()){
+			//add verts for front (hgef)
+			m_cpuMesh.AppendPlane(center + forwardOffset, UP, -RIGHT, Vector2::HALF, s_blockEastWestColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		}
 
-		//add verts for bottom (hgcd)
-		m_cpuMesh.AppendPlane(center - topOffset, -FORWARD, -RIGHT, Vector2::HALF, s_blockTopBottomColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		if (!me.GetWest().IsBlockFullyOpaque()){
+			//add verts for back (cdba)
+			m_cpuMesh.AppendPlane(center - forwardOffset, UP, RIGHT, Vector2::HALF, s_blockEastWestColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		}
+
+		if (!me.GetDown().IsBlockFullyOpaque()){
+			//add verts for bottom (hgcd)
+			m_cpuMesh.AppendPlane(center - topOffset, -FORWARD, -RIGHT, Vector2::HALF, s_blockTopBottomColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+		}
 	}
 }
 
@@ -199,4 +220,34 @@ Vector3 Chunk::GetCenterPointForBlockInWorldCoordinates(int blockIndex)
 	Vector3 chunkOffsetFromOrigin = Vector3((float) m_chunkCoords.x * (float) CHUNK_SIZE_X, (float) m_chunkCoords.y * (float) CHUNK_SIZE_Y, 0.f );
 	Vector3 center = Vector3(.5f,.5f,.5f) + blockCoords.GetVector3() + chunkOffsetFromOrigin;
 	return center;
+}
+
+bool IsBlockIndexOnEastEdge(int blockIndex)
+{
+	return ((blockIndex & CHUNK_MASK_X) == CHUNK_MASK_X);
+}
+
+bool IsBlockIndexOnWestEdge(int blockIndex)
+{
+	return ((blockIndex & CHUNK_MASK_X) == 0);
+}
+
+bool IsBlockIndexOnSouthEdge(int blockIndex)
+{
+	return ((blockIndex & CHUNK_MASK_Y) == 0);
+}
+
+bool IsBlockIndexOnNorthEdge(int blockIndex)
+{
+	return ((blockIndex & CHUNK_MASK_Y) == CHUNK_MASK_Y);
+}
+
+bool IsBlockIndexOnBottomEdge(int blockIndex)
+{
+	return ((blockIndex & CHUNK_MASK_Z) == 0);
+}
+
+bool IsBlockIndexOnTopEdge(int blockIndex)
+{
+	return ((blockIndex & CHUNK_MASK_Z) == CHUNK_MASK_Z);
 }
