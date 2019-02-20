@@ -3,7 +3,7 @@
 	</Acts>
 
 
-	<EventNode name="TheMurder">
+	<EventNode name="TheMurder" progression="time">
 		<!-- *[X]* indicates a character name who should be replaced at rutntime -->
 		<Action text="A man is murdered." />
 		<Act name="Murder" />
@@ -12,22 +12,7 @@
 		</Characters>
 		
 		<CharacterRequirements>
-			<!--
-			<Character index="0">
-				<Requirement tag="isAlive" target="true"/>
-			</Character>
-
-			<Character index="1">
-				<Requirement tag="isWeapon" target="true"/>
-			</Character>
-
-			<Character index="2">
-				<Requirement tag="isRoom" target="true"/>
-			</Character>
-			-->
 		</CharacterRequirements>
-		
-
 
 		<StoryRequirements>
 			<Requirement tag="murderOcurred" target="false" />
@@ -81,7 +66,7 @@
 	</EventNode>
 -->
 
-	<EventNode name="InvestigateSuspect">
+	<EventNode name="InvestigateSuspect" progression="interact">
 		<Action text="*0* investigates *1*" />	
 		<Act name="Murder" />
 		<Characters>
@@ -118,14 +103,14 @@
 		<CharacterEffects>
 			<EffectSet>
 				<TagChange character="0" tag = "isInvestigating" target="true" />
-				<TagChange character="0" tag = "investigationTarget" target="*1*" type="character"/>
+				<!--<TagChange character="0" tag = "investigationTarget" target="*1*" type="character"/>-->
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>
 
 
 
-	<EventNode name="InvestigateSuspectAgain">
+	<EventNode name="InvestigateSuspectAgain" progression="interact">
 		<Action text="*0* doubts *1*'s innocence and re-investigates." />	
 		<Act name="Murder" />
 		<Characters>
@@ -163,7 +148,7 @@
 		<CharacterEffects>
 			<EffectSet>
 				<TagChange character="0" tag = "isInvestigating" target="true" />
-				<TagChange character="0" tag = "investigationTarget" target="*1*" type="character"/>
+				<!--<TagChange character="0" tag = "investigationTarget" target="*1*" type="character"/>-->
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>
@@ -209,7 +194,7 @@
 	</EventNode>
 -->
 
-	<EventNode name="AccusePerson">
+	<EventNode name="AccusePerson" progression="interact">
 		<Action text="*0* accuses *1* of being the killer" />	
 		<Act name="Murder" />
 		<Characters>
@@ -252,7 +237,7 @@
 
 
 
-	<EventNode name="ArrestKiller">
+	<EventNode name="ArrestKiller" progression="interact">
 		<Action text="*0* tries to arrest *1*" />	
 		<Act name="Murder" />
 		<Characters>

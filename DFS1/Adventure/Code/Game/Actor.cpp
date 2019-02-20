@@ -151,13 +151,10 @@ void Actor::SetDialogFromState()
 	std::string tagString = m_tags.GetTagsAsString();
 	std::string storyString = "I am a: " + m_roleInStory;
 
-	while (!m_dialogue->m_dialogues.empty())
-	{
-		//delete m_dialogue->m_dialogues.back();
-		m_dialogue->m_dialogues.pop();
-	}
-	//m_dialogue->Reset();
-	m_dialogue->m_dialogues.push(new Dialogue(tagString + "\n" + storyString));
+	m_dialogue->ClearDialogues();
+	m_dialogue->AddDialogueLine(tagString);
+	m_dialogue->AddDialogueLine(storyString);
+
 }
 
 void Actor::EquipItemsInInventory()

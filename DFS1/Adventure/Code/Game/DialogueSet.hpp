@@ -14,10 +14,16 @@ public:
 	//resets dialogue to the definition's dialogue
 	void Reset();
 
+	void ClearDialogues();
+	void AddDialogueLine(std::string newLine);
+
 	bool m_hasDefinition = true;
 	Actor* m_speaker = nullptr;
 	DialogueSetDefinition* m_definition = nullptr;
 	Dialogue* m_activeDialogue = nullptr;
-	std::queue<Dialogue*> m_dialogues;
+	//std::queue<Dialogue*> m_dialogues;
 	
+	int m_dialogueIndex;
+	std::vector<Dialogue*> m_dialogues;
+
 };

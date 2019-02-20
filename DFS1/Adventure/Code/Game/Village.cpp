@@ -106,15 +106,17 @@ void Village::SetResidentDialogues()
 			
 			//check the story tags to see if this character currently has a role
 			TagSet storyTags = m_currentEdge->GetCost()->m_storyTags;
+			std::string residentRole = "";
 			for (int i = 0; i < storyTags.m_tags.size(); i++)
 			{
 				if (storyTags.m_tags[i].GetType() == "character" )
 				{
 					if (storyTags.m_tags[i].GetValue() == resident->m_name){
-						resident->m_roleInStory = storyTags.m_tags[i].GetName();
+						residentRole = storyTags.m_tags[i].GetName();
 					}
 				}
 			}
+			resident->m_roleInStory = residentRole;
 
 			resident->SetDialogFromState();
 		}

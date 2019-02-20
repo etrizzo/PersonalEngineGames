@@ -1,5 +1,5 @@
 	
-	<OutcomeNode name="GeneratesSuspicion" chanceToPlace=".3">
+	<OutcomeNode name="GeneratesSuspicion" chanceToPlace=".3" progression="choice">
 		<Act name="Murder" />
 		<Characters>
 			<Character id = "*0*" />
@@ -43,7 +43,7 @@
 	</OutcomeNode>
 
 
-	<OutcomeNode name="AccusationOutcome" chanceToPlace="1">
+	<OutcomeNode name="AccusationOutcome" chanceToPlace="1" progression="interact">
 		<Act name="Murder" />
 		<Characters>
 			<Character id = "*0*" />
@@ -100,7 +100,7 @@
 
 
 
-	<OutcomeNode name="ArrestOutcome" chanceToPlace="1">
+	<OutcomeNode name="ArrestOutcome" chanceToPlace="1" progression="choice">
 		<Act name="Murder" />
 		<Characters>
 			<Character id = "*0*" />
@@ -155,7 +155,7 @@
 	</OutcomeNode>
 
 
-	<OutcomeNode name="LearnsSomething" chanceToPlace=".3">
+	<OutcomeNode name="LearnsSomething" chanceToPlace=".3" progression="interact">
 		<Act name="Murder" />
 		<Characters>
 			<Character id = "*0*" />

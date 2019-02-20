@@ -6,18 +6,25 @@
 DialogueSet::DialogueSet(DialogueSetDefinition * def)
 {
 	m_definition = def;
+	if (m_definition != nullptr)
+	{
+		for (Dialogue* dialog : m_definition->m_dialogues)
+		{
+			m_dialogues.push_back(new Dialogue(dialog->m_content));
+		}
+	}
 	Reset();
 }
 
 bool DialogueSet::ProgressAndCheckFinish()
 {
-	if (!m_dialogues.empty()){
+	if (m_dialogueIndex < m_dialogues.size()){
 		//opening dialogue for the first time
 		//if (m_activeDialogue == nullptr){
 		//	g_theGame->Pause();
 		//}
-		m_activeDialogue = m_dialogues.front();
-		m_dialogues.pop();
+		m_activeDialogue = m_dialogues[m_dialogueIndex];
+		m_dialogueIndex++;
 		return false;
 	} else {
 		//reached the end of the dialogue
@@ -26,6 +33,7 @@ bool DialogueSet::ProgressAndCheckFinish()
 		Reset();
 		return true;
 	}
+	
 }
 
 void DialogueSet::Render(const AABB2 & box)
@@ -47,19 +55,25 @@ void DialogueSet::Render(const AABB2 & box)
 		m_activeDialogue->Render(dialogueBox, m_speaker->m_name);
 		//render the portrait
 		m_speaker->RenderFaceInBox(portraitBox);
-
-		
-
 	}
 	
 }
 
 void DialogueSet::Reset()
 {
-	m_dialogues = std::queue<Dialogue*>();
-	if (m_definition != nullptr){
-		for (Dialogue* d : m_definition->m_dialogues){
-			m_dialogues.push(d);
-		}
+	m_dialogueIndex = 0;
+}
+
+void DialogueSet::ClearDialogues()
+{
+	for (Dialogue* dialogue : m_dialogues)
+	{
+		delete dialogue;
 	}
+	m_dialogues = std::vector<Dialogue*>();
+}
+
+void DialogueSet::AddDialogueLine(std::string newLine)
+{
+	m_dialogues.push_back(new Dialogue(newLine));
 }
