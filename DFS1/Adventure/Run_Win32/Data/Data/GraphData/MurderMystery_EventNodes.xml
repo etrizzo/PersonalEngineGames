@@ -263,7 +263,7 @@
 		</StoryRequirements>
 
 		<StoryEffects>
-			<EffectSet chance="default">
+			<EffectSet>
 				<TagChange tag="Arrester" target="*0*" type="character" effectType="story"/>
 				<TagChange tag="Arrested" target="*1*" type="character" effectType="story"/>
 				<TagChange tag="arrestInProgress" target="true" effectType="story"/>

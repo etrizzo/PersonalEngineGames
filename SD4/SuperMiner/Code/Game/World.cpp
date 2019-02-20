@@ -148,10 +148,10 @@ RaycastResult World::Raycast(const Vector3 & start, const Vector3 & forwardNorma
 		result.m_impactNormal = -forwardNormal;
 		return result;
 	}
-
+	Vector3 raycastPosition = start;
+	//step down the 
 	for (int i = 0; i < numSteps; i++)
 	{
-		Vector3 raycastPosition = start + (step * (float) i);
 		nextBlock = GetBlockLocatorAtWorldPosition(raycastPosition);
 		if (nextBlock != prevBlock)
 		{
@@ -166,14 +166,16 @@ RaycastResult World::Raycast(const Vector3 & start, const Vector3 & forwardNorma
 				result.m_impactFraction = (float) i / (float) numSteps;
 				result.m_impactDistance = result.m_impactFraction * maxDistance;
 				result.m_impactBlock = BlockLocator(nextBlock.m_blockIndex, nextBlock.m_chunk);
-				result.m_impactNormal = (Chunk::GetBlockCoordinatesForBlockIndex(nextBlock.m_blockIndex)- Chunk::GetBlockCoordinatesForBlockIndex(prevBlock.m_blockIndex)).GetVector3();
+				result.m_impactNormal = (prevBlock.GetBlockCenterWorldPosition() - nextBlock.GetBlockCenterWorldPosition());		//note: need to do world position bc across chunk your normal will get fucked up
 				return result;
 			} else {
 				//advance thy raycast
 				prevBlock = nextBlock;
 			}
 		}
+		raycastPosition += step;
 	}
+	//a miss
 	RaycastResult result;
 	result.m_ray = Ray3D(start, forwardNormal);
 	result.m_maxDistance = maxDistance;
@@ -190,21 +192,30 @@ void World::UpdateDebugStuff()
 {
 	Vector3 basis = Vector3::ZERO;
 
+	RGBA raycastColor = RGBA::RED;
+	RGBA pointColor = RGBA::WHITE;
+
 	//draw the basis at the origin
 	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, basis, 1.f, Matrix44::IDENTITY, DEBUG_RENDER_HIDDEN);
 	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, basis, 1.f, Matrix44::IDENTITY, DEBUG_RENDER_USE_DEPTH);
 	
 	//draw the debug raycast
 	RaycastResult dig = g_theGame->GetPlayer()->m_digRaycast;
+
+	if(dig.DidImpact())
+	{
+		pointColor = RGBA::GREEN;
+		raycastColor = RGBA::GREEN;
+	}
 	if (g_theGame->IsDevMode()){
-		RGBA xrayColor = RGBA::RED;
-		RGBA visibleColor = RGBA::YELLOW;
+		RGBA xrayColor = RGBA::GRAY;
+		RGBA visibleColor = raycastColor;
 		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(dig.m_ray.m_position, dig.m_endPosition, xrayColor, xrayColor, 0.f,xrayColor, xrayColor, DEBUG_RENDER_HIDDEN);
 		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(dig.m_ray.m_position, dig.m_impactPosition, visibleColor, visibleColor, 0.f, visibleColor, visibleColor, DEBUG_RENDER_USE_DEPTH);
 	}
 
 	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, dig.m_impactPosition, RGBA::BLACK, RGBA::BLACK, DEBUG_RENDER_HIDDEN);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, dig.m_impactPosition, RGBA::WHITE, RGBA::WHITE, DEBUG_RENDER_USE_DEPTH);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, dig.m_impactPosition, pointColor, pointColor, DEBUG_RENDER_USE_DEPTH);
 
 	
 	if (dig.DidImpact())
@@ -212,8 +223,20 @@ void World::UpdateDebugStuff()
 		//draw the face you hit
 		Vector3 blockCenter = dig.m_impactBlock.GetBlockCenterWorldPosition();
 		Vector3 halfNormal	= dig.m_impactNormal * .5f;
-		Vector3 quadRight = Cross(dig.m_impactNormal, UP);
-		g_theGame->m_debugRenderSystem->MakeDebugRenderQuad(0.f, blockCenter - halfNormal, Vector2::HALF * .95f, quadRight, UP, RGBA::GREEN, RGBA::GREEN, DEBUG_RENDER_IGNORE_DEPTH);
+		Vector3 quadUp;
+		Vector3 quadRight;
+		if (dig.m_impactNormal == UP || dig.m_impactNormal == -UP)
+		{
+			quadUp = FORWARD;
+			quadRight = Cross(FORWARD, dig.m_impactNormal);
+		} else {
+			quadUp = UP;
+			quadRight = Cross(UP, dig.m_impactNormal);
+		}
+		RGBA wireColor = RGBA::BLANCHEDALMOND.GetColorWithAlpha(100);
+		RGBA quadColor = RGBA::GREEN.GetColorWithAlpha(100);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderQuad(0.f, blockCenter + halfNormal, Vector2::HALF * .95f, quadRight, quadUp, quadColor, quadColor, DEBUG_RENDER_IGNORE_DEPTH);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.f, blockCenter, .505f, wireColor, wireColor, DEBUG_RENDER_IGNORE_DEPTH);
 	}
 }
 

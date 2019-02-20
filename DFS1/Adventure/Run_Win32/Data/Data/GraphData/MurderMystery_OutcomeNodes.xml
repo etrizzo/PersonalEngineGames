@@ -21,6 +21,7 @@
 				<EffectSet>
 					<TagChange character="*1*" tag="isSuspicious" target="true" />
 					<TagChange character="*1*" tag="wasInvestigated" target="true" />
+					<TagChange effectType="story" tag="suspectIdentified" target="true" />
 				</EffectSet>
 			</Action>
 
@@ -164,6 +165,7 @@
 			<Character index="0">
 				<Requirement tag="isAlive" target="true"/>
 				<Requirement tag="isInvestigating" target="true" />
+				<Requirement tag="isClever" target="true" weight="4" /> <!-- makes it more likely to learn something if you're clever -->
 			</Character>
 		</CharacterRequirements>
 

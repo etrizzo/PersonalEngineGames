@@ -43,7 +43,7 @@ Vector3 BlockLocator::GetBlockCenterWorldPosition() const
 	if (m_chunk != nullptr)
 	{
 		IntVector3 localBlockCoords = m_chunk->GetBlockCoordinatesForBlockIndex(m_blockIndex);
-		IntVector3 worldBlockCoords = localBlockCoords + IntVector3(m_chunk->GetChunkCoords().x, m_chunk->GetChunkCoords().y, 0);
+		IntVector3 worldBlockCoords = localBlockCoords + IntVector3(m_chunk->GetChunkCoords().x * CHUNK_SIZE_X, m_chunk->GetChunkCoords().y * CHUNK_SIZE_Y, 0);
 		Vector3 blockCenter = worldBlockCoords.GetVector3() + Vector3::HALF;
 		return blockCenter;
 	}

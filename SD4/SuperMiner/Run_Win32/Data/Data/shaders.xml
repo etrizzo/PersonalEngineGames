@@ -62,7 +62,7 @@
 	<depth write="false" test="greater"/>
 </shader>
 
-<shader name="wireframe" cull="back" fill="wire" frontface="ccw" blend = "alpha">
+<shader name="wireframe" cull="none" fill="wire" frontface="ccw" blend = "alpha">
 	<program id="default" />
 	<depth write="true" test="less"/>
 </shader>

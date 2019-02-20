@@ -60,7 +60,7 @@ void Player::Update()
 	float ds = g_theGame->GetDeltaSeconds();
 	m_ageInSeconds+=ds;
 	if (!g_theGame->IsDevMode()){
-		m_digRaycast = m_playState->m_world->Raycast(m_cameraTarget->GetWorldPosition(), m_cameraTarget->GetForward(), 8.f);
+		m_digRaycast = m_playState->m_world->Raycast(m_cameraTarget->GetWorldPosition(), m_cameraTarget->GetForward(), m_digDistance);
 	}
 
 }

@@ -22,6 +22,8 @@ public:
 	float m_shiftMultiplier		= 4.f;
 	float m_degPerSecond	= 60.f;
 
+	float m_digDistance = 8.f;
+
 	RaycastResult m_digRaycast;
 
 	Transform* m_cameraTarget;
