@@ -89,6 +89,32 @@ bool Chunk::DoesChunkHaveMesh() const
 	return m_gpuMesh != nullptr;
 }
 
+void Chunk::SetBlockType(int blockIndex, eBlockType newType)
+{
+	m_blocks[blockIndex].SetType(newType);
+	m_isGPUMeshDirty = true;
+	//check if neighbors need to be dirtied
+	if (IsBlockIndexOnEastEdge(blockIndex) && m_eastNeighbor != nullptr)
+	{
+		m_eastNeighbor->m_isGPUMeshDirty = true;
+	}
+
+	if (IsBlockIndexOnWestEdge(blockIndex) && m_westNeighbor != nullptr)
+	{
+		m_westNeighbor->m_isGPUMeshDirty = true;
+	}
+
+	if (IsBlockIndexOnNorthEdge(blockIndex) && m_northNeighbor != nullptr)
+	{
+		m_northNeighbor->m_isGPUMeshDirty = true;
+	}
+	
+	if (IsBlockIndexOnSouthEdge(blockIndex) && m_southNeighbor != nullptr)
+	{
+		m_southNeighbor->m_isGPUMeshDirty = true;
+	}
+}
+
 IntVector2 Chunk::GetChunkCoords()
 {
 	return m_chunkCoords;

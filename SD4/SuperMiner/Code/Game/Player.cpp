@@ -2,6 +2,7 @@
 #include "Game/Game.hpp"
 #include "Game/World.hpp"
 #include "Game/DebugRenderSystem.hpp"
+#include "Game/Chunk.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 
 Player::Player(GameState_Playing* playState, Vector3 position)
@@ -68,7 +69,47 @@ void Player::Update()
 void Player::HandleInput()
 {
 	float ds = g_theGame->GetDeltaSeconds();
+	HandleInputFreeCamera();
+	HandleInputDigPlace();
 
+}
+
+void Player::Damage()
+{
+	if (!g_theGame->m_godMode){
+		m_health--;
+		if (m_health <= 0){
+			m_aboutToBeDeleted = true;
+		}
+	}
+}
+
+void Player::Respawn()
+{
+	AddRenderable();
+	m_aboutToBeDeleted = false;
+	m_health = m_maxHealth;
+}
+
+void Player::RemoveRenderable()
+{
+	g_theGame->GetScene()->RemoveRenderable(m_renderable);
+}
+
+void Player::AddRenderable()
+{
+	g_theGame->GetScene()->AddRenderable(m_renderable);
+}
+
+float Player::GetPercentageOfHealth() const
+{
+	float t = RangeMapFloat((float) m_health, 0.f, (float) m_maxHealth, 0.f, 1.f);
+	return t;
+}
+
+void Player::HandleInputFreeCamera()
+{
+	float ds = g_theGame->GetDeltaSeconds();
 	float speed = m_speed;
 	if (g_theInput->IsKeyDown(VK_SHIFT)){
 		speed *= m_shiftMultiplier;
@@ -136,40 +177,27 @@ void Player::HandleInput()
 	Translate(GetRight() * controllerTranslation.x * ds * speed);
 
 
-
 }
 
-void Player::Damage()
+void Player::HandleInputDigPlace()
 {
-	if (!g_theGame->m_godMode){
-		m_health--;
-		if (m_health <= 0){
-			m_aboutToBeDeleted = true;
+	if (g_theInput->WasMouseButtonJustPressed(MOUSE_BUTTON_LEFT))
+	{
+		//dig the block we're looking at
+		if (m_digRaycast.DidImpact()){
+			m_digRaycast.m_impactBlock.m_chunk->SetBlockType(m_digRaycast.m_impactBlock.m_blockIndex, BLOCK_AIR);
 		}
 	}
-}
 
-void Player::Respawn()
-{
-	AddRenderable();
-	m_aboutToBeDeleted = false;
-	m_health = m_maxHealth;
-}
-
-void Player::RemoveRenderable()
-{
-	g_theGame->GetScene()->RemoveRenderable(m_renderable);
-}
-
-void Player::AddRenderable()
-{
-	g_theGame->GetScene()->AddRenderable(m_renderable);
-}
-
-float Player::GetPercentageOfHealth() const
-{
-	float t = RangeMapFloat((float) m_health, 0.f, (float) m_maxHealth, 0.f, 1.f);
-	return t;
+	if (g_theInput->WasMouseButtonJustPressed(MOUSE_BUTTON_RIGHT))
+	{
+		//Place a block
+		if (m_digRaycast.DidImpact()){
+			Vector3 placePosition = m_digRaycast.m_impactBlock.GetBlockCenterWorldPosition() + m_digRaycast.m_impactNormal;
+			BlockLocator placeBlock = m_playState->m_world->GetBlockLocatorAtWorldPosition(placePosition);
+			m_digRaycast.m_impactBlock.m_chunk->SetBlockType(placeBlock.m_blockIndex, BLOCK_STONE);
+		}
+	}
 }
 
 

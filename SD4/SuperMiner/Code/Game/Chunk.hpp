@@ -20,6 +20,9 @@ public:
 	bool ShouldChunkRebuildMesh() const;
 	bool DoesChunkHaveMesh() const;
 
+	//sets a block type and dirties the mesh
+	void SetBlockType(int blockIndex, eBlockType newType);
+
 	IntVector2 GetChunkCoords();
 
 	inline static int GetBlockXCoordinate(int blockIndex);

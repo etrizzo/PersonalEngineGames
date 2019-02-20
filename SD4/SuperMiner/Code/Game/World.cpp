@@ -129,6 +129,7 @@ BlockLocator World::GetBlockLocatorAtWorldPosition(const Vector3 & worldPos) con
 
 RaycastResult World::Raycast(const Vector3 & start, const Vector3 & forwardNormal, float maxDistance) const
 {
+	TODO("Update raycast to account for the \"kissing corners\" case by checking displacement from previous block");
 	int numSteps = (int) (maxDistance  * (1.f / RAYCAST_STEP_SIZE));
 	Vector3 step = (forwardNormal * RAYCAST_STEP_SIZE);
 	BlockLocator prevBlock = GetBlockLocatorAtWorldPosition(start);

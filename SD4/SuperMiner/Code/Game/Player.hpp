@@ -30,4 +30,6 @@ public:
 
 private:
 
+	void HandleInputFreeCamera();
+	void HandleInputDigPlace();
 };
