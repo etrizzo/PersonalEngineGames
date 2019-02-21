@@ -57,7 +57,7 @@ void World::ActivateChunk(const IntVector2& chunkCoords)
 	Chunk* newChunk = new Chunk(chunkCoords);			//create
 	//2. Generate or load
 	TODO("Load chunks from disk");
-	newChunk->GenerateBlocks();							//generate blocks
+	newChunk->LoadOrGenerateBlocks();							//generate blocks
 
 	//6. Add new chunk to the world's static map OF chunks
 	m_chunks.insert(std::pair<IntVector2, Chunk*>(chunkCoords, newChunk));		//add to the world's map of chonks

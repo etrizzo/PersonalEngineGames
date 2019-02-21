@@ -79,11 +79,15 @@ void Game::PostStartup()
 	PROFILE_LOG_SCOPE_FUNCTION();
 	m_soundTrackID = g_theAudio->CreateOrGetSound("Data/Audio/OrbitalColossus.mp3");
 
-	new BlockDefinition(BLOCK_AIR,		false,  AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE);
-	new BlockDefinition(BLOCK_GRASS,	true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(3,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(4,3)));
-	new BlockDefinition(BLOCK_STONE,	true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)));
-	new BlockDefinition(BLOCK_SNOW,		true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)));
-
+	new BlockDefinition(BLOCK_AIR,			false,  AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE);
+	new BlockDefinition(BLOCK_GRASS,		true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(3,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(4,3)));
+	new BlockDefinition(BLOCK_STONE,		true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)));
+	new BlockDefinition(BLOCK_SNOW,			true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)));
+	new BlockDefinition(BLOCK_SAND,			true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(6,1)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(6,1)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(6,1)));
+	new BlockDefinition(BLOCK_COBBLESTONE,	true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,4)));
+	new BlockDefinition(BLOCK_OAK_PLANKS,	true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,1)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,1)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,1)));
+	new BlockDefinition(BLOCK_GLASS,		false, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,3)));
+	new BlockDefinition(BLOCK_GOLD,			true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(23,5)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(23,5)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(23,5)));
 
 
 	m_currentMap = nullptr;

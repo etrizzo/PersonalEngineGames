@@ -27,34 +27,11 @@ Chunk::~Chunk()
 	delete m_gpuMesh;
 }
 
-void Chunk::GenerateBlocks()
+void Chunk::LoadOrGenerateBlocks()
 {
-	for (int z = 0; z < CHUNK_SIZE_Z; z++)
+	if (!LoadFromDisk())
 	{
-		for (int y = 0; y < CHUNK_SIZE_Y; y++)
-		{
-			for (int x = 0; x < CHUNK_SIZE_X; x++)
-			{
-				//scoot over to the chunks position for the noise computation
-				int worldX = x + (m_chunkCoords.x * CHUNK_SIZE_X);
-				int worldY = y + (m_chunkCoords.y * CHUNK_SIZE_Y);
-				float height = Compute2dPerlinNoise((float) worldX, (float) worldY,  300.f, 3);
-				float heightMapped = RangeMapFloat(height, -1.f, 1.f, SEA_LEVEL, (float) CHUNK_SIZE_Z * .6f);		//range map perlin noise from -1 to 1 into [0,128]
-				int blockIndex = Chunk::GetBlockIndexForBlockCoordinates(IntVector3(x,y,z));
-
-				//later choose different things for different heights u kno
-				if ((float) z < heightMapped )
-				{
-					if (z < heightMapped - 3.f){
-						m_blocks[blockIndex].SetType(BLOCK_STONE);
-					} else {
-						m_blocks[blockIndex].SetType(BLOCK_GRASS);
-					}
-				} else {
-					m_blocks[blockIndex].SetType(BLOCK_AIR);
-				}
-			}
-		}
+		GenerateBlocks();
 	}
 }
 
@@ -168,6 +145,11 @@ IntVector3 Chunk::GetBlockCoordinatesForBlockIndex(int blockIndex)
 	return IntVector3(x,y,z);
 }
 
+std::string Chunk::GetChunkFileFormatForChunkCoords(const IntVector2 & chunkCoords)
+{
+	return Stringf("Saves/Chunk_%i,%i.chunk", chunkCoords.x, chunkCoords.y);
+}
+
 int Chunk::GetBlockIndexFromWorldPosition(const Vector3 & worldPos) const
 {
 	Vector3 chunkWorldOffset = Vector3((float) m_chunkCoords.x * CHUNK_SIZE_X, (float) m_chunkCoords.y * CHUNK_SIZE_Y, 0.f);
@@ -186,6 +168,98 @@ AABB3 Chunk::GetBounds() const
 Block & Chunk::GetBlock(int blockIndex)
 {
 	return m_blocks[blockIndex];
+}
+
+void Chunk::GenerateBlocks()
+{
+	for (int z = 0; z < CHUNK_SIZE_Z; z++)
+	{
+		for (int y = 0; y < CHUNK_SIZE_Y; y++)
+		{
+			for (int x = 0; x < CHUNK_SIZE_X; x++)
+			{
+				//scoot over to the chunks position for the noise computation
+				int worldX = x + (m_chunkCoords.x * CHUNK_SIZE_X);
+				int worldY = y + (m_chunkCoords.y * CHUNK_SIZE_Y);
+				float height = Compute2dPerlinNoise((float) worldX, (float) worldY,  300.f, 3);
+				float heightMapped = RangeMapFloat(height, -1.f, 1.f, SEA_LEVEL, (float) CHUNK_SIZE_Z * .6f);		//range map perlin noise from -1 to 1 into [0,128]
+				int blockIndex = Chunk::GetBlockIndexForBlockCoordinates(IntVector3(x,y,z));
+
+				//later choose different things for different heights u kno
+				if ((float) z < heightMapped )
+				{
+					if (z < heightMapped - 3.f){
+						m_blocks[blockIndex].SetType(BLOCK_STONE);
+					} else {
+						m_blocks[blockIndex].SetType(BLOCK_GRASS);
+					}
+				} else {
+					m_blocks[blockIndex].SetType(BLOCK_AIR);
+				}
+			}
+		}
+	}
+}
+
+bool Chunk::LoadFromDisk()
+{
+	//for now, try to load from disk (we'll be touching disk for every load, FOR NOW)
+	std::string filePath = Chunk::GetChunkFileFormatForChunkCoords(m_chunkCoords);      //returns Chunk_x,y.chunk
+
+	std::vector<unsigned char> chunkFileBuffer;
+	bool wasLoaded = LoadBinaryFileIntoBuffer(filePath, chunkFileBuffer);
+	if (!wasLoaded){
+		return false;
+	}
+
+	//reads the header, go through the RLE data and read it
+	m_isSavedOrUntouched = PopulateFromBuffer(chunkFileBuffer);
+	return m_isSavedOrUntouched;
+}
+
+bool Chunk::PopulateFromBuffer(const std::vector<unsigned char>& buffer)
+{
+	if (ValidateBufferFormat(buffer))
+	{
+		ReadBufferAsRLE(buffer);
+		return true;
+	} else {
+		ConsolePrintf("Unable to populate chunk %i,%i from buffer.", m_chunkCoords.x, m_chunkCoords.y);
+		return false;
+	}
+	
+}
+
+bool Chunk::ValidateBufferFormat(const std::vector<unsigned char>& buffer)
+{
+	ChunkFileHeader* header = (ChunkFileHeader*) buffer.data();
+	return header->IsValid();
+}
+
+void Chunk::ReadBufferAsRLE(const std::vector<unsigned char>& buffer)
+{
+	int headerSize = sizeof(ChunkFileHeader);
+	int blocksAdded = 0;
+	for (int bytepair = headerSize; bytepair < buffer.size(); bytepair+=2)
+	{
+		if (blocksAdded >= BLOCKS_PER_CHUNK){
+			ConsolePrintf(RGBA::RED, "Too many blocks saved in RLE file (Chunk %i,%i)", m_chunkCoords.x, m_chunkCoords.y);
+			return;
+		}
+		//read type
+		unsigned char type = buffer[bytepair];
+		unsigned char runLength = buffer[bytepair + 1];
+
+		//add blocks to the chunk according to type and run length
+		for (int i = 0; i < runLength; i++ )
+		{
+			m_blocks[blocksAdded].SetType((eBlockType) type);
+			blocksAdded++;
+		}
+	}
+	if (blocksAdded != BLOCKS_PER_CHUNK){
+		ConsolePrintf(RGBA::RED, "Not enough blocks in RLE file - interesting.... (Chunk %i,%i)", m_chunkCoords.x, m_chunkCoords.y);
+	}
 }
 
 void Chunk::AddVertsForBlockAtIndex(int blockIndex)
@@ -285,4 +359,73 @@ bool IsBlockIndexOnBottomEdge(int blockIndex)
 bool IsBlockIndexOnTopEdge(int blockIndex)
 {
 	return ((blockIndex & CHUNK_MASK_Z) == CHUNK_MASK_Z);
+}
+
+bool ChunkFileHeader::IsValid() const
+{
+	//check SMCD
+	if (m_4cc[0] != 'S')
+	{
+		ConsolePrintf(RGBA::RED, "Invalid chunk header: %s", m_4cc);
+		return false;
+	}
+	if (m_4cc[1] != 'M')
+	{
+		ConsolePrintf(RGBA::RED, "Invalid chunk header: %s", m_4cc);
+		return false;
+	}
+	if (m_4cc[2] != 'C')
+	{
+		ConsolePrintf(RGBA::RED, "Invalid chunk header: %s", m_4cc);
+		return false;
+	}
+	if (m_4cc[3] != 'D')
+	{
+		ConsolePrintf(RGBA::RED, "Invalid chunk header: %s", m_4cc);
+		return false;
+	}
+
+	//check dimensions
+	if (m_chunkBitsX != CHUNK_BITS_X)
+	{
+		ConsolePrintf(RGBA::RED, "Invalid chunk dimensions on x: %i (should be %i)", m_chunkBitsX, CHUNK_BITS_X);
+		return false;
+	}
+	if (m_chunkBitsY != CHUNK_BITS_Y)
+	{
+		ConsolePrintf(RGBA::RED, "Invalid chunk dimensions on yx: %i (should be %i)", m_chunkBitsY, CHUNK_BITS_Y);
+		return false;
+	}
+
+	if (m_chunkBitsZ != CHUNK_BITS_Z)
+	{
+		ConsolePrintf(RGBA::RED, "Invalid chunk dimensions on z: %i (should be %i)", m_chunkBitsZ, CHUNK_BITS_Z);
+		return false;
+	}
+
+	//check reserved
+	if (m_reserved1 != 0)
+	{
+		ConsolePrintf(RGBA::RED, "Reserved byte 1 is wrong: %i (should be %i)", m_reserved1, 0);
+		return false;
+	}
+	if (m_reserved2 != 0)
+	{
+		ConsolePrintf(RGBA::RED, "Reserved byte 2 is wrong: %i (should be %i)", m_reserved2, 0);
+		return false;
+	}
+	if (m_reserved3 != 0)
+	{
+		ConsolePrintf(RGBA::RED, "Reserved byte 3 is wrong: %i (should be %i)", m_reserved3, 0);
+		return false;
+	}
+
+	//check format
+	if (m_blockDataFormat != 'R')		//or other types later
+	{
+		ConsolePrintf(RGBA::RED, "Invalid chunk format");
+		return false;
+	}
+
+	return true;
 }

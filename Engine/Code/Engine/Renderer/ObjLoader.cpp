@@ -8,14 +8,15 @@ ObjLoader::ObjLoader(std::string fileName)
 	fileName = OBJ_DIRECTORY + fileName;
 	FILE *fp = nullptr;
 	fopen_s( &fp, fileName.c_str(), "r" );
+	int maxLine = 1000;
 	char lineCSTR [1000];
 	std::string line;
-	int MAX_LINE_LENGTH = 1000;
+	
 
 	ASSERT_OR_DIE(fp != nullptr, "NO .OBJ FILE FOUND");
 	mb = new MeshBuilder();
 	mb->Begin( PRIMITIVE_TRIANGLES, true);
-	while (fgets( lineCSTR, MAX_LINE_LENGTH, fp ) != NULL)
+	while (fgets( lineCSTR, maxLine, fp ) != NULL)
 	{
 		line = "";
 		line.append(lineCSTR);

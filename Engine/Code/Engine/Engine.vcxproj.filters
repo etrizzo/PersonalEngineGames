@@ -364,6 +364,9 @@
     <ClCompile Include="Networking\NetChannel.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="FileUtilities.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -728,6 +731,9 @@
     </ClInclude>
     <ClInclude Include="Networking\NetChannel.hpp">
       <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="FileUtilities.hpp">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

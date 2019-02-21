@@ -8,6 +8,7 @@
 #include "Engine/Core/ProfilerReport.hpp"
 #include "Engine/Core/ProfilerVisualizer.hpp"
 #include "Engine/Core/LogSystem.hpp"
+#include "Engine/FileUtilities.hpp"
 
 #include "Engine/Math/AABB2.hpp"
 #include "Engine/Math/AABB3.hpp"

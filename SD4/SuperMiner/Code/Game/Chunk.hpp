@@ -13,7 +13,7 @@ public:
 	void Update();
 	void Render() const;
 
-	void GenerateBlocks();
+	void LoadOrGenerateBlocks();
 	void CreateMesh();
 
 	bool DoesChunkHaveAllNeighbors() const;
@@ -23,6 +23,8 @@ public:
 	//sets a block type and dirties the mesh
 	void SetBlockType(int blockIndex, eBlockType newType);
 
+	bool SetMeshDirty() { m_isGPUMeshDirty = true; };
+
 	IntVector2 GetChunkCoords();
 
 	inline static int GetBlockXCoordinate(int blockIndex);
@@ -30,6 +32,7 @@ public:
 	inline static int GetBlockZCoordinate(int blockIndex);
 	static int GetBlockIndexForBlockCoordinates(const IntVector3& blockCoords);
 	static IntVector3 GetBlockCoordinatesForBlockIndex(int blockIndex);
+	static std::string GetChunkFileFormatForChunkCoords(const IntVector2& chunkCoords);
 	
 	int GetBlockIndexFromWorldPosition(const Vector3& worldPos) const;
 
@@ -54,6 +57,18 @@ private:
 
 	//we'll probably want to know when the mesh is out of date
 	bool m_isGPUMeshDirty = true; //isGPUMeshDirty;
+	bool m_isSavedOrUntouched = true;	//starts true because purely generated chunks with no modifications don't need to be saved
+
+	//generates the chunk brand new
+	void GenerateBlocks();
+
+	//Checks if the chunk is on disk, and loads it if it is. returns false if the chunk is not on disk.
+	bool LoadFromDisk();
+	//validates and reads according to the right file format (right now, just RLE
+	bool PopulateFromBuffer(const std::vector<unsigned char>& buffer);
+
+	bool ValidateBufferFormat(const std::vector<unsigned char>& buffer);
+	void ReadBufferAsRLE(const std::vector<unsigned char>& buffer);
 
 	//does all checks for HSR and air blocks and stuff and adds it to the cpuMesh
 	void AddVertsForBlockAtIndex(int blockIndex);
@@ -86,3 +101,30 @@ int Chunk::GetBlockZCoordinate(int blockIndex)
 {
 	return  blockIndex >> (CHUNK_BITS_X + CHUNK_BITS_Y);
 }
+
+
+
+
+struct ChunkFileHeader
+{
+	//the 4 character code at the start of the file to say it's a chunk file
+	unsigned char m_4cc[4] = {'S', 'M', 'C', 'D'}  ;     
+	unsigned char m_version = 1;    //file format version, future proofing
+
+	//verify when we're reading that these are the right dimensions - otherwise we can't read it
+	unsigned char m_chunkBitsX = CHUNK_BITS_X;      
+	unsigned char m_chunkBitsY = CHUNK_BITS_Y;
+	unsigned char m_chunkBitsZ = CHUNK_BITS_Z;
+
+	//Just reserving these bytes in case we want them later
+	//still check that they're zeros, but they don't mean anything.
+	unsigned char m_reserved1 = 0;
+	unsigned char m_reserved2 = 0;
+	unsigned char m_reserved3 = 0;
+
+	//later, we might check what format is the smallest for chunks
+	//could even do RLE along different directions (like z first instead of x first)
+	unsigned char m_blockDataFormat = 'R';      //'R' = RLE Compressed
+
+	bool IsValid() const;
+};

@@ -46,7 +46,7 @@ const static IntVector2 NORTH	= IntVector2(0,1);
 
 constexpr int   CHUNK_BITS_X = 4;
 constexpr int   CHUNK_BITS_Y = 4;
-constexpr int   CHUNK_BITS_Z = 7;
+constexpr int   CHUNK_BITS_Z = 8;
 
 constexpr int   CHUNK_SIZE_X = (1 << CHUNK_BITS_X);
 constexpr int   CHUNK_SIZE_Y = (1 << CHUNK_BITS_Y);

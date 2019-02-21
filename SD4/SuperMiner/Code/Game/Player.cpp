@@ -195,7 +195,7 @@ void Player::HandleInputDigPlace()
 		if (m_digRaycast.DidImpact()){
 			Vector3 placePosition = m_digRaycast.m_impactBlock.GetBlockCenterWorldPosition() + m_digRaycast.m_impactNormal;
 			BlockLocator placeBlock = m_playState->m_world->GetBlockLocatorAtWorldPosition(placePosition);
-			m_digRaycast.m_impactBlock.m_chunk->SetBlockType(placeBlock.m_blockIndex, BLOCK_STONE);
+			placeBlock.m_chunk->SetBlockType(placeBlock.m_blockIndex, BLOCK_SNOW);
 		}
 	}
 }
