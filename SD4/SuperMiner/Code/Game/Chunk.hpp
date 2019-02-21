@@ -16,6 +16,8 @@ public:
 	void LoadOrGenerateBlocks();
 	void CreateMesh();
 
+	void SaveToDisk() const;
+
 	bool DoesChunkHaveAllNeighbors() const;
 	bool ShouldChunkRebuildMesh() const;
 	bool DoesChunkHaveMesh() const;
@@ -69,6 +71,9 @@ private:
 
 	bool ValidateBufferFormat(const std::vector<unsigned char>& buffer);
 	void ReadBufferAsRLE(const std::vector<unsigned char>& buffer);
+
+	void AppendChunkHeaderToBuffer(std::vector<unsigned char>& buffer, unsigned char fileType = 'R') const;
+	void AppendBlocksToBufferRLE(std::vector<unsigned char>& buffer) const;
 
 	//does all checks for HSR and air blocks and stuff and adds it to the cpuMesh
 	void AddVertsForBlockAtIndex(int blockIndex);

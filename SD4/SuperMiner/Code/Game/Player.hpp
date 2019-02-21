@@ -18,8 +18,8 @@ public:
 	float GetPercentageOfHealth() const;
 
 	Vector2 m_positionXZ;
-	float m_speed				= 16.f;
-	float m_shiftMultiplier		= 4.f;
+	float m_speed				= 10.f;
+	float m_shiftMultiplier		= 6.f;
 	float m_degPerSecond	= 60.f;
 
 	float m_digDistance = 8.f;

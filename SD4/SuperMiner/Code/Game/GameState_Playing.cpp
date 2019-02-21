@@ -21,6 +21,14 @@ GameState_Playing::GameState_Playing()
 	m_renderPath->SetFogColor(RGBA(40, 10, 90));
 }
 
+GameState_Playing::~GameState_Playing()
+{
+	delete m_world;
+	delete m_player;
+	delete m_renderPath;
+	delete m_scene;
+}
+
 void GameState_Playing::EnterState()
 {
 	m_gameWon = false;

@@ -33,6 +33,7 @@ void Chunk::LoadOrGenerateBlocks()
 	{
 		GenerateBlocks();
 	}
+	m_isSavedOrUntouched = true;
 }
 
 void Chunk::CreateMesh()
@@ -49,6 +50,18 @@ void Chunk::CreateMesh()
 	m_cpuMesh.End();
 	m_gpuMesh = m_cpuMesh.CreateMesh(VERTEX_TYPE_3DPCU);
 	m_isGPUMeshDirty = false;
+}
+
+void Chunk::SaveToDisk() const
+{
+	if (!m_isSavedOrUntouched)
+	{
+		std::vector<unsigned char> buffer;
+		AppendChunkHeaderToBuffer(buffer, 'R');
+		AppendBlocksToBufferRLE(buffer);
+		std::string filePath = Chunk::GetChunkFileFormatForChunkCoords(m_chunkCoords);
+		WriteBufferToBinaryFile(filePath, buffer);
+	}
 }
 
 bool Chunk::DoesChunkHaveAllNeighbors() const
@@ -70,6 +83,7 @@ void Chunk::SetBlockType(int blockIndex, eBlockType newType)
 {
 	m_blocks[blockIndex].SetType(newType);
 	m_isGPUMeshDirty = true;
+	m_isSavedOrUntouched = false;
 	//check if neighbors need to be dirtied
 	if (IsBlockIndexOnEastEdge(blockIndex) && m_eastNeighbor != nullptr)
 	{
@@ -240,9 +254,9 @@ void Chunk::ReadBufferAsRLE(const std::vector<unsigned char>& buffer)
 {
 	int headerSize = sizeof(ChunkFileHeader);
 	int blocksAdded = 0;
-	for (int bytepair = headerSize; bytepair < buffer.size(); bytepair+=2)
+	for (int bytepair = headerSize; bytepair < buffer.size()-1; bytepair+=2)
 	{
-		if (blocksAdded >= BLOCKS_PER_CHUNK){
+		if (blocksAdded > BLOCKS_PER_CHUNK){
 			ConsolePrintf(RGBA::RED, "Too many blocks saved in RLE file (Chunk %i,%i)", m_chunkCoords.x, m_chunkCoords.y);
 			return;
 		}
@@ -257,8 +271,56 @@ void Chunk::ReadBufferAsRLE(const std::vector<unsigned char>& buffer)
 			blocksAdded++;
 		}
 	}
-	if (blocksAdded != BLOCKS_PER_CHUNK){
+	if (blocksAdded != BLOCKS_PER_CHUNK-1){
 		ConsolePrintf(RGBA::RED, "Not enough blocks in RLE file - interesting.... (Chunk %i,%i)", m_chunkCoords.x, m_chunkCoords.y);
+	}
+}
+
+void Chunk::AppendChunkHeaderToBuffer(std::vector<unsigned char>& buffer, unsigned char fileType) const
+{
+	ChunkFileHeader header = ChunkFileHeader();
+
+	//add 4CC
+	buffer.push_back(header.m_4cc[0]);
+	buffer.push_back(header.m_4cc[1]);
+	buffer.push_back(header.m_4cc[2]);
+	buffer.push_back(header.m_4cc[3]);
+
+	//add version
+	buffer.push_back(header.m_version);
+
+	//add dimensions
+	buffer.push_back(header.m_chunkBitsX);
+	buffer.push_back(header.m_chunkBitsY);
+	buffer.push_back(header.m_chunkBitsZ);
+
+	//add reserved
+	buffer.push_back(header.m_reserved1);
+	buffer.push_back(header.m_reserved2);
+	buffer.push_back(header.m_reserved3);
+
+	//add file type - NOT necessarily the default file type
+	buffer.push_back(fileType);
+}
+
+void Chunk::AppendBlocksToBufferRLE(std::vector<unsigned char>& buffer) const
+{
+	unsigned char currentType = m_blocks[0].m_blockID;
+	int currentRun = 1;
+	for (int i = 1; i < BLOCKS_PER_CHUNK; i++)
+	{
+		if (m_blocks[i].m_blockID != currentType || currentRun == 0xff)		//max capacity for a byte
+		{
+			//end the current run - append type & run length
+			buffer.push_back(currentType);
+			buffer.push_back((unsigned char) currentRun);
+			//set type to new type and restart run counter
+			currentType = m_blocks[i].m_blockID;
+			currentRun = 1;
+		} else {
+			//add to the current run
+			currentRun++;
+		}
 	}
 }
 
@@ -382,6 +444,13 @@ bool ChunkFileHeader::IsValid() const
 	if (m_4cc[3] != 'D')
 	{
 		ConsolePrintf(RGBA::RED, "Invalid chunk header: %s", m_4cc);
+		return false;
+	}
+
+	//check version
+	if (m_version != 1)
+	{
+		ConsolePrintf(RGBA::RED, "Invalid version: %i (should be %i)", m_version, 1);
 		return false;
 	}
 

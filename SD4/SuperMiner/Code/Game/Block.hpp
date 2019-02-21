@@ -8,8 +8,9 @@ enum eBlockType : unsigned char{
 	BLOCK_SAND,
 	BLOCK_COBBLESTONE,
 	BLOCK_OAK_PLANKS,
+	
+	BLOCK_DIAMOND,
 	BLOCK_GLASS,
-	BLOCK_GOLD,
 
 	NUM_BLOCKS
 };

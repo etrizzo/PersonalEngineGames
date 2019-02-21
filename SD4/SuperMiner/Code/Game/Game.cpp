@@ -17,6 +17,7 @@ Game::~Game()
 	if (m_debugRenderSystem->IsActive()){
 		m_debugRenderSystem->Shutdown();
 	}
+	delete m_currentState;
 }
 
 Game::Game()
@@ -87,7 +88,7 @@ void Game::PostStartup()
 	new BlockDefinition(BLOCK_COBBLESTONE,	true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,4)));
 	new BlockDefinition(BLOCK_OAK_PLANKS,	true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,1)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,1)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,1)));
 	new BlockDefinition(BLOCK_GLASS,		false, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,3)));
-	new BlockDefinition(BLOCK_GOLD,			true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(23,5)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(23,5)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(23,5)));
+	new BlockDefinition(BLOCK_DIAMOND,		true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(16,10)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(16,10)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(16,10)));
 
 
 	m_currentMap = nullptr;

@@ -19,6 +19,7 @@ class World;
 class GameState_Playing: public GameState{
 public:
 	GameState_Playing();
+	~GameState_Playing();
 
 	World* m_world;
 	Player* m_player;

@@ -13,7 +13,7 @@ class GameState
 public:
 	GameState() {};
 	GameState(float transitionLength) { m_transitionLength = transitionLength; };
-	~GameState() {};
+	virtual ~GameState() {};
 	// How many of these should be pure virutal??
 	virtual void Render();		//renders game, then UI, then transitions
 	virtual void Update(float ds = 0) { m_timeInState+=ds; }; 

@@ -16,6 +16,20 @@ World::World()
 	SetActivationRadius(m_chunkActivationRadiusChunkDistance);
 }
 
+World::~World()
+{
+	std::vector<Chunk*> chunksToDeactivate = std::vector<Chunk*>();
+	for (std::pair<IntVector2, Chunk*> chunkPair : World::m_chunks)
+	{
+		chunksToDeactivate.push_back(chunkPair.second);
+	}
+
+	for (int i = 0; i < chunksToDeactivate.size(); i++)
+	{
+		DeactivateChunk(chunksToDeactivate[i]);
+	}
+}
+
 void World::Update()
 {
 	UpdateDebugStuff();
@@ -79,12 +93,13 @@ void World::ActivateChunk(const IntVector2& chunkCoords)
 void World::DeactivateChunk(Chunk* chunkToDeactivate)
 {
 	// 1. Unlink yourself from your neighbors
-	TODO("Unlink from your neighbors");
+			//happens in chunk deconstructor
 	// 2. De-register yourself from the world
 	m_chunks.erase(chunkToDeactivate->GetChunkCoords());
-	// 3. Release/destroy VBO ID on the GPU (in deconstructor for now)
+	// 3. Release/destroy VBO ID on the GPU 
+		//(in deconstructor for now)
 	// 4. Save chunk to disk
-	TODO("Save chunks to disk if changed");
+	chunkToDeactivate->SaveToDisk();
 	//5. Delete chunk
 	delete chunkToDeactivate;
 }
@@ -135,7 +150,7 @@ RaycastResult World::Raycast(const Vector3 & start, const Vector3 & forwardNorma
 	BlockLocator prevBlock = GetBlockLocatorAtWorldPosition(start);
 	BlockLocator nextBlock = prevBlock;
 
-	if (prevBlock.IsBlockFullyOpaque())
+	if (!nextBlock.IsBlockAir())
 	{
 		//we started in a solid block
 		RaycastResult result;
@@ -156,7 +171,7 @@ RaycastResult World::Raycast(const Vector3 & start, const Vector3 & forwardNorma
 		nextBlock = GetBlockLocatorAtWorldPosition(raycastPosition);
 		if (nextBlock != prevBlock)
 		{
-			if(nextBlock.IsBlockFullyOpaque())
+			if(!nextBlock.IsBlockAir())
 			{
 				//we have a hit, return a raycastresult
 				RaycastResult result;
@@ -189,6 +204,22 @@ RaycastResult World::Raycast(const Vector3 & start, const Vector3 & forwardNorma
 	return result;
 }
 
+void World::DebugDeactivateAllChunks()
+{
+	std::vector<Chunk*> chunksToDeactivate = std::vector<Chunk*>();
+	for (std::pair<IntVector2, Chunk*> chunkPair : World::m_chunks)
+	{
+		chunksToDeactivate.push_back(chunkPair.second);
+	}
+
+	for (int i = 0; i < chunksToDeactivate.size(); i++)
+	{
+		DeactivateChunk(chunksToDeactivate[i]);
+	}
+
+	m_chunks.clear();
+}
+
 void World::UpdateDebugStuff()
 {
 	Vector3 basis = Vector3::ZERO;
@@ -219,7 +250,7 @@ void World::UpdateDebugStuff()
 	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, dig.m_impactPosition, pointColor, pointColor, DEBUG_RENDER_USE_DEPTH);
 
 	
-	if (dig.DidImpact())
+	if (dig.DidImpact() && dig.m_impactBlock.m_chunk != nullptr)
 	{
 		//draw the face you hit
 		Vector3 blockCenter = dig.m_impactBlock.GetBlockCenterWorldPosition();

@@ -19,7 +19,7 @@ bool BlockLocator::operator!=(const BlockLocator& other)
 
 Block & BlockLocator::GetBlock() const
 {
-	if (m_chunk == nullptr)
+	if (m_chunk == nullptr || (m_blockIndex < 0) || (m_blockIndex > BLOCKS_PER_CHUNK))
 	{
 		return g_invalidBlock;
 	} else {

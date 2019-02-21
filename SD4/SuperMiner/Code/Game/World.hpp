@@ -8,6 +8,7 @@ class World
 {
 public:
 	World();
+	~World();
 
 
 	void Update();	//nothing right now probs
@@ -30,6 +31,9 @@ public:
 
 	//physics
 	RaycastResult Raycast(const Vector3& start, const Vector3& forwardNormal, float maxDistance) const;
+
+
+	void DebugDeactivateAllChunks();
 
 private:
 	//initialization

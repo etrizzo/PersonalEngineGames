@@ -72,6 +72,12 @@ void Player::HandleInput()
 	HandleInputFreeCamera();
 	HandleInputDigPlace();
 
+
+	if (g_theInput->WasKeyJustPressed('U'))
+	{
+		m_playState->m_world->DebugDeactivateAllChunks();
+	}
+
 }
 
 void Player::Damage()
@@ -195,7 +201,7 @@ void Player::HandleInputDigPlace()
 		if (m_digRaycast.DidImpact()){
 			Vector3 placePosition = m_digRaycast.m_impactBlock.GetBlockCenterWorldPosition() + m_digRaycast.m_impactNormal;
 			BlockLocator placeBlock = m_playState->m_world->GetBlockLocatorAtWorldPosition(placePosition);
-			placeBlock.m_chunk->SetBlockType(placeBlock.m_blockIndex, BLOCK_SNOW);
+			placeBlock.m_chunk->SetBlockType(placeBlock.m_blockIndex, BLOCK_DIAMOND);
 		}
 	}
 }

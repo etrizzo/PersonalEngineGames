@@ -5,3 +5,4 @@
 #define MAX_LINE_LENGTH_FILE (99999999)
 
 bool LoadBinaryFileIntoBuffer(std::string filePath, std::vector<unsigned char>& buffer);
+bool WriteBufferToBinaryFile(std::string filePath, const std::vector<unsigned char>& buffer);
