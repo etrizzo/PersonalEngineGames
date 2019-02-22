@@ -13,7 +13,7 @@
 -->
 
 
-<shader name="default_unlit" sort="0" cull="none" fill="solid" frontface="ccw" blend = "alpha">
+<shader name="default_unlit" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
 	<program id="default" />
 	<depth write="true" test="less"/>
 </shader>

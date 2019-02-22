@@ -1,3 +1,0 @@
-debug_reattach_camera
-quit
-debug_detach_camera

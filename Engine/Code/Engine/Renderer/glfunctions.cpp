@@ -137,3 +137,7 @@ PFNGLFRONTFACEPROC			glFrontFace				= nullptr;
 PFNGLUNIFORM1FVPROC		glUniform1fv	= nullptr;
 PFNGLUNIFORM2FVPROC		glUniform2fv	= nullptr;
 PFNGLUNIFORM4FVPROC		glUniform4fv	= nullptr;
+
+
+
+PFNWGLSWAPINTERVALEXTPROC	wglSwapIntervalEXT	= nullptr;

@@ -404,8 +404,14 @@ void Game::RenderGame()
 
 void Game::RenderUI()
 {
+	float ds = GetDeltaSeconds();
+	float newfps = 1.f / ds;
+	m_fps = Interpolate(m_fps, newfps, .2f);
 	AABB2 screenBounds = SetUICamera();
-	AABB2 netSessionBox  = screenBounds.GetPercentageBox(Vector2(.02f, .6f), Vector2(.98f, .9f));
+
+	std::string fpsStr = Stringf("%3.2f FPS", m_fps);
+	g_theRenderer->DrawTextInBox2D(fpsStr, screenBounds, Vector2::ONE * .99f, .01f);
+
 
 	//g_theRenderer->DrawAABB2(netSessionBox, RGBA::BLACK.GetColorWithAlpha(100));
 	//g_theRenderer->DrawAABB2Outline(netSessionBox, RGBA::GetRandomRainbowColor());

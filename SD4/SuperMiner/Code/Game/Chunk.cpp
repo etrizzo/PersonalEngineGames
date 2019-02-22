@@ -322,6 +322,9 @@ void Chunk::AppendBlocksToBufferRLE(std::vector<unsigned char>& buffer) const
 			currentRun++;
 		}
 	}
+	//dump whatever was at the end
+	buffer.push_back(currentType);
+	buffer.push_back((unsigned char) currentRun);
 }
 
 void Chunk::AddVertsForBlockAtIndex(int blockIndex)

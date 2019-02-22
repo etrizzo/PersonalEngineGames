@@ -361,6 +361,10 @@ void Renderer::BindGLFunctions()
 	GL_BIND_FUNCTION( glUniform1fv );
 	GL_BIND_FUNCTION( glUniform2fv );
 	GL_BIND_FUNCTION( glUniform4fv );
+
+
+	//vsync
+	GL_BIND_FUNCTION( wglSwapIntervalEXT );
 }
 
 RECT Renderer::CalculateClientWindow(float clientAspect)
@@ -2072,7 +2076,7 @@ void Renderer::SetBlendMode(eBlendMode blend)
 
 void Renderer::PostStartup()
 {
-
+	wglSwapIntervalEXT(0);
 	m_ambientLight;
 
 
@@ -2123,6 +2127,8 @@ void Renderer::PostStartup()
 
 	SetCamera(nullptr);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+	
 
 }
 
