@@ -430,40 +430,40 @@ bool StoryGraph::FindEdgeForNewEventNodeAndAdd(StoryNode* newPlotNode)
 	return foundSpot;
 }
 
-bool StoryGraph::AddOutcomeNode(StoryNode * newDetailNode)
-{
-
-	//walk along story until you can place the node
-	std::queue<StoryEdge*> openEdges;
-	openEdges.push(m_graph.m_edges[GetRandomIntLessThan(m_graph.GetNumEdges())]);
-	//openEdges.push(m_startNode->m_outboundEdges[0]);
-	StoryNode* nodeToAddAfter; 
-	StoryEdge* edgeToAddAt = nullptr;
-	bool foundSpot = false;
-	while (!openEdges.empty()){
-		edgeToAddAt = openEdges.back();
-		openEdges.pop();
-		//if the story meets the requirements of the new nodes at that edge, continue.
-		//if not, add the end of the edge to the open list.
-		if (!NodeRequirementsAreMet(newDetailNode, edgeToAddAt)){
-			for (StoryEdge* edge : edgeToAddAt->GetEnd()->m_outboundEdges){
-				openEdges.push(edge);
-			}
-		} else {
-			//you have found a place that works
-			foundSpot = true;
-			break;
-		}
-	}
-
-	//add the plot node at the found node
-	if (foundSpot){
-
-		AddNodeAtEdge(newDetailNode, edgeToAddAt);
-	}
-
-	return foundSpot;
-}
+//bool StoryGraph::AddOutcomeNode(StoryNode * newDetailNode)
+//{
+//
+//	//walk along story until you can place the node
+//	std::queue<StoryEdge*> openEdges;
+//	openEdges.push(m_graph.m_edges[GetRandomIntLessThan(m_graph.GetNumEdges())]);
+//	//openEdges.push(m_startNode->m_outboundEdges[0]);
+//	StoryNode* nodeToAddAfter; 
+//	StoryEdge* edgeToAddAt = nullptr;
+//	bool foundSpot = false;
+//	while (!openEdges.empty()){
+//		edgeToAddAt = openEdges.back();
+//		openEdges.pop();
+//		//if the story meets the requirements of the new nodes at that edge, continue.
+//		//if not, add the end of the edge to the open list.
+//		if (!NodeRequirementsAreMet(newDetailNode, edgeToAddAt)){
+//			for (StoryEdge* edge : edgeToAddAt->GetEnd()->m_outboundEdges){
+//				openEdges.push(edge);
+//			}
+//		} else {
+//			//you have found a place that works
+//			foundSpot = true;
+//			break;
+//		}
+//	}
+//
+//	//add the plot node at the found node
+//	if (foundSpot){
+//
+//		AddNodeAtEdge(newDetailNode, edgeToAddAt);
+//	}
+//
+//	return foundSpot;
+//}
 
 bool StoryGraph::CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition * dataDefinition, StoryEdge * edgeToAddAt, std::vector<Character*> charactersForNode)
 {
@@ -1259,6 +1259,10 @@ void StoryGraph::Clear()
 	m_usedDetailNodes.clear();
 	m_startNode = nullptr;
 	m_endNode = nullptr;
+
+	m_selectedEdge = nullptr;
+	m_hoveredEdge = nullptr;
+	m_hoveredNode = nullptr;
 }
 
 StoryEdge * StoryGraph::GetEdge(StoryNode * start, StoryNode * end) const

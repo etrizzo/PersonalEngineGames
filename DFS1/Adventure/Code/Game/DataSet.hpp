@@ -1,8 +1,10 @@
 #pragma once
 #include "Game/GameCommon.hpp"
 #include "Game/StoryData.hpp"
+#include "Game/Act.hpp"
 
 class Character;
+
 
 class DataSet
 {
@@ -13,20 +15,13 @@ public:
 	std::vector<Character*> m_characters				= std::vector<Character*>();
 	std::vector<StoryDataDefinition*> m_eventNodes		= std::vector<StoryDataDefinition*>();
 	std::vector<StoryDataDefinition*> m_outcomeNodes	= std::vector<StoryDataDefinition*>();
+	std::vector<Act> m_actsInOrder						= std::vector<Act>();
 
-	//initialization
-	void ParseActs(tinyxml2::XMLElement* actElement);
-	void ParseCharacters(tinyxml2::XMLElement* charElement);
-	void ParseEvents(tinyxml2::XMLElement* eventElement);
-	void ParseOutcomes(tinyxml2::XMLElement* outcomeElement);
-	void ReadEventNodesFromXML(std::string filePath);
-	void ReadOutcomeNodesFromXML(std::string filePath);
-	void ReadCharactersFromXML(std::string filePath);
 
-	
 	StoryDataDefinition* GetRandomEventNode();
 	StoryDataDefinition* GetRandomOutcomeNode();
-	
+	int GetActNumberForName(std::string name);
+
 	StoryDataDefinition* GetOutcomeNodeWithWeights(StoryState* edge, float minFitness = 2.f);
 	StoryDataDefinition* GetEventNodeWithWeights(StoryState* edge, float minFitness = 2.f);
 	float CalculateEdgeFitnessForData(StoryState* edge, StoryDataDefinition* data);
@@ -34,4 +29,18 @@ public:
 
 	static std::map<std::string, DataSet*> s_dataSets;
 	static DataSet* GetDataSet(std::string dataSetName);
+
+private:
+
+	//initialization
+	void ParseActs(tinyxml2::XMLElement* actElement);
+	void ParseCharacters(tinyxml2::XMLElement* charElement);
+	void ParseEvents(tinyxml2::XMLElement* eventElement);
+	void ParseOutcomes(tinyxml2::XMLElement* outcomeElement);
+	void ReadActsFromXML(std::string filePath);
+	void ReadEventNodesFromXML(std::string filePath);
+	void ReadOutcomeNodesFromXML(std::string filePath);
+	void ReadCharactersFromXML(std::string filePath);
 };
+
+bool CompareActsByNumber(const Act& first, const Act& second);

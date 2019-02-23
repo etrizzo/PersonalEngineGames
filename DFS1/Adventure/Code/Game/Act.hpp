@@ -1,5 +1,16 @@
-//#pragma once
-//#include "Game/GameCommon.hpp"
+#pragma once
+#include "Game/GameCommon.hpp"
+
+
+struct Act
+{
+	Act(tinyxml2::XMLElement* actElement);
+	std::string m_name		= "";
+	int			m_number	= 0;
+};
+
+
+
 //
 ////you're a class act AAAAY LMAO jk get your shit together
 //class Act

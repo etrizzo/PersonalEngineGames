@@ -5,13 +5,6 @@
 			<Tag tag="isAlive" value="true" type="bool"/>
 			<Tag tag="hasNightVision" value="true" type="bool" />
 		</Tags>
-
-		<!--
-		<Relationships>
-			<Relationship name="CharacterB" type="Father" />
-			<Relationshp name="CharacterC" type="Lover" />
-		</Relationships>
-	-->
 	</Character>
 
 	<Character name="Bob">
@@ -20,19 +13,4 @@
 		</Tags>
 
 	</Character>
-<!--
-	<Character name="Charlie">>
-		<Traits>
-			<Trait name="Social"  		value = "80" />
-			<Trait name="Information"   value = "70" />
-			<Trait name="Decisions"  	value = "85" />
-			<Trait name="Structure"  	value = "50" />
-		</Traits>
-
-		<Tags>
-			<Tag tag="isAlive" value="true" type="bool"/>
-		</Tags>
-
-	</Character>
--->
 

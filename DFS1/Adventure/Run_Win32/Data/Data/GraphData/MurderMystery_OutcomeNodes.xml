@@ -1,9 +1,10 @@
 	
 	<OutcomeNode name="GeneratesSuspicion" chanceToPlace=".3" progression="choice">
-		<Act name="Murder" />
+		<Act name="investigation" />
 		<Characters>
-			<Character id = "*0*" />
-			<Character id = "*1*" />
+			<Character id = "*0*" name="investigator"/>
+			<Character id = "*1*" name="suspect"/>
+			<Character id = "*2*" name="onlooker" />
 		</Characters>
 
 		<CharacterRequirements>
@@ -45,10 +46,10 @@
 
 
 	<OutcomeNode name="AccusationOutcome" chanceToPlace="1" progression="interact">
-		<Act name="Murder" />
+		<Act name="accusation" />
 		<Characters>
-			<Character id = "*0*" />
-			<Character id = "*1*" />
+			<Character id = "*0*" name="accuser"/>
+			<Character id = "*1*" name="accused"/>
 		</Characters>
 
 		<CharacterRequirements>
@@ -91,10 +92,6 @@
 			<EffectSet chance="default">
 				<TagChange tag="Accuser" target="none" type="character" effectType="story"/>
 				<TagChange tag="Accused" target="none" type="character" effectType="story"/>
-				<!--
-				<TagChange tag="Accuser" target="none" type="character" effectType="story"/>
-				<TagChange tag="Accused" target="none" type="character" effectType="story"/>
-			-->
 			</EffectSet>
 		</StoryEffects>
 	</OutcomeNode>
@@ -102,10 +99,10 @@
 
 
 	<OutcomeNode name="ArrestOutcome" chanceToPlace="1" progression="choice">
-		<Act name="Murder" />
+		<Act name="accusation" />
 		<Characters>
-			<Character id = "*0*" />
-			<Character id = "*1*" />
+			<Character id = "*0*" name="arrester"/>
+			<Character id = "*1*" name="accused"/>
 		</Characters>
 
 		<CharacterRequirements>
@@ -125,7 +122,7 @@
 				</Modifier>
 				<Modifier character="0" multiplier = "0.0">
 					<StoryRequirements>
-						<Requirement tag="storyOver" target="true" />
+						<Requirement tag="storyResolved" target="true" />
 					</StoryRequirements>
 				</Modifier>
 				<EffectSet>
@@ -146,20 +143,16 @@
 			<EffectSet chance="default">
 				<TagChange tag="Accuser" target="none" type="character" effectType="story"/>
 				<TagChange tag="Accused" target="none" type="character" effectType="story"/>
-				<TagChange tag="storyOver" target="true" effectType="story" />
-				<!--
-				<TagChange tag="Accuser" target="none" type="character" effectType="story"/>
-				<TagChange tag="Accused" target="none" type="character" effectType="story"/>
-			-->
+				<TagChange tag="storyResolved" target="true" effectType="story" />
 			</EffectSet>
 		</StoryEffects>
 	</OutcomeNode>
 
 
 	<OutcomeNode name="LearnsSomething" chanceToPlace=".3" progression="interact">
-		<Act name="Murder" />
+		<Act name="investigation" />
 		<Characters>
-			<Character id = "*0*" />
+			<Character id = "*0*" name="investigator"/>
 		</Characters>
 		<CharacterRequirements>
 			<Character index="0">
@@ -182,6 +175,6 @@
 
 		<StoryRequirements>
 			<Requirement tag="killerFound" target="false" />
-			<Requirement tag="storyOver" target="false" />
+			<Requirement tag="storyResolved" target="false" />
 		</StoryRequirements>
 	</OutcomeNode>

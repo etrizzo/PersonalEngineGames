@@ -62,10 +62,6 @@ public:
 
 	float m_chanceToPlaceData = 1.f;
 	bool m_shouldLockIncomingEdge = false;
-	
-
-
-
 
 	//test bits
 	std::string m_name;

@@ -27,9 +27,11 @@ void DataSet::ParseActs(tinyxml2::XMLElement * actElement)
 	{
 		std::string fileName = ParseXmlAttribute(*fileElement, "name", "NO_FILE");
 		//read acts
-
+		ReadActsFromXML(fileName);
 		fileElement = fileElement->NextSiblingElement("File");
 	}
+
+	std::sort(m_actsInOrder.begin(), m_actsInOrder.end(), CompareActsByNumber);
 }
 
 void DataSet::ParseCharacters(tinyxml2::XMLElement * charElement)
@@ -62,6 +64,17 @@ void DataSet::ParseOutcomes(tinyxml2::XMLElement * outcomeElement)
 		std::string fileName = ParseXmlAttribute(*fileElement, "name", "NO_FILE");
 		ReadOutcomeNodesFromXML(fileName);
 		fileElement = fileElement->NextSiblingElement("File");
+	}
+}
+
+void DataSet::ReadActsFromXML(std::string filePath)
+{
+	tinyxml2::XMLDocument actDoc;
+	//	std::string filePath = "Data/Data/" + fileName;
+	actDoc.LoadFile(filePath.c_str());
+	for (tinyxml2::XMLElement* actElement = actDoc.FirstChildElement("Act"); actElement != NULL; actElement = actElement->NextSiblingElement("Act")){
+		Act act = Act(actElement);
+		m_actsInOrder.push_back(act);
 	}
 }
 
@@ -111,6 +124,19 @@ StoryDataDefinition * DataSet::GetRandomOutcomeNode()
 {
 	int i = GetRandomIntLessThan(m_outcomeNodes.size());
 	return m_outcomeNodes[i];
+}
+
+int DataSet::GetActNumberForName(std::string name)
+{
+	for (int i = 0; i < m_actsInOrder.size(); i++)
+	{
+		if (m_actsInOrder[i].m_name == name)
+		{
+			return m_actsInOrder[i].m_number;
+		} else {
+			return -1;
+		}
+	}
 }
 
 StoryDataDefinition * DataSet::GetOutcomeNodeWithWeights(StoryState * edge, float minFitness)
@@ -238,4 +264,9 @@ DataSet * DataSet::GetDataSet(std::string dataSetName)
 		return pair->second;
 	}
 	return nullptr;
+}
+
+bool CompareActsByNumber(const Act & first, const Act & second)
+{
+	return first.m_number < second.m_number;
 }

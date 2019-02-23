@@ -71,7 +71,7 @@ public:
 	
 
 	void GenerateSkeleton(int numPlotNodes);
-	void AddPlotNodes(int numPlotNodes);
+	//void AddPlotNodes(int numPlotNodes);
 	StoryNode* AddSingleEventNode();
 	StoryNode* AddEventNodeAtEdge(StoryEdge* edge);
 	void AddOutcomeNodesToEventNode(StoryNode* plotNode);
@@ -79,7 +79,7 @@ public:
 	void GenerateStartAndEnd();
 	bool TryToAddDetailNodeAtEdge(StoryEdge* edge, int maxTries = 10);
 	bool FindEdgeForNewEventNodeAndAdd(StoryNode* newPlotNode);
-	bool AddOutcomeNode(StoryNode* newDetailNode);
+	//bool AddOutcomeNode(StoryNode* newDetailNode);
 	bool CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode);
 	StoryNode* CreateAndAddEventNodeAtEdge(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode);
 	bool AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToAdd, bool branchToFutureNodesIfNecessary);

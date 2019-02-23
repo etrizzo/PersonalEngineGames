@@ -1,32 +1,13 @@
-<Act name="Introduction">
-	<EntryRequirements>
-		<!-- none -->
-	</EntryRequirements>
-</Act>
+<Act name="Introduction" number="1" />
 
 
-<Act name="InvestigationSolo">
-	<!-- should characters be restricted within acts?
-	<Characters number="1">
-	</Characters>
--->
-	<EntryRequirements> <!-- act entry requirements -->
-		<Requirement tag="murderOccured" target="true" />
-	</EntryRequirements>
-</Act>
+<Act name="Investigation" number="2" />
 
-<Act name="Accusation">
-	<EntryRequirements>
-		<Requirement tag="suspectIdentified" target="true" />
-	</EntryRequirements>
-</Act>
+<Act name="Arrest" number="3" />
 
 <!--
 	Might need to be a universal act that spans all data sets.
-	- Kind of weird because we want to support multiple endings, so setting anything concretely (i.e. "the killer was arrested" vs. "the killer escapes")
+	- Kind of weird because we want to support multiple endings, so we shouldn't require any concrete ending tags(i.e. "the killer was arrested" vs. "the killer escapes")
+	- unless there's just multiple conclusion acts, but that breaks the "linear & ordered" rule
 -->
-<Act name="Conclusion">
-	<EntryRequirements>
-		<Requirement tag="storyResolved" target="true" />
-	</EntryRequirements>
-</Act>
+<Act name="Conclusion" number="4" />

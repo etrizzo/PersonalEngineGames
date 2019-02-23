@@ -613,7 +613,8 @@ void Game::GenerateGraph()
 	while (!generated){
 		ClearGraph();
 		m_graph->RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
-		generated = m_graph->AddEndingsToEachBranch();
+		//generated = m_graph->AddEndingsToEachBranch();
+		generated = true;
 	}
 }
 

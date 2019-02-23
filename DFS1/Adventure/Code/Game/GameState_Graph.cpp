@@ -92,11 +92,13 @@ void GameState_Graph::RenderGraph() const
 	//g_theRenderer->DrawTextInBox2D(graphText, bounds, Vector2(0.f, 1.f), .01f, TEXT_DRAW_SHRINK_TO_FIT);
 	m_currentGraph->RenderGraph();
 
-	for (Village* village : m_encounterMap->m_allVillages)
-	{
-		if (village->m_villageGraph == m_currentGraph)
+	if (m_encounterMap != nullptr){
+		for (Village* village : m_encounterMap->m_allVillages)
 		{
-			m_currentGraph->RenderEdge(village->m_currentEdge, RGBA::MAGENTA);
+			if (village->m_villageGraph == m_currentGraph)
+			{
+				m_currentGraph->RenderEdge(village->m_currentEdge, RGBA::MAGENTA);
+			}
 		}
 	}
 }

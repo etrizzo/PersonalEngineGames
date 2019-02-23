@@ -1,12 +1,7 @@
-	<Acts>
-		<Act name="Murder" index="1" />
-	</Acts>
-
-
 	<EventNode name="TheMurder" progression="time">
 		<!-- *[X]* indicates a character name who should be replaced at rutntime -->
 		<Action text="A man is murdered." />
-		<Act name="Murder" />
+		<Act name="Introduction" />
 		<Characters>
 
 		</Characters>
@@ -24,51 +19,9 @@
 		</StoryEffects>
 	</EventNode>
 
-
-<!--
-	<EventNode name="InvestigateRoom">
-		<Action text="*0* investigates *1*" />
-		<Act name="Murder" />	
-		<Characters>
-			<Character id = "*0*" title="investigator"/>
-			<Character id = "*1*" title="room" />
-		</Characters>
-
-		<CharacterRequirements>
-			<Character index="0">
-				<Requirement tag="isAlive" target="true"/>
-			</Character>
-
-			<Character index="1">
-				<Requirement tag="isRoom" target="true"/>
-			</Character>
-		</CharacterRequirements>
-
-		<StoryRequirements>
-			<Requirement tag="murderOcurred" target="true" />
-			<Requirement tag="killerFound" target="false" />
-			<Requirement tag="storyOver" target="false" />
-		</StoryRequirements>
-
-		<StoryEffects>
-			<EffectSet chance="default">
-				<TagChange tag="Investigator" target="*0*" type="character" effectType="story"/>
-				<TagChange tag="Suspect" target="*1*" type="character" effectType="story"/>
-			</EffectSet>
-		</StoryEffects>
-
-		<CharacterEffects>
-			<EffectSet>
-				<TagChange character="0" tag = "isInvestigating" target="true" />
-				<TagChange character="0" tag = "investigationTarget" target="*1*" type="character"/>
-			</EffectSet>
-		</CharacterEffects>
-	</EventNode>
--->
-
 	<EventNode name="InvestigateSuspect" progression="interact">
 		<Action text="*0* investigates *1*" />	
-		<Act name="Murder" />
+		<Act name="Investigation" />
 		<Characters>
 			<Character id = "*0*" title="investigator"/>
 			<Character id = "*1*" title="suspect" />
@@ -89,7 +42,7 @@
 		<StoryRequirements>
 			<Requirement tag="murderOcurred" target="true" />
 			<Requirement tag="killerFound" target="false" />
-			<Requirement tag="storyOver" target="false" />
+			<Requirement tag="storyResolved" target="false" />
 			<Requirement tag="Investigator" target="none" type="character"/>
 		</StoryRequirements>
 
@@ -103,7 +56,7 @@
 		<CharacterEffects>
 			<EffectSet>
 				<TagChange character="0" tag = "isInvestigating" target="true" />
-				<!--<TagChange character="0" tag = "investigationTarget" target="*1*" type="character"/>-->
+				<!--<TagChange character="0" tag = "InvestigationTarget" target="*1*" type="character"/>-->
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>
@@ -112,7 +65,7 @@
 
 	<EventNode name="InvestigateSuspectAgain" progression="interact">
 		<Action text="*0* doubts *1*'s innocence and re-investigates." />	
-		<Act name="Murder" />
+		<Act name="Investigation" />
 		<Characters>
 			<Character id = "*0*" title="investigator"/>
 			<Character id = "*1*" title="suspect" />
@@ -134,7 +87,7 @@
 		<StoryRequirements>
 			<Requirement tag="murderOcurred" target="true" />
 			<Requirement tag="killerFound" target="false" />
-			<Requirement tag="storyOver" target="false" />
+			<Requirement tag="storyResolved" target="false" />
 			<Requirement tag="Investigator" target="none" type="character"/>
 		</StoryRequirements>
 
@@ -148,58 +101,16 @@
 		<CharacterEffects>
 			<EffectSet>
 				<TagChange character="0" tag = "isInvestigating" target="true" />
-				<!--<TagChange character="0" tag = "investigationTarget" target="*1*" type="character"/>-->
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>
-
-<!--
-	<EventNode name="InvestigateWeapon">
-		<Action text="*0* investigates *1*" />	
-		<Act name="Murder" />
-		<Characters>
-			<Character id = "*0*" title="investigator"/>
-			<Character id = "*1*" title="weapon" />
-		</Characters>
-
-		<CharacterRequirements>
-			<Character index="0">
-				<Requirement tag="isAlive" target="true"/>
-			</Character>
-
-			<Character index="1">
-				<Requirement tag="isWeapon" target="true"/>
-			</Character>
-		</CharacterRequirements>
-
-		<StoryRequirements>
-			<Requirement tag="murderOcurred" target="true" />
-			<Requirement tag="killerFound" target="false" />
-			<Requirement tag="storyOver" target="false" />
-		</StoryRequirements>
-
-		<StoryEffects>
-			<EffectSet chance="default">
-				<TagChange tag="Investigator" target="*0*" type="character" effectType="story"/>
-				<TagChange tag="Suspect" target="*1*" type="character" effectType="story"/>
-			</EffectSet>
-		</StoryEffects>
-
-		<CharacterEffects>
-			<EffectSet>
-				<TagChange character="0" tag = "isInvestigating" target="true" />
-				<TagChange character="0" tag = "investigationTarget" target="*1*" type="character"/>
-			</EffectSet>
-		</CharacterEffects>
-	</EventNode>
--->
 
 	<EventNode name="AccusePerson" progression="interact">
 		<Action text="*0* accuses *1* of being the killer" />	
-		<Act name="Murder" />
+		<Act name="Accusation" />
 		<Characters>
-			<Character id = "*0*" title="investigator"/>
-			<Character id = "*1*" title="weapon" />
+			<Character id = "*0*" title="accuser"/>
+			<Character id = "*1*" title="suspect" />
 		</Characters>
 
 		<CharacterRequirements>
@@ -239,9 +150,9 @@
 
 	<EventNode name="ArrestKiller" progression="interact">
 		<Action text="*0* tries to arrest *1*" />	
-		<Act name="Murder" />
+		<Act name="Accusation" />
 		<Characters>
-			<Character id = "*0*" title="investigator"/>
+			<Character id = "*0*" title="arrester"/>
 			<Character id = "*1*" title="killer" />
 		</Characters>
 
@@ -259,7 +170,7 @@
 
 		<StoryRequirements>
 			<Requirement tag="killerFound" target="true" />
-			<Requirement tag="storyOver" target="false" />
+			<Requirement tag="storyResolved" target="false" />
 		</StoryRequirements>
 
 		<StoryEffects>
