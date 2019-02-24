@@ -38,7 +38,6 @@
 		</CharacterRequirements>
 
 		<StoryRequirements>
-			<Requirement tag="murderOcurred" target="true" />
 			<Requirement tag="killerFound" target="false" />
 			<Requirement tag="storyResolved" target="false" />
 			<Requirement tag="Investigator" target="none" type="character"/>
@@ -82,7 +81,6 @@
 		</CharacterRequirements>
 
 		<StoryRequirements>
-			<Requirement tag="murderOcurred" target="true" />
 			<Requirement tag="killerFound" target="false" />
 			<Requirement tag="storyResolved" target="false" />
 			<Requirement tag="Investigator" target="none" type="character"/>
@@ -121,7 +119,6 @@
 		</CharacterRequirements>
 
 		<StoryRequirements>
-			<Requirement tag="murderOcurred" target="true" />
 			<Requirement tag="Accused" target="none" type="character" />
 			<Requirement tag="killerFound" target="false" />
 		</StoryRequirements>
