@@ -22,6 +22,7 @@ SpriteAnim::SpriteAnim(SpriteAnimDef * animDef)
 	m_isFinished = false;
 	m_isPlaying = true;
 	m_playForward = true;
+	m_spriteSheet = animDef->m_spriteSheet;
 	if (m_definition->m_chooseOneIndexInRange){
 		m_randomIndex = m_definition->m_indices.GetRandomInRange();
 	}

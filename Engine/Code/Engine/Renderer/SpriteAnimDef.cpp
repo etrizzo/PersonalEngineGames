@@ -39,7 +39,7 @@ SpriteAnimDef::~SpriteAnimDef()
 
 void SpriteAnimDef::ParseSpriteIndices(tinyxml2::XMLElement* spriteAnimElement){
 	std::string stringText = ParseXmlAttribute(*spriteAnimElement, "spriteIndexes", (std::string) " " );
-	unsigned int tildeIndex = (unsigned int) stringText.find('~');
+	size_t tildeIndex =  stringText.find('~');
 	if (tildeIndex != std::string::npos){
 		m_indices = IntRange(0);
 		m_indices.SetFromText(stringText.c_str());
@@ -54,14 +54,14 @@ void SpriteAnimDef::ParseSpriteIndices(tinyxml2::XMLElement* spriteAnimElement){
 		}
 	} else {
 		unsigned int oldIndex = 0;
-		unsigned int commaIndex = (unsigned int) stringText.find(',');
+		size_t commaIndex = stringText.find(',');
 		if (stringText.compare((std::string) " ")){
 			while (commaIndex != std::string::npos){
 				std::string indexString = stringText.substr(oldIndex,commaIndex);
 				m_spriteIndexes.push_back(atoi(indexString.c_str())); 
 
 				oldIndex = commaIndex + 1;
-				commaIndex = (unsigned int) stringText.find(',', oldIndex);
+				commaIndex =  stringText.find(',', oldIndex);
 			}
 			std::string indexString = stringText.substr(oldIndex);
 			m_spriteIndexes.push_back(atoi(indexString.c_str())); 
