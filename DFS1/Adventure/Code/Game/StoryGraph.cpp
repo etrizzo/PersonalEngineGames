@@ -489,6 +489,8 @@ bool StoryGraph::CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition * dataDefinit
 			StoryState* incomingCost = new StoryState(*edgeToAddAt->GetCost());
 			StoryState* outgoingCost = new StoryState(*edgeToAddAt->GetCost());
 			outgoingCost->UpdateFromNode(newNode->m_data);
+			//clamp the incoming act range to the node's max
+			incomingCost->m_possibleActRange.max = Min(incomingCost->m_possibleActRange.max, newNode->m_data->m_definition->m_actRange.max);
 			//verify that the node doesn't break at this edge.
 					// (check that all characters meet the requirements for the end node)
 			// get all reachable nodes
@@ -791,6 +793,8 @@ void StoryGraph::AddNodeAtEdge(StoryNode * newNode, StoryEdge * existingEdge)
 		incomingCost->m_isLocked = true;
 	}
 	outgoingCost->UpdateFromNode(newNode->m_data);
+	//clamp the incoming act range to the node's max
+	incomingCost->m_possibleActRange.max = Min(incomingCost->m_possibleActRange.max, newNode->m_data->m_definition->m_actRange.max);
 	AddEdge(existingEdge->GetStart(), newNode, incomingCost);
 	AddEdge(newNode, existingEdge->GetEnd(), outgoingCost);
 	delete existingEdge;
@@ -1312,7 +1316,10 @@ bool StoryGraph::ContainsEdge(StoryNode * start, StoryNode * end) const
 
 bool StoryGraph::NodeRequirementsAreMet(StoryNode * newNode, StoryEdge* atEdge)
 {
-	int tries = 0;
+	if (!DoRangesOverlap(newNode->m_data->m_definition->m_actRange, atEdge->GetCost()->m_possibleActRange))
+	{
+		return false;
+	}
 	//keep trying to match valid characters with 
 	if (StoryRequirementsMet(newNode->m_data->m_definition, atEdge)){
 		if (TryToSetCharactersForNode(newNode, atEdge)){
@@ -1531,7 +1538,7 @@ void StoryGraph::RenderEdge(StoryEdge * edge, RGBA color) const
 
 	AABB2 costBox = AABB2(halfPoint + Vector2(0.f, EDGE_FONT_SIZE * .5f), .01, .008);
 
-	std::string cost = edge->GetCost()->ToString();
+	std::string cost = edge->GetCost()->m_possibleActRange.ToString();
 	g_theRenderer->DrawTextInBox2D(cost, costBox, Vector2::HALF, EDGE_FONT_SIZE, TEXT_DRAW_WORD_WRAP, m_edgeTextColor);
 	//g_theRenderer->DrawText2D(cost, halfPoint - Vector2(.002f, 0.f), EDGE_FONT_SIZE, RGBA::YELLOW);
 }

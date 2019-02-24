@@ -119,6 +119,7 @@ Thesis Stuff
 #define NUM_PLOT_NODES_TO_GENERATE (6 + 2)
 #define NUM_DETAIL_NODES_TO_GENERATE (3)
 #define DEFAULT_BRANCH_CHANCE_ON_FAIL (0.0f)
+#define MAX_ACTS (20)
 
 
 class Character;

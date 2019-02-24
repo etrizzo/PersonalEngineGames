@@ -31,6 +31,8 @@ public:
 	float UpdateAndGetChance();
 	void SetAsVoid();
 
+	IntRange m_possibleActRange = IntRange(0, MAX_ACTS);
+
 	TagSet m_storyTags = TagSet();
 
 	StoryData* m_startData = nullptr;

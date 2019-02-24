@@ -1,7 +1,6 @@
-	<EventNode name="TheMurder" progression="time">
+	<EventNode name="TheMurder" progression="time" actname="Introduction" actRange="1">
 		<!-- *[X]* indicates a character name who should be replaced at rutntime -->
 		<Action text="A man is murdered." />
-		<Act name="Introduction" />
 		<Characters>
 
 		</Characters>
@@ -19,9 +18,8 @@
 		</StoryEffects>
 	</EventNode>
 
-	<EventNode name="InvestigateSuspect" progression="interact">
+	<EventNode name="InvestigateSuspect" progression="interact" actRange="2">
 		<Action text="*0* investigates *1*" />	
-		<Act name="Investigation" />
 		<Characters>
 			<Character id = "*0*" title="investigator"/>
 			<Character id = "*1*" title="suspect" />
@@ -63,9 +61,8 @@
 
 
 
-	<EventNode name="InvestigateSuspectAgain" progression="interact">
+	<EventNode name="InvestigateSuspectAgain" progression="interact" actRange="2">
 		<Action text="*0* doubts *1*'s innocence and re-investigates." />	
-		<Act name="Investigation" />
 		<Characters>
 			<Character id = "*0*" title="investigator"/>
 			<Character id = "*1*" title="suspect" />
@@ -105,9 +102,8 @@
 		</CharacterEffects>
 	</EventNode>
 
-	<EventNode name="AccusePerson" progression="interact">
+	<EventNode name="AccusePerson" progression="interact" actRange="3">
 		<Action text="*0* accuses *1* of being the killer" />	
-		<Act name="Accusation" />
 		<Characters>
 			<Character id = "*0*" title="accuser"/>
 			<Character id = "*1*" title="suspect" />
@@ -148,9 +144,8 @@
 
 
 
-	<EventNode name="ArrestKiller" progression="interact">
+	<EventNode name="ArrestKiller" progression="interact" actRange="3">
 		<Action text="*0* tries to arrest *1*" />	
-		<Act name="Accusation" />
 		<Characters>
 			<Character id = "*0*" title="arrester"/>
 			<Character id = "*1*" title="killer" />

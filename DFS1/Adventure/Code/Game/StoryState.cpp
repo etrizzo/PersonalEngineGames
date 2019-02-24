@@ -12,6 +12,8 @@ StoryState::StoryState(float cost, int numCharacters, StoryGraph* graph)
 			m_characterStates.push_back(new CharacterState(graph->GetCharacter(i)));
 		}
 	}
+
+	m_possibleActRange = IntRange(0, MAX_ACTS);
 }
 
 StoryState::StoryState(const StoryState & copy)
@@ -21,7 +23,7 @@ StoryState::StoryState(const StoryState & copy)
 		CharacterState* newState = new CharacterState(charState);
 		m_characterStates.push_back(newState);
 	}
-
+	m_possibleActRange = copy.m_possibleActRange;
 	m_storyTags = copy.m_storyTags;
 }
 
@@ -51,6 +53,9 @@ void StoryState::UpdateFromNode(StoryData * data)
 		effect->ApplyToState(this, data);
 	}
 
+	//this is an outgoing edge - clamp the act range to the node's mins.
+	m_possibleActRange.min = Max(m_possibleActRange.min, data->m_definition->m_actRange.min);
+
 	//}
 	//if (m_cost > 0.f){
 	//	m_cost = -1.f;
@@ -65,6 +70,8 @@ void StoryState::UpdateFromNodeDefinition(StoryDataDefinition * dataDef)
 	{
 		effect->ApplyToState(this, nullptr);
 	}
+	m_possibleActRange.min = Max(m_possibleActRange.min, dataDef->m_actRange.min);
+
 }
 
 void StoryState::PredictUpdateOnCharacter(Character * character, unsigned int indexOnNode, StoryData * node)

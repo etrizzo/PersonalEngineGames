@@ -49,12 +49,12 @@ std::string IntRange::ToString() const
 bool DoRangesOverlap(const IntRange & a, const IntRange & b)
 {
 	if (a.max < b.min && a.min < b.min){
-		return true;
+		return false;
 	}
 	if (b.max < a.min && b.min < a.min){
-		return true;
+		return false;
 	}
-	return false;
+	return true;
 }
 
 const IntRange Interpolate(const IntRange & start, const IntRange & end, float fractionTowardEnd)

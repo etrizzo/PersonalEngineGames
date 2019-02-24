@@ -24,7 +24,7 @@ void StoryDataDefinition::InitFromXML(tinyxml2::XMLElement* nodeElement)
 	} else {
 		ERROR_AND_DIE("Node initialized without type.");
 	}
-
+	m_actRange = ParseXmlAttribute(*nodeElement, "actRange", IntRange(0, MAX_ACTS));
 	m_shouldLockIncomingEdge = ParseXmlAttribute(*nodeElement, "lockIncoming", false);
 }
 

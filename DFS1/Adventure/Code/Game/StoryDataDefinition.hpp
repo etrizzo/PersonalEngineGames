@@ -54,6 +54,7 @@ public:
 	//vector of character requirements - 1 set for each character on the node.
 	std::vector<CharacterRequirementSet*> m_characterReqs;
 	StoryRequirementSet* m_storyReqs;
+	IntRange m_actRange = IntRange(0);
 	//StoryRequirements m_storyReqs;
 	//EffectSet* m_effectSet;
 	EffectSet* m_guaranteedEffects = nullptr;

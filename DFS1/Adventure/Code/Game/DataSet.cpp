@@ -144,31 +144,38 @@ StoryDataDefinition * DataSet::GetOutcomeNodeWithWeights(StoryState * edge, floa
 	std::vector<StoryDataDefinition*> fitNodes = std::vector<StoryDataDefinition*>();
 	std::vector<StoryDataDefinition*> defaultNodes = std::vector<StoryDataDefinition*>();
 	for(StoryDataDefinition* data : m_outcomeNodes){
-		float fitness = CalculateEdgeFitnessForData(edge, data);
-		if (fitness >= minFitness){
-			if (fitness >= 1.f){
-				//try to populate the array with the most fit nodes being more likely
-				int intFitness = (int) fitness;
-				for (int i = 0; i < intFitness; i++){
+		if (DoRangesOverlap(data->m_actRange, edge->m_possibleActRange)) {
+			float fitness = CalculateEdgeFitnessForData(edge, data);
+			if (fitness >= minFitness) {
+				if (fitness >= 1.f) {
+					//try to populate the array with the most fit nodes being more likely
+					int intFitness = (int)fitness;
+					for (int i = 0; i < intFitness; i++) {
+						fitNodes.push_back(data);
+					}
+				}
+				else {
+					//by default the node is added once to the array
 					fitNodes.push_back(data);
 				}
-			} else {
-				//by default the node is added once to the array
-				fitNodes.push_back(data);
 			}
-		} else {
-			if (fitness >= 1.f){
-				//try to populate the array with the most fit nodes being more likely
-				int intFitness = (int) fitness;
-				for (int i = 0; i < intFitness; i++){
+			else {
+				if (fitness >= 1.f) {
+					//try to populate the array with the most fit nodes being more likely
+					int intFitness = (int)fitness;
+					for (int i = 0; i < intFitness; i++) {
+						defaultNodes.push_back(data);
+					}
+				}
+				else {
+					//by default the node is added once to the array
 					defaultNodes.push_back(data);
 				}
-			} else {
-				//by default the node is added once to the array
-				defaultNodes.push_back(data);
 			}
 		}
 	}
+
+	ASSERT_OR_DIE((defaultNodes.size() > 0 || fitNodes.size() > 0), "No possible outcome nodes for act");
 
 	StoryDataDefinition* chosenNode = nullptr;
 	do 
@@ -189,31 +196,38 @@ StoryDataDefinition * DataSet::GetEventNodeWithWeights(StoryState * edge, float 
 	std::vector<StoryDataDefinition*> fitNodes = std::vector<StoryDataDefinition*>();
 	std::vector<StoryDataDefinition*> defaultNodes = std::vector<StoryDataDefinition*>();
 	for(StoryDataDefinition* data : m_eventNodes){
-		float fitness = CalculateEdgeFitnessForData(edge, data);
-		if (fitness >= minFitness){
-			if (fitness >= 1.f){
-				//try to populate the array with the most fit nodes being more likely
-				int intFitness = (int) fitness;
-				for (int i = 0; i < intFitness; i++){
+		if (DoRangesOverlap(data->m_actRange, edge->m_possibleActRange)) {
+			float fitness = CalculateEdgeFitnessForData(edge, data);
+			if (fitness >= minFitness) {
+				if (fitness >= 1.f) {
+					//try to populate the array with the most fit nodes being more likely
+					int intFitness = (int)fitness;
+					for (int i = 0; i < intFitness; i++) {
+						fitNodes.push_back(data);
+					}
+				}
+				else {
+					//by default the node is added once to the array
 					fitNodes.push_back(data);
 				}
-			} else {
-				//by default the node is added once to the array
-				fitNodes.push_back(data);
 			}
-		} else {
-			if (fitness >= 1.f){
-				//try to populate the array with the most fit nodes being more likely
-				int intFitness = (int) fitness;
-				for (int i = 0; i < intFitness; i++){
+			else {
+				if (fitness >= 1.f) {
+					//try to populate the array with the most fit nodes being more likely
+					int intFitness = (int)fitness;
+					for (int i = 0; i < intFitness; i++) {
+						defaultNodes.push_back(data);
+					}
+				}
+				else {
+					//by default the node is added once to the array
 					defaultNodes.push_back(data);
 				}
-			} else {
-				//by default the node is added once to the array
-				defaultNodes.push_back(data);
 			}
 		}
 	}
+
+	ASSERT_OR_DIE((defaultNodes.size() > 0 || fitNodes.size() > 0), "No possible event nodes for act");
 
 	StoryDataDefinition* chosenNode = nullptr;
 	do 
