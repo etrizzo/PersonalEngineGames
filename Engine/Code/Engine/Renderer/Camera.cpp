@@ -66,6 +66,7 @@ void Camera::SetProjection(Matrix44 proj)
 
 void Camera::SetProjectionOrtho(float height, float aspect, float nearVal, float farVal, const Vector2& screenMins)
 {
+	m_aspect = aspect;
 	float width = height * aspect;
 	m_orthographicSize = height;
 	m_bounds = AABB2(screenMins, screenMins + Vector2(width, height));
@@ -95,6 +96,10 @@ Matrix44 Camera::GetProjectionMatrix()
 
 void Camera::SetPosition(const Vector3 & position)
 {
+	Vector2 screenMins = position.XY();
+	float width = m_orthographicSize * m_aspect;
+	m_bounds = AABB2(screenMins, screenMins + Vector2(width, m_orthographicSize));
+
 	m_transform.SetLocalPosition(position);
 	m_viewMatrix = InvertFast( m_transform.GetWorldMatrix() );
 }

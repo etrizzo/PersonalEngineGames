@@ -67,6 +67,7 @@ public:
 
 	FrameBuffer m_output; 
 	float m_orthographicSize;
+	float m_aspect;
 	AABB2 m_bounds;
 
 	SubMesh* m_debugmesh;

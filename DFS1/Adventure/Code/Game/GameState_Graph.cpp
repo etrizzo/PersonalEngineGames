@@ -15,6 +15,16 @@ GameState_Graph::GameState_Graph(GameState*  encounter, bool isEncounter)
 		m_encounterMap = ((GameState_Encounter*) encounter)->m_currentAdventure->m_currentMap;
 	}
 	m_currentAdventure = encounter->m_currentAdventure;
+
+	m_cameraAspect = g_gameConfigBlackboard.GetValue("windowAspect", 1.f);
+
+	//set up the graph camera
+	m_graphCamera = new Camera();
+
+	// Setup what it will draw to
+	m_graphCamera->SetColorTarget(g_theRenderer->m_defaultColorTarget);
+	m_graphCamera->SetDepthStencilTarget(g_theRenderer->m_defaultDepthTarget);
+	m_graphCamera->SetProjectionOrtho(m_cameraOrtho, m_cameraAspect, 0.f, 100.f);
 }
 
 GameState_Graph::~GameState_Graph()
@@ -25,13 +35,16 @@ void GameState_Graph::Update(float ds)
 {
 	m_timeInState+=ds;
 	UpdateGraph();
+	UpdateCamera();
 }
 
 void GameState_Graph::RenderUI()
 {
-	AABB2 bounds = g_theGame->SetUICamera();
+	AABB2 bounds = SetGraphCamera();
 	RenderGraph();
 	g_theRenderer->DrawTextInBox2D(m_graphName, bounds, Vector2::ALIGN_CENTER_TOP, bounds.GetHeight() * .03f);
+	
+	
 }
 
 void GameState_Graph::HandleInput()
@@ -80,7 +93,18 @@ void GameState_Graph::HandleInput()
 			}
 		}
 	}
+
 	m_currentGraph->HandleInput();
+
+	HandleCameraInput();
+}
+
+AABB2 GameState_Graph::SetGraphCamera()
+{
+	g_theRenderer->SetCamera(m_graphCamera);
+
+	g_theRenderer->DisableDepth();
+	return m_graphCamera->GetBounds();
 }
 
 
@@ -106,4 +130,48 @@ void GameState_Graph::RenderGraph() const
 void GameState_Graph::UpdateGraph()
 {
 	m_currentGraph->UpdateNodePositions();
+}
+
+void GameState_Graph::UpdateCamera()
+{
+	m_graphCamera->SetProjectionOrtho(m_cameraOrtho, m_cameraAspect, 0.f, 100.f, m_cameraPosition);
+	//m_graphCamera->SetPosition(m_cameraPosition);
+}
+
+void GameState_Graph::HandleCameraInput()
+{
+	float ds = g_theGame->GetDeltaSeconds();
+	float speed = m_cameraOrtho;
+	Vector2 translation = Vector2::ZERO;
+	Vector2 right = Vector2(1.f, 0.f);
+	Vector2 up = Vector2(0.f, 1.f);
+	if (IsRightKeyDown())
+	{
+		translation += right * speed * ds;
+	}
+	if (IsLeftKeyDown())
+	{
+		translation += right * -speed * ds;
+	}
+
+	if (IsUpKeyDown())
+	{
+		translation += up * speed * ds;
+	}
+	if (IsDownKeyDown())
+	{
+		translation += up * -speed * ds;
+	}
+	m_cameraPosition += translation;
+
+	if (g_theInput->WasKeyJustPressed('0'))
+	{
+		m_cameraOrtho -= .1f;
+	}
+	if (g_theInput->WasKeyJustPressed('9'))
+	{
+		m_cameraOrtho += .1f;
+	}
+
+	m_cameraOrtho = ClampFloat(m_cameraOrtho, .5f, 10.f);
 }

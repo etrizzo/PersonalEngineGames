@@ -719,17 +719,17 @@ bool WasLeftJustPressed()
 
 bool IsUpKeyDown()
 {
-	return g_theInput->IsKeyDown(VK_LEFT) || g_theInput->IsKeyDown('W') || g_primaryController->IsButtonDown(XBOX_D_LEFT);
+	return g_theInput->IsKeyDown(VK_UP) || g_theInput->IsKeyDown('W') || g_primaryController->IsButtonDown(XBOX_D_LEFT);
 }
 
 bool IsDownKeyDown()
 {
-	return g_theInput->IsKeyDown(VK_LEFT) || g_theInput->IsKeyDown('S') || g_primaryController->IsButtonDown(XBOX_D_LEFT);
+	return g_theInput->IsKeyDown(VK_DOWN) || g_theInput->IsKeyDown('S') || g_primaryController->IsButtonDown(XBOX_D_LEFT);
 }
 
 bool IsRightKeyDown()
 {
-	return g_theInput->IsKeyDown(VK_LEFT) || g_theInput->IsKeyDown('D') || g_primaryController->IsButtonDown(XBOX_D_LEFT);
+	return g_theInput->IsKeyDown(VK_RIGHT) || g_theInput->IsKeyDown('D') || g_primaryController->IsButtonDown(XBOX_D_LEFT);
 }
 
 bool IsLeftKeyDown()
