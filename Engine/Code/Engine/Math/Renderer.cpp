@@ -529,7 +529,8 @@ void Renderer::BindRendererUniforms()
 	}
 
 	if (view_bind >= 0) {
-		glUniformMatrix4fv( view_bind, 1, GL_FALSE, (GLfloat*)&m_currentCamera->GetViewMatrix() );
+		Matrix44 viewMat = m_currentCamera->GetViewMatrix();
+		glUniformMatrix4fv( view_bind, 1, GL_FALSE, (GLfloat*)&viewMat );
 	}
 
 	if (pos_bind >= 0) {

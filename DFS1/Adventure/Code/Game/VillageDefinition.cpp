@@ -112,7 +112,6 @@ void VillageDefinition::ReadVillageNamesFromSourceFile()
 		Strip(line, '\n');
 		m_villageNames.push_back(line);
 	}
-	int x = 0;
 }
 
 void VillageDefinition::LoadUnusedVillageNamesFromBaseAndShuffle()
@@ -121,8 +120,8 @@ void VillageDefinition::LoadUnusedVillageNamesFromBaseAndShuffle()
 	m_unusedVillageNames = Strings(m_villageNames);
 
 	//shuffle the list
-	for (int i = 0; i < m_unusedVillageNames.size(); i++){
-		int randomSwapIndex = GetRandomIntLessThan(m_unusedVillageNames.size());
+	for (int i = 0; i < (int) m_unusedVillageNames.size(); i++){
+		int randomSwapIndex = GetRandomIntLessThan((int) m_unusedVillageNames.size());
 		std::swap(m_unusedVillageNames[i], m_unusedVillageNames[randomSwapIndex]);
 	}
 }

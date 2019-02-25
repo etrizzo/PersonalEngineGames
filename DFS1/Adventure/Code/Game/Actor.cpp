@@ -272,7 +272,7 @@ void Actor::RenderFaceInBox(AABB2 faceBox, RGBA tint)
 	//draw the portrait in layers - for each slot, check how many layers that slot has
 	for (int slot = 0; slot < (int) NUM_PORTRAIT_SLOTS; slot++){
 		for (int i = 0; i < m_currentLook->GetNumPortraitLayersForSlot((ePortraitSlot) slot); i++){
-			if (m_currentLook->m_portraitLayers[slot].size() > i){
+			if ((int) m_currentLook->m_portraitLayers[slot].size() > i){
 				PortraitLayer* layer = m_currentLook->m_portraitLayers[slot][i];
 				AABB2 layerTexCoords = layer->m_uvs;
 				g_theRenderer->DrawTexturedAABB2(portraitBox, *portraitTexture, layerTexCoords.mins, layerTexCoords.maxs, layer->m_tint);

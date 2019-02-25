@@ -57,25 +57,25 @@ ClothingSet * ClothingSetDefinition::GetSetAtEquipmentIndex(int equipIndex) cons
 	if ((int)  m_layersByClothingType[CHEST_SLOT].size() > 0){
 		//load chest clothing
 		int torsoIndex = equipIndex;
-		ASSERT_OR_DIE(torsoIndex < m_layersByClothingType[CHEST_SLOT].size(), "Asked for an equipment index that doesn't exist.");
+		ASSERT_OR_DIE(torsoIndex < (int) m_layersByClothingType[CHEST_SLOT].size(), "Asked for an equipment index that doesn't exist.");
 		set->InitLayer(CHEST_SLOT, GetLayer(CHEST_SLOT, torsoIndex));
 		//if that chest clothing should render pants, get random pants
 		if ( GetLayer(CHEST_SLOT, torsoIndex)->ShouldRenderLegs()){
 			int legIndex = equipIndex;
-			ASSERT_OR_DIE(legIndex < m_layersByClothingType[LEGS_SLOT].size(), "Asked for an equipment index that doesn't exist.");
+			ASSERT_OR_DIE(legIndex < (int) m_layersByClothingType[LEGS_SLOT].size(), "Asked for an equipment index that doesn't exist.");
 			set->InitLayer(LEGS_SLOT,		GetLayer(LEGS_SLOT, legIndex));		//init body and ears of same skin tone
 		}
 	}
 	if ((int)  m_layersByClothingType[BODY_SLOT].size() > 0){
 		//load body
 		int bodyIndex = equipIndex;
-		ASSERT_OR_DIE(bodyIndex < m_layersByClothingType[BODY_SLOT].size(), "Asked for an equipment index that doesn't exist.");
+		ASSERT_OR_DIE(bodyIndex < (int) m_layersByClothingType[BODY_SLOT].size(), "Asked for an equipment index that doesn't exist.");
 		set->InitLayer(BODY_SLOT,		GetLayer(BODY_SLOT, bodyIndex));		//init body and ears of same skin tone
 		set->InitLayer(EARS_SLOT,		GetLayer(EARS_SLOT, bodyIndex));
 		//set->InitPortraitBody();
 
 	}
-	if (m_layersByClothingType[HEAD_SLOT].size() > 0){
+	if ((int) m_layersByClothingType[HEAD_SLOT].size() > 0){
 		int hairIndex = GetRandomIntLessThan((int) m_layersByClothingType[HEAD_SLOT].size());
 		set->InitLayer(HEAD_SLOT,		GetLayer(HEAD_SLOT, hairIndex));
 		//set->InitPortraitHair();
@@ -84,14 +84,14 @@ ClothingSet * ClothingSetDefinition::GetSetAtEquipmentIndex(int equipIndex) cons
 	if ((int)  m_layersByClothingType[HAT_SLOT].size() > 0){
 		//load body
 		int bodyIndex = equipIndex;
-		ASSERT_OR_DIE(bodyIndex < m_layersByClothingType[HAT_SLOT].size(), "Asked for an equipment index that doesn't exist.");
+		ASSERT_OR_DIE(bodyIndex < (int) m_layersByClothingType[HAT_SLOT].size(), "Asked for an equipment index that doesn't exist.");
 		set->InitLayer(HAT_SLOT,		GetLayer(HAT_SLOT, bodyIndex));		//init body and ears of same skin tone
 
 	}
 	if ((int)  m_layersByClothingType[WEAPON_SLOT].size() > 0){
 		//load body
 		int bodyIndex = equipIndex;
-		ASSERT_OR_DIE(bodyIndex < m_layersByClothingType[WEAPON_SLOT].size(), "Asked for an equipment index that doesn't exist.");
+		ASSERT_OR_DIE(bodyIndex < (int) m_layersByClothingType[WEAPON_SLOT].size(), "Asked for an equipment index that doesn't exist.");
 		set->InitLayer(WEAPON_SLOT,		GetLayer(WEAPON_SLOT, bodyIndex));		//init body and ears of same skin tone
 
 	}
@@ -217,7 +217,6 @@ void ClothingSetDefinition::ParseTorsos(tinyxml2::XMLElement * setElement)
 	tinyxml2::XMLElement* allTorsosElement = setElement->FirstChildElement("Torsos");
 	if (allTorsosElement != nullptr){
 		//parse all body elements
-		int i = 0;
 		for(tinyxml2::XMLElement* torsoElement = allTorsosElement->FirstChildElement("Torso"); torsoElement != nullptr; torsoElement = torsoElement->NextSiblingElement("Torso")){
 			Texture* torsoTexture = ParseXmlAttribute(*torsoElement, "texture", (Texture*) nullptr);
 			std::string colorType = ParseXmlAttribute(*torsoElement, "color", "NONE");

@@ -535,7 +535,7 @@ void Map::FillSeededDistanceMap(Heatmap& distMap,const Tile* destinationTile, co
 	Tile currentTile;
 	Tile neighbors[4];
 	const Tile firstSeed = openTiles[0];
-	eManhattanDir currentDirection; //= GetMostSignificantDirection(firstSeed.m_coordinates, destinationTile->m_coordinates);
+	eManhattanDir currentDirection = NUM_MANHATTAN_DIRS; //= GetMostSignificantDirection(firstSeed.m_coordinates, destinationTile->m_coordinates);
 	while (!openTiles.empty()){
 		currentTile = openTiles.back();
 		openTiles.pop_back();
@@ -564,7 +564,7 @@ void Map::FillSeededDistanceMap(Heatmap& distMap,const Tile* destinationTile, co
 				currentDirection = MANHATTAN_EAST;
 			}
 		}
-		bool straightenPath = CheckRandomChance(straightChance);
+		//bool straightenPath = CheckRandomChance(straightChance);
 		for (int direction = MANHATTAN_NORTH; direction < NUM_MANHATTAN_DIRS; direction++){
 			Tile currentNeighbor = neighbors[direction];
 			if (currentNeighbor.m_tileDef != nullptr){
@@ -1173,8 +1173,8 @@ void Map::CreateTileRenderable(bool edge)
 	tileVerts.clear();
 	AABB2 camBounds = GetCameraBounds();
 	Vector2 spacing = Vector2(1.f,1.f);
-	Tile* minTile = TileAtFloat(camBounds.mins - spacing);
-	Tile* maxTile = TileAtFloat(camBounds.maxs + spacing);
+	//Tile* minTile = TileAtFloat(camBounds.mins - spacing);
+	//Tile* maxTile = TileAtFloat(camBounds.maxs + spacing);
 
 	IntVector2 minTileCoords = IntVector2(0,0);
 	IntVector2 maxTileCoords = m_dimensions;
@@ -1353,7 +1353,7 @@ void Map::EdgeShoreline()
 
 void Map::EdgeGrassToDirt()
 {
-	for (int i = 0; i < 2 ; i++){
+	for (int iteration = 0; iteration < 2 ; iteration++){
 		//actually do the edges now
 		for (int i = 0; i < m_numTiles; i++){
 			Tile* tile = &m_tiles[i];

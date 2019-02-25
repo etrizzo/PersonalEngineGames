@@ -46,7 +46,7 @@ TileDefinition * TileNeighborSet::FindEdgeTileDefinition()
 				}
 				//Add the terrain def to the list, or increment existing value
 				bool containsDef = false;
-				for (int i = 0; i < defsHigherLevelThanMe.size(); i++){
+				for (int i = 0; i < (int) defsHigherLevelThanMe.size(); i++){
 					if (defsHigherLevelThanMe[i] == terrainDef){
 						//one more tile of that type :)
 						defCount[i] = defCount[i] + 1;
@@ -65,7 +65,7 @@ TileDefinition * TileNeighborSet::FindEdgeTileDefinition()
 
 	TileDefinition* highestCountDef = nullptr;
 	int highestCount = 0;
-	for (int i = 0; i < defsHigherLevelThanMe.size(); i++){
+	for (int i = 0; i < (int) defsHigherLevelThanMe.size(); i++){
 		if (defCount[i] > highestCount){
 			highestCountDef = defsHigherLevelThanMe[i];
 			highestCount = defCount[i];
@@ -90,7 +90,7 @@ TileDefinition * TileNeighborSet::FindShoreEdge()
 				TileDefinition* terrainDef = t->m_extraInfo->m_terrainDef;
 				//Add the terrain def to the list, or increment existing value
 				bool containsDef = false;
-				for (int i = 0; i < defsHigherLayerThanMe.size(); i++){
+				for (int i = 0; i < (int) defsHigherLayerThanMe.size(); i++){
 					if (defsHigherLayerThanMe[i] == terrainDef){
 						//one more tile of that type :)
 						defCount[i] = defCount[i] + 1;
@@ -110,7 +110,7 @@ TileDefinition * TileNeighborSet::FindShoreEdge()
 	//get the higher-layer definition that has the highest number of neighbors around this tile
 	TileDefinition* highestCountDef = nullptr;
 	int highestCount = 0;
-	for (int i = 0; i < defsHigherLayerThanMe.size(); i++){
+	for (int i = 0; i < (int) defsHigherLayerThanMe.size(); i++){
 		if (defCount[i] > highestCount){
 			highestCountDef = defsHigherLayerThanMe[i];
 			highestCount = defCount[i];
@@ -375,7 +375,7 @@ bool TileNeighborSet::IsTileInvalid() const
 	//	return false;
 	//}
 
-	TileEdgeDefinition* def = m_edgeToLookFor->m_edgeDefinition;
+	//TileEdgeDefinition* def = m_edgeToLookFor->m_edgeDefinition;
 	//check every configuration :))))))
 	if (CheckConcaveTopLeft()){
 		return false;
@@ -456,7 +456,7 @@ TileDefinition * TileNeighborSet::FindMostSignificantNeighbor()
 			TileDefinition* terrainDef = t->m_extraInfo->m_terrainDef;
 			//Add the terrain def to the list, or increment existing value
 			bool containsDef = false;
-			for (int i = 0; i < neighborDefs.size(); i++){
+			for (int i = 0; i < (int) neighborDefs.size(); i++){
 				if (neighborDefs[i] == terrainDef){
 					//one more tile of that type :)
 					defCount[i] = defCount[i] + 1;
@@ -474,7 +474,7 @@ TileDefinition * TileNeighborSet::FindMostSignificantNeighbor()
 
 	TileDefinition* highestCountDef = nullptr;
 	int highestCount = 0;
-	for (int i = 0; i < neighborDefs.size(); i++){
+	for (int i = 0; i < (int) neighborDefs.size(); i++){
 		if (defCount[i] > highestCount){
 			highestCountDef = neighborDefs[i];
 			highestCount = defCount[i];

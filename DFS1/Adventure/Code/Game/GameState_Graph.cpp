@@ -62,7 +62,7 @@ void GameState_Graph::HandleInput()
 	{
 		if (g_theInput->WasKeyJustPressed('M')){
 			m_graphIndex++;
-			if (m_graphIndex < m_encounterMap->m_allVillages.size()){
+			if (m_graphIndex < (int) m_encounterMap->m_allVillages.size()){
 				//go to the next village graph
 				m_currentGraph = m_encounterMap->m_allVillages[m_graphIndex]->m_villageGraph;
 				m_graphName = "Village: " + m_encounterMap->m_allVillages[m_graphIndex]->m_villageName;

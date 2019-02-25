@@ -78,7 +78,7 @@ Game::Game()
 	m_camera = new Camera();
 	m_camera->SetColorTarget( g_theRenderer->m_defaultColorTarget );
 	m_camera->SetDepthStencilTarget( g_theRenderer->m_defaultDepthTarget );
-	m_camera->SetProjectionOrtho(m_screenWidth, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f,100.f);
+	m_camera->SetProjectionOrtho((float) m_screenWidth, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f,100.f);
 	//Vector2 center = m_camera->GetBounds().GetCenter();
 	//m_camera->LookAt(Vector3(center.x, center.y, -1.f), Vector3(center.x, center.y, .5f));
 
@@ -393,6 +393,7 @@ void Game::LoadTileDefinitions()
 	tinyxml2::XMLElement* edgeroot = tileEdgeDoc.FirstChildElement("EdgeDefinitions");
 	for (tinyxml2::XMLElement* edgeDefElement = edgeroot->FirstChildElement("EdgeDefinition"); edgeDefElement != NULL; edgeDefElement = edgeDefElement->NextSiblingElement("EdgeDefinition")){
 		TileEdgeDefinition* newDefinition = new TileEdgeDefinition(edgeDefElement);
+		UNUSED(newDefinition);
 		//TileDefinition::s_definitions.insert(std::pair<std::string, TileDefinition*>(newDefinition->m_name, newDefinition));
 	}
 

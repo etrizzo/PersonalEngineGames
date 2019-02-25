@@ -9,7 +9,7 @@ class Quest;
 class QuestReward{
 public:
 	QuestReward(){};
-	QuestReward(tinyxml2::XMLElement* questRewardElement) {};
+	QuestReward(tinyxml2::XMLElement* questRewardElement) { UNUSED(questRewardElement); };
 
 	virtual void GiveReward(Quest* quest) = 0;
 

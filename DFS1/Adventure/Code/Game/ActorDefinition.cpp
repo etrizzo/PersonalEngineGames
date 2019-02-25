@@ -163,7 +163,7 @@ void ActorDefinition::LoadUnusedActorNamesFromBaseAndShuffle()
 	m_unusedActorNames = Strings(m_actorNames);
 
 	//shuffle the list
-	for (int i = 0; i < m_unusedActorNames.size(); i++){
+	for (int i = 0; i < (int) m_unusedActorNames.size(); i++){
 		int randomSwapIndex = GetRandomIntLessThan(m_unusedActorNames.size());
 		std::swap(m_unusedActorNames[i], m_unusedActorNames[randomSwapIndex]);
 	}

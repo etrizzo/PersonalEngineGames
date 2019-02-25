@@ -55,7 +55,6 @@ void Item::RenderImageInBox(AABB2 boxToRenderIn)
 
 void Item::RenderStats(AABB2 boxToRenderIn)
 {
-	float widthOfBox = boxToRenderIn.GetWidth();
 	float heightOfBox = boxToRenderIn.GetHeight();
 	float fontSize = heightOfBox * .1f;
 	Vector2 padding = Vector2(fontSize * .2f, fontSize * .2f);

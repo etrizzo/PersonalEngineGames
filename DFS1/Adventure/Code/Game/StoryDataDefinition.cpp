@@ -44,7 +44,7 @@ void StoryDataDefinition::InitAsOutcomeNode(tinyxml2::XMLElement * nodeElement)
 	}
 
 	//fill data with empty stuff
-	for (int i= 0; i < m_numCharacters; i++){
+	for (int i= 0; i < (int) m_numCharacters; i++){
 		m_characters.push_back(nullptr);
 		m_characterReqs.push_back(new CharacterRequirementSet());
 	}
@@ -53,7 +53,7 @@ void StoryDataDefinition::InitAsOutcomeNode(tinyxml2::XMLElement * nodeElement)
 	tinyxml2::XMLElement* charReqElement = nodeElement->FirstChildElement("CharacterRequirements");
 	for (tinyxml2::XMLElement* reqElement = charReqElement->FirstChildElement("Character"); reqElement != nullptr; reqElement = reqElement->NextSiblingElement("Character")){
 		int charIndex = (unsigned int) ParseXmlAttribute(*reqElement, "index", (int) -1);
-		if (charIndex >= 0 && charIndex < m_characterReqs.size()){
+		if (charIndex >= 0 && charIndex < (int) m_characterReqs.size()){
 			m_characterReqs[charIndex]->InitFromXML(reqElement, this);
 		}
 	}
@@ -126,7 +126,7 @@ void StoryDataDefinition::InitAsEventNode(tinyxml2::XMLElement * nodeElement)
 
 
 	//fill data with empty stuff
-	for (int i= 0; i < m_numCharacters; i++){
+	for (int i= 0; i < (int) m_numCharacters; i++){
 		m_characters.push_back(nullptr);
 		m_characterReqs.push_back(new CharacterRequirementSet());
 	}
@@ -135,7 +135,7 @@ void StoryDataDefinition::InitAsEventNode(tinyxml2::XMLElement * nodeElement)
 	tinyxml2::XMLElement* charReqElement = nodeElement->FirstChildElement("CharacterRequirements");
 	for (tinyxml2::XMLElement* reqElement = charReqElement->FirstChildElement("Character"); reqElement != nullptr; reqElement = reqElement->NextSiblingElement("Character")){
 		int charIndex = (unsigned int) ParseXmlAttribute(*reqElement, "index", (int) -1);
-		if (charIndex >= 0 && charIndex < m_characterReqs.size()){
+		if (charIndex >= 0 && charIndex < (int) m_characterReqs.size()){
 			m_characterReqs[charIndex]->InitFromXML(reqElement, this);
 		}
 	}
@@ -191,9 +191,6 @@ std::string StoryDataDefinition::ToString() const
 //	for (StoryEdge* edge 
 //}
 
-void StoryDataDefinition::AddData(StoryDataDefinition * data)
-{
-}
 
 
 
@@ -289,7 +286,7 @@ unsigned int StoryDataDefinition::GetNumCharacters() const
 
 CharacterRequirementSet* StoryDataDefinition::GetRequirementsForCharacter(Character * character)
 {
-	for (int i = 0; i < m_characterReqs.size(); i++){
+	for (int i = 0; i < (int) m_characterReqs.size(); i++){
 		if (m_characters[i] == character){
 			return m_characterReqs[i];
 		}
@@ -315,7 +312,7 @@ Character* StoryDataDefinition::GetCharacterFromDataString(std::string data)
 {
 	Strip(data, '*');
 	int i = atoi(data.c_str());
-	if (i >= 0 && i < m_characters.size()){
+	if (i >= 0 && i < (int) m_characters.size()){
 		return m_characters[i];
 	} else {
 		return nullptr;

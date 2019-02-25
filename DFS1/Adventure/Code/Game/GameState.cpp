@@ -88,7 +88,7 @@ void GameState_Attract::Update(float ds)
 {
 	m_timeInState+=ds;
 	if (m_isTransitioning){
-		float percThroughTransition =  (m_timeInState) / m_transitionLength;
+		//float percThroughTransition =  (m_timeInState) / m_transitionLength;
 		//g_theAudio->SetSoundPlaybackVolume(g_theGame->m_attractPlayback, 1.f - percThroughTransition);
 	}
 }
@@ -416,7 +416,6 @@ void GameState_Defeat::RenderTransitionEffect(float t)
 void GameState_Defeat::HandleInput()
 {
 	if (WasStartJustPressed()){
-		int difficulty = m_encounterGameState->m_currentAdventure->m_difficulty;
 		delete m_encounterGameState;
 		m_encounterGameState = nullptr;
 		g_theGame->TransitionToState(new GameState_Attract());

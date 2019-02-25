@@ -45,7 +45,7 @@ RGBA GetRandomLipColor()
 		r = ClampInt(r, 100, 255);
 		g = ClampInt(g, 0, 220);
 		b = ClampInt(b, 0, 220);
-		color = RGBA(r,g,b);
+		color = RGBA((unsigned char) r,(unsigned char) g,(unsigned char) b);
 	} else {
 		//chance for a bright ass lip
 		color = RGBA::GetRandomRainbowColor();

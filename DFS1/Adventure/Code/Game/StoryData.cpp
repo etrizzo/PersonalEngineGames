@@ -124,6 +124,8 @@ float StoryData::UpdateAndGetChance(StoryState * incomingEdge)
 
 void StoryData::AddData(StoryData * data)
 {
+	//this function exists to be compatible with directed graph template
+	UNUSED(data);
 }
 
 bool StoryData::AreAllCharactersSet() const
@@ -194,7 +196,7 @@ bool StoryData::DoesCharacterMeetSlotRequirementsAtEdge(Character * character, u
 CharacterRequirementSet* StoryData::GetRequirementsForCharacter(Character * character)
 {
 	if (m_definition != nullptr){
-		for (int i = 0; i < m_definition->m_characterReqs.size(); i++){
+		for (int i = 0; i < (int) m_definition->m_characterReqs.size(); i++){
 			if (m_characters[i] == character){
 				return  m_definition->m_characterReqs[i];
 			}
@@ -206,7 +208,7 @@ CharacterRequirementSet* StoryData::GetRequirementsForCharacter(Character * char
 
 void StoryData::SetCharacters(std::vector<Character*> characters)
 {
-	for (int i = 0; i < characters.size(); i++){
+	for (int i = 0; i < (int) characters.size(); i++){
 		SetCharacter(i, characters[i]);
 	}
 }
@@ -244,7 +246,7 @@ Character* StoryData::GetCharacterFromDataString(std::string data)
 	 if (i == 0 && (data != "0" && data != "0*")){
 		 return nullptr;
 	 }
-	 if (i >= 0 && i < m_characters.size()){
+	 if (i >= 0 && i < (int) m_characters.size()){
 		 return m_characters[i];
 	 } else {
 		 return nullptr;

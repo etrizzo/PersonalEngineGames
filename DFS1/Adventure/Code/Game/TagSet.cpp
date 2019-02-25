@@ -8,7 +8,7 @@ TagSet::TagSet(const std::string & commaSeparatedTagNames)
 
 TagSet::TagSet(const TagSet & copy)
 {
-	for (int i = 0; i < copy.m_tags.size(); i++){
+	for (int i = 0; i < (int) copy.m_tags.size(); i++){
 		TagPair tag = TagPair(copy.m_tags[i].GetName(), copy.m_tags[i].GetValue(), copy.m_tags[i].GetType());
 		m_tags.push_back(tag);
 	}
@@ -101,7 +101,7 @@ void TagSet::SetTagWithValue(const std::string & tagName, const std::string & va
 		m_tags.push_back(tag);
 	} else {
 		//set the existing value
-		for(int i = 0; i < m_tags.size(); i++){
+		for(int i = 0; i < (int) m_tags.size(); i++){
 			if (m_tags[i].GetName() == tagName){
 				m_tags[i].SetValue(value);
 			}

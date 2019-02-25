@@ -26,9 +26,7 @@ public:
 	std::string ToString() const;
 
 	//state utilities
-	//updates node's story state w/ outbound edges with the effects set
-	void AddData(StoryDataDefinition* data);
-
+	
 	//character utilities
 	bool DoesCharacterMeetSlotRequirementsAtEdge(Character* character, unsigned int charSlot, StoryEdge* atEdge);
 	unsigned int GetNumCharacters() const;

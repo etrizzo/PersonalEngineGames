@@ -18,7 +18,7 @@ DialogueSet::DialogueSet(DialogueSetDefinition * def)
 
 bool DialogueSet::ProgressAndCheckFinish()
 {
-	if (m_dialogueIndex < m_dialogues.size()){
+	if (m_dialogueIndex < (int) m_dialogues.size()){
 		//opening dialogue for the first time
 		//if (m_activeDialogue == nullptr){
 		//	g_theGame->Pause();

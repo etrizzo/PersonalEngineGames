@@ -26,7 +26,7 @@ void StoryGraph::SelectCharactersForGraph(int numCharacters)
 	if (numCharacters == 0){
 		numCharacters = g_gameConfigBlackboard.GetValue("numCharacters", (int) m_dataSet->m_characters.size());
 	}
-	if (numCharacters >=  m_dataSet->m_characters.size()){
+	if (numCharacters >= (int) m_dataSet->m_characters.size()){
 		for(Character* character :  m_dataSet->m_characters){
 			m_characters.push_back(character);
 		}
@@ -45,7 +45,7 @@ void StoryGraph::SelectCharactersForGraph(int numCharacters)
 
 void StoryGraph::UpdateNodePositions()
 {
-	for(int i = 0; i < m_graph.m_nodes.size(); i++){
+	for(int i = 0; i < (int) m_graph.m_nodes.size(); i++){
 		StoryNode* node = m_graph.m_nodes[i];
 		if (node == m_startNode){
 			node->m_data->SetPosition(START_NODE_POSITION);
@@ -55,7 +55,7 @@ void StoryGraph::UpdateNodePositions()
 		} else {
 			Vector2 nodeForce = CalculateNodeForces(node);
 			if (nodeForce.GetLengthSquared() > (MIN_DISTANCE_TO_MOVE * MIN_DISTANCE_TO_MOVE)){
-				Vector2 newNodePos = (nodeForce * .016) + node->m_data->GetPosition();
+				Vector2 newNodePos = (nodeForce * .016f) + node->m_data->GetPosition();
 				node->m_data->SetPosition(newNodePos);
 			}
 		}
@@ -136,7 +136,7 @@ void StoryGraph::GenerateSkeleton(int numPlotNodes)
 	GenerateStartAndEnd();
 	StoryNode* addNode = nullptr;
 	StoryData* newData = nullptr;
-	while(GetNumNodes() < numPlotNodes){
+	while((int) GetNumNodes() < numPlotNodes){
 		//re-roll if you get a duplicate node.
 		StoryDataDefinition* sourceNode = m_dataSet->GetRandomEventNode();
 		bool alreadyUsed = false;
@@ -319,6 +319,11 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 				alreadyUsed = false;
 			}
 		}
+		if (sourceNode == nullptr)
+		{
+			//there are no outcome nodes that can be added in this act - early out
+			return false;
+		}
 
 		//try to add the node
 		if (StoryRequirementsMet(sourceNode, edge)){
@@ -473,7 +478,7 @@ bool StoryGraph::CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition * dataDefinit
 	StoryData* newData = nullptr;
 	StoryNode* newNode = nullptr;
 	bool addedAnyNodes = false;
-	for (int i = 0; i < dataDefinition->m_actions.size(); i++){
+	for (int i = 0; i < (int) dataDefinition->m_actions.size(); i++){
 		//check random chance to just ignore this action
 		if (!CheckRandomChance(dataDefinition->m_actions[i]->m_chanceToPlaceAction)){
 			continue;
@@ -499,7 +504,7 @@ bool StoryGraph::CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition * dataDefinit
 			bool atEnd = false;
 			int reachableIndex = 1;
 			while (!(possibleEnd->m_data->IsCompatibleWithIncomingEdge(outgoingCost)) && !atEnd){
-				if (reachableIndex < possibleEndNodes.size()){
+				if (reachableIndex < (int) possibleEndNodes.size()){
 					possibleEnd = possibleEndNodes[reachableIndex];
 					reachableIndex++;
 				} else {
@@ -679,7 +684,7 @@ void StoryGraph::RemoveBranchesWithNoEnding()
 
 			//Delete all the nodes we found that are end-less
 
-			for(int i = 0; i < branchToDelete.size(); i++)
+			for(int i = 0; i < (int) branchToDelete.size(); i++)
 			{
 				StoryNode* toDelete = branchToDelete[i];
 				RemoveAndDeleteNode(toDelete);
@@ -1378,7 +1383,7 @@ std::vector<Character*> StoryGraph::GetCharactersForNode(StoryDataDefinition* no
 
 	//keep track of which characters already used
 	std::vector<bool> usedChars;
-	for (int i = 0; i < m_characters.size(); i++){
+	for (int i = 0; i < (int) m_characters.size(); i++){
 		//init usedChars to be false
 		usedChars.push_back(false);
 
@@ -1482,7 +1487,7 @@ void StoryGraph::RenderNode(StoryNode * node, Vector2 position, RGBA color) cons
 	}
 
 	if (node->m_data->m_type == PLOT_NODE){
-		g_theRenderer->DrawDisc2(nodeBox.GetCenter(), NODE_SIZE * 1.05, color);
+		g_theRenderer->DrawDisc2(nodeBox.GetCenter(), NODE_SIZE * 1.05f, color);
 	} else {
 		g_theRenderer->DrawAABB2(nodeBox, color);
 	}
@@ -1526,7 +1531,7 @@ void StoryGraph::RenderEdge(StoryEdge * edge, RGBA color) const
 		boxColor = m_edgeSelectColor;
 	}
 	if (edge->GetCost()->m_isLocked){
-		boxColor = boxColor.GetColorWithAlpha(.5f);
+		boxColor = boxColor.GetColorWithAlpha(128);
 	}
 	g_theRenderer->DrawOBB2(box, boxColor);
 
@@ -1536,7 +1541,7 @@ void StoryGraph::RenderEdge(StoryEdge * edge, RGBA color) const
 	g_theRenderer->DrawLine2D(halfPoint, halfPoint - angledRight, color, color);
 	
 
-	AABB2 costBox = AABB2(halfPoint + Vector2(0.f, EDGE_FONT_SIZE * .5f), .01, .008);
+	AABB2 costBox = AABB2(halfPoint + Vector2(0.f, EDGE_FONT_SIZE * .5f), .01f, .008f);
 
 	std::string cost = edge->GetCost()->m_possibleActRange.ToString();
 	g_theRenderer->DrawTextInBox2D(cost, costBox, Vector2::HALF, EDGE_FONT_SIZE, TEXT_DRAW_WORD_WRAP, m_edgeTextColor);
@@ -1600,6 +1605,7 @@ StoryState* ShortestPathHeuristic(StoryEdge * edge)
 
 StoryState * RandomPathHeuristic(StoryEdge * edge)
 {
+	UNUSED(edge);
 	return new StoryState(GetRandomFloatInRange(0.f, 10.f), 1, nullptr);
 }
 

@@ -8,5 +8,6 @@ AIBehavior::AIBehavior(const tinyxml2::XMLElement & behaviorElement)
 
 AIBehavior * AIBehavior::CreateAIBehavior(const tinyxml2::XMLElement & behaviorElement)
 {
+	UNUSED(behaviorElement);
 	return nullptr;
 }

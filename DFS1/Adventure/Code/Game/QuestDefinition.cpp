@@ -35,7 +35,7 @@ QuestDefinition::QuestDefinition(tinyxml2::XMLElement * questElement)
 
 DialogueSet * QuestDefinition::GetDialogueSet(int index)
 {
-	if (m_dialogues.size() > index){
+	if ((int) m_dialogues.size() > index){
 		return new DialogueSet(m_dialogues[index]);
 	}
 	return nullptr;
@@ -45,7 +45,7 @@ Tile * QuestDefinition::GetSpawnTile(Map * map) const
 {
 	if (m_giverSpawnTileDefinition != nullptr){
 		if (m_giverSpawnTileTag == "None"){
-			return &map->GetSpawnTileOfType(m_giverSpawnTileDefinition);
+			return &(map->GetSpawnTileOfType(m_giverSpawnTileDefinition));
 		} else {
 			return map->GetTaggedTileOfType(m_giverSpawnTileDefinition, m_giverSpawnTileTag);
 		}
@@ -53,7 +53,7 @@ Tile * QuestDefinition::GetSpawnTile(Map * map) const
 		if (m_giverSpawnTileTag != "None"){
 			return map->GetRandomTileWithTag(m_giverSpawnTileTag);
 		} else {
-			return &map->GetRandomBaseTile();
+			return &(map->GetRandomBaseTile());
 		}
 	}
 }

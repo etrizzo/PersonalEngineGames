@@ -146,6 +146,7 @@ bool VictoryCondition_SpeakToActor::SpeakToGiver()
 VictoryCondition_CollectItem::VictoryCondition_CollectItem(const tinyxml2::XMLElement * conditionsElement, Adventure * adv, Quest* quest)
 	: VictoryCondition(conditionsElement, quest)
 {
+	m_currentAdventure = adv;
 	m_itemName = ParseXmlAttribute(*conditionsElement, "itemToCollect", "NO_ITEM");
 	m_numberToCollect = ParseXmlAttribute(*conditionsElement, "numToCollect", 1);
 	m_keepItemAfterFinish = ParseXmlAttribute(*conditionsElement, "keepItem", true);

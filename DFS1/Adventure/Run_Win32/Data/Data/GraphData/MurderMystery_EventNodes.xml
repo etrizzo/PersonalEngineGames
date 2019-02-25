@@ -1,3 +1,37 @@
+	
+	<EventNode name="Conversation" progression="time" actname="Introduction" actRange="1">
+		<Action text="*0* gossips with *1* about *2*" />
+		<Characters>
+			<Character id = "*0*" title="gossiper"/>
+			<Character id = "*1*" title="listener" />
+			<Character id = "*2*" title="subject" />
+		</Characters>
+		
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+			</Character>
+
+			<Character index="1">
+				<Requirement tag="isAlive" target="true"/>
+			</Character>
+
+			<Character index="2">
+				<Requirement tag="isAlive" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="murderOcurred" target="false" />
+		</StoryRequirements>
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange character="0" tag = "isGossip" target="true" />
+				<TagChange character="1" tag = "isGossip" target="true" />
+			</EffectSet>
+		</StoryEffects>
+	</EventNode>
+
 	<EventNode name="TheMurder" progression="time" actname="Introduction" actRange="1">
 		<!-- *[X]* indicates a character name who should be replaced at rutntime -->
 		<Action text="A man is murdered." />
@@ -15,6 +49,7 @@
 			<EffectSet chance="default">
 				<TagChange tag="murderOcurred" target="true" effectType="story"/>
 			</EffectSet>
+			
 		</StoryEffects>
 	</EventNode>
 

@@ -183,9 +183,9 @@ MapGenStep_FillAndEdge::MapGenStep_FillAndEdge( const tinyxml2::XMLElement& gene
 
 void MapGenStep_FillAndEdge::Run(Map & map)
 {
-	int innerBound = -1 + m_edgeThickness;
-	int outerBoundX = map.GetWidth() - m_edgeThickness;
-	int outerBoundY = map.GetHeight() - m_edgeThickness;
+	//int innerBound = -1 + m_edgeThickness;
+	//int outerBoundX = map.GetWidth() - m_edgeThickness;
+	//int outerBoundY = map.GetHeight() - m_edgeThickness;
 	for(int tileIndex = 0; tileIndex < (int) map.m_tiles.size(); tileIndex++){
 		IntVector2 tileCoords = GetCoordinatesFromIndex(tileIndex, map.GetWidth());
 		if (m_mask->CanDrawOnPoint(tileCoords)){

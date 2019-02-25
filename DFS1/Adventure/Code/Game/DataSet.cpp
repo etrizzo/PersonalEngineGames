@@ -128,7 +128,7 @@ StoryDataDefinition * DataSet::GetRandomOutcomeNode()
 
 int DataSet::GetActNumberForName(std::string name)
 {
-	for (int i = 0; i < m_actsInOrder.size(); i++)
+	for (int i = 0; i < (int) m_actsInOrder.size(); i++)
 	{
 		if (m_actsInOrder[i].m_name == name)
 		{
@@ -175,7 +175,13 @@ StoryDataDefinition * DataSet::GetOutcomeNodeWithWeights(StoryState * edge, floa
 		}
 	}
 
-	ASSERT_OR_DIE((defaultNodes.size() > 0 || fitNodes.size() > 0), "No possible outcome nodes for act");
+	//ASSERT_OR_DIE((defaultNodes.size() > 0 || fitNodes.size() > 0), "No possible outcome nodes for act");
+
+
+	if (defaultNodes.size() == 0 && fitNodes.size() == 0)
+	{
+		return nullptr;
+	}
 
 	StoryDataDefinition* chosenNode = nullptr;
 	do 

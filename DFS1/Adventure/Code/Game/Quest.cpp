@@ -38,7 +38,7 @@ bool Quest::UpdateAndCheckIfComplete()
 {
 	if (!m_isComplete){			//if you haven't already completed this quest, check the steps
 		bool allComplete = true;
-		for (int i = 0; i < m_conditions.size(); i++){
+		for (int i = 0; i < (int) m_conditions.size(); i++){
 			VictoryCondition* condition = m_conditions[i];
 			if (!condition->m_complete){		//if the condition has not already been completed
 				if (!condition->CheckIfComplete()){		//updates and checks for completion
@@ -50,7 +50,7 @@ bool Quest::UpdateAndCheckIfComplete()
 					}
 					if (m_definition->m_isSequential){
 						//if the quest should be completed in order, unlock the next step in the quest (if there is one)
-						if (i + 1 < m_conditions.size()){
+						if (i + 1 < (int) m_conditions.size()){
 							condition->m_active = false;
 							m_conditions[i + 1]->m_active = true;
 						}
@@ -89,13 +89,13 @@ std::string Quest::GetText()
 
 void Quest::SpeakToGiver()
 {
-	for (int i = 0; i < m_conditions.size(); i++){
+	for (int i = 0; i < (int) m_conditions.size(); i++){
 		VictoryCondition* condition = m_conditions[i];
 		if (!condition->m_complete){
 			if (condition->SpeakToGiver()){
 				//m_currentIndex++;
 				if (m_definition->m_isSequential){
-					if (i + 1 < m_conditions.size()){
+					if (i + 1 < (int) m_conditions.size()){
 						condition->m_active = false;
 						m_conditions[i + 1]->m_active = true;
 					}

@@ -30,8 +30,7 @@ bool WriteBufferToBinaryFile(std::string filePath, const std::vector<unsigned ch
 		//file couldn't be opened.
 		return false;
 	}
-	int c = 0;
-	for (int i = 0; i < buffer.size(); i++)
+	for (int i = 0; i < (int) buffer.size(); i++)
 	{
 		fputc((int) buffer[i], fp);
 	}

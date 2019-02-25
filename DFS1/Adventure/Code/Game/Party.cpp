@@ -14,7 +14,7 @@ Party::Party()
 
 void Party::Update(float ds)
 {
-
+	UNUSED(ds);
 }
 
 void Party::CheckForKilledPlayers()
@@ -38,7 +38,7 @@ void Party::RenderPartyUI(AABB2 renderBox)
 {
 	float height = renderBox.GetHeight();
 	// render each actor, starting with the current player
-	for (int i = 0; i < m_partyMembers.size(); i++){
+	for (int i = 0; i < (int) m_partyMembers.size(); i++){
 		int index = (m_currentPlayerIndex + i) % m_partyMembers.size();			//wrap index	
 		Actor* actor = m_partyMembers[index];
 		RenderPartyMemberUI(actor, renderBox);

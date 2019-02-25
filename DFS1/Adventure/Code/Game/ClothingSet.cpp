@@ -108,7 +108,7 @@ int ClothingSet::GetNumPortraitLayersForSlot(ePortraitSlot slot) const
 
 Texture * ClothingSet::GetPortraitTexture(ePortraitSlot slot, int index) const
 {
-	if (m_portraitLayers[slot].size() > index){
+	if ((int) m_portraitLayers[slot].size() > index){
 		return m_portraitLayers[slot][index]->m_texture;
 	} else {
 		return nullptr;

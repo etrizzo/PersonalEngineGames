@@ -74,9 +74,9 @@ void Village::ConnectResidentsToGraphCharacters()
 {
 	m_villageGraph->SelectCharactersForGraph(m_residents.size());
 	//tier 1 - eventually, pick the best villager for each role
-	for (int i = 0; i < m_villageGraph->m_characters.size(); i++)
+	for (int i = 0; i < (int) m_villageGraph->m_characters.size(); i++)
 	{
-		if (i < m_residents.size())
+		if (i < (int) m_residents.size())
 		{
 			m_residents[i]->AssignStoryCharacter(m_villageGraph->m_characters[i]);
 		}
@@ -107,7 +107,7 @@ void Village::SetResidentDialogues()
 			//check the story tags to see if this character currently has a role
 			TagSet storyTags = m_currentEdge->GetCost()->m_storyTags;
 			std::string residentRole = "";
-			for (int i = 0; i < storyTags.m_tags.size(); i++)
+			for (int i = 0; i < (int) storyTags.m_tags.size(); i++)
 			{
 				if (storyTags.m_tags[i].GetType() == "character" )
 				{
