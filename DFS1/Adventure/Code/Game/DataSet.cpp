@@ -126,7 +126,7 @@ StoryDataDefinition * DataSet::GetRandomOutcomeNode()
 	return m_outcomeNodes[i];
 }
 
-int DataSet::GetActNumberForName(std::string name)
+int DataSet::GetActNumberForName(std::string name) const
 {
 	for (int i = 0; i < (int) m_actsInOrder.size(); i++)
 	{
@@ -137,6 +137,21 @@ int DataSet::GetActNumberForName(std::string name)
 			return -1;
 		}
 	}
+}
+
+int DataSet::GetNumActs() const
+{
+	return (int) m_actsInOrder.size();
+}
+
+int DataSet::GetFinalActNumber() const
+{
+	int maxNum = 0;
+	for (int i = 0; i < (int) m_actsInOrder.size(); i++)
+	{
+		maxNum = Max(maxNum, m_actsInOrder[i].m_number);
+	}
+	return maxNum;
 }
 
 StoryDataDefinition * DataSet::GetOutcomeNodeWithWeights(StoryState * edge, float minFitness)

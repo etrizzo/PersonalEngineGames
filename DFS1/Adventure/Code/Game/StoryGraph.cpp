@@ -48,10 +48,10 @@ void StoryGraph::UpdateNodePositions()
 	for(int i = 0; i < (int) m_graph.m_nodes.size(); i++){
 		StoryNode* node = m_graph.m_nodes[i];
 		if (node == m_startNode){
-			node->m_data->SetPosition(START_NODE_POSITION);
+			//node->m_data->SetPosition(START_NODE_POSITION);
 		}
 		else if (node == m_endNode){
-			node->m_data->SetPosition(END_NODE_POSITION);
+			//node->m_data->SetPosition(END_NODE_POSITION);
 		} else {
 			Vector2 nodeForce = CalculateNodeForces(node);
 			if (nodeForce.GetLengthSquared() > (MIN_DISTANCE_TO_MOVE * MIN_DISTANCE_TO_MOVE)){
@@ -71,14 +71,15 @@ void StoryGraph::RunNodeAdjustments()
 
 
 
-void StoryGraph::HandleInput()
+void StoryGraph::HandleInput(const AABB2& bounds)
 {
+	Vector2 mousePos = g_theInput->GetMouseNormalizedScreenPosition(bounds);
 	if (!g_theInput->IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
 		m_hoveredNode = nullptr;
 		m_hoveredEdge = nullptr;
 		for(StoryNode* node : m_graph.m_nodes){
 			Disc2 nodeBounds = GetNodeBounds(node);
-			if (nodeBounds.IsPointInside(g_theGame->m_normalizedMousePos)){
+			if (nodeBounds.IsPointInside(mousePos)){
 				m_hoveredNode = node;
 				break;
 			}
@@ -86,7 +87,7 @@ void StoryGraph::HandleInput()
 		if (m_hoveredNode == nullptr){
 			for(StoryEdge* edge : m_graph.m_edges){
 				OBB2 edgeBounds = GetEdgeBounds(edge);
-				if (edgeBounds.IsPointInside(g_theGame->m_normalizedMousePos)){
+				if (edgeBounds.IsPointInside(mousePos)){
 					m_hoveredEdge = edge;
 					break;
 				}
@@ -94,7 +95,7 @@ void StoryGraph::HandleInput()
 		}
 	} else {
 		if (m_hoveredNode != nullptr){
-			m_hoveredNode->m_data->m_graphPosition = g_theGame->m_normalizedMousePos;
+			m_hoveredNode->m_data->m_graphPosition = mousePos;
 		}
 	}
 	if (g_theInput->WasMouseButtonJustPressed(MOUSE_BUTTON_LEFT)){
@@ -128,6 +129,11 @@ void StoryGraph::RunGenerationPlotAndDetail(int numPlotNodes, int desiredSize)
 	GenerateSkeleton(numPlotNodes);
 	RunNodeAdjustments();
 	AddDetailNodesToDesiredSize(desiredSize);
+}
+
+void StoryGraph::RunGenerationByActs(int numPairsToAdd)
+{
+
 }
 
 void StoryGraph::GenerateSkeleton(int numPlotNodes)
@@ -289,6 +295,8 @@ void StoryGraph::GenerateStartAndEnd()
 	if (m_startNode == nullptr && m_endNode == nullptr){
 		AddStart(new StoryNode(new StoryData("START")));
 		AddEnd(new StoryNode(new StoryData("END")));
+		StoryState* startingEdge = new StoryState(1.f, m_characters.size(), this);
+		startingEdge->m_possibleActRange = IntRange(0, m_dataSet->GetFinalActNumber());
 		AddEdge(m_startNode, m_endNode, new StoryState(1.f, m_characters.size(), this));
 	}
 	
@@ -398,8 +406,8 @@ bool StoryGraph::FindEdgeForNewEventNodeAndAdd(StoryNode* newPlotNode)
 	//walk along story until you can place the node
 	std::queue<StoryEdge*> openEdges;
 	//openEdges.push(m_startNode->m_outboundEdges[0]);
-	StoryEdge* startEdge = GetEdgeForNewEventNode();
-	if (startEdge->GetCost()->m_isLocked){
+	StoryEdge* startEdge = GetEdgeForNewEventNode(newPlotNode);
+	if (startEdge == nullptr || startEdge->GetCost()->m_isLocked){
 		return false;
 	}
 	openEdges.push(startEdge);
@@ -1057,9 +1065,8 @@ Vector2 StoryGraph::CalculateNodePush(StoryNode * node) const
 	return average;
 }
 
-void StoryGraph::RenderGraph() const
+void StoryGraph::RenderGraph(const AABB2& bounds) const
 {
-	AABB2 bounds = g_theGame->GetUIBounds();
 	//std::string graphText = g_theGame->m_graph.ToString();
 	g_theRenderer->DrawTextInBox2D(m_pathString, bounds, Vector2(0.f, 1.f), .01f, TEXT_DRAW_SHRINK_TO_FIT);
 
@@ -1072,12 +1079,11 @@ void StoryGraph::RenderGraph() const
 	}
 	RenderPath();
 
-	RenderDebugInfo();
+	RenderDebugInfo(bounds);
 }
 
-void StoryGraph::RenderDebugInfo() const
+void StoryGraph::RenderDebugInfo(const AABB2& bounds) const
 {
-	AABB2 bounds = g_theGame->GetUIBounds();
 	AABB2 selectedBox = bounds.GetPercentageBox(Vector2(.01f, .7f), Vector2(.2f, .99f));
 	AABB2 hoveredBox = bounds.GetPercentageBox(Vector2(.8f, .7f), Vector2(.99f, .99f));
 	if (m_selectedEdge != nullptr){
@@ -1443,19 +1449,38 @@ std::vector<Character*> StoryGraph::GetCharactersForNode(StoryDataDefinition* no
 	return std::vector<Character*>();
 }
 
-StoryEdge * StoryGraph::GetEdgeForNewEventNode() const
+StoryEdge * StoryGraph::GetEdgeForNewEventNode(StoryNode* newNode, float minFitness) const
 {
-	int numEdges = m_graph.m_edges.size();
-	StoryEdge* eventEdge = nullptr;
-	while (eventEdge == nullptr){
-		eventEdge = m_graph.m_edges[GetRandomIntLessThan(numEdges)];
-		if (eventEdge->GetStart()->m_data->m_type == PLOT_NODE && eventEdge->GetEnd()->m_data->m_type == DETAIL_NODE){
-			//we are in between an event node and it's subsequent outcome node
-			//reroll
-			eventEdge = nullptr;
+	//pure random edges
+	//int numEdges = m_graph.m_edges.size();
+	//StoryEdge* eventEdge = nullptr;
+	//while (eventEdge == nullptr){
+	//	eventEdge = m_graph.m_edges[GetRandomIntLessThan(numEdges)];
+	//	if (eventEdge->GetStart()->m_data->m_type == PLOT_NODE && eventEdge->GetEnd()->m_data->m_type == DETAIL_NODE){
+	//		//we are in between an event node and it's subsequent outcome node
+	//		//reroll
+	//		eventEdge = nullptr;
+	//	}
+	//}
+
+	std::vector<StoryEdge*> fitEdges = std::vector<StoryEdge*>();
+
+	//weighted
+	for (StoryEdge* edge : m_graph.m_edges)
+	{
+		float weight = m_dataSet->CalculateEdgeFitnessForData(edge->GetCost(), newNode->m_data->m_definition);
+		if (weight > minFitness){
+			fitEdges.push_back(edge);
 		}
 	}
-	return eventEdge;
+
+	if (fitEdges.size() == 0)
+	{
+		return nullptr;
+	}
+
+	int fitIndex = GetRandomIntLessThan((int) fitEdges.size());
+	return fitEdges[fitIndex];
 }
 
 

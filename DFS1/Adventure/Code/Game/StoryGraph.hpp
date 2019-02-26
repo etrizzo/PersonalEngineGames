@@ -45,8 +45,8 @@ public:
 	=====================
 	*/
 
-	void RenderGraph() const;
-	void RenderDebugInfo() const;
+	void RenderGraph(const AABB2& screenBounds) const;
+	void RenderDebugInfo(const AABB2& screenBounds) const;
 	void UpdateNodePositions();
 	void RunNodeAdjustments();
 	void RenderPath() const;
@@ -59,7 +59,7 @@ public:
 	=====================
 	*/
 
-	void HandleInput();
+	void HandleInput(const AABB2& bounds);
 
 	/*
 	=====================
@@ -68,6 +68,7 @@ public:
 	*/
 	void RunGenerationPairs(int numPairs);
 	void RunGenerationPlotAndDetail(int numPlotNodes = 3, int desiredSize = 10);
+	void RunGenerationByActs(int numPairsToAdd);		//targets edges with the largest act range
 	
 
 	void GenerateSkeleton(int numPlotNodes);
@@ -169,7 +170,7 @@ protected:
 	StoryNode* m_endNode							= nullptr;
 
 	//finds a good spot for a new pair of nodes.
-	StoryEdge* GetEdgeForNewEventNode()	const;
+	StoryEdge* GetEdgeForNewEventNode(StoryNode* newNode,  float minFitness = 2.f)	const;
 
 	DirectedGraph<StoryData*, StoryState*> m_graph	= DirectedGraph<StoryData*, StoryState*>();
 	

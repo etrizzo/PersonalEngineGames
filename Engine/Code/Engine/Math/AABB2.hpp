@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Math/Vector2.hpp"
 #include "Engine/Math/MathUtils.hpp"
+#include <string>
 
 
 class AABB2
@@ -58,6 +59,8 @@ public:
 	Vector2 GetClosestPointOnEdge(Vector2 point) const;
 
 	float GetAspect() const;
+
+	std::string ToString() const;
 
 	//Operators
 	void operator+=(const Vector2& translation);

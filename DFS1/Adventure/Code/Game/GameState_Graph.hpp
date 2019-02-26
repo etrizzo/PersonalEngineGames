@@ -30,7 +30,7 @@ public:
 	Vector2 m_cameraPosition = Vector2::ZERO;
 
 private:
-	void RenderGraph() const;
+	void RenderGraph(const AABB2& bounds) const;
 	void UpdateGraph();
 
 	void UpdateCamera();

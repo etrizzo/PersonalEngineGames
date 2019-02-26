@@ -397,6 +397,12 @@ float AABB2::GetAspect() const
 	return (GetWidth() / GetHeight());
 }
 
+std::string AABB2::ToString() const
+{
+	std::string str = Stringf("(%3.2f, %3.2f) -> (%3.2f, %3.2f)", mins.x, mins.y, maxs.x, maxs.y);
+	return str;
+}
+
 void AABB2::operator+=(const Vector2 & translation)
 {
 	maxs+=translation;

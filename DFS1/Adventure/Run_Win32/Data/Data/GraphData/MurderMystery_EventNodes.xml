@@ -28,9 +28,13 @@
 			<EffectSet chance="default">
 				<TagChange character="0" tag = "isGossip" target="true" />
 				<TagChange character="1" tag = "isGossip" target="true" />
+
+				<TagChange tag="Gossiper" target="*0*" type="character" effectType="story"/>
+				<TagChange tag="GossipSubject" target="*2*" type="character" effectType="story"/>
 			</EffectSet>
 		</StoryEffects>
 	</EventNode>
+
 
 	<EventNode name="TheMurder" progression="time" actname="Introduction" actRange="1">
 		<!-- *[X]* indicates a character name who should be replaced at rutntime -->

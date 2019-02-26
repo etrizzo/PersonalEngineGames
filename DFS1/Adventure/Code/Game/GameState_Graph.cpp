@@ -41,8 +41,9 @@ void GameState_Graph::Update(float ds)
 void GameState_Graph::RenderUI()
 {
 	AABB2 bounds = SetGraphCamera();
-	RenderGraph();
+	RenderGraph(bounds);
 	g_theRenderer->DrawTextInBox2D(m_graphName, bounds, Vector2::ALIGN_CENTER_TOP, bounds.GetHeight() * .03f);
+	g_theRenderer->DrawTextInBox2D(bounds.ToString(), bounds, Vector2::ONE, bounds.GetHeight() * .02f);
 	
 	
 }
@@ -94,7 +95,7 @@ void GameState_Graph::HandleInput()
 		}
 	}
 
-	m_currentGraph->HandleInput();
+	m_currentGraph->HandleInput(m_graphCamera->GetBounds());
 
 	HandleCameraInput();
 }
@@ -108,13 +109,13 @@ AABB2 GameState_Graph::SetGraphCamera()
 }
 
 
-void GameState_Graph::RenderGraph() const
+void GameState_Graph::RenderGraph(const AABB2& bounds) const
 {
 	g_theRenderer->ClearScreen(RGBA::BLACK);
 	//AABB2 bounds = g_theGame->GetUIBounds();
 	//std::string graphText = m_currentGraph.ToString();
 	//g_theRenderer->DrawTextInBox2D(graphText, bounds, Vector2(0.f, 1.f), .01f, TEXT_DRAW_SHRINK_TO_FIT);
-	m_currentGraph->RenderGraph();
+	m_currentGraph->RenderGraph(bounds);
 
 	if (m_encounterMap != nullptr){
 		for (Village* village : m_encounterMap->m_allVillages)

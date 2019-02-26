@@ -26,6 +26,7 @@
 	</Tags>
 </Character>
 
+<!--
 <Character name="Rev. Green">
 	<Tags>
 		<Tag tag="isAlive" value="true" type="bool"/>
@@ -37,7 +38,7 @@
 		<Tag tag="isAlive" value="true" type="bool"/>
 	</Tags>
 </Character>
-<!--
+
 -->
 
 <!--

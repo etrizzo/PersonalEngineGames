@@ -20,7 +20,9 @@ public:
 
 	StoryDataDefinition* GetRandomEventNode();
 	StoryDataDefinition* GetRandomOutcomeNode();
-	int GetActNumberForName(std::string name);
+	int GetActNumberForName(std::string name) const;
+	int GetNumActs() const;
+	int GetFinalActNumber() const;
 
 	StoryDataDefinition* GetOutcomeNodeWithWeights(StoryState* edge, float minFitness = 2.f);
 	StoryDataDefinition* GetEventNodeWithWeights(StoryState* edge, float minFitness = 2.f);

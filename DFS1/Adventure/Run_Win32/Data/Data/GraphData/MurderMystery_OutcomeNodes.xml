@@ -1,9 +1,50 @@
-	
+	<OutcomeNode name="GossipOutcome" progression="choice" actRange="1">
+		<Characters>
+			<Character id = "*0*" name="gossiper"/>
+			<Character id = "*1*" name="gossipsubject"/>
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<StoryRequirement tag="Gossiper" />  <!-- name matches the character labeled "Investigator"  in the story state -->
+				<Requirement tag="isAlive" target="true" />
+			</Character>
+			<Character index="1">
+				<StoryRequirement tag="GossipSubject" />
+				<Requirement tag="isAlive" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<Actions>
+			<Action text="*1* overhears *0* gossiping about them!" chance=".5">
+				<EffectSet>
+					<TagChange character="*1*" tag="hasMotive" target="true" />
+					<TagChange effectType="story" tag="isDisliked" target="*0*" type="character"/>
+				</EffectSet>
+			</Action>
+
+			<Action text="*1* doesn't notice the gossiping." chance=".5">
+				<EffectSet>
+					
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="Gossiper" target="none" type="character" effectType="story"/>
+				<TagChange tag="GossipSubject" target="none" type="character" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+
+	</OutcomeNode>
+
+
 	<OutcomeNode name="GeneratesSuspicion" chanceToPlace=".3" progression="choice" actRange="2">
 		<Characters>
 			<Character id = "*0*" name="investigator"/>
 			<Character id = "*1*" name="suspect"/>
-			<Character id = "*2*" name="onlooker" />
+
 		</Characters>
 
 		<CharacterRequirements>
