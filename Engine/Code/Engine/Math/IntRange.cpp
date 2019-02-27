@@ -13,6 +13,11 @@ IntRange::IntRange(int initialMinMax)
 	max = initialMinMax;
 }
 
+int IntRange::GetSize() const
+{
+	return max - min;
+}
+
 int IntRange::GetRandomInRange() const
 {
 	return GetRandomIntInRange(min, max);

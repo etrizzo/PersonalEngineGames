@@ -1,4 +1,5 @@
 #include "DataSet.hpp"
+#include "Game/ActionDefinition.hpp"
 
 std::map<std::string, DataSet*> DataSet::s_dataSets = std::map<std::string, DataSet*>();
 
@@ -87,6 +88,10 @@ void DataSet::ReadEventNodesFromXML(std::string filePath)
 		StoryDataDefinition* data = new StoryDataDefinition( PLOT_NODE);
 		data->InitFromXML(nodeElement);
 		m_eventNodes.push_back(data);
+		if (data->IsEnding())
+		{
+			m_actEndingNodes.push_back(data);
+		}
 	}
 }
 
@@ -289,6 +294,27 @@ float DataSet::CalculateEdgeFitnessForData(StoryState * edge, StoryDataDefinitio
 
 	//if no characters violated requirements, return true.
 	return fitness;
+}
+
+float DataSet::GetNodeLikelihoodToLeadToEnding(StoryDataDefinition * nodeDef)
+{
+	//if one of your actions leads to an ending, return 100% likelihood
+	if (nodeDef->IsEnding())
+	{
+		return 1.f; 
+	}
+
+	//else, look at all end conditions and see what percentage of requirements your effects would meet
+	for (StoryDataDefinition* ending : m_actEndingNodes)
+	{
+		//if the node could end your act,
+		if (DoRangesOverlap(ending->m_actRange, nodeDef->m_actRange)) 
+		{
+			//calculate what percentage of the ending's requirements your effects meet
+			int totalRequirements = 0;
+			ending->m_storyReqs.
+		}
+	}
 }
 
 DataSet * DataSet::GetDataSet(std::string dataSetName)

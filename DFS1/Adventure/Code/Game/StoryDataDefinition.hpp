@@ -24,6 +24,7 @@ public:
 
 	std::string GetName() const;
 	std::string ToString() const;
+	bool IsEnding() const;
 
 	//state utilities
 	
@@ -61,6 +62,8 @@ public:
 
 	float m_chanceToPlaceData = 1.f;
 	bool m_shouldLockIncomingEdge = false;
+
+	float m_likelihoodToLeadToEnding = 0.f;		//calculated AFTER all nodes are read by the data set
 
 	//test bits
 	std::string m_name;

@@ -36,8 +36,8 @@
 	</EventNode>
 
 
-	<EventNode name="TheMurder" progression="time" actname="Introduction" actRange="1">
-		<!-- *[X]* indicates a character name who should be replaced at rutntime -->
+	<EventNode name="TheMurder" progression="time" actname="Introduction" actRange="1" endsAct="true">
+		<!-- *[X]* indicates a character name who should be replaced at runtime -->
 		<Action text="A man is murdered." />
 		<Characters>
 
@@ -47,7 +47,7 @@
 		</CharacterRequirements>
 
 		<StoryRequirements>
-			<Requirement tag="murderOcurred" target="false" />
+			<Requirement tag="murderOcurred" target="false" weight="5"/>
 		</StoryRequirements>
 		<StoryEffects>
 			<EffectSet chance="default">

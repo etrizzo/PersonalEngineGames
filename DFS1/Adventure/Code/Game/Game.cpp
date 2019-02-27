@@ -613,10 +613,10 @@ void Game::GenerateGraph()
 	bool generated = false;
 	while (!generated){
 		ClearGraph();
-		m_graph->RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
-		m_graph->RunGenerationByActs();
+		//m_graph->RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
+		m_graph->RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
 		generated = true;
-		//generated = m_graph->AddEndingsToEachBranch();
+		generated = m_graph->AddEndingsToGraph();
 		
 	}
 }

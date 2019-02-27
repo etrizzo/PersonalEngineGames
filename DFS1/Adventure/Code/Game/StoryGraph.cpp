@@ -111,8 +111,6 @@ void StoryGraph::HandleInput(const AABB2& bounds)
 void StoryGraph::RunGenerationPairs(int numPairs)
 {
 	Clear();
-
-	//m_graph.RunGeneration(NUM_PLOT_NODES_TO_GENERATE,NUM_DETAIL_NODES_TO_GENERATE + NUM_PLOT_NODES_TO_GENERATE);
 	GenerateStartAndEnd();
 	//generate node pairs
 	for (int i = 0; i < numPairs; i++){
@@ -133,7 +131,16 @@ void StoryGraph::RunGenerationPlotAndDetail(int numPlotNodes, int desiredSize)
 
 void StoryGraph::RunGenerationByActs(int numPairsToAdd)
 {
-
+	Clear();
+	GenerateStartAndEnd();
+	for (int i = 0; i < numPairsToAdd; i++)
+	{
+		StoryEdge* edgeWithLargeRange = GetEdgeWithLargestActRange();
+		StoryNode* newEventNode = AddEventNodeAtEdge(edgeWithLargeRange);
+		if (newEventNode != nullptr) {
+			AddOutcomeNodesToEventNode(newEventNode);
+		}
+	}
 }
 
 void StoryGraph::GenerateSkeleton(int numPlotNodes)
@@ -297,7 +304,7 @@ void StoryGraph::GenerateStartAndEnd()
 		AddEnd(new StoryNode(new StoryData("END")));
 		StoryState* startingEdge = new StoryState(1.f, m_characters.size(), this);
 		startingEdge->m_possibleActRange = IntRange(0, m_dataSet->GetFinalActNumber());
-		AddEdge(m_startNode, m_endNode, new StoryState(1.f, m_characters.size(), this));
+		AddEdge(m_startNode, m_endNode, startingEdge);
 	}
 	
 }
@@ -612,6 +619,13 @@ bool StoryGraph::AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToA
 	return added;
 }
 
+bool StoryGraph::AddEndingsToGraph(int maxTries)
+{
+	AddEndingsToEachBranch(maxTries);
+	RemoveBranchesWithNoEnding();
+	return !CheckForInvalidGraph();
+}
+
 bool StoryGraph::AddEndingsToEachBranch(int maxTries)
 {
 	bool allPathsHaveEndings = false;
@@ -643,8 +657,7 @@ bool StoryGraph::AddEndingsToEachBranch(int maxTries)
 		
 	}
 
-	RemoveBranchesWithNoEnding();
-	return !CheckForEmptyGraph();
+	return true;
 }
 
 void StoryGraph::RemoveBranchesWithNoEnding()
@@ -702,9 +715,10 @@ void StoryGraph::RemoveBranchesWithNoEnding()
 	}
 }
 
-bool StoryGraph::CheckForEmptyGraph()
+bool StoryGraph::CheckForInvalidGraph()
 {
-	if (m_graph.m_nodes.size() <= 1){
+	//if there are no nodes or no endings
+	if (m_graph.m_nodes.size() <= 1 || m_endNode->m_inboundEdges.size() < 1){
 		return true;
 	} else {
 		return false;
@@ -1468,9 +1482,13 @@ StoryEdge * StoryGraph::GetEdgeForNewEventNode(StoryNode* newNode, float minFitn
 	//weighted
 	for (StoryEdge* edge : m_graph.m_edges)
 	{
-		float weight = m_dataSet->CalculateEdgeFitnessForData(edge->GetCost(), newNode->m_data->m_definition);
-		if (weight > minFitness){
-			fitEdges.push_back(edge);
+		// if the edge isn't connecting an event and outcome node (which are married together)
+		if (!(edge->GetStart()->m_data->m_type == PLOT_NODE && edge->GetEnd()->m_data->m_type == DETAIL_NODE)) {
+			float weight = m_dataSet->CalculateEdgeFitnessForData(edge->GetCost(), newNode->m_data->m_definition);
+			//if it meets the requirements of a good edge
+			if (weight > minFitness) {
+				fitEdges.push_back(edge);
+			}
 		}
 	}
 
@@ -1481,6 +1499,21 @@ StoryEdge * StoryGraph::GetEdgeForNewEventNode(StoryNode* newNode, float minFitn
 
 	int fitIndex = GetRandomIntLessThan((int) fitEdges.size());
 	return fitEdges[fitIndex];
+}
+
+StoryEdge * StoryGraph::GetEdgeWithLargestActRange() const
+{
+	StoryEdge* largestEdge = nullptr;
+	int largestRange = 0;
+	for (StoryEdge* edge : m_graph.m_edges)
+	{
+		if (edge->GetCost()->m_possibleActRange.GetSize() > largestRange)
+		{
+			largestEdge = edge;
+			largestRange = edge->GetCost()->m_possibleActRange.GetSize();
+		}
+	}
+	return largestEdge;
 }
 
 

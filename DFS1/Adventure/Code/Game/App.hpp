@@ -69,6 +69,8 @@ void CommandResetGraph(Command& cmd);
 void CommandGenerateSkeleton(Command& cmd);
 void CommandAddDetails(Command& cmd);
 void CommandGeneratePairs(Command& cmd);
+void CommandAddEndings(Command& cmd);
+void CommandTrimBadBranches(Command& cmd);
 
 void CommandReadDefaultData(Command& cmd);
 void CommandReadMurderData(Command& cmd);

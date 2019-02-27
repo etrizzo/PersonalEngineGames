@@ -186,6 +186,17 @@ std::string StoryDataDefinition::ToString() const
 	return text;
 }
 
+bool StoryDataDefinition::IsEnding() const
+{
+	for (ActionDefinition* action : m_actions)
+	{
+		if (action->m_endsAct) {
+			return true;
+		}
+	}
+	return false;
+}
+
 //void StoryDataDefinition::UpdateState(EffectSet * effects)
 //{
 //	for (StoryEdge* edge 

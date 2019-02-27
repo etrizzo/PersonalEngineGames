@@ -12,6 +12,8 @@ public:
 	int min;
 	int max;
 
+	int GetSize() const;
+
 	int GetRandomInRange() const;
 	void SetFromText(const char* text);
 	bool IsIntInRange(int isInRange) const;

@@ -87,10 +87,12 @@ public:
 
 	//looks backwards from the end node and adds nodes to edges that don't have an end.
 	// returns true if successful, returns false if the graph was unsalvagable (indicating that whoever called this should regenerate).
+	bool AddEndingsToGraph(int maxTries = 20);
+
 	bool AddEndingsToEachBranch(int maxTries = 20);
 	void RemoveBranchesWithNoEnding();
 	//if no paths had an ending and the graph is now just an end node, this will return true
-	bool CheckForEmptyGraph();
+	bool CheckForInvalidGraph();
 
 	//by default, adds 1/4 * (numNodes) branches
 	void IdentifyBranchesAndAdd(int numBranchesToAdd = -1);
@@ -171,6 +173,9 @@ protected:
 
 	//finds a good spot for a new pair of nodes.
 	StoryEdge* GetEdgeForNewEventNode(StoryNode* newNode,  float minFitness = 2.f)	const;
+
+	//find the edge in the graph right now which has the largest act range
+	StoryEdge* GetEdgeWithLargestActRange() const;
 
 	DirectedGraph<StoryData*, StoryState*> m_graph	= DirectedGraph<StoryData*, StoryState*>();
 	

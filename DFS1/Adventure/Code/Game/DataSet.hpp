@@ -17,6 +17,8 @@ public:
 	std::vector<StoryDataDefinition*> m_outcomeNodes	= std::vector<StoryDataDefinition*>();
 	std::vector<Act> m_actsInOrder						= std::vector<Act>();
 
+	//for reference - all nodes that have an act-ending action
+	std::vector<StoryDataDefinition*> m_actEndingNodes	= std::vector<StoryDataDefinition*>();
 
 	StoryDataDefinition* GetRandomEventNode();
 	StoryDataDefinition* GetRandomOutcomeNode();
@@ -27,6 +29,8 @@ public:
 	StoryDataDefinition* GetOutcomeNodeWithWeights(StoryState* edge, float minFitness = 2.f);
 	StoryDataDefinition* GetEventNodeWithWeights(StoryState* edge, float minFitness = 2.f);
 	float CalculateEdgeFitnessForData(StoryState* edge, StoryDataDefinition* data);
+
+	float GetNodeLikelihoodToLeadToEnding(StoryDataDefinition* nodeDef);
 
 
 	static std::map<std::string, DataSet*> s_dataSets;

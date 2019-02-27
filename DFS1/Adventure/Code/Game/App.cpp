@@ -172,6 +172,8 @@ void App::RegisterCommands()
 	CommandRegister("set_branch_chance", CommandSetBranchChance, "Sets the chance to branch nodes on failure to place node.", "set_branch_chance <float 0-1>");
 
 	CommandRegister("generate_pairs", CommandGeneratePairs, "Generates a plot node and outcome node as a pair", "generate_pairs <numPairs>");
+	CommandRegister("add_endings", CommandAddEndings, "Adds ending nodes to the graph");
+	CommandRegister("remove_bad_endings", CommandTrimBadBranches, "Removes branches with no ending from the graph.");
 	CommandRegister("reset_graph", CommandResetGraph, "resets the graph to start->end");
 
 	CommandRegister("read_default_data", CommandReadDefaultData, "reads the default data set into the graph and resets it.");
@@ -452,6 +454,18 @@ void CommandGeneratePairs(Command & cmd)
 		ConsolePrintf("Generating pairs with seed %i", randoSeed);
 	}
 	g_theGame->GenerateNodePairs(numToGenerate);
+}
+
+void CommandAddEndings(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->m_graph->AddEndingsToEachBranch();
+}
+
+void CommandTrimBadBranches(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->m_graph->RemoveBranchesWithNoEnding();
 }
 
 void CommandReadDefaultData(Command & cmd)
