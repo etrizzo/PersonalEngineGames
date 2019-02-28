@@ -117,7 +117,8 @@ public:
 
 private:
 	float m_fps = 60.f;
-	void LoadTileDefinitions();
+	void ReadBlocksFromFile(std::string blockXMLFile);
+
 
 	void RenderGame();
 	void RenderUI();

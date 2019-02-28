@@ -3,6 +3,7 @@
 #include "Game/World.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Game/Chunk.hpp"
+#include "Game/BlockDefinition.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 
 Player::Player(GameState_Playing* playState, Vector3 position)
@@ -78,6 +79,26 @@ void Player::HandleInput()
 		m_playState->m_world->DebugDeactivateAllChunks();
 	}
 
+
+	if (g_theInput->WasKeyJustPressed(BRACKET_SQUARE_RIGHT))
+	{
+		m_currentPlaceBlockType = (m_currentPlaceBlockType + 1) % BlockDefinition::s_blockDefinitions.size();
+		if (m_currentPlaceBlockType == BLOCK_AIR)
+		{
+			//wrap to 1 instead of air
+			m_currentPlaceBlockType = 1U;
+		}
+	}
+
+	if (g_theInput->WasKeyJustPressed(BRACKET_SQUARE_LEFT))
+	{
+		m_currentPlaceBlockType = (m_currentPlaceBlockType + BlockDefinition::s_blockDefinitions.size() - 1) % BlockDefinition::s_blockDefinitions.size();
+		if (m_currentPlaceBlockType == BLOCK_AIR)
+		{
+			//wrap to highest id instead of air (Note: even if s_blockDefinitions isn't ordered by ID this should still be the highest ID we have.
+			m_currentPlaceBlockType = BlockDefinition::s_blockDefinitions.size() - 1;
+		}
+	}
 }
 
 void Player::Damage()
@@ -191,7 +212,7 @@ void Player::HandleInputDigPlace()
 	{
 		//dig the block we're looking at
 		if (m_digRaycast.DidImpact()){
-			m_digRaycast.m_impactBlock.m_chunk->SetBlockType(m_digRaycast.m_impactBlock.m_blockIndex, BLOCK_AIR);
+			m_digRaycast.m_impactBlock.m_chunk->DigBlock(m_digRaycast.m_impactBlock.m_blockIndex, BLOCK_AIR);
 		}
 	}
 
@@ -201,7 +222,7 @@ void Player::HandleInputDigPlace()
 		if (m_digRaycast.DidImpact()){
 			Vector3 placePosition = m_digRaycast.m_impactBlock.GetBlockCenterWorldPosition() + m_digRaycast.m_impactNormal;
 			BlockLocator placeBlock = m_playState->m_world->GetBlockLocatorAtWorldPosition(placePosition);
-			placeBlock.m_chunk->SetBlockType(placeBlock.m_blockIndex, BLOCK_DIAMOND);
+			placeBlock.m_chunk->PlaceBlock(placeBlock.m_blockIndex, m_currentPlaceBlockType);
 		}
 	}
 }

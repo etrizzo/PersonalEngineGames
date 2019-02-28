@@ -52,6 +52,10 @@ void Chunk::CreateMesh()
 	m_isGPUMeshDirty = false;
 }
 
+void Chunk::InitializeLighting()
+{
+}
+
 void Chunk::SaveToDisk() const
 {
 	if (!m_isSavedOrUntouched)
@@ -79,7 +83,17 @@ bool Chunk::DoesChunkHaveMesh() const
 	return m_gpuMesh != nullptr;
 }
 
-void Chunk::SetBlockType(int blockIndex, eBlockType newType)
+void Chunk::DigBlock(int blockIndex, uchar newType)
+{
+	SetBlockType(blockIndex, newType);
+}
+
+void Chunk::PlaceBlock(int blockIndex, uchar newType)
+{
+	SetBlockType(blockIndex, newType);
+}
+
+void Chunk::SetBlockType(int blockIndex, uchar newType)
 {
 	m_blocks[blockIndex].SetType(newType);
 	m_isGPUMeshDirty = true;
@@ -186,6 +200,9 @@ Block & Chunk::GetBlock(int blockIndex)
 
 void Chunk::GenerateBlocks()
 {
+	uchar stoneBlock = BlockDefinition::GetBlockIDFromName("Stone");
+	uchar grassBlock = BlockDefinition::GetBlockIDFromName("Grass");
+	uchar snowBlock = BlockDefinition::GetBlockIDFromName("Snow");
 	for (int z = 0; z < CHUNK_SIZE_Z; z++)
 	{
 		for (int y = 0; y < CHUNK_SIZE_Y; y++)
@@ -203,9 +220,9 @@ void Chunk::GenerateBlocks()
 				if ((float) z < heightMapped )
 				{
 					if (z < heightMapped - 3.f){
-						m_blocks[blockIndex].SetType(BLOCK_STONE);
+						m_blocks[blockIndex].SetType(stoneBlock);
 					} else {
-						m_blocks[blockIndex].SetType(BLOCK_GRASS);
+						m_blocks[blockIndex].SetType(grassBlock);
 					}
 				} else {
 					m_blocks[blockIndex].SetType(BLOCK_AIR);
@@ -267,7 +284,7 @@ void Chunk::ReadBufferAsRLE(const std::vector<unsigned char>& buffer)
 		//add blocks to the chunk according to type and run length
 		for (int i = 0; i < runLength; i++ )
 		{
-			m_blocks[blocksAdded].SetType((eBlockType) type);
+			m_blocks[blocksAdded].SetType((uchar) type);
 			blocksAdded++;
 		}
 	}

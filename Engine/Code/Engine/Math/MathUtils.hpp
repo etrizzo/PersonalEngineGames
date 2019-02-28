@@ -136,17 +136,17 @@ bool IsPointInConicSector2D(const Vector2& point, const Vector2& centerPoint, co
 // BITFLAG UTILS
 //---------------
 
-bool AreBitsSet(unsigned char bitFlags8, unsigned char flagsToCheck);
+bool AreBitsSet(unsigned char bitFlags8, const unsigned char flagsToCheck);
 
-bool AreBitsSet( unsigned int bitFlags32, unsigned int flagsToCheck );
+bool AreBitsSet( unsigned int bitFlags32, const unsigned int flagsToCheck );
 
-void SetBits( unsigned char& bitFlags8, unsigned char flagsToSet );
+void SetBits( unsigned char& bitFlags8, const unsigned char flagsToSet );
 
-void SetBits( unsigned int& bitFlags32, unsigned int flagsToSet );
+void SetBits( unsigned int& bitFlags32, const unsigned int flagsToSet );
 
-void ClearBits( unsigned char& bitFlags8, unsigned char flagToClear );
+void ClearBits( unsigned char& bitFlags8, const unsigned char flagToClear );
 
-void ClearBits( unsigned int& bitFlags32, unsigned int flagToClear );
+void ClearBits( unsigned int& bitFlags32, const unsigned int flagToClear );
 
 
 

@@ -15,6 +15,7 @@ public:
 
 	void LoadOrGenerateBlocks();
 	void CreateMesh();
+	void InitializeLighting();
 
 	void SaveToDisk() const;
 
@@ -22,8 +23,10 @@ public:
 	bool ShouldChunkRebuildMesh() const;
 	bool DoesChunkHaveMesh() const;
 
-	//sets a block type and dirties the mesh
-	void SetBlockType(int blockIndex, eBlockType newType);
+	//wrapper functions for setblocktype that also does the lighting stuff we need.
+	void DigBlock(int blockIndex, uchar newType = BLOCK_AIR);
+	void PlaceBlock(int blockIndex, uchar newType);
+	
 
 	bool SetMeshDirty() { m_isGPUMeshDirty = true; };
 
@@ -37,6 +40,7 @@ public:
 	static std::string GetChunkFileFormatForChunkCoords(const IntVector2& chunkCoords);
 	
 	int GetBlockIndexFromWorldPosition(const Vector3& worldPos) const;
+	Vector3 GetCenterPointForBlockInWorldCoordinates(int blockIndex);
 
 	AABB3 GetBounds() const;
 	Block& GetBlock(int blockIndex);
@@ -78,7 +82,9 @@ private:
 	//does all checks for HSR and air blocks and stuff and adds it to the cpuMesh
 	void AddVertsForBlockAtIndex(int blockIndex);
 
-	Vector3 GetCenterPointForBlockInWorldCoordinates(int blockIndex);
+
+	//sets a block type and dirties the mesh
+	void SetBlockType(int blockIndex, uchar newType);
 
 };
 

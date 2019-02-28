@@ -2,6 +2,16 @@
 #include "Engine/Input/XboxController.hpp"
 #include "Engine/Input/Mouse.hpp"
 
+
+//input keys
+#define BRACKET_SQUARE_LEFT (VK_OEM_4)
+#define BRACKET_SQUARE_RIGHT (VK_OEM_6)
+#define PERIOD (VK_OEM_PERIOD);
+#define COMMA (VK_OEM_COMMA);
+#define PLUS (VK_OEM_PLUS);
+#define MINUS (VK_OEM_MINUS);
+
+
 class InputSystem
 {
 
@@ -44,7 +54,8 @@ public:
 
 	void HandleMouseButton(eMouseButtonAction wparam);
 
-	
+	bool IsShiftDown() const;
+	bool IsControlDown() const;
 
 };
 

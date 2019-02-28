@@ -89,6 +89,18 @@ void GameState_Playing::RenderGame()
 void GameState_Playing::RenderUI()
 {
 	AABB2 bounds = g_theGame->SetUICamera();
+
+	BlockDefinition* playerPlaceBlock = BlockDefinition::GetBlockDefinitionFromID(m_player->m_currentPlaceBlockType);
+	AABB2 blockUI = bounds.GetPercentageBox(.95f, .01f, .99f, .05f);
+	blockUI.TrimToSquare();
+
+	float padding = bounds.GetHeight() * .005f;
+	blockUI.AddPaddingToSides(padding, padding);
+	g_theRenderer->DrawAABB2(blockUI, RGBA::GRAY.GetColorWithAlpha(200));
+	g_theRenderer->DrawAABB2Outline(blockUI, RGBA::WHITE);
+	blockUI.AddPaddingToSides(-padding, -padding);
+
+	g_theRenderer->DrawTexturedAABB2(blockUI, *g_blockSpriteSheet->GetTexture(), playerPlaceBlock->m_sideUVs.mins, playerPlaceBlock->m_sideUVs.maxs, RGBA::WHITE);
 }
 
 void GameState_Playing::HandleInput()

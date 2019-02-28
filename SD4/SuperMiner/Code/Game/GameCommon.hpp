@@ -14,10 +14,7 @@
 #include "Engine/Renderer/Material.hpp"
 #include "Game/Block.hpp"
 
-#define SMALL_VALUE .05f
-#define MAX_STEPS 16
-
-const int TILE_WIDTH = 1;
+typedef unsigned char uchar;
 
 class Renderer;
 class InputSystem;

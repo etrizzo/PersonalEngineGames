@@ -66,7 +66,7 @@
 #define UNIMPLEMENTED()  TODO( "IMPLEMENT: " QUOTE(__FILE__) " (" QUOTE(__LINE__) ")" ); GUARANTEE_RECOVERABLE(0, "UNIMPLEMENTED");
 
 
-
+//networking
 #define INVALID_PACKET_ACK (0xffff)
 #define INVALID_RELIABLE_ID (0xffff)
 #define INVALID_CONNECTION_INDEX (0xff)

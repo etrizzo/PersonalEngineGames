@@ -24,7 +24,7 @@ World::~World()
 		chunksToDeactivate.push_back(chunkPair.second);
 	}
 
-	for (int i = 0; i < chunksToDeactivate.size(); i++)
+	for (int i = 0; i < (int) chunksToDeactivate.size(); i++)
 	{
 		DeactivateChunk(chunksToDeactivate[i]);
 	}
@@ -70,7 +70,6 @@ void World::ActivateChunk(const IntVector2& chunkCoords)
 	//1. New Chunk
 	Chunk* newChunk = new Chunk(chunkCoords);			//create
 	//2. Generate or load
-	TODO("Load chunks from disk");
 	newChunk->LoadOrGenerateBlocks();							//generate blocks
 
 	//6. Add new chunk to the world's static map OF chunks
@@ -86,7 +85,7 @@ void World::ActivateChunk(const IntVector2& chunkCoords)
 
 	//5. Update chunk state/status. Is chunk missing? Is the VBO built? Is the state activated?
 
-	
+	newChunk->InitializeLighting();
 	
 }
 
@@ -212,7 +211,7 @@ void World::DebugDeactivateAllChunks()
 		chunksToDeactivate.push_back(chunkPair.second);
 	}
 
-	for (int i = 0; i < chunksToDeactivate.size(); i++)
+	for (int i = 0; i < (int) chunksToDeactivate.size(); i++)
 	{
 		DeactivateChunk(chunksToDeactivate[i]);
 	}

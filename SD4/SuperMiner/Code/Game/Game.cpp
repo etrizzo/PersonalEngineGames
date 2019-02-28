@@ -81,15 +81,8 @@ void Game::PostStartup()
 	m_soundTrackID = g_theAudio->CreateOrGetSound("Data/Audio/OrbitalColossus.mp3");
 
 	new BlockDefinition(BLOCK_AIR,			false,  AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE);
-	new BlockDefinition(BLOCK_GRASS,		true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,0)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(3,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(4,3)));
-	new BlockDefinition(BLOCK_STONE,		true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(7,4)));
-	new BlockDefinition(BLOCK_SNOW,			true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,3)));
-	new BlockDefinition(BLOCK_SAND,			true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(6,1)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(6,1)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(6,1)));
-	new BlockDefinition(BLOCK_COBBLESTONE,	true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,4)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(1,4)));
-	new BlockDefinition(BLOCK_OAK_PLANKS,	true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,1)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,1)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,1)));
-	new BlockDefinition(BLOCK_GLASS,		false, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,3)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(30,3)));
-	new BlockDefinition(BLOCK_DIAMOND,		true, g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(16,10)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(16,10)),  g_blockSpriteSheet->GetTexCoordsForSpriteCoords(IntVector2(16,10)));
 
+	ReadBlocksFromFile("Data/Data/Blocks.xml");
 
 	m_currentMap = nullptr;
 	m_playState = new GameState_Playing();
@@ -379,16 +372,15 @@ unsigned int Game::GetNumActiveLights() const
 
 
 
-void Game::LoadTileDefinitions()
+void Game::ReadBlocksFromFile(std::string blockXMLFile)
 {
-	tinyxml2::XMLDocument tileDefDoc;
-	tileDefDoc.LoadFile("Data/Data/Tiles.xml");
+	tinyxml2::XMLDocument blockDefDoc;
+	blockDefDoc.LoadFile(blockXMLFile.c_str());
 
 
-	tinyxml2::XMLElement* root = tileDefDoc.FirstChildElement("TileDefinitions");
-	for (tinyxml2::XMLElement* tileDefElement = root->FirstChildElement("TileDefinition"); tileDefElement != NULL; tileDefElement = tileDefElement->NextSiblingElement("TileDefinition")){
-		TileDefinition newDefinition = TileDefinition(tileDefElement);
-		TileDefinition::s_definitions.insert(std::pair<std::string, TileDefinition>(newDefinition.m_name, newDefinition));
+	tinyxml2::XMLElement* root = blockDefDoc.FirstChildElement("Blocks");
+	for (tinyxml2::XMLElement* blockDefElement = root->FirstChildElement("Block"); blockDefElement != nullptr; blockDefElement = blockDefElement->NextSiblingElement("Block")){
+		new BlockDefinition(blockDefElement);
 	}
 
 

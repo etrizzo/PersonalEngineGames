@@ -7,15 +7,23 @@ Block::Block()
 	m_bits = 0U;
 }
 
-Block::Block(eBlockType blockType)
+Block::Block(uchar blockType)
 {
-	m_blockID = (unsigned char) blockType;
+	m_blockID = blockType;
 	m_bits = 0U;
 }
 
-void Block::SetType(eBlockType newType)
+void Block::SetType(uchar newType)
 {
 	m_blockID = newType;
+	BlockDefinition* newDefinition = BlockDefinition::GetBlockDefinitionFromID(newType);
+	if (newDefinition->IsFullyOpaque())
+	{
+		SetBits(m_bits, BLOCK_BIT_IS_FULL_OPAQUE);
+	}
+	else {
+		ClearBits(m_bits, BLOCK_BIT_IS_FULL_OPAQUE);
+	}
 }
 
 BlockDefinition * Block::GetType() const
@@ -25,5 +33,6 @@ BlockDefinition * Block::GetType() const
 
 bool Block::IsFullyOpaque() const
 {
-	return GetType()->IsFullyOpaque();
+	return AreBitsSet(m_bits, BLOCK_BIT_IS_FULL_OPAQUE);
+	//return GetType()->IsFullyOpaque();
 }

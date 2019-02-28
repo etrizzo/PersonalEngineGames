@@ -399,34 +399,34 @@ bool IsPointInConicSector2D(const Vector2 & point, const Vector2 & centerPoint, 
 
 
 
-bool AreBitsSet(unsigned char bitFlags8, unsigned char flagsToCheck)
+bool AreBitsSet(unsigned char bitFlags8, const unsigned char flagsToCheck)
 {
 	return ((bitFlags8 & flagsToCheck) == flagsToCheck);
 }
 
-bool AreBitsSet(unsigned int bitFlags32, unsigned int flagsToCheck)
+bool AreBitsSet(unsigned int bitFlags32, const unsigned int flagsToCheck)
 {
 	return ((bitFlags32 & flagsToCheck) == flagsToCheck);
 }
 
-void SetBits(unsigned char & bitFlags8, unsigned char flagsToSet)
+void SetBits(unsigned char & bitFlags8, const unsigned char flagsToSet)
 {
-	bitFlags8 = (bitFlags8 | flagsToSet);
+	bitFlags8 |= flagsToSet;
 }
 
-void SetBits(unsigned int & bitFlags32, unsigned int flagsToSet)
+void SetBits(unsigned int & bitFlags32, const unsigned int flagsToSet)
 {
-	bitFlags32 = (bitFlags32 | flagsToSet);
+	bitFlags32 |= flagsToSet;
 }
 
-void ClearBits(unsigned char & bitFlags8, unsigned char flagToClear)
+void ClearBits(unsigned char & bitFlags8, const unsigned char flagToClear)
 {
-	bitFlags8 = (bitFlags8 & (~flagToClear));
+	bitFlags8 &= (~flagToClear);
 }
 
-void ClearBits(unsigned int & bitFlags32, unsigned int flagToClear)
+void ClearBits(unsigned int & bitFlags32, const unsigned int flagToClear)
 {
-	bitFlags32 = (bitFlags32 & (~flagToClear));
+	bitFlags32 &= (~flagToClear);
 }
 
 //returns index of a 1D array from 2D coordinates

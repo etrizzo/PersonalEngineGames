@@ -156,4 +156,14 @@ void InputSystem::HandleMouseButton(eMouseButtonAction wparam)
 	}
 }
 
+bool InputSystem::IsShiftDown() const
+{
+	return IsKeyDown(VK_SHIFT) || IsKeyDown(VK_LSHIFT) || IsKeyDown(VK_RSHIFT);
+}
+
+bool InputSystem::IsControlDown() const
+{
+	return IsKeyDown(VK_CONTROL) || IsKeyDown(VK_LCONTROL) || IsKeyDown(VK_RCONTROL);
+}
+
 
