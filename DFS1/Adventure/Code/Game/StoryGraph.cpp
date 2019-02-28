@@ -225,16 +225,17 @@ StoryNode * StoryGraph::AddSingleEventNode()
 
 StoryNode * StoryGraph::AddEventNodeAtEdge(StoryEdge * edge)
 {
-	bool added = false;
+	//if you can, add an end node first.
+	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge->GetCost());
+	bool added = (addedNode != nullptr);
 	int tries = 0;
 	int maxTries = 100;
-	StoryNode* addedNode = nullptr;
+	
 	while (tries < maxTries && !added){
-		//reroll if you get a duplicate node.
 		StoryDataDefinition* sourceNode = m_dataSet->GetEventNodeWithWeights(edge->GetCost(), 3.f);
 
 		//try to add the node
-		if (StoryRequirementsMet(sourceNode, edge)){
+		if (sourceNode != nullptr && StoryRequirementsMet(sourceNode, edge)){
 			//if the story requirements are met, check character requirements
 			std::vector<Character*> charsForNode = GetCharactersForNode(sourceNode, edge);
 			//if you found characters for the node, add the node.
@@ -311,7 +312,9 @@ void StoryGraph::GenerateStartAndEnd()
 
 bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 {
-	bool added = false;
+	//try to add an ending node first.
+	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge->GetCost());
+	bool added = (addedNode != nullptr);
 	int tries = 0;
 	while (tries < maxTries && !added){
 		//reroll if you get a duplicate node.
@@ -723,6 +726,37 @@ bool StoryGraph::CheckForInvalidGraph()
 	} else {
 		return false;
 	}
+}
+
+StoryNode* StoryGraph::TryToAddEndNodeAtEdge(StoryState* edgeState)
+{
+	//if we've already used all of our endings, gtfo
+	if (m_dataSet->m_unusedEndNodes.size() == 0)
+	{
+		return nullptr;
+	}
+
+	Shuffle(m_dataSet->m_unusedEndNodes);
+
+	for(int i = 0; i < (int) m_dataSet->m_unusedEndNodes.size(); i++)
+	{
+		if (DoRangesOverlap(m_dataSet->m_unusedEndNodes[i]->m_actRange, edgeState->m_possibleActRange)) {
+			if (m_dataSet->m_unusedEndNodes[i]->DoesEdgeMeetStoryRequirements(edgeState)){
+				StoryDataDefinition* endingDef = m_dataSet->m_unusedEndNodes[i];
+				//check that we can actually add it first
+				//...
+				//actually add it
+				//...
+				if (added){
+					m_dataSet->RemoveEndingFromUnusedEndings(endingDef);
+					return newNode;
+				}
+			}
+		}
+	}
+
+	//if we don't get a match, return nullptr
+	return nullptr;
 }
 
 void StoryGraph::IdentifyBranchesAndAdd(int numBranchesToAdd)

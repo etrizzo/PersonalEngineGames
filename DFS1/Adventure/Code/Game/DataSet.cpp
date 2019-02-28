@@ -119,6 +119,16 @@ void DataSet::ReadCharactersFromXML(std::string filePath)
 	}
 }
 
+void DataSet::ResetUsedEndNodes()
+{
+	m_unusedEndNodes = std::vector<StoryDataDefinition*>();
+	for (StoryDataDefinition* ending : m_actEndingNodes)
+	{
+		m_unusedEndNodes.push_back(ending);
+	}
+	Shuffle(m_unusedEndNodes);
+}
+
 StoryDataDefinition * DataSet::GetRandomEventNode()
 {
 	int i = GetRandomIntLessThan(m_eventNodes.size());
@@ -269,6 +279,46 @@ StoryDataDefinition * DataSet::GetEventNodeWithWeights(StoryState * edge, float 
 	return chosenNode;
 }
 
+void DataSet::RemoveEndingFromUnusedEndings(StoryDataDefinition* ending)
+{
+
+}
+
+StoryDataDefinition * DataSet::GetEndingNode(StoryState * edge)
+{
+	//if we've already used all of our endings, gtfo
+	if (m_unusedEndNodes.size() == 0)
+	{
+		return nullptr;
+	}
+
+	Shuffle(m_unusedEndNodes);
+
+	for(int i = 0; i < (int) m_unusedEndNodes.size(); i++)
+	{
+		if (DoRangesOverlap(m_unusedEndNodes[i]->m_actRange, edge->m_possibleActRange)) {
+			if (m_unusedEndNodes[i]->DoesEdgeMeetStoryRequirements(edge)){
+				StoryDataDefinition* data = m_unusedEndNodes[i];
+				RemoveAtFast(m_unusedEndNodes, i);
+				//remove all endings from the same act
+				for (int j = m_unusedEndNodes.size() - 1; j >= 0; j--)
+				{
+					//because endings only have 1 possible act, we know the acts are the same if the ranges overlap at all.
+					if (DoRangesOverlap(m_unusedEndNodes[j]->m_actRange, data->m_actRange))
+					{
+						RemoveAtFast(m_unusedEndNodes, j);
+					}
+				}
+				return data;
+			}
+		}
+	}
+
+	//if we don't get a match, return nullptr
+	return nullptr;
+	
+}
+
 float DataSet::CalculateEdgeFitnessForData(StoryState * edge, StoryDataDefinition * data)
 {
 	float fitness = 0.f;
@@ -304,17 +354,17 @@ float DataSet::GetNodeLikelihoodToLeadToEnding(StoryDataDefinition * nodeDef)
 		return 1.f; 
 	}
 
-	//else, look at all end conditions and see what percentage of requirements your effects would meet
-	for (StoryDataDefinition* ending : m_actEndingNodes)
-	{
-		//if the node could end your act,
-		if (DoRangesOverlap(ending->m_actRange, nodeDef->m_actRange)) 
-		{
-			//calculate what percentage of the ending's requirements your effects meet
-			int totalRequirements = 0;
-			ending->m_storyReqs.
-		}
-	}
+	////else, look at all end conditions and see what percentage of requirements your effects would meet
+	//for (StoryDataDefinition* ending : m_actEndingNodes)
+	//{
+	//	//if the node could end your act,
+	//	if (DoRangesOverlap(ending->m_actRange, nodeDef->m_actRange)) 
+	//	{
+	//		//calculate what percentage of the ending's requirements your effects meet
+	//		int totalRequirements = 0;
+	//		//ending->m_storyReqs.
+	//	}
+	//}
 }
 
 DataSet * DataSet::GetDataSet(std::string dataSetName)

@@ -281,6 +281,19 @@ bool Contains(std::vector<T*>& array, T* obj){
 	return false;
 }
 
+template <typename T>
+void Shuffle(std::vector<T*>& array, unsigned int numTimesToShuffle = 2)
+{
+	for (unsigned int i = 0; i < numTimesToShuffle; i++)
+	{
+		for (int arrayIndex = 0; arrayIndex < (int) array.size(); arrayIndex++)
+		{
+			int randomIndex = GetRandomIntLessThan((int) array.size());
+			std::swap(array[arrayIndex], array[randomIndex]);
+		}
+	}
+}
+
 
 //template specialization! neat!
 // https://stackoverflow.com/questions/14466620/c-template-specialization-calling-methods-on-types-that-could-be-pointers-or/14466705

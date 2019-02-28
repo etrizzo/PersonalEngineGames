@@ -19,6 +19,9 @@ public:
 
 	//for reference - all nodes that have an act-ending action
 	std::vector<StoryDataDefinition*> m_actEndingNodes	= std::vector<StoryDataDefinition*>();
+	std::vector<StoryDataDefinition*> m_unusedEndNodes = std::vector<StoryDataDefinition*>();
+
+	void ResetUsedEndNodes();
 
 	StoryDataDefinition* GetRandomEventNode();
 	StoryDataDefinition* GetRandomOutcomeNode();
@@ -26,8 +29,14 @@ public:
 	int GetNumActs() const;
 	int GetFinalActNumber() const;
 
+
 	StoryDataDefinition* GetOutcomeNodeWithWeights(StoryState* edge, float minFitness = 2.f);
 	StoryDataDefinition* GetEventNodeWithWeights(StoryState* edge, float minFitness = 2.f);
+
+	void RemoveEndingFromUnusedEndings(StoryDataDefinition* ending);
+
+	StoryDataDefinition* GetEndingNode(StoryState* edge);
+
 	float CalculateEdgeFitnessForData(StoryState* edge, StoryDataDefinition* data);
 
 	float GetNodeLikelihoodToLeadToEnding(StoryDataDefinition* nodeDef);
