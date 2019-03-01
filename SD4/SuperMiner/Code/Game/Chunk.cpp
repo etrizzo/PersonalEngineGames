@@ -202,7 +202,7 @@ void Chunk::GenerateBlocks()
 {
 	uchar stoneBlock = BlockDefinition::GetBlockIDFromName("Stone");
 	uchar grassBlock = BlockDefinition::GetBlockIDFromName("Grass");
-	uchar snowBlock = BlockDefinition::GetBlockIDFromName("Snow");
+	uchar seaBlock = BlockDefinition::GetBlockIDFromName("Snow");
 	for (int z = 0; z < CHUNK_SIZE_Z; z++)
 	{
 		for (int y = 0; y < CHUNK_SIZE_Y; y++)
@@ -212,8 +212,8 @@ void Chunk::GenerateBlocks()
 				//scoot over to the chunks position for the noise computation
 				int worldX = x + (m_chunkCoords.x * CHUNK_SIZE_X);
 				int worldY = y + (m_chunkCoords.y * CHUNK_SIZE_Y);
-				float height = Compute2dPerlinNoise((float) worldX, (float) worldY,  300.f, 3);
-				float heightMapped = RangeMapFloat(height, -1.f, 1.f, SEA_LEVEL, (float) CHUNK_SIZE_Z * .6f);		//range map perlin noise from -1 to 1 into [0,128]
+				float height = Compute2dPerlinNoise((float) worldX, (float) worldY,  300.f, 4);
+				float heightMapped = RangeMapFloat(height, -1.f, 1.f, (float) CHUNK_SIZE_Z * .25f, (float) CHUNK_SIZE_Z * .65f);		//range map perlin noise from -1 to 1 into [0,128]
 				int blockIndex = Chunk::GetBlockIndexForBlockCoordinates(IntVector3(x,y,z));
 
 				//later choose different things for different heights u kno
@@ -225,7 +225,14 @@ void Chunk::GenerateBlocks()
 						m_blocks[blockIndex].SetType(grassBlock);
 					}
 				} else {
-					m_blocks[blockIndex].SetType(BLOCK_AIR);
+					//if you're below sea level, set to "water" (which is snow for now)
+					if (z < SEA_LEVEL) {
+						m_blocks[blockIndex].SetType(seaBlock);
+					}
+					else {
+						//otherwise you're air.
+						m_blocks[blockIndex].SetType(BLOCK_AIR);
+					}
 				}
 			}
 		}
@@ -400,7 +407,7 @@ void Chunk::AddVertsForBlockAtIndex(int blockIndex)
 
 		if (!me.GetDown().IsBlockFullyOpaque()){
 			//add verts for bottom (hgcd)
-			m_cpuMesh.AppendPlane(center - topOffset, -FORWARD, -RIGHT, Vector2::HALF, s_blockTopBottomColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+			m_cpuMesh.AppendPlane(center - topOffset, FORWARD, -RIGHT, Vector2::HALF, s_blockTopBottomColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 	}
 }

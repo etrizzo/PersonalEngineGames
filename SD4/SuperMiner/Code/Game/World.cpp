@@ -221,46 +221,58 @@ void World::DebugDeactivateAllChunks()
 
 void World::UpdateDebugStuff()
 {
-	Vector3 basis = Vector3::ZERO;
+	
 
 	RGBA raycastColor = RGBA::RED;
 	RGBA pointColor = RGBA::WHITE;
 
 	//draw the basis at the origin
-	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, basis, 1.f, Matrix44::IDENTITY, DEBUG_RENDER_HIDDEN);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, basis, 1.f, Matrix44::IDENTITY, DEBUG_RENDER_USE_DEPTH);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, Vector3::ZERO, 1.f, Matrix44::IDENTITY, DEBUG_RENDER_HIDDEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, Vector3::ZERO, 1.f, Matrix44::IDENTITY, DEBUG_RENDER_USE_DEPTH);
 	
+	//draw the basis in front of the player
+	Vector3 playerPos = g_theGame->GetPlayer()->GetPosition();
+	Vector3 playerForward = g_theGame->GetPlayer()->GetForward();
+	Vector3 basis = playerPos + (playerForward * 3.f);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, basis, .15f, Matrix44::IDENTITY, DEBUG_RENDER_HIDDEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderBasis(0.f, basis, .15f, Matrix44::IDENTITY, DEBUG_RENDER_USE_DEPTH);
+
+
+
 	//draw the debug raycast
 	RaycastResult dig = g_theGame->GetPlayer()->m_digRaycast;
+	if (g_theGame->IsDevMode()) {
+		
 
-	if(dig.DidImpact())
-	{
-		pointColor = RGBA::GREEN;
-		raycastColor = RGBA::GREEN;
+		if (dig.DidImpact())
+		{
+			pointColor = RGBA::GREEN;
+			raycastColor = RGBA::GREEN;
+		}
+		if (g_theGame->IsDevMode()) {
+			RGBA xrayColor = RGBA::GRAY;
+			RGBA visibleColor = raycastColor;
+			g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(dig.m_ray.m_position, dig.m_endPosition, xrayColor, xrayColor, 0.f, xrayColor, xrayColor, DEBUG_RENDER_HIDDEN);
+			g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(dig.m_ray.m_position, dig.m_impactPosition, visibleColor, visibleColor, 0.f, visibleColor, visibleColor, DEBUG_RENDER_USE_DEPTH);
+		}
+
+		g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, dig.m_impactPosition, RGBA::BLACK, RGBA::BLACK, DEBUG_RENDER_HIDDEN);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, dig.m_impactPosition, pointColor, pointColor, DEBUG_RENDER_USE_DEPTH);
 	}
-	if (g_theGame->IsDevMode()){
-		RGBA xrayColor = RGBA::GRAY;
-		RGBA visibleColor = raycastColor;
-		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(dig.m_ray.m_position, dig.m_endPosition, xrayColor, xrayColor, 0.f,xrayColor, xrayColor, DEBUG_RENDER_HIDDEN);
-		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(dig.m_ray.m_position, dig.m_impactPosition, visibleColor, visibleColor, 0.f, visibleColor, visibleColor, DEBUG_RENDER_USE_DEPTH);
-	}
 
-	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, dig.m_impactPosition, RGBA::BLACK, RGBA::BLACK, DEBUG_RENDER_HIDDEN);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, dig.m_impactPosition, pointColor, pointColor, DEBUG_RENDER_USE_DEPTH);
-
-	
-	if (dig.DidImpact() && dig.m_impactBlock.m_chunk != nullptr)
+	//draw the face you hit
+	if (dig.DidImpact() && dig.m_impactBlock.m_chunk != nullptr && dig.m_impactFraction > 0.f)
 	{
-		//draw the face you hit
 		Vector3 blockCenter = dig.m_impactBlock.GetBlockCenterWorldPosition();
-		Vector3 halfNormal	= dig.m_impactNormal * .5f;
+		Vector3 halfNormal = dig.m_impactNormal * .5f;
 		Vector3 quadUp;
 		Vector3 quadRight;
 		if (dig.m_impactNormal == UP || dig.m_impactNormal == -UP)
 		{
 			quadUp = FORWARD;
 			quadRight = Cross(FORWARD, dig.m_impactNormal);
-		} else {
+		}
+		else {
 			quadUp = UP;
 			quadRight = Cross(UP, dig.m_impactNormal);
 		}
@@ -269,6 +281,7 @@ void World::UpdateDebugStuff()
 		g_theGame->m_debugRenderSystem->MakeDebugRenderQuad(0.f, blockCenter + halfNormal, Vector2::HALF * .95f, quadRight, quadUp, quadColor, quadColor, DEBUG_RENDER_IGNORE_DEPTH);
 		g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.f, blockCenter, .505f, wireColor, wireColor, DEBUG_RENDER_IGNORE_DEPTH);
 	}
+	
 }
 
 void World::UpdateBlockPlacementAndDigging()

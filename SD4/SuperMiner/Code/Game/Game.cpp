@@ -80,7 +80,7 @@ void Game::PostStartup()
 	PROFILE_LOG_SCOPE_FUNCTION();
 	m_soundTrackID = g_theAudio->CreateOrGetSound("Data/Audio/OrbitalColossus.mp3");
 
-	new BlockDefinition(BLOCK_AIR,			false,  AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE);
+	new BlockDefinition(BLOCK_AIR, false, AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE, AABB2::ZERO_TO_ONE);
 
 	ReadBlocksFromFile("Data/Data/Blocks.xml");
 

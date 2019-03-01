@@ -55,7 +55,7 @@ constexpr int	CHUNK_MASK_X = CHUNK_SIZE_X - 1;
 constexpr int	CHUNK_MASK_Y = (CHUNK_SIZE_Y - 1) << CHUNK_BITS_X;
 constexpr int	CHUNK_MASK_Z = (CHUNK_SIZE_Z - 1) << (CHUNK_BITS_X + CHUNK_BITS_Y);
 
-constexpr float	SEA_LEVEL = (float) CHUNK_SIZE_Z * .33f;
+constexpr float	SEA_LEVEL = (float) CHUNK_SIZE_Z * .43f;
 
 constexpr float RAYCAST_STEP_SIZE = .02f;
 

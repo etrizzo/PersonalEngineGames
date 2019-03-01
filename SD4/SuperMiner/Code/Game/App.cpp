@@ -118,12 +118,13 @@ void App::Update()
 	if (g_theGame->m_isPaused){
 		ds = 0.f;
 	}
+	HandleInput();
 
 	g_theGame->Update();
 	g_devConsole->Update(ds);
 	ProfilerVisualizer::GetInstance()->Update();
 	m_appTime = GetCurrentTimeSeconds();
-	HandleInput();
+	
 	g_theRenderer->UpdateClock(ds, m_deltaTime);
 	
 }
