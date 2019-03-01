@@ -26,6 +26,7 @@ void StoryDataDefinition::InitFromXML(tinyxml2::XMLElement* nodeElement)
 	}
 	m_actRange = ParseXmlAttribute(*nodeElement, "actRange", IntRange(0, MAX_ACTS));
 	m_shouldLockIncomingEdge = ParseXmlAttribute(*nodeElement, "lockIncoming", false);
+	m_name = ParseXmlAttribute(*nodeElement, "name", "NO_NAME");
 }
 
 void StoryDataDefinition::InitAsOutcomeNode(tinyxml2::XMLElement * nodeElement)
@@ -93,8 +94,7 @@ void StoryDataDefinition::InitAsEventNode(tinyxml2::XMLElement * nodeElement)
 {
 	tinyxml2::XMLElement* actionElement = nodeElement->FirstChildElement("Action");
 	std::string actionText = ParseXmlAttribute(*actionElement, "text", "NO_ACTION");
-
-	m_name = ParseXmlAttribute(*nodeElement, "name", "NO_NAME");
+	bool isEnding = ParseXmlAttribute(*actionElement, "endsAct", false);
 
 	m_chanceToPlaceData = ParseXmlAttribute(*nodeElement, "chanceToPlace", 1.f);
 
@@ -145,6 +145,7 @@ void StoryDataDefinition::InitAsEventNode(tinyxml2::XMLElement * nodeElement)
 	//parse effects
 	tinyxml2::XMLElement* allCharacterEffects = nodeElement->FirstChildElement("CharacterEffects");
 	ActionDefinition* actionDef = new ActionDefinition(actionText, allCharacterEffects, this);
+	actionDef->m_endsAct = isEnding;
 	m_actions.push_back(actionDef);
 	//m_effectSet = new EffectSet(allEffects->FirstChildElement("EffectSet"), this);
 	

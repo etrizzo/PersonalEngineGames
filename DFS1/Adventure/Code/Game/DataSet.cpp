@@ -19,6 +19,8 @@ DataSet::DataSet(tinyxml2::XMLElement * datasetElement)
 	//parse outcomes
 	tinyxml2::XMLElement* outcomeElement = datasetElement->FirstChildElement("OutcomeNodes");
 	ParseOutcomes(outcomeElement);
+
+	ResetUsedEndNodes();
 }
 
 void DataSet::ParseActs(tinyxml2::XMLElement * actElement)
@@ -104,6 +106,10 @@ void DataSet::ReadOutcomeNodesFromXML(std::string filePath)
 		StoryDataDefinition* data = new StoryDataDefinition( DETAIL_NODE);
 		data->InitFromXML(nodeElement);
 		m_outcomeNodes.push_back(data);
+		if (data->IsEnding())
+		{
+			m_actEndingNodes.push_back(data);
+		}
 	}
 }
 

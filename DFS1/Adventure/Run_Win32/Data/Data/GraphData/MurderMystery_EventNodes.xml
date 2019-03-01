@@ -36,9 +36,9 @@
 	</EventNode>
 
 
-	<EventNode name="TheMurder" progression="time" actname="Introduction" actRange="1" endsAct="true">
+	<EventNode name="TheMurder" progression="time" actname="Introduction" actRange="1" >
 		<!-- *[X]* indicates a character name who should be replaced at runtime -->
-		<Action text="A man is murdered." />
+		<Action text="A man is murdered." endsAct="true"/>
 		<Characters>
 
 		</Characters>

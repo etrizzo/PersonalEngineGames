@@ -226,7 +226,7 @@ StoryNode * StoryGraph::AddSingleEventNode()
 StoryNode * StoryGraph::AddEventNodeAtEdge(StoryEdge * edge)
 {
 	//if you can, add an end node first.
-	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge->GetCost());
+	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge);
 	bool added = (addedNode != nullptr);
 	int tries = 0;
 	int maxTries = 100;
@@ -313,7 +313,7 @@ void StoryGraph::GenerateStartAndEnd()
 bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 {
 	//try to add an ending node first.
-	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge->GetCost());
+	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge);
 	bool added = (addedNode != nullptr);
 	int tries = 0;
 	while (tries < maxTries && !added){
@@ -728,14 +728,15 @@ bool StoryGraph::CheckForInvalidGraph()
 	}
 }
 
-StoryNode* StoryGraph::TryToAddEndNodeAtEdge(StoryState* edgeState)
+StoryNode* StoryGraph::TryToAddEndNodeAtEdge(StoryEdge* edge)
 {
 	//if we've already used all of our endings, gtfo
 	if (m_dataSet->m_unusedEndNodes.size() == 0)
 	{
 		return nullptr;
 	}
-
+	StoryState* edgeState = edge->GetCost();
+	
 	Shuffle(m_dataSet->m_unusedEndNodes);
 
 	for(int i = 0; i < (int) m_dataSet->m_unusedEndNodes.size(); i++)
@@ -743,10 +744,22 @@ StoryNode* StoryGraph::TryToAddEndNodeAtEdge(StoryState* edgeState)
 		if (DoRangesOverlap(m_dataSet->m_unusedEndNodes[i]->m_actRange, edgeState->m_possibleActRange)) {
 			if (m_dataSet->m_unusedEndNodes[i]->DoesEdgeMeetStoryRequirements(edgeState)){
 				StoryDataDefinition* endingDef = m_dataSet->m_unusedEndNodes[i];
+				bool added = false;
+				StoryNode* newNode = nullptr;
 				//check that we can actually add it first
-				//...
-				//actually add it
-				//...
+				if (StoryRequirementsMet(endingDef, edge))
+				{
+					//if the story requirements are met, check character requirements
+					std::vector<Character*> charsForNode = GetCharactersForNode(endingDef, edge);
+					//if you found characters for the node, add the node.
+					if (charsForNode.size() == endingDef->GetNumCharacters()) {
+						//actually add it
+						newNode = CreateAndAddEventNodeAtEdge(endingDef, edge, charsForNode);		//always does it
+						if (newNode != nullptr) {
+							added = true;
+						}
+					}
+				}
 				if (added){
 					m_dataSet->RemoveEndingFromUnusedEndings(endingDef);
 					return newNode;
@@ -755,7 +768,7 @@ StoryNode* StoryGraph::TryToAddEndNodeAtEdge(StoryState* edgeState)
 		}
 	}
 
-	//if we don't get a match, return nullptr
+	//if we don't get a match with any of the ending nodes, return nullptr
 	return nullptr;
 }
 

@@ -94,7 +94,7 @@ public:
 	//if no paths had an ending and the graph is now just an end node, this will return true
 	bool CheckForInvalidGraph();
 
-	StoryNode* TryToAddEndNodeAtEdge(StoryState* edgeState);
+	StoryNode* TryToAddEndNodeAtEdge(StoryEdge* edgeState);
 
 	//by default, adds 1/4 * (numNodes) branches
 	void IdentifyBranchesAndAdd(int numBranchesToAdd = -1);
