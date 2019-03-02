@@ -31,8 +31,8 @@ BlockDefinition * Block::GetType() const
 	return BlockDefinition::GetBlockDefinitionFromID(m_blockID);
 }
 
-bool Block::IsFullyOpaque() const
+
+uchar Block::GetDefinitionInternalLightLevel() const
 {
-	return AreBitsSet(m_bits, BLOCK_BIT_IS_FULL_OPAQUE);
-	//return GetType()->IsFullyOpaque();
+	return (uchar) GetType()->m_internalLightLevel;
 }

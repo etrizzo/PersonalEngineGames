@@ -1,6 +1,7 @@
 #pragma once
 #include "Game/GameCommon.hpp"
 #include "Game/Block.hpp"
+#include "Game/BlockLocator.hpp"
 class Map;
 
 
@@ -81,6 +82,8 @@ private:
 
 	//does all checks for HSR and air blocks and stuff and adds it to the cpuMesh
 	void AddVertsForBlockAtIndex(int blockIndex);
+
+	RGBA GetLightingTintForBlock(const BlockLocator& block);
 
 
 	//sets a block type and dirties the mesh

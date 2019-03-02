@@ -91,6 +91,7 @@ public:
 	void DebugToggleRendering();
 
 	bool IsDevMode() const { return m_devMode; }
+	bool IsDebugLighting() const { return m_isDebugLighting; }
 
 	RenderScene* GetScene();
 
@@ -123,6 +124,7 @@ private:
 	void RenderGame();
 	void RenderUI();
 
+	bool m_isDebugLighting = false;
 	
 };
 

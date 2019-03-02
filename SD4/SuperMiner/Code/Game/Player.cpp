@@ -92,11 +92,11 @@ void Player::HandleInput()
 
 	if (g_theInput->WasKeyJustPressed(BRACKET_SQUARE_LEFT))
 	{
-		m_currentPlaceBlockType = (m_currentPlaceBlockType + BlockDefinition::s_blockDefinitions.size() - 1) % BlockDefinition::s_blockDefinitions.size();
+		m_currentPlaceBlockType = (m_currentPlaceBlockType + (uchar) BlockDefinition::s_blockDefinitions.size() - 1) % (uchar) BlockDefinition::s_blockDefinitions.size();
 		if (m_currentPlaceBlockType == BLOCK_AIR)
 		{
 			//wrap to highest id instead of air (Note: even if s_blockDefinitions isn't ordered by ID this should still be the highest ID we have.
-			m_currentPlaceBlockType = BlockDefinition::s_blockDefinitions.size() - 1;
+			m_currentPlaceBlockType = (uchar) BlockDefinition::s_blockDefinitions.size() - 1;
 		}
 	}
 }

@@ -36,12 +36,8 @@ void World::Update()
 	//we want block placement/digging to happen before chunk management so that we can mark the changed chunk for re-building mesh THAT FRAME (bc it's usually the closest dirty chunk)
 	UpdateBlockPlacementAndDigging();
 	UpdateChunks();     //nothing for now
+	UpdateDirtyLighting();
 	ManageChunks();     //activate, deactivate, re-build meshes, etc.
-
-	for (std::pair<IntVector2, Chunk*> chunkPair : World::m_chunks)
-	{
-		chunkPair.second->Update();
-	}
 }
 
 void World::Render()
@@ -293,6 +289,17 @@ void World::UpdateChunks()
 	for (std::pair<IntVector2, Chunk*> chunkPair : World::m_chunks)
 	{
 		chunkPair.second->Update();
+	}
+}
+
+void World::UpdateDirtyLighting()
+{
+	if (!g_theGame->IsDebugLighting())
+	{
+
+	}
+	else {
+
 	}
 }
 

@@ -43,6 +43,7 @@ private:
 	void UpdateDebugStuff();
 	void UpdateBlockPlacementAndDigging();
 	void UpdateChunks();
+	void UpdateDirtyLighting();
 	void ManageChunks();
 
 
@@ -58,8 +59,9 @@ private:
 	float m_chunkActivationRadiusChunkDistance = 5.f;		//int?
 	float m_chunkDeactivationRadiusChunkDistance = 7.f;
 public:
-	
 	std::vector<IntVector2> m_chunkActivationOffsetsSortedByDistance;
+
+	std::deque<BlockLocator> m_dirtyLightingBlocks;
 
 	Material* m_chunkMaterial;		//for convenience
 

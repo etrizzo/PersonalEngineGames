@@ -19,6 +19,7 @@ public:
 	BlockDefinition* GetBlockType() const;
 	inline bool IsBlockFullyOpaque() const;			
 	inline bool IsBlockAir() const;
+	inline uchar GetIndoorLightLevel() const;
 	AABB3 GetBlockBounds() const;
 	Vector3 GetBlockCenterWorldPosition() const;
 
@@ -46,5 +47,10 @@ bool BlockLocator::IsBlockFullyOpaque() const
 
 bool BlockLocator::IsBlockAir() const
 {
-	return GetBlock().m_blockID == BLOCK_AIR;
+	return GetBlock().GetBlockID() == BLOCK_AIR;
+}
+
+inline uchar BlockLocator::GetIndoorLightLevel() const
+{
+	return GetBlock().GetIndoorLightLevel();
 }

@@ -40,7 +40,7 @@ void Chunk::CreateMesh()
 {
 	m_cpuMesh.Clear();
 	m_cpuMesh.Begin(PRIMITIVE_TRIANGLES, true);
-	m_cpuMesh.ReserveVerts(CHUNK_LAYER_DIMS_XY * 4.f * 6.f);		//~ 2 faces for the top and bottom of a chunk 
+	m_cpuMesh.ReserveVerts((float) CHUNK_LAYER_DIMS_XY * 6.f * 6.f);		//~ 3 faces for the top and bottom of a chunk 
 
 	//loop through ur blocks
 	for (int blockIndex = 0; blockIndex < BLOCKS_PER_CHUNK; blockIndex++)
@@ -278,7 +278,7 @@ void Chunk::ReadBufferAsRLE(const std::vector<unsigned char>& buffer)
 {
 	int headerSize = sizeof(ChunkFileHeader);
 	int blocksAdded = 0;
-	for (int bytepair = headerSize; bytepair < buffer.size()-1; bytepair+=2)
+	for (int bytepair = headerSize; bytepair < (int) buffer.size()-1; bytepair+=2)
 	{
 		if (blocksAdded > BLOCKS_PER_CHUNK){
 			ConsolePrintf(RGBA::RED, "Too many blocks saved in RLE file (Chunk %i,%i)", m_chunkCoords.x, m_chunkCoords.y);
@@ -329,17 +329,17 @@ void Chunk::AppendChunkHeaderToBuffer(std::vector<unsigned char>& buffer, unsign
 
 void Chunk::AppendBlocksToBufferRLE(std::vector<unsigned char>& buffer) const
 {
-	unsigned char currentType = m_blocks[0].m_blockID;
+	unsigned char currentType = m_blocks[0].GetBlockID();
 	int currentRun = 1;
 	for (int i = 1; i < BLOCKS_PER_CHUNK; i++)
 	{
-		if (m_blocks[i].m_blockID != currentType || currentRun == 0xff)		//max capacity for a byte
+		if (m_blocks[i].GetBlockID() != currentType || currentRun == 0xff)		//max capacity for a byte
 		{
 			//end the current run - append type & run length
 			buffer.push_back(currentType);
 			buffer.push_back((unsigned char) currentRun);
 			//set type to new type and restart run counter
-			currentType = m_blocks[i].m_blockID;
+			currentType = m_blocks[i].GetBlockID();
 			currentRun = 1;
 		} else {
 			//add to the current run
@@ -353,7 +353,7 @@ void Chunk::AppendBlocksToBufferRLE(std::vector<unsigned char>& buffer) const
 
 void Chunk::AddVertsForBlockAtIndex(int blockIndex)
 {
-	unsigned char blockType = m_blocks[blockIndex].m_blockID;
+	unsigned char blockType = m_blocks[blockIndex].GetBlockID();
 	if (blockType == 0U)
 	{
 		return;
@@ -379,37 +379,55 @@ void Chunk::AddVertsForBlockAtIndex(int blockIndex)
 		//m_cpuMesh.AppendCube(center, Vector3::ONE, RGBA::WHITE, RIGHT, UP, FORWARD, blockDef->m_topUVs, blockDef->m_sideUVs, blockDef->m_bottomUVs);
 		
 		BlockLocator me(blockIndex, this);
+		RGBA tint;
 
 		if (!me.GetUp().IsBlockFullyOpaque()){
 			//Add verts for top (abfe)					//up	//right
-			m_cpuMesh.AppendPlane(center + topOffset, FORWARD, RIGHT, Vector2::HALF, s_blockTopBottomColor, blockDef->m_topUVs.mins, blockDef->m_topUVs.maxs);
+			tint = GetLightingTintForBlock(me.GetUp());
+			m_cpuMesh.AppendPlane(center + topOffset, FORWARD, RIGHT, Vector2::HALF, tint, blockDef->m_topUVs.mins, blockDef->m_topUVs.maxs);
 		}
 
 		if (!me.GetSouth().IsBlockFullyOpaque()){
 			//add verts for right (dhfb)
-			m_cpuMesh.AppendPlane(center + rightOffset, UP, FORWARD, Vector2::HALF, s_blockNorthSouthColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+			tint = GetLightingTintForBlock(me.GetSouth());
+			m_cpuMesh.AppendPlane(center + rightOffset, UP, FORWARD, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 
 		if (!me.GetNorth().IsBlockFullyOpaque()){
 			//add verts for left (gcae)
-			m_cpuMesh.AppendPlane(center - rightOffset, UP, -FORWARD, Vector2::HALF, s_blockNorthSouthColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+			tint = GetLightingTintForBlock(me.GetNorth());
+			m_cpuMesh.AppendPlane(center - rightOffset, UP, -FORWARD, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 
 		if (!me.GetEast().IsBlockFullyOpaque()){
 			//add verts for front (hgef)
-			m_cpuMesh.AppendPlane(center + forwardOffset, UP, -RIGHT, Vector2::HALF, s_blockEastWestColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+			tint = GetLightingTintForBlock(me.GetEast());
+			m_cpuMesh.AppendPlane(center + forwardOffset, UP, -RIGHT, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 
 		if (!me.GetWest().IsBlockFullyOpaque()){
 			//add verts for back (cdba)
-			m_cpuMesh.AppendPlane(center - forwardOffset, UP, RIGHT, Vector2::HALF, s_blockEastWestColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+			tint = GetLightingTintForBlock(me.GetWest());
+			m_cpuMesh.AppendPlane(center - forwardOffset, UP, RIGHT, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 
 		if (!me.GetDown().IsBlockFullyOpaque()){
 			//add verts for bottom (hgcd)
-			m_cpuMesh.AppendPlane(center - topOffset, FORWARD, -RIGHT, Vector2::HALF, s_blockTopBottomColor, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+			tint = GetLightingTintForBlock(me.GetDown());
+			m_cpuMesh.AppendPlane(center - topOffset, FORWARD, -RIGHT, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 	}
+}
+
+RGBA Chunk::GetLightingTintForBlock(const BlockLocator & block)
+{
+	uchar indoor = block.GetIndoorLightLevel();
+	float indoorScale = RangeMapFloat((float)indoor, 0.f, 15.f, .1f, 1.f);
+
+	float finalScale = indoorScale;
+	RGBA tint;
+	tint.SetAsFloats(finalScale, finalScale, finalScale, 1.f);
+	return tint;
 }
 
 Vector3 Chunk::GetCenterPointForBlockInWorldCoordinates(int blockIndex)
