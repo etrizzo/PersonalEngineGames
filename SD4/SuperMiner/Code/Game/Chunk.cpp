@@ -422,6 +422,10 @@ void Chunk::AddVertsForBlockAtIndex(int blockIndex)
 RGBA Chunk::GetLightingTintForBlock(const BlockLocator & block)
 {
 	uchar indoor = block.GetIndoorLightLevel();
+	if (indoor != 0U)
+	{
+		int x = 0;
+	}
 	float indoorScale = RangeMapFloat((float)indoor, 0.f, 15.f, .1f, 1.f);
 
 	float finalScale = indoorScale;

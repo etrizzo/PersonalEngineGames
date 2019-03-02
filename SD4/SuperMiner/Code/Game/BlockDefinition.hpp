@@ -13,11 +13,11 @@ public:
 	uchar m_blockID = BLOCK_AIR;
 	bool m_isFullyOpaque = true;
 
-	int m_internalLightLevel;
+	int m_internalLightLevel = 0U;
 
-	AABB2 m_topUVs;
-	AABB2 m_sideUVs;
-	AABB2 m_bottomUVs;
+	AABB2 m_topUVs		= AABB2::ZERO_TO_ONE;
+	AABB2 m_sideUVs		= AABB2::ZERO_TO_ONE;
+	AABB2 m_bottomUVs	= AABB2::ZERO_TO_ONE;
 
 	static BlockDefinition* GetBlockDefinitionFromID(unsigned char blockID);
 	static uchar GetBlockIDFromName(const std::string& name);
