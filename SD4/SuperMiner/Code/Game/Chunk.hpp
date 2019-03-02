@@ -29,7 +29,7 @@ public:
 	void PlaceBlock(int blockIndex, uchar newType);
 	
 
-	bool SetMeshDirty() { m_isGPUMeshDirty = true; };
+	void SetMeshDirty() { m_isGPUMeshDirty = true; };
 
 	IntVector2 GetChunkCoords();
 
@@ -88,6 +88,9 @@ private:
 
 	//sets a block type and dirties the mesh
 	void SetBlockType(int blockIndex, uchar newType);
+
+
+	bool ShouldSetBlockDirtyAtActivation(int blockIndex);
 
 };
 

@@ -56,6 +56,14 @@ void Chunk::CreateMesh()
 
 void Chunk::InitializeLighting()
 {
+	for (int i = 0; i < BLOCKS_PER_CHUNK; i++)
+	{
+		if (ShouldSetBlockDirtyAtActivation(i))
+		{
+			BlockLocator blockLocator = BlockLocator(i, this);
+			g_theGame->GetWorld()->SetBlockLightDirty(blockLocator);
+		}
+	}
 }
 
 void Chunk::SaveToDisk() const
@@ -123,6 +131,25 @@ void Chunk::SetBlockType(int blockIndex, uchar newType)
 	{
 		m_southNeighbor->m_isGPUMeshDirty = true;
 	}
+}
+
+bool Chunk::ShouldSetBlockDirtyAtActivation(int blockIndex)
+{
+	//if block index has nonzero internal light level, should dirty
+	if (m_blocks[blockIndex].GetDefinitionInternalLightLevel() > 0)
+	{
+		return true;
+	}
+
+	if (!m_blocks[blockIndex].IsFullyOpaque()) {
+		//mark non-opaque border blocks as dirty
+		if (IsBlockIndexOnEastEdge(blockIndex) || IsBlockIndexOnNorthEdge(blockIndex) || IsBlockIndexOnSouthEdge(blockIndex) || IsBlockIndexOnWestEdge(blockIndex))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 IntVector2 Chunk::GetChunkCoords()

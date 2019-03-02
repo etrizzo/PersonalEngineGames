@@ -124,7 +124,7 @@ private:
 	void RenderGame();
 	void RenderUI();
 
-	bool m_isDebugLighting = false;
+	bool m_isDebugLighting = true;
 	
 };
 

@@ -17,6 +17,7 @@ public:
 
 	Block& GetBlock() const;
 	BlockDefinition* GetBlockType() const;
+	inline bool IsValid() const { return m_chunk != nullptr; }
 	inline bool IsBlockFullyOpaque() const;			
 	inline bool IsBlockAir() const;
 	inline uchar GetIndoorLightLevel() const;

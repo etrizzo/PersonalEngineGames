@@ -53,6 +53,11 @@ void World::Render()
 	{
 		chunkPair.second->Render();
 	}
+
+	if (g_theGame->IsDebugLighting())
+	{
+		RenderDebugLightingPoints();
+	}
 }
 
 void World::SetActivationRadius(float newRadius)
@@ -277,7 +282,29 @@ void World::UpdateDebugStuff()
 		g_theGame->m_debugRenderSystem->MakeDebugRenderQuad(0.f, blockCenter + halfNormal, Vector2::HALF * .95f, quadRight, quadUp, quadColor, quadColor, DEBUG_RENDER_IGNORE_DEPTH);
 		g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.f, blockCenter, .505f, wireColor, wireColor, DEBUG_RENDER_IGNORE_DEPTH);
 	}
-	
+
+	if (g_theGame->IsDebugLighting())
+	{
+		UpdateDebugLightingPoints();
+	}
+}
+
+void World::UpdateDebugLightingPoints()
+{
+	if (!m_dirtyLightingBlocks.empty())
+	{
+		m_debugLightingPointCPUMesh.Clear();
+		m_debugLightingPointCPUMesh.Begin(PRIMITIVE_TRIANGLES, true);
+		for (int i = 0; i < m_dirtyLightingBlocks.size(); i++)
+		{
+			Vector3 blockPoint = m_dirtyLightingBlocks[i].GetBlockCenterWorldPosition();
+			m_debugLightingPointCPUMesh.AppendCube(blockPoint, Vector3::ONE * .05f, RGBA::YELLOW, RIGHT, UP, FORWARD);
+		}
+		m_debugLightingPointCPUMesh.End();
+
+		delete m_debugLightingPointGPUMesh;
+		m_debugLightingPointGPUMesh = m_debugLightingPointCPUMesh.CreateMesh();
+	}
 }
 
 void World::UpdateBlockPlacementAndDigging()
@@ -303,12 +330,31 @@ void World::UpdateDirtyLighting()
 		{
 			BlockLocator dirtyLightBLock = m_dirtyLightingBlocks.front();
 			m_dirtyLightingBlocks.pop_front();
-			//do the dirty lighting calculation on the block locator
-			UpdateDirtyBlockLighting(dirtyLightBLock);
+
+			if (dirtyLightBLock.IsValid())
+			{
+				//do the dirty lighting calculation on the block locator
+				UpdateDirtyBlockLighting(dirtyLightBLock);
+				dirtyLightBLock.m_chunk->SetMeshDirty();
+			}
 		}
 	}
 	else {
-
+		if (g_theInput->WasKeyJustPressed('L'))
+		{
+			//do one step of lighting
+			std::deque<BlockLocator> lightingToDoThisFrame;
+			lightingToDoThisFrame.swap(m_dirtyLightingBlocks);
+			while (!lightingToDoThisFrame.empty())
+			{
+				BlockLocator dirtyBlock = lightingToDoThisFrame.front();
+				lightingToDoThisFrame.pop_front();
+				UpdateDirtyBlockLighting(dirtyBlock);
+				dirtyBlock.m_chunk->SetMeshDirty();
+				//this still pushes to m_dirtyLightBlocks, so next time we press L we'll have new blocks to process.
+			}
+			
+		}
 	}
 }
 
@@ -319,33 +365,49 @@ void World::ManageChunks()
 	TryToDeactivateChunks();
 }
 
+void World::RenderDebugLightingPoints()
+{
+	if (!m_dirtyLightingBlocks.empty()) {
+		g_theRenderer->SetDepth(COMPARE_ALWAYS, false);
+		g_theRenderer->ReleaseShader();
+		g_theRenderer->ReleaseTexture();
+		g_theRenderer->DrawMesh(m_debugLightingPointGPUMesh->m_subMeshes[0]);
+	}
+}
+
 void World::UpdateDirtyBlockLighting(BlockLocator & block)
 {
 	// hey, u cute af ;)
-
-	//get the correct value, compare with old value.
-	uchar oldVal = block.GetBlock().GetIndoorLightLevel();
-	uchar correctVal = GetCorrectLightLevel(block);
-
-	if (oldVal != correctVal)
+	if (block.IsValid())
 	{
-		block.GetBlock().SetIndoorLighting(correctVal);
-		//set clean lighting for this clean block
-		block.GetBlock().ClearLightDirty();
+		//get the correct value, compare with old value.
+		uchar oldVal = block.GetBlock().GetIndoorLightLevel();
+		uchar correctVal = GetCorrectLightLevel(block);
 
-		BlockLocator east = block.GetEast();
-		BlockLocator west = block.GetWest();
-		BlockLocator south = block.GetSouth();
-		BlockLocator north = block.GetNorth();
-		BlockLocator up = block.GetUp();
-		BlockLocator down = block.GetDown();
+		Block& actualBlock = block.GetBlock();
 
-		if (!east.IsBlockFullyOpaque()) { SetBlockLightDirty(east); }
-		if (!west.IsBlockFullyOpaque()) { SetBlockLightDirty(west); }
-		if (!south.IsBlockFullyOpaque()) { SetBlockLightDirty(south); }
-		if (!north.IsBlockFullyOpaque()) { SetBlockLightDirty(north); }
-		if (!up.IsBlockFullyOpaque()) { SetBlockLightDirty(up); }
-		if (!down.IsBlockFullyOpaque()) { SetBlockLightDirty(down); }
+		if (oldVal != correctVal)
+		{
+
+			actualBlock.SetIndoorLighting(correctVal);
+			//set clean lighting for this clean block
+
+
+			BlockLocator east = block.GetEast();
+			BlockLocator west = block.GetWest();
+			BlockLocator south = block.GetSouth();
+			BlockLocator north = block.GetNorth();
+			BlockLocator up = block.GetUp();
+			BlockLocator down = block.GetDown();
+
+			if (!east.IsBlockFullyOpaque()) { SetBlockLightDirty(east); }
+			if (!west.IsBlockFullyOpaque()) { SetBlockLightDirty(west); }
+			if (!south.IsBlockFullyOpaque()) { SetBlockLightDirty(south); }
+			if (!north.IsBlockFullyOpaque()) { SetBlockLightDirty(north); }
+			if (!up.IsBlockFullyOpaque()) { SetBlockLightDirty(up); }
+			if (!down.IsBlockFullyOpaque()) { SetBlockLightDirty(down); }
+		}
+		actualBlock.ClearLightDirty();
 	}
 }
 

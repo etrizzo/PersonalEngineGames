@@ -72,6 +72,7 @@ Game::Game()
 	//m_udp = new UDPTest();
 
 	m_session = new NetSession();
+	m_isDebugLighting = g_gameConfigBlackboard.GetValue("debugLighting", false);
 
 }
 

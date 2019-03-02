@@ -43,10 +43,15 @@ private:
 
 	//update loop
 	void UpdateDebugStuff();
+	void UpdateDebugLightingPoints();
 	void UpdateBlockPlacementAndDigging();
 	void UpdateChunks();
 	void UpdateDirtyLighting();
 	void ManageChunks();
+
+	//must be done after everything else
+	void RenderDebugLightingPoints();
+
 
 	//lighting
 	void UpdateDirtyBlockLighting(BlockLocator& block);
@@ -63,14 +68,17 @@ private:
 	float GetChunkDistanceFromPlayerSquared(Chunk* chunk) const;
 	//bool ShouldDeactivateChunk(Chunk* chunk) const;
 	
-	float m_chunkActivationRadiusChunkDistance = 5.f;		//int?
-	float m_chunkDeactivationRadiusChunkDistance = 7.f;
+	float m_chunkActivationRadiusChunkDistance = 50.f;		//int?
+	float m_chunkDeactivationRadiusChunkDistance = 70.f;
 public:
 	std::vector<IntVector2> m_chunkActivationOffsetsSortedByDistance;
 
 	std::deque<BlockLocator> m_dirtyLightingBlocks;
 
 	Material* m_chunkMaterial;		//for convenience
+	
+	MeshBuilder m_debugLightingPointCPUMesh;
+	Mesh* m_debugLightingPointGPUMesh;
 
 	std::map<IntVector2, Chunk*> m_chunks;
 };
