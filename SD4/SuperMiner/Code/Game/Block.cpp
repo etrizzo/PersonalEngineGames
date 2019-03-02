@@ -20,7 +20,7 @@ void Block::SetType(uchar newType)
 	m_blockID = newType;
 	BlockDefinition* newDefinition = BlockDefinition::GetBlockDefinitionFromID(newType);
 
-	m_lighting = (uchar) newDefinition->m_internalLightLevel;
+	//m_lighting = (uchar) newDefinition->m_internalLightLevel;
 
 	if (newDefinition->IsFullyOpaque())
 	{

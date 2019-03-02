@@ -29,6 +29,8 @@ public:
 
 	BlockLocator GetBlockLocatorAtWorldPosition(const Vector3& worldPos) const;
 
+	void SetBlockLightDirty(BlockLocator& block);
+
 	//physics
 	RaycastResult Raycast(const Vector3& start, const Vector3& forwardNormal, float maxDistance) const;
 
@@ -45,6 +47,11 @@ private:
 	void UpdateChunks();
 	void UpdateDirtyLighting();
 	void ManageChunks();
+
+	//lighting
+	void UpdateDirtyBlockLighting(BlockLocator& block);
+	uchar GetCorrectLightLevel(const BlockLocator& block);
+	
 
 
 	void TryToActivateChunks();

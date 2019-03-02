@@ -33,6 +33,12 @@ public:
 	inline bool IsSolid() const;
 	inline bool IsVisible() const;
 
+	inline void SetLightDirty();
+	inline void ClearLightDirty();
+
+	inline void SetIndoorLighting(uchar indoor);
+	inline void SetOutdoorLighting(uchar outdoor);
+
 	inline int GetIndoorLightLevel() const;
 	inline int GetOutdoorLightLevel() const;
 
@@ -68,6 +74,28 @@ inline bool Block::IsSolid() const
 inline bool Block::IsVisible() const
 {
 	return AreBitsSet(m_bits, BLOCK_BIT_IS_VISIBLE);
+}
+
+inline void Block::SetLightDirty()
+{
+	SetBits(m_bits, BLOCK_BIT_IS_LIGHT_DIRTY);
+}
+
+inline void Block::ClearLightDirty()
+{
+	ClearBits(m_bits, BLOCK_BIT_IS_LIGHT_DIRTY);
+}
+
+inline void Block::SetIndoorLighting(uchar indoor)
+{
+	ClearBits(m_lighting, BLOCK_LIGHTING_INDOOR_MASK);
+	m_lighting |= indoor;
+}
+
+inline void Block::SetOutdoorLighting(uchar outdoor)
+{
+	ClearBits(m_lighting, BLOCK_LIGHTING_OUTDOOR_MASK);
+	m_lighting |= (outdoor << BLOCK_LIGHTING_BITS);
 }
 
 inline int Block::GetIndoorLightLevel() const

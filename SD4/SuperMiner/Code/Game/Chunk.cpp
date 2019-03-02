@@ -1,6 +1,8 @@
 #include "Game/Chunk.hpp"
 #include "Game/BlockDefinition.hpp"
 #include "Game/BlockLocator.hpp"
+#include "Game/Game.hpp"
+#include "Game/World.hpp"
 
 Chunk::Chunk(IntVector2 chunkCoords)
 {
@@ -98,6 +100,9 @@ void Chunk::SetBlockType(int blockIndex, uchar newType)
 	m_blocks[blockIndex].SetType(newType);
 	m_isGPUMeshDirty = true;
 	m_isSavedOrUntouched = false;
+
+	g_theGame->GetWorld()->SetBlockLightDirty(BlockLocator(blockIndex, this));
+
 	//check if neighbors need to be dirtied
 	if (IsBlockIndexOnEastEdge(blockIndex) && m_eastNeighbor != nullptr)
 	{

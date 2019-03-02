@@ -296,7 +296,16 @@ void World::UpdateDirtyLighting()
 {
 	if (!g_theGame->IsDebugLighting())
 	{
-
+		//m_dirtyLihgtingBlocks is a queue of dirty blocks 
+		//(or a "deque", which is kind of like a vector bc 
+		//  you can push and pop at both ends really fast)
+		while (!m_dirtyLightingBlocks.empty())
+		{
+			BlockLocator dirtyLightBLock = m_dirtyLightingBlocks.front();
+			m_dirtyLightingBlocks.pop_front();
+			//do the dirty lighting calculation on the block locator
+			UpdateDirtyBlockLighting(dirtyLightBLock);
+		}
 	}
 	else {
 
@@ -308,6 +317,94 @@ void World::ManageChunks()
 	TryToActivateChunks();
 	TryToBuildChunkMesh();
 	TryToDeactivateChunks();
+}
+
+void World::UpdateDirtyBlockLighting(BlockLocator & block)
+{
+	// hey, u cute af ;)
+
+	//get the correct value, compare with old value.
+	uchar oldVal = block.GetBlock().GetIndoorLightLevel();
+	uchar correctVal = GetCorrectLightLevel(block);
+
+	if (oldVal != correctVal)
+	{
+		block.GetBlock().SetIndoorLighting(correctVal);
+		//set clean lighting for this clean block
+		block.GetBlock().ClearLightDirty();
+
+		BlockLocator east = block.GetEast();
+		BlockLocator west = block.GetWest();
+		BlockLocator south = block.GetSouth();
+		BlockLocator north = block.GetNorth();
+		BlockLocator up = block.GetUp();
+		BlockLocator down = block.GetDown();
+
+		if (!east.IsBlockFullyOpaque()) { SetBlockLightDirty(east); }
+		if (!west.IsBlockFullyOpaque()) { SetBlockLightDirty(west); }
+		if (!south.IsBlockFullyOpaque()) { SetBlockLightDirty(south); }
+		if (!north.IsBlockFullyOpaque()) { SetBlockLightDirty(north); }
+		if (!up.IsBlockFullyOpaque()) { SetBlockLightDirty(up); }
+		if (!down.IsBlockFullyOpaque()) { SetBlockLightDirty(down); }
+	}
+}
+
+uchar World::GetCorrectLightLevel(const BlockLocator & block)
+{
+	/*
+	- My Light level is the MAXIMUM of:
+		+ My own block definition's glow value (13 for glowstone, 0 or stone, etc.)
+		+ IF and only if i am not fully opaque: my brightest neighbor's light value - 1
+	*/
+	Block& actualBlock = block.GetBlock();
+	uchar definitionGlow = actualBlock.GetDefinitionInternalLightLevel();
+	uchar neighborGlow = 0U;
+	BlockLocator east = block.GetEast();
+	BlockLocator west = block.GetWest();
+	BlockLocator south = block.GetSouth();
+	BlockLocator north = block.GetNorth();
+	BlockLocator up = block.GetUp();
+	BlockLocator down = block.GetDown();
+
+	if (!actualBlock.IsFullyOpaque()) 
+	{
+		//set neighborGlow to be maxNeighbor - 1
+		//find max neighbor
+		uchar maxNeighborGlow = 0U;
+
+		TODO("Should this be looking at indoor light level, or the max of indoor & outdoor?");
+		uchar eastLevel		= east.GetIndoorLightLevel();
+		uchar westLevel		= west.GetIndoorLightLevel();
+		uchar southLevel	= south.GetIndoorLightLevel();
+		uchar northLevel	= north.GetIndoorLightLevel();
+		uchar upLevel		= up.GetIndoorLightLevel();
+		uchar downLevel		= down.GetIndoorLightLevel();
+
+		//set maxNeihgborGlow to max
+		if (eastLevel	> maxNeighborGlow) { maxNeighborGlow = eastLevel; }
+		if (westLevel	> maxNeighborGlow) { maxNeighborGlow = westLevel; }
+		if (southLevel	> maxNeighborGlow) { maxNeighborGlow = southLevel; }
+		if (northLevel	> maxNeighborGlow) { maxNeighborGlow = northLevel; }
+		if (upLevel		> maxNeighborGlow) { maxNeighborGlow = upLevel; }
+		if (downLevel	> maxNeighborGlow) { maxNeighborGlow = downLevel; }
+
+		if (maxNeighborGlow > 0) {
+			neighborGlow = maxNeighborGlow - 1U;
+		}
+	}
+
+	return (uchar) Max(neighborGlow, definitionGlow);
+}
+
+void World::SetBlockLightDirty(BlockLocator & block)
+{
+	Block& actualBlock = block.GetBlock();
+	//only want to check lighting on blocks that accept lighting (aren't opaque) and aren't already in the dirty list
+	if ( !actualBlock.IsLightDirty())
+	{
+		actualBlock.SetLightDirty();
+		m_dirtyLightingBlocks.push_back(block);
+	}
 }
 
 void World::TryToActivateChunks()

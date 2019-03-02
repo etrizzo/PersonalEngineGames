@@ -1,5 +1,7 @@
 #include "Game/BlockLocator.hpp"
 #include "Game/Chunk.hpp"
+#include "Game/Game.hpp"
+#include "Game/World.hpp"
 
 BlockLocator::BlockLocator(int blockIndex, Chunk* chunk)
 {

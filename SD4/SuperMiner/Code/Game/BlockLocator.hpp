@@ -23,6 +23,7 @@ public:
 	AABB3 GetBlockBounds() const;
 	Vector3 GetBlockCenterWorldPosition() const;
 
+
 	//Functions that get make block locators for your neighbors
 	BlockLocator GetEast() const;
 	BlockLocator GetWest() const;
