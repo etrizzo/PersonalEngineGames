@@ -37,12 +37,14 @@ World::~World()
 
 void World::Update()
 {
-	UpdateDebugStuff();
+	
 	//we want block placement/digging to happen before chunk management so that we can mark the changed chunk for re-building mesh THAT FRAME (bc it's usually the closest dirty chunk)
 	UpdateBlockPlacementAndDigging();
 	UpdateChunks();     //nothing for now
 	UpdateDirtyLighting();
 	ManageChunks();     //activate, deactivate, re-build meshes, etc.
+
+	UpdateDebugStuff();
 }
 
 void World::Render()
@@ -393,19 +395,14 @@ void World::UpdateDirtyBlockLighting(BlockLocator & block)
 	// hey, u cute af ;)
 	if (block.IsValid())
 	{
-		//get the correct value, compare with old value.
-		uchar oldVal = block.GetBlock().GetIndoorLightLevel();
-		uchar correctVal = GetCorrectLightLevel(block);
+		bool changedIndoor = UpdateBlockIndoorLighting(block);
+		bool changedOutdoor = UpdateBlockOutdoorLighting(block);
 
 		Block& actualBlock = block.GetBlock();
 
-		if (oldVal != correctVal)
+		if (changedIndoor || changedOutdoor)
 		{
-
-			actualBlock.SetIndoorLighting(correctVal);
-			//set clean lighting for this clean block
-
-
+			//mark your non-opaque neighbors as dirty if anything changed
 			BlockLocator east = block.GetEast();
 			BlockLocator west = block.GetWest();
 			BlockLocator south = block.GetSouth();
@@ -424,7 +421,39 @@ void World::UpdateDirtyBlockLighting(BlockLocator & block)
 	}
 }
 
-uchar World::GetCorrectLightLevel(const BlockLocator & block)
+bool World::UpdateBlockIndoorLighting(BlockLocator & block)
+{
+	//get the correct value, compare with old value.
+	uchar oldVal = block.GetBlock().GetIndoorLightLevel();
+	uchar correctVal = GetCorrectIndoorLightLevel(block);
+
+	Block& actualBlock = block.GetBlock();
+
+	if (oldVal != correctVal)
+	{
+		actualBlock.SetIndoorLighting(correctVal);
+		return true;
+	}
+	return false;
+}
+
+bool World::UpdateBlockOutdoorLighting(BlockLocator & block)
+{
+	//get the correct value, compare with old value.
+	uchar oldVal = block.GetBlock().GetOutdoorLightLevel();
+	uchar correctVal = GetCorrectOutdoorLightLevel(block);
+
+	Block& actualBlock = block.GetBlock();
+
+	if (oldVal != correctVal)
+	{
+		actualBlock.SetOutdoorLighting(correctVal);
+		return true;
+	}
+	return false;
+}
+
+uchar World::GetCorrectIndoorLightLevel(const BlockLocator & block)
 {
 	/*
 	- My Light level is the MAXIMUM of:
@@ -447,7 +476,6 @@ uchar World::GetCorrectLightLevel(const BlockLocator & block)
 		//find max neighbor
 		uchar maxNeighborGlow = 0U;
 
-		TODO("Should this be looking at indoor light level, or the max of indoor & outdoor?");
 		uchar eastLevel		= east.GetIndoorLightLevel();
 		uchar westLevel		= west.GetIndoorLightLevel();
 		uchar southLevel	= south.GetIndoorLightLevel();
@@ -469,6 +497,55 @@ uchar World::GetCorrectLightLevel(const BlockLocator & block)
 	}
 
 	return (uchar) Max(neighborGlow, definitionGlow);
+}
+
+uchar World::GetCorrectOutdoorLightLevel(const BlockLocator & block)
+{
+	/*
+	- My outdoor Light level is:
+		+ 15 if i'm sky
+		+ max of (0, maxNeighbor - 1)
+	*/
+	Block& actualBlock = block.GetBlock();
+	if (actualBlock.IsSky())
+	{
+		return MAX_OUTDOOR_LIGHT;
+	}
+	uchar neighborGlow = 0U;
+	BlockLocator east = block.GetEast();
+	BlockLocator west = block.GetWest();
+	BlockLocator south = block.GetSouth();
+	BlockLocator north = block.GetNorth();
+	BlockLocator up = block.GetUp();
+	BlockLocator down = block.GetDown();
+
+	if (!actualBlock.IsFullyOpaque())
+	{
+		//set neighborGlow to be maxNeighbor - 1
+		//find max neighbor
+		uchar maxNeighborGlow = 0U;
+
+		uchar eastLevel = east.GetOutdoorLightLevel();
+		uchar westLevel = west.GetOutdoorLightLevel();
+		uchar southLevel = south.GetOutdoorLightLevel();
+		uchar northLevel = north.GetOutdoorLightLevel();
+		uchar upLevel = up.GetOutdoorLightLevel();
+		uchar downLevel = down.GetOutdoorLightLevel();
+
+		//set maxNeihgborGlow to max
+		if (eastLevel > maxNeighborGlow) { maxNeighborGlow = eastLevel; }
+		if (westLevel > maxNeighborGlow) { maxNeighborGlow = westLevel; }
+		if (southLevel > maxNeighborGlow) { maxNeighborGlow = southLevel; }
+		if (northLevel > maxNeighborGlow) { maxNeighborGlow = northLevel; }
+		if (upLevel > maxNeighborGlow) { maxNeighborGlow = upLevel; }
+		if (downLevel > maxNeighborGlow) { maxNeighborGlow = downLevel; }
+
+		if (maxNeighborGlow > 0) {
+			neighborGlow = maxNeighborGlow - 1U;
+		}
+	}
+
+	return max(neighborGlow, 0);
 }
 
 void World::SetBlockLightDirty(BlockLocator & block)

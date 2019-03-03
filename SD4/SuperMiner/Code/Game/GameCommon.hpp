@@ -57,6 +57,8 @@ constexpr int	CHUNK_MASK_Z = (CHUNK_SIZE_Z - 1) << (CHUNK_BITS_X + CHUNK_BITS_Y)
 
 constexpr float	SEA_LEVEL = (float) CHUNK_SIZE_Z * .43f;
 
+constexpr uchar MAX_OUTDOOR_LIGHT = (15);
+
 constexpr float RAYCAST_STEP_SIZE = .02f;
 
 //this is the matrix to apply to convert world coordinates to engine coordinates 

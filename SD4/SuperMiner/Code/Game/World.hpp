@@ -49,6 +49,9 @@ private:
 	void UpdateDirtyLighting();
 	void ManageChunks();
 
+
+	
+
 	//render loop
 	void RenderChunks();
 	//must be done after everything else
@@ -57,7 +60,12 @@ private:
 
 	//lighting
 	void UpdateDirtyBlockLighting(BlockLocator& block);
-	uchar GetCorrectLightLevel(const BlockLocator& block);
+	//returns true if lighting changed
+	bool UpdateBlockIndoorLighting(BlockLocator& block);
+	//returns true if lighting changed
+	bool UpdateBlockOutdoorLighting(BlockLocator& block);
+	uchar GetCorrectIndoorLightLevel(const BlockLocator& block);
+	uchar GetCorrectOutdoorLightLevel(const BlockLocator& block);
 	
 
 

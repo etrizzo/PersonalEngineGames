@@ -91,6 +91,7 @@ private:
 
 
 	bool ShouldSetBlockDirtyAtActivation(int blockIndex);
+	void InitializeSkyBlocks();
 
 };
 

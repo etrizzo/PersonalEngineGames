@@ -36,6 +36,9 @@ public:
 	inline void SetLightDirty();
 	inline void ClearLightDirty();
 
+	inline void SetIsSky();
+	inline void ClearIsSky();
+
 	inline void SetIndoorLighting(uchar indoor);
 	inline void SetOutdoorLighting(uchar outdoor);
 
@@ -85,6 +88,16 @@ inline void Block::SetLightDirty()
 inline void Block::ClearLightDirty()
 {
 	ClearBits(m_bits, BLOCK_BIT_IS_LIGHT_DIRTY);
+}
+
+inline void Block::SetIsSky()
+{
+	SetBits(m_bits, BLOCK_BIT_IS_SKY);
+}
+
+inline void Block::ClearIsSky()
+{
+	ClearBits(m_bits, BLOCK_BIT_IS_SKY);
 }
 
 inline void Block::SetIndoorLighting(uchar indoor)

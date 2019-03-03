@@ -56,6 +56,8 @@ void Chunk::CreateMesh()
 
 void Chunk::InitializeLighting()
 {
+	InitializeSkyBlocks();
+
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++)
 	{
 		if (ShouldSetBlockDirtyAtActivation(i))
@@ -147,9 +149,50 @@ bool Chunk::ShouldSetBlockDirtyAtActivation(int blockIndex)
 		{
 			return true;
 		}
+
+		if (!m_blocks[blockIndex].IsSky())
+		{
+			//check neighbors to see if they are sky.
+			//also we know we aren't at an edge bc we would have returned already, so we don't need a blocklocator.... right?
+			int east = blockIndex + 1;
+			int west = blockIndex - 1;
+			int north = blockIndex + CHUNK_SIZE_X;
+			int south = blockIndex - CHUNK_SIZE_X;
+			
+			if (m_blocks[south].IsSky()) { 
+				return true; 
+			}
+			if (m_blocks[west].IsSky()) { 
+				return true; 
+			}
+			if (m_blocks[east].IsSky()) { 
+				return true; 
+			}
+			if (m_blocks[north].IsSky()) { 
+				return true; 
+			}
+		}
 	}
 
 	return false;
+}
+
+void Chunk::InitializeSkyBlocks()
+{
+	int startingIndex = GetBlockIndexForBlockCoordinates(IntVector3(0, 0, CHUNK_SIZE_Z - 1));
+	for (int i = startingIndex; i < startingIndex + CHUNK_LAYER_DIMS_XY; i++)
+	{
+		int blockIndex = i;
+		//descend each column until you hit an opaque block.
+		while (!IsBlockIndexOnBottomEdge(blockIndex) && !m_blocks[blockIndex].IsFullyOpaque())
+		{
+			m_blocks[blockIndex].SetIsSky();
+			m_blocks[blockIndex].SetOutdoorLighting(MAX_OUTDOOR_LIGHT);
+
+			//decrement blockIndex
+			blockIndex -= CHUNK_LAYER_DIMS_XY;
+		}
+	}
 }
 
 IntVector2 Chunk::GetChunkCoords()
