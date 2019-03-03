@@ -286,7 +286,10 @@ void World::UpdateDebugStuff()
 
 	if (g_theGame->IsDebugLighting())
 	{
-		UpdateDebugLightingPoints();
+		//if (g_theInput->WasKeyJustPressed('L') || m_debugLightingPointGPUMesh == nullptr)
+		//{
+			UpdateDebugLightingPoints();
+		//}
 	}
 }
 

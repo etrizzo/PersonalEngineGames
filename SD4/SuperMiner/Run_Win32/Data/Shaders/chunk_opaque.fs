@@ -20,6 +20,8 @@ void main( void )
 
 	vec4 lightColor = vec4(actualLightVal, actualLightVal, actualLightVal, 1.0);
 
+	lightColor = vec4(indoor, outdoor, 0.0, 1.0);
+
 	outColor = diffuse * lightColor;
 	outColor = ApplyFog( outColor, passViewPos.x);
 }

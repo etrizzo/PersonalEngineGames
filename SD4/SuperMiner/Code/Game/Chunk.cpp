@@ -98,11 +98,44 @@ bool Chunk::DoesChunkHaveMesh() const
 void Chunk::DigBlock(int blockIndex, uchar newType)
 {
 	SetBlockType(blockIndex, newType);
+	
+	//99% of the tim this will be true
+	if (newType == BLOCK_AIR)
+	{
+		//check to see if you're now sky
+		BlockLocator me = BlockLocator(blockIndex, this);
+		if (me.GetUp().GetBlock().IsSky()) {
+			
+			//descend and update all non-opaque blocks below me.
+			while (me.IsValid() && !me.IsBlockFullyOpaque())
+			{
+				me.GetBlock().SetIsSky();
+				g_theGame->GetWorld()->SetBlockLightDirty(me);
+				//me.GetBlock().SetLightDirty();
+				me.MoveDown();
+			}
+		}
+	}
 }
 
 void Chunk::PlaceBlock(int blockIndex, uchar newType)
 {
 	SetBlockType(blockIndex, newType);
+
+	//if you were sky and you're now opaque, you gotta change everybody below you
+	if (m_blocks[blockIndex].IsSky() && m_blocks[blockIndex].IsFullyOpaque())
+	{
+		//check to see if you're now sky
+		BlockLocator me = BlockLocator(blockIndex, this);
+		//descend and update all non-opaque blocks below me.
+		do
+		{
+			me.GetBlock().ClearIsSky();
+			g_theGame->GetWorld()->SetBlockLightDirty(me);
+			//me.GetBlock().SetLightDirty();
+			me.MoveDown();
+		} while (me.IsValid() && !me.IsBlockFullyOpaque());
+	}
 }
 
 void Chunk::SetBlockType(int blockIndex, uchar newType)
@@ -370,7 +403,7 @@ void Chunk::ReadBufferAsRLE(const std::vector<unsigned char>& buffer)
 			blocksAdded++;
 		}
 	}
-	if (blocksAdded != BLOCKS_PER_CHUNK-1){
+	if (blocksAdded != BLOCKS_PER_CHUNK){
 		ConsolePrintf(RGBA::RED, "Not enough blocks in RLE file - interesting.... (Chunk %i,%i)", m_chunkCoords.x, m_chunkCoords.y);
 	}
 }

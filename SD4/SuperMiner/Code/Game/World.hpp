@@ -89,7 +89,7 @@ public:
 	Material* m_chunkOpaqueMaterial;		//for convenience
 	
 	MeshBuilder m_debugLightingPointCPUMesh;
-	Mesh* m_debugLightingPointGPUMesh;
+	Mesh* m_debugLightingPointGPUMesh = nullptr;
 
 	std::map<IntVector2, Chunk*> m_chunks;
 	
