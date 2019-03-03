@@ -74,6 +74,8 @@
 
 
 
+
+
 class Window;
 class DevConsole;
 
@@ -187,8 +189,6 @@ struct RenderState
 	// Blend
 	eBlendMode m_blendMode	= BLEND_MODE_ALPHA;
 }; 
-
-
 
 
 

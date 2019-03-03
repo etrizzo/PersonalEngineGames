@@ -17,11 +17,6 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	mb.AppendCube(Vector3(0.f, 0.f, 0.f), Vector3::ONE * .5f, RGBA::GREEN, RIGHT, UP, FORWARD);
 	mb.End();
 	m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
-	
-	Material* mat = Material::GetMaterial("couch_cel");
-	if (mat != nullptr){
-		SetMaterial(mat);
-	}
 
 
 
@@ -69,7 +64,7 @@ void Player::Update()
 
 void Player::HandleInput()
 {
-	float ds = g_theGame->GetDeltaSeconds();
+//	float ds = g_theGame->GetDeltaSeconds();
 	HandleInputFreeCamera();
 	HandleInputDigPlace();
 

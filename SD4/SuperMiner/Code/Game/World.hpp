@@ -49,6 +49,8 @@ private:
 	void UpdateDirtyLighting();
 	void ManageChunks();
 
+	//render loop
+	void RenderChunks();
 	//must be done after everything else
 	void RenderDebugLightingPoints();
 
@@ -71,16 +73,19 @@ private:
 	float m_chunkActivationRadiusChunkDistance = 50.f;		//int?
 	float m_chunkDeactivationRadiusChunkDistance = 70.f;
 public:
+	FogData_t	m_fogData;
 	std::vector<IntVector2> m_chunkActivationOffsetsSortedByDistance;
 
 	std::deque<BlockLocator> m_dirtyLightingBlocks;
 
-	Material* m_chunkMaterial;		//for convenience
+	Material* m_chunkOpaqueMaterial;		//for convenience
 	
 	MeshBuilder m_debugLightingPointCPUMesh;
 	Mesh* m_debugLightingPointGPUMesh;
 
 	std::map<IntVector2, Chunk*> m_chunks;
+	
+	RGBA m_skyColor = RGBA::BEEFEE;
 };
 
 

@@ -454,15 +454,13 @@ void Chunk::AddVertsForBlockAtIndex(int blockIndex)
 RGBA Chunk::GetLightingTintForBlock(const BlockLocator & block)
 {
 	uchar indoor = block.GetIndoorLightLevel();
-	if (indoor != 0U)
-	{
-		int x = 0;
-	}
+	uchar outdoor = block.GetOutdoorLightLevel();
 	float indoorScale = RangeMapFloat((float)indoor, 0.f, 15.f, .1f, 1.f);
+	float outdoorScale = RangeMapFloat((float)outdoor, 0.f, 15.f, 0.f, 1.f);
 
 	float finalScale = indoorScale;
 	RGBA tint;
-	tint.SetAsFloats(finalScale, finalScale, finalScale, 1.f);
+	tint.SetAsFloats(finalScale, outdoorScale, 0.f, 1.f);
 	return tint;
 }
 

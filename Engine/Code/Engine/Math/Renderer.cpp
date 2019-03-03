@@ -662,6 +662,14 @@ void Renderer::BindAmbientLight()
 	}
 }
 
+void Renderer::BindFog(FogData_t& fogData)
+{
+	m_fogBuffer.CopyToGPU( sizeof(fogData), &fogData);
+	glBindBufferBase( GL_UNIFORM_BUFFER, 
+		FOG_BUFFER_BINDING, 
+		m_fogBuffer.GetHandle() ); 
+}
+
 void Renderer::BindMaterial(Material * mat)
 {
 	
@@ -840,7 +848,8 @@ void Renderer::UpdateClock(float gameDS, float systemDS)
 
 void Renderer::ClearScreen(const RGBA & clearColor)
 {
-	glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+	Vector4 normalizedColor = clearColor.GetNormalized();
+	glClearColor(normalizedColor.x, normalizedColor.y, normalizedColor.z, normalizedColor.w);
 	glClear( GL_COLOR_BUFFER_BIT );
 }
 

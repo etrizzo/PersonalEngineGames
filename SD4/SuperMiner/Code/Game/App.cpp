@@ -244,14 +244,6 @@ void App::RegisterDebugSystemCommands()
 	CommandRegister("debug_reattach_camera", CommandDebugReattachCamera, "Reattaches camera to in-game camera");
 	CommandRegister("debug_show_tasks", CommandDebugPrintTasks, "Prints all debug render types");
 	CommandRegister("debug_task", CommandDebugDrawTask, "Draws debug render task", "debug_task <render_task_type>");
-
-	//lighting commands
-	CommandRegister("new_light", CommandMakeNewLight, "Adds new light of specified in front of the camera, with color rgba", "new_light <point|dir|spot> <r,g,b,a>");
-	CommandRegister("delete_light", CommandRemoveLight, "Removes light at index i", "delete_light <i>");
-	CommandRegister("delete_lights_all", CommandRemoveAllLights, "Removes all lights in the scene");
-	CommandRegister("set_light_attenuation", CommandSetLightAttenuation, "Sets attenuation for light i to a0,a1,a2", "set_light_attenuation <i> <a0,a1,a2>");
-	CommandRegister("set_ambient_light", CommandSetAmbientLight, "Sets ambient light on renderer.", "set_ambient_light <r,g,b,a>");
-
 }
 
 void App::RegisterNetCommands()
@@ -415,74 +407,6 @@ void CommandRecompileShaders(Command & cmd)
 	ConsolePrintf(RGBA::CYAN, "All shaders recompiled");
 }
 
-
-
-void CommandMakeNewLight(Command & cmd)
-{
-	Vector3 pos = cmd.GetNextVec3();
-	std::string type = cmd.GetNextString();
-	RGBA color = cmd.GetNextColor();
-	if (color == RGBA::BLACK){		//default color for GetNextColor();
-		color = RGBA::WHITE;
-	}
-	g_theGame->AddNewLight(type, color);
-}
-
-void CommandSetLightColor(Command & cmd)
-{
-	RGBA color = cmd.GetNextColor();
-	if (color == RGBA::BLACK){		//default color for GetNextColor();
-		color = RGBA::WHITE;
-	}
-	g_theGame->SetLightColor(color);
-}
-
-void CommandSetLightPosition(Command & cmd)
-{
-	Vector3 pos = cmd.GetNextVec3();
-	g_theGame->SetLightPosition(pos);
-}
-
-void CommandSetAmbientLight(Command & cmd)
-{
-	RGBA color = cmd.GetNextColor();
-	if (color == RGBA::BLACK){
-		ConsolePrintf(RGBA::RED, "No color specified. Specify color as r,g,b,a\n   ex: set_ambient_light 255,0,0,255");
-	} else {
-		g_theRenderer->SetAmbientLight(color);
-	}
-}
-
-void CommandRemoveLight(Command & cmd)
-{
-	int idx = cmd.GetNextInt();	//returns 0 if none found so that works for now
-	//g_theGame->RemoveLight(idx);
-	if (idx < (int) g_theGame->GetNumActiveLights()){
-		g_theGame->RemoveLight(idx);
-	} else {
-		ConsolePrintf(RGBA::RED, "Cannot remove light %i because there are only %i lights in the scene :(", idx, (int) (g_theGame->GetNumActiveLights()) );
-	}
-}
-
-void CommandRemoveAllLights(Command & cmd)
-{
-	UNUSED(cmd);
-	for (int i = 0; i < (int) g_theGame->GetScene()->m_lights.size(); i++){
-		g_theGame->RemoveLight();
-	}
-	g_theGame->GetScene()->m_lights.clear();
-}
-
-void CommandSetLightAttenuation(Command & cmd)
-{
-	int idx = cmd.GetNextInt();
-	Vector3 att = cmd.GetNextVec3();
-
-	if (idx < MAX_LIGHTS && idx < (int) g_theGame->GetNumActiveLights()){
-		g_theGame->SetLightAttenuation(idx, att);
-		ConsolePrintf("Set light %i attenuation to: %f,%f,%f", idx, att.x, att.y, att.z);
-	}
-}
 
 void CommandSetGodMode(Command & cmd)
 {

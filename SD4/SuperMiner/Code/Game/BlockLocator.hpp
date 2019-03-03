@@ -21,6 +21,7 @@ public:
 	inline bool IsBlockFullyOpaque() const;			
 	inline bool IsBlockAir() const;
 	inline uchar GetIndoorLightLevel() const;
+	inline uchar GetOutdoorLightLevel() const;
 	AABB3 GetBlockBounds() const;
 	Vector3 GetBlockCenterWorldPosition() const;
 
@@ -54,5 +55,10 @@ bool BlockLocator::IsBlockAir() const
 
 inline uchar BlockLocator::GetIndoorLightLevel() const
 {
-	return GetBlock().GetIndoorLightLevel();
+	return (uchar) GetBlock().GetIndoorLightLevel();
+}
+
+inline uchar BlockLocator::GetOutdoorLightLevel() const
+{
+	return (uchar) GetBlock().GetOutdoorLightLevel();
 }

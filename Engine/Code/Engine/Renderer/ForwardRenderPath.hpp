@@ -3,21 +3,8 @@
 #include "Engine/Renderer/RenderScene.hpp"
 #include "Engine/Renderer/DrawCall.hpp"
 
-#define FOG_BUFFER_BINDING (0)
-#define SHADOW_DEPTH_BINDING (8)
-#define SORT_LAYER_ALPHA (1)
-
-struct fogData_t{
-	void SetFogBuffer(RGBA color, float nearPlane, float farPlane, float nearFactor = .1f, float farFactor = .8f);
-	//void SetFogColor(RGBA color);
 
 
-	Vector4 fogColor;
-	float fogNearPlane;
-	float fogNearFactor;
-	float fogFarPlane;
-	float fogFarFactor;
-};
 
 class ForwardRenderPath{
 public:
@@ -39,7 +26,7 @@ public:
 	bool m_usingShadows;
 
 private:
-	fogData_t	m_fogData;
+	FogData_t	m_fogData;
 	UniformBuffer m_fogBuffer;
 
 	void ClearForCamera(Camera* cam);

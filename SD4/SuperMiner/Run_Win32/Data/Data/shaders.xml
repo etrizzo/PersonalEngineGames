@@ -18,36 +18,9 @@
 	<depth write="true" test="less"/>
 </shader>
 
-<!-- lit -->
-
-<shader name="default_lit" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
-	<program id="lit" />
+<shader name="chunk_opaque" sort="0" cull="back" fill="solid" frontface="ccw" blend="alpha">
+	<program id="chunk_opaque" />
 	<depth write="true" test="less"/>
-</shader>
-
-<shader name="cel_shaded" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
-	<program id="cel_shaded" />
-	<depth write="true" test="less"/>
-</shader>
-
-<shader name="cel_shaded_fog" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
-	<program id="cel_shaded_fog" />
-	<depth write="true" test="less"/>
-</shader>
-
-<shader name="lit_fog" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
-	<program id="lit_fog" />
-	<depth write="true" test="less"/>
-</shader>
-
-<shader name="lit_alpha" sort="1" cull="back" fill="solid" frontface="ccw" blend = "alpha">
-	<program id="lit" />
-	<depth write="false" test="less"/>
-</shader>
-
-<shader name="lit_alpha_fog" sort="1" cull="back" fill="solid" frontface="ccw" blend = "alpha">
-	<program id="lit_fog" />
-	<depth write="false" test="less"/>
 </shader>
 
 <!-- variations on default shader -->
@@ -94,10 +67,6 @@
 	<program id="cutout" />
 	<depth write="true" test="less"/>
 </shader>
-<shader name="cutout_lit" cull="back" fill="solid" frontface="ccw" blend = "alpha">
-	<program id="cutout_lit" />
-	<depth write="true" test="less"/>
-</shader>
 
 <shader name="water" sort="1" cull="none" fill="solid" frontface="ccw" blend="alpha">
 	<program id="scrolling" />
@@ -128,15 +97,5 @@
 
 <shader name="world_normal" cull="back" fill="solid" frontface="ccw" blend = "alpha">
 	<program id="world_normal" />
-	<depth write="true" test="less"/>
-</shader>
-
-<shader name="diffuse" cull="back" fill="solid" frontface="ccw" blend = "alpha">
-	<program id="diffuse" />
-	<depth write="true" test="less"/>
-</shader>
-
-<shader name="specular" cull="back" fill="solid" frontface="ccw" blend = "alpha">
-	<program id="specular" />
 	<depth write="true" test="less"/>
 </shader>

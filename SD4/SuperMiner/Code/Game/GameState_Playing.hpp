@@ -13,7 +13,7 @@ class Light;
 class SpotLight;
 class ParticleSystem;
 class ForwardRenderPath;
-class RenderScene;
+//class RenderScene;
 class World;
 
 class GameState_Playing: public GameState{
@@ -26,8 +26,8 @@ public:
 	//Light* m_cameraLight;
 	//std::vector<Light*> m_lights = std::vector<Light*>();
 
-	ForwardRenderPath* m_renderPath;
-	RenderScene* m_scene;
+	/*ForwardRenderPath* m_renderPath;
+	RenderScene* m_scene;*/
 
 	std::vector<Entity*> m_allEntities;
 
@@ -38,23 +38,10 @@ public:
 	void HandleInput();
 	void RespawnPlayer();
 
-	Light* AddNewLight(std::string type, RGBA color = RGBA::WHITE);		//adds in front of camera
-	Light* AddNewLight(std::string type, Vector3 pos, RGBA color = RGBA::WHITE);
-	Light* AddNewPointLight(Vector3 pos, RGBA color);
-	Light* AddNewSpotLight(Vector3 pos, RGBA color, float innerAngle = 20.f, float outerAngle = 25.f);
-	Light* AddNewDirectionalLight(Vector3 pos, RGBA color, Vector3 rotation = Vector3::ZERO);
-	void RemoveLight(int idx = 0);
-	void RemoveLight(Light* light);
-	void SetLightPosition(Vector3 newPos, unsigned int idx = 0);
-	void SetLightColor(RGBA newColor, unsigned int idx = 0);
-	void SetLightColor(Vector4 newColor, unsigned int idx = 0);
-
-	void SetLightAttenuation(int lightIndex, Vector3 att);
-
 
 	unsigned int GetNumActiveLights() const;
 
-	RenderScene* GetScene() { return m_scene; }
+	//RenderScene* GetScene() { return m_scene; }
 
 	bool m_gameWon = false;
 	bool m_gameLost = false;

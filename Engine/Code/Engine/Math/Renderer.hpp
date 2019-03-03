@@ -31,9 +31,13 @@
 
 
 // Uniform bindings
+#define FOG_BUFFER_BINDING		(0)
 #define LIGHT_BUFFER_BINDING	(2)
 #define TIME_BUFFER_BINDING		(8)
 #define SIZE_BUFFER_BINDING		(9)
+
+#define SHADOW_DEPTH_BINDING (8)
+#define SORT_LAYER_ALPHA (1)
 
 typedef RenderBuffer UniformBuffer;
 
@@ -44,6 +48,18 @@ struct size_data_t
 	float m_texelSizeY;
 	float m_screenSizeX;
 	float m_screenSizeY;
+};
+
+struct FogData_t {
+	void SetFogBuffer(RGBA color, float nearPlane, float farPlane, float nearFactor = .1f, float farFactor = .8f);
+	//void SetFogColor(RGBA color);
+
+
+	Vector4 fogColor;
+	float fogNearPlane;
+	float fogNearFactor;
+	float fogFarPlane;
+	float fogFarFactor;
 };
 
 
@@ -123,6 +139,7 @@ public:
 	void BindLightUniforms(Light* lights[MAX_LIGHTS]);
 	void BindSurfaceUniforms(float specAmount, float specFactor);
 	void BindAmbientLight();
+	void BindFog(FogData_t& fogData);
 
 	void BindMaterial(Material* mat);
 
@@ -268,6 +285,8 @@ private:
 
 	size_data_t m_sizeData;
 	UniformBuffer m_sizeBuffer;
+
+	UniformBuffer m_fogBuffer;
 
 
 	Texture* m_effectTarget  = nullptr;

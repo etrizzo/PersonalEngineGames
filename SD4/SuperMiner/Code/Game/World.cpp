@@ -7,13 +7,18 @@
 
 World::World()
 {
-	m_chunkMaterial = Material::GetMaterial("block");
-	ASSERT_OR_DIE(m_chunkMaterial != nullptr, "No block material loaded in material data");
+	m_chunkOpaqueMaterial = Material::GetMaterial("chunk_opaque");
+	ASSERT_OR_DIE(m_chunkOpaqueMaterial != nullptr, "No block material loaded in material data");
 	float activationRadiusInBlocks = g_gameConfigBlackboard.GetValue("activationRadius", 100.f);
 	float deactivationRadiusInBlocks = activationRadiusInBlocks + 25.f;
 	m_chunkActivationRadiusChunkDistance = activationRadiusInBlocks / (float) CHUNK_SIZE_X;
 	m_chunkDeactivationRadiusChunkDistance = deactivationRadiusInBlocks / (float) CHUNK_SIZE_X;
 	SetActivationRadius(m_chunkActivationRadiusChunkDistance);
+
+	float fogFarPlane = activationRadiusInBlocks - 38.f;
+	float fogNearPlane = fogFarPlane * .5f;
+	m_fogData;
+	m_fogData.SetFogBuffer(RGBA::BEEFEE, fogNearPlane, fogFarPlane, 0.f, 1.f);
 }
 
 World::~World()
@@ -44,15 +49,9 @@ void World::Render()
 {
 	TODO("Establish best render order for chunks here");
 
-	//set render state for all the chunks - we don't want to bind anything between them
-	g_theRenderer->BindMaterial(m_chunkMaterial);
-	g_theRenderer->BindModel(Matrix44::IDENTITY);
-	g_theRenderer->BindRendererUniforms();		//binds the camera for this frame
 
-	for (std::pair<IntVector2, Chunk*> chunkPair : World::m_chunks)
-	{
-		chunkPair.second->Render();
-	}
+	
+	RenderChunks();
 
 	if (g_theGame->IsDebugLighting())
 	{
@@ -363,6 +362,20 @@ void World::ManageChunks()
 	TryToActivateChunks();
 	TryToBuildChunkMesh();
 	TryToDeactivateChunks();
+}
+
+void World::RenderChunks()
+{
+	//set render state for all the chunks - we don't want to bind anything between them
+	g_theRenderer->BindMaterial(m_chunkOpaqueMaterial);
+	g_theRenderer->BindModel(Matrix44::IDENTITY);
+	g_theRenderer->BindRendererUniforms();		//binds the camera for this frame
+	g_theRenderer->BindFog(m_fogData);
+
+	for (std::pair<IntVector2, Chunk*> chunkPair : World::m_chunks)
+	{
+		chunkPair.second->Render();
+	}
 }
 
 void World::RenderDebugLightingPoints()

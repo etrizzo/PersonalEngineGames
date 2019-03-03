@@ -42,6 +42,7 @@ public:
 	inline int GetIndoorLightLevel() const;
 	inline int GetOutdoorLightLevel() const;
 
+
 	uchar GetDefinitionInternalLightLevel() const;
 
 private:

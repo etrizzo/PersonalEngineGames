@@ -212,10 +212,7 @@ void ForwardRenderPath::SetFogColor(RGBA color)
 void ForwardRenderPath::BindFog()
 {
 	TODO("Move fog binding to renderer");
-	m_fogBuffer.CopyToGPU( sizeof(m_fogData), &m_fogData);
-	glBindBufferBase( GL_UNIFORM_BUFFER, 
-		FOG_BUFFER_BINDING, 
-		m_fogBuffer.GetHandle() ); 
+	m_renderer->BindFog(m_fogData);
 }
 
 void ForwardRenderPath::SetShadows(RenderScene* scene)
@@ -317,7 +314,7 @@ void ForwardRenderPath::RenderShadowsForLight(Light * l, RenderScene * scene)
 
 }
 
-void fogData_t::SetFogBuffer(RGBA color, float nearPlane, float farPlane, float nearFactor, float farFactor)
+void FogData_t::SetFogBuffer(RGBA color, float nearPlane, float farPlane, float nearFactor, float farFactor)
 {
 	fogColor = color.GetNormalized();
 	fogNearPlane = nearPlane;

@@ -6,7 +6,7 @@
 
 Entity::~Entity()
 {
-	g_theGame->GetScene()->RemoveRenderable(m_renderable);
+
 }
 
 Entity::Entity()
