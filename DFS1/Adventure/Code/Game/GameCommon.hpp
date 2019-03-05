@@ -135,3 +135,11 @@ enum eNodeType{
 	DEFAULT_NODE,		//for start and end nodes
 	NUM_NODE_TYPES
 };
+
+
+enum eProgressionType {
+	PROGRESSION_TIME,
+	PROGRESSION_INTERACT,
+	PROGRESSION_CHOICE,
+	NUM_PROGRESSION_TYPES
+};

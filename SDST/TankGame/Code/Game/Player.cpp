@@ -13,16 +13,16 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	//make tank
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendCube(Vector3::ZERO, Vector3(.8f, .3f, 1.f), RGBA::GREEN);
+	mb.AppendCube(Vector3::ZERO, Vector3(.8f, .3f, 1.f), RGBA::GREEN, RIGHT, UP, FORWARD);
 	mb.End();
 	m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
 
 	//make turret
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	Vector3 sphere = Vector3::ZERO - (Vector3::UP * .08f);
+	Vector3 sphere = Vector3::ZERO - (UP * .08f);
 	mb.AppendSphere(sphere, .2f, 10, 10, RGBA::RED);
 	//mb.AppendCube(sphere, Vector3::ONE * .5f, RGBA::RED);
-	mb.AppendCube(Vector3::FORWARD * .4f, Vector3(.1f, .1f, .8f), RGBA::RED);
+	mb.AppendCube(FORWARD * .4f, Vector3(.1f, .1f, .8f), RGBA::RED, RIGHT, UP, FORWARD);
 	mb.End();
 	m_turretRenderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
 	m_turretRenderable->SetMaterial(Material::GetMaterial("cel_shaded_lit"));
@@ -58,7 +58,7 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 
 	mb.Clear();
 	mb.Begin(PRIMITIVE_LINES, false);
-	mb.AppendLine(Vector3::ZERO, Vector3::FORWARD * 15.f, RGBA::RED, RGBA(100,0,0,128));
+	mb.AppendLine(Vector3::ZERO, FORWARD * 15.f, RGBA::RED, RGBA(100,0,0,128));
 	mb.End();
 	m_laserSightRenderable = new Renderable();
 	m_laserSightRenderable->SetMesh(mb.CreateMesh());
@@ -77,7 +77,7 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	m_maxHealth = m_health;
 
 	m_shadowCameraTransform = new Transform();
-	Vector3 lightEuler = g_theGame->m_playState->m_sun->m_transform.GetEulerAngles();
+	Vector3 lightEuler = g_theGame->m_playState->m_sun->m_transform.GetEulerAnglesYawPitchRoll();
 	Vector3 sunDirection = g_theGame->m_playState->m_sun->m_transform.GetForward();
 	m_shadowCameraOffset = sunDirection * -25.f;
 	m_shadowCameraTransform->SetRotationEuler(lightEuler);

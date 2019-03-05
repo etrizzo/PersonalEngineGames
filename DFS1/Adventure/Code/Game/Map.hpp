@@ -71,7 +71,7 @@ public:
 	void RunPhysics();
 	void CheckEntityInteractions();
 
-	void ProgressVillageStories();
+	void ProgressVillageStoriesTime();
 
 	void Render();
 	void PostRender();

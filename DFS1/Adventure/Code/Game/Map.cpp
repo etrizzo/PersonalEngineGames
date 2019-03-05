@@ -323,11 +323,11 @@ void Map::CheckEntityInteractions()
 
 }
 
-void Map::ProgressVillageStories()
+void Map::ProgressVillageStoriesTime()
 {
 	//lmao
 	for (Village* village : m_allVillages){
-		village->ProgressVillageStory();
+		village->ProgressVillageStoryTime();
 	}
 }
 

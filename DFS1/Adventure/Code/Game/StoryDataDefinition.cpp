@@ -27,6 +27,12 @@ void StoryDataDefinition::InitFromXML(tinyxml2::XMLElement* nodeElement)
 	m_actRange = ParseXmlAttribute(*nodeElement, "actRange", IntRange(0, MAX_ACTS));
 	m_shouldLockIncomingEdge = ParseXmlAttribute(*nodeElement, "lockIncoming", false);
 	m_name = ParseXmlAttribute(*nodeElement, "name", "NO_NAME");
+	m_id = m_name;
+
+	std::string progression = ParseXmlAttribute(*nodeElement, "progression", "time");
+	if (progression == "time")		{ m_progressionType = PROGRESSION_TIME; }
+	if (progression == "choice")	{ m_progressionType = PROGRESSION_CHOICE; }
+	if (progression == "interact")	{ m_progressionType = PROGRESSION_INTERACT; }
 }
 
 void StoryDataDefinition::InitAsOutcomeNode(tinyxml2::XMLElement * nodeElement)

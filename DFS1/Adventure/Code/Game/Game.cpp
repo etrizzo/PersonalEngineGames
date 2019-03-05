@@ -571,7 +571,6 @@ void Game::InitGraphDefault()
 	InitCharacterArray();
 
 	m_graph->GenerateStartAndEnd();
-	ConsolePrintf("Default data loaded.");
 }
 
 void Game::InitGraphMurder()
@@ -582,7 +581,6 @@ void Game::InitGraphMurder()
 	InitCharacterArray();
 
 	m_graph->GenerateStartAndEnd();
-	ConsolePrintf("Murder mystery data loaded.");
 }
 
 void Game::InitGraphDialogue()
@@ -593,12 +591,20 @@ void Game::InitGraphDialogue()
 	InitCharacterArray();
 
 	m_graph->GenerateStartAndEnd();
-	ConsolePrintf("Dialogue data loaded.");
 }
 
-void Game::ProgressStories()
+void Game::InitGraphHero()
 {
-	m_currentState->m_currentAdventure->m_currentMap->ProgressVillageStories();
+	ClearGraph();
+	m_graph->LoadDataSet("HerosJourney");
+	InitCharacterArray();
+
+	m_graph->GenerateStartAndEnd();
+}
+
+void Game::ProgressStoriesTime()
+{
+	m_currentState->m_currentAdventure->m_currentMap->ProgressVillageStoriesTime();
 }
 
 

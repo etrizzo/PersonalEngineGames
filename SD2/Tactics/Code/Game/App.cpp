@@ -23,9 +23,10 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_gameConfigBlackboard.PopulateFromXmlElementAttributes(*configElement);
 
 	float aspect = g_gameConfigBlackboard.GetValue("windowAspect", 1.f);
-	m_nearBottomLeft = g_gameConfigBlackboard.GetValue("bottomLeft", Vector3::ZERO);
+	
 	float screenWidth = g_gameConfigBlackboard.GetValue("width", 1000.f);
 	float screenHeight = screenWidth / aspect;
+	m_nearBottomLeft = g_gameConfigBlackboard.GetValue("bottomLeft", Vector3(-screenWidth * .5f, -screenHeight * .5f, 0.f));
 	std::string name = g_gameConfigBlackboard.GetValue("appName", "Win32 OpenGL Test App");
 	float maxClientFraction = g_gameConfigBlackboard.GetValue("windowHeight", .9f);
 	g_Window = new Window(name.c_str(), aspect, applicationInstanceHandle, maxClientFraction);

@@ -179,6 +179,7 @@ void App::RegisterCommands()
 	CommandRegister("read_default_data", CommandReadDefaultData, "reads the default data set into the graph and resets it.");
 	CommandRegister("read_murder_data", CommandReadMurderData, "reads the murder mystery data set into the graph and resets it.");
 	CommandRegister("read_dialogue_data", CommandReadDialogueData, "reads the dialogue data set into the graph and resets it.");
+	CommandRegister("read_hero_data", CommandReadHeroData, "reads the hero's journey data set into the graph and resets it.");
 
 	CommandRegister("progress_story", CommandProgressStory, "Progresses the story graph for all villages");
 }
@@ -507,8 +508,15 @@ void CommandReadDialogueData(Command & cmd)
 	ConsolePrintf("Dialogue data loaded.");
 }
 
+void CommandReadHeroData(Command & cmd)
+{
+	UNUSED(cmd);
+	g_theGame->InitGraphHero();
+	ConsolePrintf("Hero's Journey data loaded.");
+}
+
 void CommandProgressStory(Command & cmd)
 {
 	UNUSED(cmd);
-	g_theGame->ProgressStories();
+	g_theGame->ProgressStoriesTime();
 }

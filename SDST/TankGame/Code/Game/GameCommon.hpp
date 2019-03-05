@@ -13,8 +13,12 @@
 #include "Engine/Core/Clock.hpp"
 
 
-#define SMALL_VALUE .05f
-#define MAX_STEPS 16
+#define MAX_STEPS (16)
+#define SMALL_VALUE (.05f)
+
+const Vector3 RIGHT = Vector3(1.f, 0.f, 0.f);
+const Vector3 UP = Vector3(0.f, 1.f, 0.f);
+const Vector3 FORWARD = Vector3(0.f, 0.f, 1.f);
 
 const int TILE_WIDTH = 1;
 

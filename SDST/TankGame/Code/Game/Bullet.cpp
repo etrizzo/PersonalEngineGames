@@ -10,11 +10,11 @@
 Bullet::Bullet(const Transform& t, GameState_Playing* playState)
 {
 	MeshBuilder mb;
-	Vector3 upright = (Vector3::UP + Vector3::RIGHT).GetNormalized();
-	Vector3 leftRight = (Vector3::UP + (-1.f * Vector3::RIGHT)).GetNormalized();
+	Vector3 upright = (UP + RIGHT).GetNormalized();
+	Vector3 leftRight = (UP + (-1.f * RIGHT)).GetNormalized();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendPlane(Vector3::ZERO, upright, Vector3::FORWARD, Vector2(.55f,.1f), m_tint, Vector2::ZERO, Vector2::ONE);
-	mb.AppendPlane(Vector3::ZERO, leftRight, Vector3::FORWARD, Vector2(.55f,.1f), m_tint, Vector2::ZERO, Vector2::ONE);
+	mb.AppendPlane(Vector3::ZERO, upright, FORWARD, Vector2(.55f,.1f), m_tint, Vector2::ZERO, Vector2::ONE);
+	mb.AppendPlane(Vector3::ZERO, leftRight, FORWARD, Vector2(.55f,.1f), m_tint, Vector2::ZERO, Vector2::ONE);
 	mb.End();
 
 	m_renderable = new Renderable();

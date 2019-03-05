@@ -31,9 +31,9 @@ void Warrior::Render()
 		IsoSprite* iso = m_animator->GetCurrentIsoSprite(); //IsoSprite::GetIsoSprite("archer_f.idle");
 		//IsoSprite* iso = IsoSprite::GetIsoSprite("knight_f.idle");
 		Sprite* actorSprite = iso->GetSpriteforViewAngle(g_theGame->m_camera->GetForward(), m_forwardDirection);
-		g_theRenderer->DrawSprite(m_worldPosition, actorSprite, g_theGame->m_camera->GetRight(), Vector3::UP);
+		g_theRenderer->DrawSprite(m_worldPosition, actorSprite, g_theGame->m_camera->GetRight(), UP);
 		g_theRenderer->BindShaderProgram("stroke");
-		g_theRenderer->DrawTextAsSprite("Warrior", m_worldPosition + Vector3(0.f, m_height * .9f, 0.f), Vector2::HALF, .2f, g_theGame->m_camera->GetRight(), Vector3::UP, GetFactionColor(m_faction));
+		g_theRenderer->DrawTextAsSprite("Warrior", m_worldPosition + Vector3(0.f, m_height * .9f, 0.f), Vector2::HALF, .2f, g_theGame->m_camera->GetRight(), UP, GetFactionColor(m_faction));
 		g_theRenderer->BindShaderProgram("cutout");
 		//g_theRenderer->DrawCube(m_worldPosition + Vector3(m_forwardDirection.x, 0.f, m_forwardDirection.y), Vector3::ONE * .1f, GetFactionColor(m_faction));
 	}

@@ -15,9 +15,9 @@
 #include "Engine/Core/Clock.hpp"
 
 
-
-#define SCREEN_MAX 1000.f
-#define SCREEN_MIN 0.f
+const Vector3 RIGHT = Vector3(1.f, 0.f, 0.f);
+const Vector3 UP = Vector3(0.f, 1.f, 0.f);
+const Vector3 FORWARD = Vector3(0.f, 0.f, 1.f);
 
 const int BLOCK_WIDTH = 1;
 const std::string DEFAULT_LVL = "heightMap.png";

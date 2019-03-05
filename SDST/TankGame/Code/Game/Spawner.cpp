@@ -11,7 +11,7 @@ Spawner::Spawner(Vector2 startPos, GameState_Playing * playState)
 
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendCube(Vector3::ZERO, Vector3(thiccness * 2.f, height * 2.f, thiccness * 2.f), RGBA::YELLOW);
+	mb.AppendCube(Vector3::ZERO, Vector3(thiccness * 2.f, height * 2.f, thiccness * 2.f), RGBA::YELLOW, RIGHT, UP, FORWARD);
 	mb.End();
 	m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
 	SetMaterial(Material::GetMaterial("cel_shaded_lit"), 0);

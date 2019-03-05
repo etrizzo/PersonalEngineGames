@@ -19,7 +19,7 @@ Enemy::Enemy(Vector2 startPos, GameState_Playing * playState)
 	//make the plane
 	mb.Clear();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendPlane(Vector3::FORWARD *.5f, Vector3::UP, -1.f * Vector3::RIGHT, Vector2::HALF, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
+	mb.AppendPlane(FORWARD *.5f, UP, -1.f * RIGHT, Vector2::HALF, RGBA::WHITE, Vector2::ZERO, Vector2::ONE);
 	mb.End();
 	m_renderable->SetMesh(mb.CreateSubMesh(VERTEX_TYPE_LIT), 1);
 	Material* mat = Material::GetMaterial("minion");

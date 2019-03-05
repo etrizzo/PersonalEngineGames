@@ -30,17 +30,20 @@ Village::~Village()
 	//doesn't OWN it's residents, they still belong to the map. Just references.
 }
 
-void Village::ProgressVillageStory()
+void Village::ProgressVillageStoryTime()
 {
-	//progress to the next node
-	StoryNode* node = m_currentEdge->GetEnd();
-	
-	if (node != m_villageGraph->GetEnd()){
-		int edgeIndex = GetRandomIntLessThan(node->m_outboundEdges.size());
-		m_currentEdge = node->m_outboundEdges[edgeIndex];
+	StoryNode* start = m_currentEdge->GetStart();
+	if (start->m_data->GetProgressionType() == PROGRESSION_TIME) {
+		//progress to the next node
+		StoryNode* node = m_currentEdge->GetEnd();
 
-		//do whatever to update the state of the story according to quests & shit
-		SetResidentDialogues();
+		if (node != m_villageGraph->GetEnd() && node->m_data->GetProgressionType() == PROGRESSION_TIME) {
+			int edgeIndex = GetRandomIntLessThan(node->m_outboundEdges.size());
+			m_currentEdge = node->m_outboundEdges[edgeIndex];
+
+			//do whatever to update the state of the story according to quests & shit
+			SetResidentDialogues();
+		}
 	}
 }
 

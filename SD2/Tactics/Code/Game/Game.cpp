@@ -66,8 +66,8 @@ void Game::InitCameras(Vector3 nearBottomLeft, Vector3 farTopRight)
 	m_uiCamera->SetDepthStencilTarget( g_theRenderer->m_defaultDepthTarget );
 
 	m_uiCamera->SetProjectionOrtho(1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f,100.f);
-	Vector2 center = m_uiCamera->GetBounds().GetCenter();
-	m_uiCamera->LookAt( Vector3( center.x, center.y, -1.f ), Vector3(center.x, center.y, .5f)); 
+	//Vector2 center = m_uiCamera->GetBounds().GetCenter();
+	//m_uiCamera->LookAt( Vector3( center.x, center.y, -1.f ), Vector3(center.x, center.y, .5f)); 
 }
 
 void Game::Update(float deltaSeconds)
@@ -104,9 +104,10 @@ void Game::RotateCamera(Vector2 thumbstickPos, float zoomIn, float zoomOut)
 	azimuth *= thumbstickPos.y;
 	float newSize = m_camera->GetOrthographicSize() + zoom;
 	newSize = ClampFloat(newSize, 5.f, 40.f);
-	m_camera->SetSphericalCoordinate(m_camera->m_radius, m_camera->m_rotation + degrees, m_camera->m_azimuth + azimuth);
+	
 	//m_camera->SetProjectionOrtho(newSize, 1.f, 0.f, 100.f);
-	m_camera->SetProjectionOrtho(newSize, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
+	//m_camera->SetProjectionOrtho(newSize, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f, 100.f);
+	m_camera->SetSphericalCoordinate(m_camera->m_radius, m_camera->m_rotation + degrees, m_camera->m_azimuth + azimuth);
 }
 
 void Game::TogglePause()

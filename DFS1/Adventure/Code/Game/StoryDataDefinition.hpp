@@ -59,6 +59,7 @@ public:
 	EffectSet* m_guaranteedEffects = nullptr;
 	EffectSet* m_storyEffects	= nullptr;
 	std::vector<ActionDefinition*> m_actions;
+	eProgressionType m_progressionType = PROGRESSION_TIME;
 
 	float m_chanceToPlaceData = 1.f;
 	bool m_shouldLockIncomingEdge = false;

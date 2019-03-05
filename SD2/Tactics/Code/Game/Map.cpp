@@ -58,7 +58,7 @@ void Map::RenderTiles(){
 			}
 
 			g_theRenderer->BindTexture(*tileTexture);
-			g_theRenderer->DrawCube(blockToRender.GetCenter(), blockToRender.GetDimensions(), definition->m_spriteTint, definition->m_uvTop, definition->m_uvSide, definition->m_uvBottom);
+			g_theRenderer->DrawCube(blockToRender.GetCenter(), blockToRender.GetDimensions(), definition->m_spriteTint, RIGHT, UP, FORWARD, definition->m_uvTop, definition->m_uvSide, definition->m_uvBottom);
 			g_theRenderer->ReleaseTexture();
 			/*if (g_theGame->m_devMode){
 				g_theRenderer->DrawCube(blockToRender.GetTopCenter(), blockToRender.GetDimensions() * .1f, RGBA::YELLOW);

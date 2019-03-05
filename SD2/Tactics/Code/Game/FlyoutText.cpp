@@ -25,6 +25,6 @@ void FlyoutText::Update(float deltaSeconds)
 void FlyoutText::Render()
 {
 	g_theRenderer->BindShaderProgram("stroke");
-	g_theRenderer->DrawTextAsSprite(m_text, m_pos, Vector2::HALF, m_textHeight, g_theGame->m_camera->GetRight(), Vector3::UP, m_tint);
+	g_theRenderer->DrawTextAsSprite(m_text, m_pos, Vector2::HALF, m_textHeight, g_theGame->m_camera->GetRight(), UP, m_tint);
 	g_theRenderer->ReleaseShader();
 }

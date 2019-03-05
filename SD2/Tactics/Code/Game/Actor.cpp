@@ -75,8 +75,8 @@ void Actor::Render()
 		Vector3 pos = block->GetTopCenter();
 		//g_theRenderer->DrawCube(pos, Vector3(BLOCK_WIDTH * .35f, BLOCK_WIDTH * 2.f * (float) m_height, BLOCK_WIDTH * .35f), GetFactionColor(m_faction));
 		Sprite* actorSprite = g_theRenderer->GetSprite("archer_f.tr.idle");
-		g_theRenderer->DrawSprite(m_worldPosition, actorSprite, g_theGame->m_camera->GetRight(), Vector3::UP, GetFactionColor(m_faction));
-		g_theRenderer->DrawTextAsSprite("the boi", m_worldPosition + Vector3(0.f, (float) m_height, 0.f), Vector2::HALF, .1f, g_theGame->m_camera->GetRight(), Vector3::UP, GetFactionColor(m_faction));
+		g_theRenderer->DrawSprite(m_worldPosition, actorSprite, g_theGame->m_camera->GetRight(), UP, GetFactionColor(m_faction));
+		g_theRenderer->DrawTextAsSprite("the boi", m_worldPosition + Vector3(0.f, (float) m_height, 0.f), Vector2::HALF, .1f, g_theGame->m_camera->GetRight(), UP, GetFactionColor(m_faction));
 		//g_theRenderer->DrawCube(m_worldPosition + Vector3(m_forwardDirection.x, 0.f, m_forwardDirection.y), Vector3::ONE * .1f, GetFactionColor(m_faction));
 	}
 	if (g_theGame->m_devMode){

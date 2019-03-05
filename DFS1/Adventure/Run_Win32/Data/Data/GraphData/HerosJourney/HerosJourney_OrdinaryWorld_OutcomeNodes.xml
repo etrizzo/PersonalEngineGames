@@ -1,0 +1,109 @@
+	<OutcomeNode name="LeaveHomeOutcome" progression="choice" actRange="1">
+		<Characters>
+			<Character id = "*0*" name="wantsToLeave"/>
+			<Character id = "*1*" name="listener"/>
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<StoryRequirement tag="wantsToLeave" weight="5"/>  <!-- name matches the character labeled "Investigator"  in the story state -->
+				<Requirement tag="isAlive" target="true" />
+			</Character>
+			<Character index="1">
+				<StoryRequirement tag="friend" weight="5" />
+				<Requirement tag="isAlive" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<Actions>
+			<Action text="*1* and *0* make a plan to leave home together" chance=".33">
+				<Modifier character = "1" multiplier = "3.1"> 
+					<CharacterRequirements>
+						<Requirement tag="isBold" target="true"/>
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*1*" tag="wantsToLeaveHome" target="true" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*1* wonders if they'd be happy anywhere but home" chance=".33">
+				<Modifier character = "1" multiplier = "3.1"> 
+					<CharacterRequirements>
+						<Requirement tag="isKind" target="true"/>
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*1*" tag="wantsToLeaveHome" target="false" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*1* tells *0* they should give up and be happy here." chance=".33">
+				<Modifier character = "1" multiplier = "3.1"> 
+					<CharacterRequirements>
+						<Requirement tag="isStubborn" target="true"/>
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*1*" tag="wantsToLeaveHome" target="false" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="wantsToLeave" target="none" type="character" effectType="story"/>
+				<TagChange tag="friend" target="none" type="character" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+	</OutcomeNode>
+
+
+	<OutcomeNode name="SunsetOutcome" progression="choice" actRange="1">
+		<Characters>
+			<Character id = "*0*" name="protagonist"/>
+			<Character id = "*1*" name="bff"/>
+			<Character id = "*2*" name="loveInterest" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isProtagonist" target="true" weight="5"/>
+			</Character>
+			<Character index="1">
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isBestFriend" target="true" weight="5"/>
+			</Character>
+			<Character index="2">
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isLoveInterest" target="true" weight="5"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="watchingSunset" target="true" weight="5"/>
+		</StoryRequirements>
+
+		<Actions>
+			<Action text="*0* and *1* have a deep conversation." chance=".5">
+				<EffectSet>
+					<TagChange character="*0*" tag="missesFriend" target="true" />
+					<TagChange tag="hadDeepConversation" target="*1*" type="character" effectType="story" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*0* and *2* have a deep conversation." chance=".5">
+				<EffectSet>
+					<TagChange character="*0*" tag="missesLoveInterest" target="true" />
+					<TagChange tag="hadDeepConversation" target="*2*" type="character" effectType="story" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="watchingSunset" target="false" type="boolean" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+	</OutcomeNode>

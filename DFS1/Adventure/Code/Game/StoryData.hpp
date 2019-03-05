@@ -44,6 +44,7 @@ public:
 	std::string ReadCharacterNameFromDataString(std::string data);
 
 	bool DoesNodeEndAct() const;
+	eProgressionType GetProgressionType() const { return m_definition->m_progressionType; }
 
 	void SetPosition(Vector2 pos);
 	Vector2 GetPosition() const;

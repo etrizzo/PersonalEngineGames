@@ -287,7 +287,13 @@ StoryDataDefinition * DataSet::GetEventNodeWithWeights(StoryState * edge, float 
 
 void DataSet::RemoveEndingFromUnusedEndings(StoryDataDefinition* ending)
 {
-
+	for (int i = m_unusedEndNodes.size() - 1; i >= 0; i--)
+	{
+		if (DoRangesOverlap(m_unusedEndNodes[i]->m_actRange, ending->m_actRange))
+		{
+			RemoveAtFast(m_unusedEndNodes, i);
+		}
+	}
 }
 
 StoryDataDefinition * DataSet::GetEndingNode(StoryState * edge)

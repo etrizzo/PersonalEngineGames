@@ -14,7 +14,7 @@ public:
 	Village(VillageDefinition* definition, Map* map, int numActorsToSpawn);
 	~Village();
 
-	void ProgressVillageStory();
+	void ProgressVillageStoryTime();
 
 	std::string m_villageName;
 	VillageDefinition* m_definition;
