@@ -269,6 +269,10 @@ std::string StoryData::ReadCharacterNameFromDataString(std::string data)
 
 bool StoryData::DoesNodeEndAct() const
 {
+	if (m_type == DEFAULT_NODE)
+	{
+		return false;
+	}
 	return m_action->DoesActionEndAct();
 }
 

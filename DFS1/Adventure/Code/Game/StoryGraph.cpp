@@ -133,14 +133,28 @@ void StoryGraph::RunGenerationByActs(int numPairsToAdd)
 {
 	Clear();
 	GenerateStartAndEnd();
-	for (int i = 0; i < numPairsToAdd; i++)
+	int added = 0;
+	int tries = 0;
+	while ((added < numPairsToAdd || !HavePlacedAllEndings()) && tries < 40)
 	{
-		StoryEdge* edgeWithLargeRange = GetEdgeWithLargestActRange();
+		bool shouldSeekEnding = false;
+		if (!HavePlacedAllEndings() && added >= numPairsToAdd)
+		{
+			shouldSeekEnding = true;
+		}
+		StoryEdge* edgeWithLargeRange = GetEdgeWithLargestActRange(shouldSeekEnding);
 		StoryNode* newEventNode = AddEventNodeAtEdge(edgeWithLargeRange);
 		if (newEventNode != nullptr) {
+			added++;
 			AddOutcomeNodesToEventNode(newEventNode);
 		}
+		tries++;
 	}
+}
+
+bool StoryGraph::HavePlacedAllEndings() const
+{
+	return m_dataSet->m_unusedEndNodes.size() == 0;
 }
 
 void StoryGraph::GenerateSkeleton(int numPlotNodes)
@@ -1000,6 +1014,99 @@ void StoryGraph::ClearSavedState()
 	m_hoveredNode = nullptr;
 }
 
+void StoryGraph::AnalyzeGraph()
+{
+	m_branchingNodes.clear();
+	m_mergingNodes.clear();
+	m_endingNodes.clear();
+	IdentifyBranches();
+	IdentifyBottlenecks();
+	IdentifyEndings();
+	CleanAnalysisData();
+	DetermineGraphType();
+	m_analysisHasRun = true;
+}
+
+void StoryGraph::IdentifyBranches()
+{
+	for(StoryNode* node : m_graph.m_nodes)
+	{
+		if (node->m_outboundEdges.size() > 1)
+		{
+			m_branchingNodes.push_back(node);
+		}
+	}
+}
+
+void StoryGraph::IdentifyEndings()
+{
+	for (StoryEdge* edge : m_endNode->m_inboundEdges)
+	{
+		m_endingNodes.push_back(edge->GetStart());
+	}
+}
+
+void StoryGraph::IdentifyBottlenecks()
+{
+	for(StoryNode* node : m_graph.m_nodes)
+	{
+		if (node != m_endNode && node->m_inboundEdges.size() > 1)
+		{
+			m_mergingNodes.push_back(node);
+		}
+	}
+}
+
+void StoryGraph::CleanAnalysisData()
+{
+	//clean up branches - don't want "branches" that are just insta-endings
+	for (int i = m_branchingNodes.size() - 1; i >= 0; i--)
+	{
+		int numBranchesThatInstantlyEnd = 0;
+		for (StoryEdge* edge : m_branchingNodes[i]->m_outboundEdges)
+		{
+			StoryNode* end = edge->GetEnd();
+			if (Contains(m_endingNodes, end))
+			{
+				numBranchesThatInstantlyEnd++;
+			}
+		}
+		if (numBranchesThatInstantlyEnd > 0 && numBranchesThatInstantlyEnd >= m_branchingNodes[i]->m_outboundEdges.size() - 2)		//if you have <= 1 outbound edges that aren't endings, it's not really a branch.
+		{
+			RemoveAtFast(m_branchingNodes, i);
+		}
+	}
+}
+
+void StoryGraph::DetermineGraphType()
+{
+	if (m_branchingNodes.size() >= 1)
+	{
+		//not a gauntlet at least.
+		if (m_mergingNodes.size() >=1 )
+		{
+			//probably a branch and bottleneck?
+			m_graphType = "Branch and Bottleneck";
+		} else {
+			//sorting hat if the branching is early?
+			if (m_branchingNodes.size() < 3)
+			{
+				m_graphType = "Sorting Hat";
+			} else {
+				m_graphType = "Quest??";
+			}
+		}
+	} else {
+		if (m_endingNodes.size() > 1)
+		{
+			m_graphType = "Gauntlet";
+		} else {
+			m_graphType = "Linear";
+		}
+		
+	}
+}
+
 Character * StoryGraph::GetCharacter(unsigned int index) const
 {
 	if (index < m_characters.size()){
@@ -1140,6 +1247,8 @@ void StoryGraph::RenderGraph(const AABB2& bounds) const
 	}
 	RenderPath();
 
+	RenderAnalysis(bounds);
+
 	RenderDebugInfo(bounds);
 }
 
@@ -1187,6 +1296,39 @@ void StoryGraph::RenderPath() const
 			StoryNode* node = m_pathFound[i];
 			RenderNode(node, node->m_data->GetPosition(), m_pathColor);
 		}
+	}
+}
+
+void StoryGraph::RenderAnalysis(const AABB2& screenBounds) const
+{
+	if (m_analysisHasRun)
+	{
+		//draw branches
+		for(StoryNode* branch : m_branchingNodes)
+		{
+			AABB2 nodeBox = AABB2 (branch->m_data->m_graphPosition, NODE_SIZE, NODE_SIZE);
+			nodeBox.Translate(Vector2(0.f, NODE_SIZE* 2.f));
+			g_theRenderer->DrawTextInBox2D("Branch\nv", nodeBox, Vector2(.5f, 0.f), NODE_SIZE * .2f, TEXT_DRAW_SHRINK_TO_FIT, RGBA::ORANGE);
+		}
+
+		//draw merges
+		for(StoryNode* merge : m_mergingNodes)
+		{
+			AABB2 nodeBox = AABB2 (merge->m_data->m_graphPosition, NODE_SIZE, NODE_SIZE);
+			nodeBox.Translate(Vector2(0.f, NODE_SIZE* 2.f));
+			g_theRenderer->DrawTextInBox2D("Merge\nv", nodeBox, Vector2(.5f, 0.f), NODE_SIZE * .2f, TEXT_DRAW_SHRINK_TO_FIT, RGBA::MAGENTA);
+		}
+
+		//draw endings
+		for(StoryNode* end : m_endingNodes)
+		{
+			AABB2 nodeBox = AABB2 (end->m_data->m_graphPosition, NODE_SIZE, NODE_SIZE);
+			nodeBox.Translate(Vector2(0.f, NODE_SIZE * 2.f));
+			g_theRenderer->DrawTextInBox2D("Ending\nv", nodeBox, Vector2(.5f, 0.f), NODE_SIZE * .2f, TEXT_DRAW_SHRINK_TO_FIT, RGBA::RED);
+		}
+
+		//draw type of story
+		g_theRenderer->DrawTextInBox2D(m_graphType, screenBounds, Vector2(1.f, 0.f), .05f, TEXT_DRAW_SHRINK_TO_FIT);
 	}
 }
 
@@ -1339,6 +1481,14 @@ void StoryGraph::Clear()
 	m_selectedEdge = nullptr;
 	m_hoveredEdge = nullptr;
 	m_hoveredNode = nullptr;
+
+	m_branchingNodes.clear();
+	m_endingNodes.clear();
+	m_mergingNodes.clear();
+	m_analysisHasRun = false;
+	if (m_dataSet != nullptr){
+		m_dataSet->ResetUsedEndNodes();
+	}
 }
 
 StoryEdge * StoryGraph::GetEdge(StoryNode * start, StoryNode * end) const
@@ -1548,10 +1698,11 @@ StoryEdge * StoryGraph::GetEdgeForNewEventNode(StoryNode* newNode, float minFitn
 	return fitEdges[fitIndex];
 }
 
-StoryEdge * StoryGraph::GetEdgeWithLargestActRange() const
+StoryEdge * StoryGraph::GetEdgeWithLargestActRange(bool lookingForEndings) const
 {
 	StoryEdge* largestEdge = nullptr;
 	int largestRange = 0;
+	//find the largest range first
 	for (StoryEdge* edge : m_graph.m_edges)
 	{
 		if (edge->GetCost()->m_possibleActRange.GetSize() > largestRange)
@@ -1560,7 +1711,32 @@ StoryEdge * StoryGraph::GetEdgeWithLargestActRange() const
 			largestRange = edge->GetCost()->m_possibleActRange.GetSize();
 		}
 	}
-	return largestEdge;
+	//if we're looking for endings, still want to return the largest range even when it's just 1 because those are the edges between acts.
+	if (largestRange > 1 || lookingForEndings)
+	{
+		std::vector<StoryEdge*> m_largestRanges = std::vector<StoryEdge*>();
+		for (StoryEdge* edge : m_graph.m_edges)
+		{
+			if (edge->GetCost()->m_possibleActRange.GetSize() == largestRange)
+			{
+				if (lookingForEndings)
+				{
+					//only add edges that don't have an ending
+					if (!edge->GetStart()->m_data->DoesNodeEndAct())
+					{
+						m_largestRanges.push_back(edge);
+					}
+				} else {
+					m_largestRanges.push_back(edge);
+				}
+				
+			}
+		}
+		return m_largestRanges[GetRandomIntLessThan(m_largestRanges.size())];
+	} else {
+		return m_graph.m_edges[GetRandomIntLessThan(m_graph.m_edges.size())];
+	}
+	return nullptr;
 }
 
 
@@ -1592,8 +1768,18 @@ void StoryGraph::RenderNode(StoryNode * node, Vector2 position, RGBA color) cons
 	}
 
 	if (node->m_data->m_type == PLOT_NODE){
+		if (node->m_data->DoesNodeEndAct())
+		{
+			g_theRenderer->DrawDisc2(nodeBox.GetCenter(), NODE_SIZE * 1.1f, RGBA::RED);
+		}
 		g_theRenderer->DrawDisc2(nodeBox.GetCenter(), NODE_SIZE * 1.05f, color);
 	} else {
+		if (node->m_data->DoesNodeEndAct())
+		{
+			nodeBox.AddPaddingToSides(.05f, .05f);
+			g_theRenderer->DrawAABB2(nodeBox, RGBA::RED);
+			nodeBox.AddPaddingToSides(-.05f,-.05f);
+		}
 		g_theRenderer->DrawAABB2(nodeBox, color);
 	}
 	nodeBox.AddPaddingToSides(-.001f, -.001f);

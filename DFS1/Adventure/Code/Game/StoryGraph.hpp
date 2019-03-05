@@ -50,6 +50,7 @@ public:
 	void UpdateNodePositions();
 	void RunNodeAdjustments();
 	void RenderPath() const;
+	void RenderAnalysis(const AABB2& screenBounds) const;
 	Disc2 GetNodeBounds(StoryNode* node) const;
 	OBB2 GetEdgeBounds(StoryEdge* edge) const;
 
@@ -70,6 +71,7 @@ public:
 	void RunGenerationPlotAndDetail(int numPlotNodes = 3, int desiredSize = 10);
 	void RunGenerationByActs(int numPairsToAdd);		//targets edges with the largest act range
 	
+	bool HavePlacedAllEndings() const;
 
 	void GenerateSkeleton(int numPlotNodes);
 	//void AddPlotNodes(int numPlotNodes);
@@ -111,6 +113,19 @@ public:
 	void PrintPath() ;
 
 	void ClearSavedState();
+
+	/*
+	=========
+	Analaysis
+	=========
+	*/
+	void AnalyzeGraph();
+	void IdentifyBranches();
+	void IdentifyEndings();
+	void IdentifyBottlenecks();
+	void CleanAnalysisData();
+	void DetermineGraphType();
+
 
 	/*
 	=========
@@ -167,6 +182,7 @@ public:
 	std::vector<Character*> m_characters			= std::vector<Character*>();
 
 	void RenderEdge(StoryEdge* edge, RGBA color = RGBA::WHITE) const;
+
 protected:
 	DataSet* m_dataSet		= nullptr;
 
@@ -177,11 +193,15 @@ protected:
 	StoryEdge* GetEdgeForNewEventNode(StoryNode* newNode,  float minFitness = 2.f)	const;
 
 	//find the edge in the graph right now which has the largest act range
-	StoryEdge* GetEdgeWithLargestActRange() const;
+	StoryEdge* GetEdgeWithLargestActRange(bool lookingForEndings) const;
 
 	DirectedGraph<StoryData*, StoryState*> m_graph	= DirectedGraph<StoryData*, StoryState*>();
 	
-	
+	bool m_analysisHasRun = false;
+	std::vector<StoryNode*> m_branchingNodes = std::vector<StoryNode*>();
+	std::vector<StoryNode*> m_mergingNodes	 = std::vector<StoryNode*>();
+	std::vector<StoryNode*> m_endingNodes	 = std::vector<StoryNode*>();
+	std::string m_graphType = "Undetermined";
 
 	std::vector<StoryNode*> m_pathFound				= std::vector<StoryNode*>();
 	std::string m_pathString						= "";
