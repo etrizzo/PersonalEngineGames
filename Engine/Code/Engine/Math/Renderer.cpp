@@ -2265,5 +2265,16 @@ void Renderer::AddFaceToCube(const Vector3 & nearBottomLeft, const Vector3 & nea
 	startIndex+=6;
 }
 
+void FogData_t::SetFogBuffer(RGBA color, float nearPlane, float farPlane, float nearFactor, float farFactor)
+{
+	fogColor = color.GetNormalized();
+	fogNearPlane = nearPlane;
+	fogFarPlane = farPlane;
+	fogNearFactor = nearFactor;
+	fogFarFactor = farFactor;
+}
 
-
+void FogData_t::SetFogColor(RGBA color)
+{
+	fogColor = color.GetNormalized();
+}

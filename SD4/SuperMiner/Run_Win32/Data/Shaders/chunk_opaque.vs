@@ -5,6 +5,9 @@ uniform mat4 MODEL;
 uniform mat4 VIEW;
 uniform mat4 PROJECTION; 
 
+uniform float TIME_OF_DAY;
+
+
 // Attributes ============================================
 // Inputs
 in vec3 POSITION;
@@ -12,12 +15,14 @@ in vec3 NORMAL;
 in vec4 COLOR;
 in vec2 UV; 
 
+
 // Outputs
 out vec2 passUV; 
 out vec4 passColor; 
 out vec3 passWorldPos;     
 out vec3 passWorldNormal;  
 out vec3 passViewPos;
+out float passTimeOfDay;
 
 // Entry Point ===========================================
 void main( void )
@@ -43,6 +48,7 @@ void main( void )
    passWorldPos = world_pos.xyz;  
    passWorldNormal = (vec4( NORMAL, 0.0f ) * MODEL).xyz; 
    passViewPos = camera_pos.xyz;
+   passTimeOfDay = TIME_OF_DAY;
    
    gl_Position = clip_pos; // we pass out a clip coordinate
    

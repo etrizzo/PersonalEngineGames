@@ -37,7 +37,7 @@ World::~World()
 
 void World::Update()
 {
-	
+	UpdateTimeOfDay();
 	//we want block placement/digging to happen before chunk management so that we can mark the changed chunk for re-building mesh THAT FRAME (bc it's usually the closest dirty chunk)
 	UpdateBlockPlacementAndDigging();
 	UpdateChunks();     //nothing for now
@@ -45,6 +45,8 @@ void World::Update()
 	ManageChunks();     //activate, deactivate, re-build meshes, etc.
 
 	UpdateDebugStuff();
+
+	
 }
 
 void World::Render()
@@ -221,6 +223,19 @@ void World::DebugDeactivateAllChunks()
 	m_chunks.clear();
 }
 
+void World::UpdateTimeOfDay()
+{
+	m_worldTime += GetMasterClock()->GetDeltaSeconds();
+	m_timeOfDay = (SinDegreesf(m_worldTime * 10.f) + 1.f) * .5f;
+	m_outdoorLightScalar = m_timeOfDay;
+	/*if (m_outdoorLightScalar > .5f)
+	{
+		m_outdoorLightScalar = 1.f - m_outdoorLightScalar;
+	}*/
+	m_skyColor = Interpolate(RGBA::BLACK, RGBA::BEEFEE, m_outdoorLightScalar);
+	m_fogData.SetFogColor(m_skyColor);
+}
+
 void World::UpdateDebugStuff()
 {
 	
@@ -372,6 +387,7 @@ void World::ManageChunks()
 void World::RenderChunks()
 {
 	//set render state for all the chunks - we don't want to bind anything between them
+	m_chunkOpaqueMaterial->SetProperty("TIME_OF_DAY", m_outdoorLightScalar);
 	g_theRenderer->BindMaterial(m_chunkOpaqueMaterial);
 	g_theRenderer->BindModel(Matrix44::IDENTITY);
 	g_theRenderer->BindRendererUniforms();		//binds the camera for this frame

@@ -8,19 +8,21 @@ in vec2 passUV;
 in vec3 passNormal;
 in vec3 passViewPos;
 
+in float passTimeOfDay;
+
 out vec4 outColor;
 void main( void )
 {
 	vec4 diffuse = texture( gTexDiffuse, passUV );
 
 	float indoor = passColor.r;
-	float outdoor = passColor.g;
+	float outdoor = passColor.g * passTimeOfDay;
 
 	float actualLightVal = max(indoor, outdoor);
 
 	vec4 lightColor = vec4(actualLightVal, actualLightVal, actualLightVal, 1.0);
 
-	lightColor = vec4(indoor, outdoor, 0.0, 1.0);
+	//lightColor = vec4(indoor, outdoor, 0.0, 1.0);
 
 	outColor = diffuse * lightColor;
 	outColor = ApplyFog( outColor, passViewPos.x);

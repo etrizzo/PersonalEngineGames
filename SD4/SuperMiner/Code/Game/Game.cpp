@@ -324,6 +324,7 @@ void Game::RenderUI()
 	std::string fpsStr = Stringf("%3.2f FPS", m_fps);
 	g_theRenderer->DrawTextInBox2D(fpsStr, screenBounds, Vector2::ONE * .99f, .01f);
 
+	
 
 	//g_theRenderer->DrawAABB2(netSessionBox, RGBA::BLACK.GetColorWithAlpha(100));
 	//g_theRenderer->DrawAABB2Outline(netSessionBox, RGBA::GetRandomRainbowColor());

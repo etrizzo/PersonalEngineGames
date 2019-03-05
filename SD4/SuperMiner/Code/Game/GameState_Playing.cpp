@@ -79,6 +79,12 @@ void GameState_Playing::RenderUI()
 {
 	AABB2 bounds = g_theGame->SetUICamera();
 
+	//draw time of day
+	std::string timeOfDayStr = Stringf("Time of Day: %3.2f", m_world->m_timeOfDay);
+	g_theRenderer->DrawTextInBox2D(timeOfDayStr, bounds, Vector2(0.01f, .99f), .01f);
+
+
+	//draw block UI
 	BlockDefinition* playerPlaceBlock = BlockDefinition::GetBlockDefinitionFromID(m_player->m_currentPlaceBlockType);
 	AABB2 blockUI = bounds.GetPercentageBox(.95f, .01f, .99f, .05f);
 	blockUI.TrimToSquare();

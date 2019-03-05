@@ -383,10 +383,6 @@ Matrix44 Matrix44::LookAt(const Vector3 & position, const Vector3 & target, cons
 	Vector3 newForward = direction.GetNormalized();
 	//figure out other 2 axes
 	Vector3 newRight = Cross(up, newForward);
-	if (!isLeftHanded)
-	{
-		newRight *= -1.f;
-	}
 	newRight.NormalizeAndGetLength();
 	Vector3 newUp = Cross(newForward, newRight).GetNormalized();
 	Matrix44 lookMatrix;

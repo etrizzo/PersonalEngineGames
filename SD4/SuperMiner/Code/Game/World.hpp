@@ -42,6 +42,7 @@ private:
 	void SetChunkActivationCheatSheet();
 
 	//update loop
+	void UpdateTimeOfDay();
 	void UpdateDebugStuff();
 	void UpdateDebugLightingPoints();
 	void UpdateBlockPlacementAndDigging();
@@ -94,6 +95,9 @@ public:
 	std::map<IntVector2, Chunk*> m_chunks;
 	
 	RGBA m_skyColor = RGBA::BEEFEE;
+	float m_timeOfDay = 0.f;
+	float m_outdoorLightScalar = 0.f;
+	float m_worldTime = 0.f;
 };
 
 

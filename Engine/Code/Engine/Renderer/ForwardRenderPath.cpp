@@ -314,14 +314,9 @@ void ForwardRenderPath::RenderShadowsForLight(Light * l, RenderScene * scene)
 
 }
 
-void FogData_t::SetFogBuffer(RGBA color, float nearPlane, float farPlane, float nearFactor, float farFactor)
-{
-	fogColor = color.GetNormalized();
-	fogNearPlane = nearPlane;
-	fogFarPlane = farPlane;
-	fogNearFactor = nearFactor;
-	fogFarFactor = farFactor;
-}
+
+
+
 
 
 bool CompareDrawCallsBySortLayer(DrawCall i, DrawCall j)

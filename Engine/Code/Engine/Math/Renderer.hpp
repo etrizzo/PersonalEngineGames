@@ -52,7 +52,7 @@ struct size_data_t
 
 struct FogData_t {
 	void SetFogBuffer(RGBA color, float nearPlane, float farPlane, float nearFactor = .1f, float farFactor = .8f);
-	//void SetFogColor(RGBA color);
+	void SetFogColor(RGBA color);
 
 
 	Vector4 fogColor;
