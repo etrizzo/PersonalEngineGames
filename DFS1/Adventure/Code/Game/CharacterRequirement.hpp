@@ -14,7 +14,7 @@ public:
 	CharacterRequirement(unsigned int charID, StoryDataDefinition* parentData, tinyxml2::XMLElement* element );
 
 	virtual CharacterRequirement* Clone() const = 0;
-	
+
 	virtual bool PassesRequirement(Character* character, StoryState* edgeState) = 0;
 
 	unsigned int m_characterID = (unsigned int) -1;

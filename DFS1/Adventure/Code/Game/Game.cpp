@@ -624,7 +624,9 @@ void Game::GenerateGraph()
 		
 		generated = true;
 		//generated = m_graph->AddEndingsToGraph(10);
-		generated = m_graph->AddEndingsToActBoundaryEdge(m_graph->GetEnd(), 10);
+		m_graph->AddEndingsToActBoundaryEdge(m_graph->GetEnd(), 10);
+		m_graph->RemoveBranchesWithNoEnding(m_graph->GetEnd());
+		generated = !m_graph->CheckForInvalidGraph();
 		
 	}
 	m_graph->AnalyzeGraph();

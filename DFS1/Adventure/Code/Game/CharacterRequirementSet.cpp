@@ -36,6 +36,7 @@ void CharacterRequirementSet::InitFromXML(tinyxml2::XMLElement * setElement, Sto
 	}
 }
 
+
 float CharacterRequirementSet::GetCharacterFitness(Character * character, StoryState* edgeState)
 {
 	float baseFitness = 0.f;

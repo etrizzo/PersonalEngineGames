@@ -30,13 +30,14 @@ public:
 	int GetFinalActNumber() const;
 
 
-	StoryDataDefinition* GetOutcomeNodeWithWeights(StoryState* edge, float minFitness = 2.f);
-	StoryDataDefinition* GetEventNodeWithWeights(StoryState* edge, float minFitness = 2.f);
+	StoryDataDefinition* GetOutcomeNodeWithWeights(StoryState* edge, float minFitness = .75f);
+	StoryDataDefinition* GetEventNodeWithWeights(StoryState* edge, float minFitness = .75f);
 
 	void RemoveEndingFromUnusedEndings(StoryDataDefinition* ending);
 
 	StoryDataDefinition* GetEndingNode(StoryState* edge);
 
+	float CalculateEdgeFitnessForNewDataZeroToOne(StoryState* edge, StoryDataDefinition* data);
 	float CalculateEdgeFitnessForData(StoryState* edge, StoryDataDefinition* data);
 
 	float GetNodeLikelihoodToLeadToEnding(StoryDataDefinition* nodeDef);

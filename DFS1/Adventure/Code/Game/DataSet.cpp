@@ -181,7 +181,7 @@ StoryDataDefinition * DataSet::GetOutcomeNodeWithWeights(StoryState * edge, floa
 	std::vector<StoryDataDefinition*> defaultNodes = std::vector<StoryDataDefinition*>();
 	for(StoryDataDefinition* data : m_outcomeNodes){
 		if (DoRangesOverlap(data->m_actRange, edge->m_possibleActRange)) {
-			float fitness = CalculateEdgeFitnessForData(edge, data);
+			float fitness = CalculateEdgeFitnessForNewDataZeroToOne(edge, data);
 			if (fitness >= minFitness) {
 				if (fitness >= 1.f) {
 					//try to populate the array with the most fit nodes being more likely
@@ -239,7 +239,7 @@ StoryDataDefinition * DataSet::GetEventNodeWithWeights(StoryState * edge, float 
 	std::vector<StoryDataDefinition*> defaultNodes = std::vector<StoryDataDefinition*>();
 	for(StoryDataDefinition* data : m_eventNodes){
 		if (DoRangesOverlap(data->m_actRange, edge->m_possibleActRange)) {
-			float fitness = CalculateEdgeFitnessForData(edge, data);
+			float fitness = CalculateEdgeFitnessForNewDataZeroToOne(edge, data);
 			if (fitness >= minFitness) {
 				if (fitness >= 1.f) {
 					//try to populate the array with the most fit nodes being more likely
@@ -329,6 +329,45 @@ StoryDataDefinition * DataSet::GetEndingNode(StoryState * edge)
 	//if we don't get a match, return nullptr
 	return nullptr;
 	
+}
+
+float DataSet::CalculateEdgeFitnessForNewDataZeroToOne(StoryState* edge, StoryDataDefinition* data)
+{
+	float numReqs = 0.f;
+	float fitness = 0.f;
+	//because the data doesn't have characters yet, look at what character requirments the data has instead
+	for (CharacterRequirementSet* reqSet : data->m_characterReqs)
+	{
+		float maxFitness = 0.f;
+		//calculate the max requirement
+		for (CharacterRequirement* req : reqSet->m_requirements)
+		{
+			numReqs+= req->m_fitnessWeight;
+		}
+
+		for (CharacterState* charState : edge->m_characterStates)
+		{
+			float charFitness = reqSet->GetCharacterFitness(charState->m_character, edge);
+			if (charFitness > maxFitness)
+			{
+				maxFitness = charFitness;
+			}
+		}
+		//add whatever our maximum fitness for this requirement was
+		//this isn't precise, bc we don't know who was what, but we'll check that all again later.
+		fitness+= maxFitness;
+	}
+
+	//also want to check story requirements....
+	if(data->m_storyReqs->DoesEdgeMeetAllRequirements(edge)){
+		fitness+= (float) data->m_storyReqs->m_requirements.size();
+	} else {
+		fitness = 0.f;
+	}
+	numReqs+=data->m_storyReqs->m_requirements.size();
+
+	//if no characters violated requirements, return true.
+	return fitness / numReqs;
 }
 
 float DataSet::CalculateEdgeFitnessForData(StoryState * edge, StoryDataDefinition * data)

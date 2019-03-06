@@ -252,7 +252,7 @@ StoryNode * StoryGraph::AddEventNodeAtEdge(StoryEdge * edge)
 	int maxTries = 100;
 	
 	while (tries < maxTries && !added){
-		StoryDataDefinition* sourceNode = m_dataSet->GetEventNodeWithWeights(edge->GetCost(), 3.f);
+		StoryDataDefinition* sourceNode = m_dataSet->GetEventNodeWithWeights(edge->GetCost(), .75f);
 
 		//try to add the node
 		if (sourceNode != nullptr && StoryRequirementsMet(sourceNode, edge)){
@@ -290,7 +290,7 @@ void StoryGraph::AddOutcomeNodesToEventNode(StoryNode * plotNode)
 	for (int i = 0; i < startingSize; i++){
 		StoryEdge* edge = edges[i];
 		if (!edge->GetCost()->m_isVoid){
-			TryToAddDetailNodeAtEdge(edge, 10);
+			TryToAddOutcomeNodeAtEdge(edge, 10);
 		}
 	}
 }
@@ -310,7 +310,7 @@ void StoryGraph::AddDetailNodesToDesiredSize(int desiredSize)
 	for (int i = 0; i < startingSize; i++){
 		StoryEdge* edge = skeletonEdges[i];
 		if (!edge->GetCost()->m_isVoid){
-			if (TryToAddDetailNodeAtEdge(edge, 10)){
+			if (TryToAddOutcomeNodeAtEdge(edge, 10)){
 				canAdd = true;
 			}
 		}
@@ -330,7 +330,7 @@ void StoryGraph::GenerateStartAndEnd()
 	
 }
 
-bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
+bool StoryGraph::TryToAddOutcomeNodeAtEdge(StoryEdge * edge, int maxTries)
 {
 	//try to add an ending node first.
 	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge, true);
@@ -339,7 +339,7 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 	int tries = 0;
 	while (tries < maxTries && !added){
 		//reroll if you get a duplicate node.
-		StoryDataDefinition* sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), 3.f);
+		StoryDataDefinition* sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), .75f);
 		bool alreadyUsed = true;
 		int rerollRepeatTries = 0;
 		while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
@@ -347,9 +347,9 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 				alreadyUsed = true;
 				if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
 					if (rerollRepeatTries < (float) MAX_REPEAT_REROLLS * .5f){
-						sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), 3.f);
+						sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), .8f);
 					} else {
-						sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), 1.f);
+						sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), .5f);
 					}
 				} else {
 					alreadyUsed = false;		//let it slide based on chance
@@ -372,6 +372,7 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 			//if you found characters for the node, add the node.
 			if (charsForNode.size() != 0){
 				if (CreateAndAddOutcomeNodeAtEdge(sourceNode, edge, charsForNode)){
+					m_usedDetailNodes.push_back(sourceNode);
 					added = true;
 				} else {
 					tries++;
@@ -1745,10 +1746,12 @@ StoryEdge * StoryGraph::GetEdgeWithLargestActRange(bool lookingForEndings) const
 	//find the largest range first
 	for (StoryEdge* edge : m_graph.m_edges)
 	{
-		if (edge->GetCost()->m_possibleActRange.GetSize() > largestRange)
-		{
-			largestEdge = edge;
-			largestRange = edge->GetCost()->m_possibleActRange.GetSize();
+		if(!IsEventToOutcomeEdge(edge)){
+			if (edge->GetCost()->m_possibleActRange.GetSize() > largestRange)
+			{
+				largestEdge = edge;
+				largestRange = edge->GetCost()->m_possibleActRange.GetSize();
+			}
 		}
 	}
 	//if we're looking for endings, still want to return the largest range even when it's just 1 because those are the edges between acts.
@@ -1757,23 +1760,25 @@ StoryEdge * StoryGraph::GetEdgeWithLargestActRange(bool lookingForEndings) const
 		std::vector<StoryEdge*> m_largestRanges = std::vector<StoryEdge*>();
 		for (StoryEdge* edge : m_graph.m_edges)
 		{
-			if (edge->GetCost()->m_possibleActRange.GetSize() == largestRange)
-			{
-				if (lookingForEndings)
+			if(!IsEventToOutcomeEdge(edge)){
+				if (edge->GetCost()->m_possibleActRange.GetSize() == largestRange)
 				{
-					//check to see if we're like, missing an act still.
-					if ((edge->GetEnd() == m_endNode) && (edge->GetCost()->m_possibleActRange.GetSize() != 0)) {
-						return edge;
-					}
-					//only add edges that don't have an ending
-					if (!edge->GetStart()->m_data->DoesNodeEndAct())
+					if (lookingForEndings)
 					{
+						//check to see if we're like, missing an act still.
+						if ((edge->GetEnd() == m_endNode) && (edge->GetCost()->m_possibleActRange.GetSize() != 0)) {
+							return edge;
+						}
+						//only add edges that don't have an ending
+						if (!edge->GetStart()->m_data->DoesNodeEndAct())
+						{
+							m_largestRanges.push_back(edge);
+						}
+					} else {
 						m_largestRanges.push_back(edge);
 					}
-				} else {
-					m_largestRanges.push_back(edge);
+					
 				}
-				
 			}
 		}
 		return m_largestRanges[GetRandomIntLessThan(m_largestRanges.size())];
@@ -1883,6 +1888,17 @@ void StoryGraph::RenderEdge(StoryEdge * edge, RGBA color) const
 	g_theRenderer->DrawTextInBox2D(cost, costBox, Vector2::HALF, EDGE_FONT_SIZE, TEXT_DRAW_WORD_WRAP, m_edgeTextColor);
 	//g_theRenderer->DrawText2D(cost, halfPoint - Vector2(.002f, 0.f), EDGE_FONT_SIZE, RGBA::YELLOW);
 }
+
+
+bool StoryGraph::IsEventToOutcomeEdge(StoryEdge* edge) const
+{
+	if (edge->GetStart()->m_data->m_type == PLOT_NODE && edge->GetEnd()->m_data->m_type == DETAIL_NODE)
+	{
+		return true;
+	}
+	return false;
+}
+
 
 void StoryGraph::UpdateDepths()
 {

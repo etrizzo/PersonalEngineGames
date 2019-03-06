@@ -80,7 +80,7 @@ public:
 	void AddOutcomeNodesToEventNode(StoryNode* plotNode);
 	void AddDetailNodesToDesiredSize(int desiredSize = 10);
 	void GenerateStartAndEnd();
-	bool TryToAddDetailNodeAtEdge(StoryEdge* edge, int maxTries = 10);
+	bool TryToAddOutcomeNodeAtEdge(StoryEdge* edge, int maxTries = 10);
 	bool FindEdgeForNewEventNodeAndAdd(StoryNode* newPlotNode);
 	//bool AddOutcomeNode(StoryNode* newDetailNode);
 	bool CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode, bool onlyAddEndings = false);
@@ -182,6 +182,9 @@ public:
 	std::vector<Character*> m_characters			= std::vector<Character*>();
 
 	void RenderEdge(StoryEdge* edge, RGBA color = RGBA::WHITE) const;
+
+
+	bool IsEventToOutcomeEdge(StoryEdge* edge) const;
 
 protected:
 	DataSet* m_dataSet		= nullptr;
