@@ -92,7 +92,7 @@ void Village::GenerateGraph()
 	while (!generated){
 		m_villageGraph->Clear();
 		m_villageGraph->RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
-		generated = m_villageGraph->AddEndingsToEachBranch(10);
+		generated = m_villageGraph->AddEndingsToGraph();
 	}
 
 	m_currentEdge = m_villageGraph->GetStart()->m_outboundEdges[0];

@@ -115,7 +115,7 @@ extern SpriteSheet* g_portraitSpriteSheet;
 Thesis Stuff
 ============================*/
 
-#define NUM_NODE_PAIRS_TO_GENERATE (7)
+#define NUM_NODE_PAIRS_TO_GENERATE (5)
 #define NUM_PLOT_NODES_TO_GENERATE (6 + 2)
 #define NUM_DETAIL_NODES_TO_GENERATE (3)
 #define DEFAULT_BRANCH_CHANCE_ON_FAIL (0.0f)

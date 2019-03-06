@@ -135,19 +135,25 @@ void StoryGraph::RunGenerationByActs(int numPairsToAdd)
 	GenerateStartAndEnd();
 	int added = 0;
 	int tries = 0;
-	while ((added < numPairsToAdd || !HavePlacedAllEndings()) && tries < 40)
+	bool shouldSeekEnding = false;
+	while (added < numPairsToAdd)
 	{
-		bool shouldSeekEnding = false;
-		if (!HavePlacedAllEndings() && added >= numPairsToAdd)
-		{
-			shouldSeekEnding = true;
-		}
-		StoryEdge* edgeWithLargeRange = GetEdgeWithLargestActRange(shouldSeekEnding);
+		StoryEdge* edgeWithLargeRange = GetEdgeWithLargestActRange(false);
 		StoryNode* newEventNode = AddEventNodeAtEdge(edgeWithLargeRange);
 		if (newEventNode != nullptr) {
 			added++;
 			AddOutcomeNodesToEventNode(newEventNode);
 		}
+		//else
+		//{
+		//	//maybe the case where you didn't get an outcome adding on to the initial edge??
+		//	if (edgeWithLargeRange->GetStart()->m_data->m_type == PLOT_NODE && edgeWithLargeRange->GetEnd()->m_data->m_type != DETAIL_NODE)
+		//	{
+		//		AddOutcomeNodesToEventNode(edgeWithLargeRange->GetStart());
+		//	}
+		//}
+
+
 		tries++;
 	}
 }
@@ -240,7 +246,7 @@ StoryNode * StoryGraph::AddSingleEventNode()
 StoryNode * StoryGraph::AddEventNodeAtEdge(StoryEdge * edge)
 {
 	//if you can, add an end node first.
-	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge);
+	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge, false);
 	bool added = (addedNode != nullptr);
 	int tries = 0;
 	int maxTries = 100;
@@ -318,7 +324,7 @@ void StoryGraph::GenerateStartAndEnd()
 		AddStart(new StoryNode(new StoryData("START")));
 		AddEnd(new StoryNode(new StoryData("END")));
 		StoryState* startingEdge = new StoryState(1.f, m_characters.size(), this);
-		startingEdge->m_possibleActRange = IntRange(0, m_dataSet->GetFinalActNumber());
+		startingEdge->m_possibleActRange = IntRange(1, m_dataSet->GetFinalActNumber());
 		AddEdge(m_startNode, m_endNode, startingEdge);
 	}
 	
@@ -327,8 +333,9 @@ void StoryGraph::GenerateStartAndEnd()
 bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 {
 	//try to add an ending node first.
-	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge);
+	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge, true);
 	bool added = (addedNode != nullptr);
+	//bool added = false;
 	int tries = 0;
 	while (tries < maxTries && !added){
 		//reroll if you get a duplicate node.
@@ -357,6 +364,7 @@ bool StoryGraph::TryToAddDetailNodeAtEdge(StoryEdge * edge, int maxTries)
 			return false;
 		}
 
+		//sourceNode is the definition
 		//try to add the node
 		if (StoryRequirementsMet(sourceNode, edge)){
 			//if the story requirements are met, check character requirements
@@ -502,7 +510,7 @@ bool StoryGraph::FindEdgeForNewEventNodeAndAdd(StoryNode* newPlotNode)
 //	return foundSpot;
 //}
 
-bool StoryGraph::CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition * dataDefinition, StoryEdge * edgeToAddAt, std::vector<Character*> charactersForNode)
+bool StoryGraph::CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition * dataDefinition, StoryEdge * edgeToAddAt, std::vector<Character*> charactersForNode, bool onlyPlaceEndings)
 {
 	//at this point, we need to know what characters will be set for this node set.
 	StoryNode* startNode = edgeToAddAt->GetStart();
@@ -511,8 +519,12 @@ bool StoryGraph::CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition * dataDefinit
 	StoryNode* newNode = nullptr;
 	bool addedAnyNodes = false;
 	for (int i = 0; i < (int) dataDefinition->m_actions.size(); i++){
-		//check random chance to just ignore this action
-		if (!CheckRandomChance(dataDefinition->m_actions[i]->m_chanceToPlaceAction)){
+		//if you're only placing endings and this action ain't one, skip it
+		if (onlyPlaceEndings && !dataDefinition->m_actions[i]->m_endsAct) {
+			int x = 0;
+			continue;
+		} else if (!CheckRandomChance(dataDefinition->m_actions[i]->m_chanceToPlaceAction)){
+			//check random chance to just ignore this action
 			continue;
 		} else {
 			//add a node for this action
@@ -638,12 +650,16 @@ bool StoryGraph::AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToA
 
 bool StoryGraph::AddEndingsToGraph(int maxTries)
 {
-	AddEndingsToEachBranch(maxTries);
-	RemoveBranchesWithNoEnding();
+	std::vector<StoryNode*> actBoundaries = GetActStartingNodes();
+	for (StoryNode* nextActStart : actBoundaries)
+	{
+		AddEndingsToActBoundaryEdge(nextActStart, maxTries);
+		RemoveBranchesWithNoEnding(nextActStart);
+	}
 	return !CheckForInvalidGraph();
 }
 
-bool StoryGraph::AddEndingsToEachBranch(int maxTries)
+bool StoryGraph::AddEndingsToActBoundaryEdge(StoryNode* nextActStartingNode, int maxTries)
 {
 	bool allPathsHaveEndings = false;
 
@@ -653,8 +669,9 @@ bool StoryGraph::AddEndingsToEachBranch(int maxTries)
 	while (!allPathsHaveEndings && addedNodes < maxAdds && tries < maxTries){
 		tries++;
 		allPathsHaveEndings = true;
+		
 		//look at all incoming edges to the end node
-		for(StoryEdge* incomingEdge : m_endNode->m_inboundEdges)
+		for(StoryEdge* incomingEdge : nextActStartingNode->m_inboundEdges)
 		{
 			//if you find a node before the end node that doesn't end the act, need to add to it
 			StoryData* startNode = incomingEdge->GetStart()->m_data;
@@ -677,14 +694,14 @@ bool StoryGraph::AddEndingsToEachBranch(int maxTries)
 	return true;
 }
 
-void StoryGraph::RemoveBranchesWithNoEnding()
+void StoryGraph::RemoveBranchesWithNoEnding(StoryNode* nextActStartingNode)
 {
 	bool allPathsHaveEndings = false;
 	while (!allPathsHaveEndings){
 		allPathsHaveEndings = true;
 		//look at all incoming edges to the end node
 		StoryNode* nodeToDelete = nullptr;
-		for(StoryEdge* incomingEdge : m_endNode->m_inboundEdges)
+		for(StoryEdge* incomingEdge : nextActStartingNode->m_inboundEdges)
 		{
 			//if you find a node before the end node that doesn't end the act, need to add to it
 			nodeToDelete = incomingEdge->GetStart();
@@ -742,7 +759,7 @@ bool StoryGraph::CheckForInvalidGraph()
 	}
 }
 
-StoryNode* StoryGraph::TryToAddEndNodeAtEdge(StoryEdge* edge)
+StoryNode * StoryGraph::TryToAddEndNodeAtEdge(StoryEdge * edge, bool isOutcome)
 {
 	//if we've already used all of our endings, gtfo
 	if (m_dataSet->m_unusedEndNodes.size() == 0)
@@ -768,7 +785,17 @@ StoryNode* StoryGraph::TryToAddEndNodeAtEdge(StoryEdge* edge)
 					//if you found characters for the node, add the node.
 					if (charsForNode.size() == endingDef->GetNumCharacters()) {
 						//actually add it
-						newNode = CreateAndAddEventNodeAtEdge(endingDef, edge, charsForNode);		//always does it
+						if (isOutcome) {
+							newNode = CreateAndAddEventNodeAtEdge(endingDef, edge, charsForNode);		//always does it
+						}
+						else {
+							newNode = edge->GetStart();
+							added = CreateAndAddOutcomeNodeAtEdge(endingDef, edge, charsForNode, true);
+							if (added) {
+								newNode = newNode->m_outboundEdges[0]->GetEnd();
+								//wack
+							}
+						}
 						if (newNode != nullptr) {
 							added = true;
 						}
@@ -1660,6 +1687,19 @@ std::vector<Character*> StoryGraph::GetCharactersForNode(StoryDataDefinition* no
 	return std::vector<Character*>();
 }
 
+std::vector<StoryNode*> StoryGraph::GetActStartingNodes() const
+{
+	std::vector<StoryNode*> boundaries = std::vector<StoryNode*>();
+	for (StoryEdge* edge : m_graph.m_edges)
+	{
+		if (edge->GetCost()->m_possibleActRange.GetSize() > 0)
+		{
+			boundaries.push_back(edge->GetEnd());
+		}
+	}
+	return boundaries;
+}
+
 StoryEdge * StoryGraph::GetEdgeForNewEventNode(StoryNode* newNode, float minFitness) const
 {
 	//pure random edges
@@ -1721,6 +1761,10 @@ StoryEdge * StoryGraph::GetEdgeWithLargestActRange(bool lookingForEndings) const
 			{
 				if (lookingForEndings)
 				{
+					//check to see if we're like, missing an act still.
+					if ((edge->GetEnd() == m_endNode) && (edge->GetCost()->m_possibleActRange.GetSize() != 0)) {
+						return edge;
+					}
 					//only add edges that don't have an ending
 					if (!edge->GetStart()->m_data->DoesNodeEndAct())
 					{
@@ -1776,9 +1820,10 @@ void StoryGraph::RenderNode(StoryNode * node, Vector2 position, RGBA color) cons
 	} else {
 		if (node->m_data->DoesNodeEndAct())
 		{
-			nodeBox.AddPaddingToSides(.05f, .05f);
+			float padding = NODE_SIZE * .05f;
+			nodeBox.AddPaddingToSides(padding, padding);
 			g_theRenderer->DrawAABB2(nodeBox, RGBA::RED);
-			nodeBox.AddPaddingToSides(-.05f,-.05f);
+			nodeBox.AddPaddingToSides(-padding,-padding);
 		}
 		g_theRenderer->DrawAABB2(nodeBox, color);
 	}

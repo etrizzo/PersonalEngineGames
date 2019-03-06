@@ -343,7 +343,7 @@ float DataSet::CalculateEdgeFitnessForData(StoryState * edge, StoryDataDefinitio
 			fitness+=charFitnessForRequirements;
 		} else {
 			//it technically works so like +1 i guess
-			fitness+=1.f;
+			//fitness+=1.f;
 		}
 	}
 

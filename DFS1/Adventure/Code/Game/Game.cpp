@@ -621,8 +621,10 @@ void Game::GenerateGraph()
 		ClearGraph();
 		//m_graph->RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
 		m_graph->RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
+		
 		generated = true;
-		//generated = m_graph->AddEndingsToGraph();
+		//generated = m_graph->AddEndingsToGraph(10);
+		generated = m_graph->AddEndingsToActBoundaryEdge(m_graph->GetEnd(), 10);
 		
 	}
 	m_graph->AnalyzeGraph();

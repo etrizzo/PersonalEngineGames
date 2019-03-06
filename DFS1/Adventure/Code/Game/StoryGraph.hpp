@@ -83,7 +83,7 @@ public:
 	bool TryToAddDetailNodeAtEdge(StoryEdge* edge, int maxTries = 10);
 	bool FindEdgeForNewEventNodeAndAdd(StoryNode* newPlotNode);
 	//bool AddOutcomeNode(StoryNode* newDetailNode);
-	bool CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode);
+	bool CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode, bool onlyAddEndings = false);
 	StoryNode* CreateAndAddEventNodeAtEdge(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode);
 	bool AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToAdd, bool branchToFutureNodesIfNecessary);
 
@@ -91,12 +91,12 @@ public:
 	// returns true if successful, returns false if the graph was unsalvagable (indicating that whoever called this should regenerate).
 	bool AddEndingsToGraph(int maxTries = 20);
 
-	bool AddEndingsToEachBranch(int maxTries = 20);
-	void RemoveBranchesWithNoEnding();
+	bool AddEndingsToActBoundaryEdge(StoryNode* nextActStartingNode, int maxTries = 20);
+	void RemoveBranchesWithNoEnding(StoryNode* nextActStartingNode);
 	//if no paths had an ending and the graph is now just an end node, this will return true
 	bool CheckForInvalidGraph();
 
-	StoryNode* TryToAddEndNodeAtEdge(StoryEdge* edgeState);
+	StoryNode* TryToAddEndNodeAtEdge(StoryEdge* edgeState, bool isOutcome);
 
 	//by default, adds 1/4 * (numNodes) branches
 	void IdentifyBranchesAndAdd(int numBranchesToAdd = -1);
@@ -188,6 +188,9 @@ protected:
 
 	StoryNode* m_startNode							= nullptr;
 	StoryNode* m_endNode							= nullptr;
+
+	//returns a list of all edges whos range >= 1
+	std::vector<StoryNode*> GetActStartingNodes() const;
 
 	//finds a good spot for a new pair of nodes.
 	StoryEdge* GetEdgeForNewEventNode(StoryNode* newNode,  float minFitness = 2.f)	const;
