@@ -89,10 +89,12 @@ void DataSet::ReadEventNodesFromXML(std::string filePath)
 	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("EventNode"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("EventNode")){
 		StoryDataDefinition* data = new StoryDataDefinition( PLOT_NODE);
 		data->InitFromXML(nodeElement);
-		m_eventNodes.push_back(data);
+		
 		if (data->IsEnding())
 		{
 			m_actEndingNodes.push_back(data);
+		} else {
+			m_eventNodes.push_back(data);		//shouldn't have endings in it... or should it???
 		}
 	}
 }
@@ -105,10 +107,12 @@ void DataSet::ReadOutcomeNodesFromXML(std::string filePath)
 	for (tinyxml2::XMLElement* nodeElement = nodeDoc.FirstChildElement("OutcomeNode"); nodeElement != NULL; nodeElement = nodeElement->NextSiblingElement("OutcomeNode")){
 		StoryDataDefinition* data = new StoryDataDefinition( DETAIL_NODE);
 		data->InitFromXML(nodeElement);
-		m_outcomeNodes.push_back(data);
+		
 		if (data->IsEnding())
 		{
 			m_actEndingNodes.push_back(data);
+		}else {
+			m_outcomeNodes.push_back(data);
 		}
 	}
 }

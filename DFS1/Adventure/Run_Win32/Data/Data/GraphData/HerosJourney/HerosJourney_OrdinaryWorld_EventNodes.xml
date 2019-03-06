@@ -6,10 +6,15 @@
 			<Character id = "*2*" title="loveinterest" />
 			<Character id = "*3*" title="antagonist" />
 		</Characters>
+
+		<StoryRequirements>
+			<Requirement tag="storyBegan" target="false" weight="5"/>
+		</StoryRequirements>
 		
 		<CharacterRequirements>
 			<Character index="0">
 				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isEvil" target="false" /> <!-- protag can't be evil!!! -->
 			</Character>
 
 			<Character index="1">
@@ -50,11 +55,6 @@
 				<Requirement tag="isAlive" target="true"/>
 				<Requirement tag="isAntagonist" target="false" />
 			</Character>
-
-			<Character index="2">
-				<Requirement tag="isAlive" target="true"/>
-				<Requirement tag="isAntagonist" target="false" />
-			</Character>
 		</CharacterRequirements>
 
 		<StoryRequirements>
@@ -64,10 +64,11 @@
 			<EffectSet chance="default">
 				<TagChange character="*0*" tag="wantsToLeaveHome" target="true" />
 				<TagChange tag="wantsToLeave" target="*0*" type="character" effectType="story"/>
-				<TagChange tag="friend" target="*2*" type="character" effectType="story"/>
+				<TagChange tag="friend" target="*1*" type="character" effectType="story"/>
 			</EffectSet>
 		</StoryEffects>
 	</EventNode>
+
 
 	<EventNode name="Sunset" progression="time" actname="OrdinaryWorld" actRange="1">
 		<Action text="*0* *1* and *2* watch the sunset together" />
@@ -109,7 +110,7 @@
 
 
 	<EventNode name="Vision" progression="time" actname="OrdinaryWorld" actRange="1" >
-		<Action text="Suddenly *0* blacks out and sees a mysterious vision." endsAct="true"/>
+		<Action text="*0* Suddenly blacks out and sees a mysterious vision." endsAct="true"/>
 		<Characters>
 			<Character id = "*0*" title="protagonist"/>
 		</Characters>
@@ -133,7 +134,7 @@
 
 
 	<EventNode name="Stranger" progression="time" actname="OrdinaryWorld" actRange="1">
-		<Action text="A mysterious stranger approaches *0* " endsAct="true"/>
+		<Action text="A mysterious stranger approaches *0*" endsAct="true"/>
 		<Characters>
 			<Character id = "*0*" title="protagonist"/>
 		</Characters>
@@ -156,7 +157,7 @@
 	</EventNode>
 
 	<EventNode name="Cave" progression="time" actname="OrdinaryWorld" actRange="1" >
-		<Action text=" *0* stumbles into a mysterious cave covered with ancient paintings" endsAct="true"/>
+		<Action text="*0* stumbles into a mysterious cave covered with ancient paintings" endsAct="true"/>
 		<Characters>
 			<Character id = "*0*" title="protagonist"/>
 		</Characters>
