@@ -10,9 +10,10 @@ public:
 	World();
 	~World();
 
-
-	void Update();	//nothing right now probs
+	void HandleInput();
+	void Update();	
 	void Render();
+
 
 	void SetActivationRadius(float newRadius);
 	inline float GetActivationRadius() const { return m_chunkActivationRadiusChunkDistance; }
@@ -36,6 +37,8 @@ public:
 
 
 	void DebugDeactivateAllChunks();
+
+	Clock* m_worldClock;
 
 private:
 	//initialization
@@ -98,6 +101,12 @@ public:
 	float m_timeOfDay = 0.f;
 	float m_outdoorLightScalar = 0.f;
 	float m_worldTime = 0.f;
+	float m_percThroughDay = 0.f;
+
+	//lightning
+	float m_lightningPerlinValue = 0.f;
+	float m_lightningValue = 0.f;
+	float m_glowPerlinValue = 0.f;
 };
 
 

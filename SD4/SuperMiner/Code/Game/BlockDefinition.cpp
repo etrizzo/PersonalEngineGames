@@ -5,14 +5,14 @@ std::vector<BlockDefinition*> BlockDefinition::s_blockDefinitions = std::vector<
 BlockDefinition::BlockDefinition(tinyxml2::XMLElement * blockElement)
 {
 	m_name = ParseXmlAttribute(*blockElement, "name", "NO_NAME");
-	m_blockID = ParseXmlAttribute(*blockElement, "id", 0);
+	m_blockID = (unsigned char) ParseXmlAttribute(*blockElement, "id", 0);
 	//error checking that we have a block ID and that it's not a duplicate.
 	std::string errorNoID = Stringf("%s must specify a block ID in data!", m_name.c_str());
 	ASSERT_OR_DIE(m_blockID != 0, errorNoID.c_str());
 	BlockDefinition* def = BlockDefinition::GetBlockDefinitionFromID(m_blockID);
 	if (def != nullptr)
 	{
-		std::string errorDuplicate = Stringf("%s was already defined with id %i before %s with the same ID! Each block must have a unique ID!", def->m_name, def->m_blockID, m_name);
+		std::string errorDuplicate = Stringf("%s was already defined with id %i before %s with the same ID! Each block must have a unique ID!", def->m_name.c_str(), def->m_blockID, m_name.c_str());
 		ASSERT_OR_DIE(def == nullptr, errorDuplicate.c_str());
 	}
 

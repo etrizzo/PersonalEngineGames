@@ -512,6 +512,11 @@ float SmoothStep3(float t)
 	return Crossfade(SmoothStart3(t), SmoothStop3(t), t);
 }
 
+float InAndOutBurger(float t)
+{
+	return (-CosDegreesf(t * 360.f) + 1.f) * .5f;
+}
+
 float InAndOut2(float t)
 {
 	float val = SinDegreesf(t * 180.f);

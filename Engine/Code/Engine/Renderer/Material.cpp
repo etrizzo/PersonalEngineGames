@@ -144,9 +144,9 @@ void Material::RemoveProperty(const char * name)
 {
 	for (int i = (int) m_properties.size() - 1; i >=0; i--){
 		if (m_properties[i]->m_name == name){
-			//MaterialProperty* p = m_properties[i];
+			MaterialProperty* p = m_properties[i];
 			RemoveAtFast(m_properties, i);
-			//delete p;
+			delete p;
 		}
 	}
 }

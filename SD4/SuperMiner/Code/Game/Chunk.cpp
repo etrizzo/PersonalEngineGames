@@ -42,7 +42,7 @@ void Chunk::CreateMesh()
 {
 	m_cpuMesh.Clear();
 	m_cpuMesh.Begin(PRIMITIVE_TRIANGLES, true);
-	m_cpuMesh.ReserveVerts((float) CHUNK_LAYER_DIMS_XY * 6.f * 6.f);		//~ 3 faces for the top and bottom of a chunk 
+	m_cpuMesh.ReserveVerts( CHUNK_LAYER_DIMS_XY * 8 * 6);		//~ 4 faces for the top and bottom of a chunk 
 
 	//loop through ur blocks
 	for (int blockIndex = 0; blockIndex < BLOCKS_PER_CHUNK; blockIndex++)
@@ -143,8 +143,8 @@ void Chunk::SetBlockType(int blockIndex, uchar newType)
 	m_blocks[blockIndex].SetType(newType);
 	m_isGPUMeshDirty = true;
 	m_isSavedOrUntouched = false;
-
-	g_theGame->GetWorld()->SetBlockLightDirty(BlockLocator(blockIndex, this));
+	BlockLocator me = BlockLocator(blockIndex, this);
+	g_theGame->GetWorld()->SetBlockLightDirty(me);
 
 	//check if neighbors need to be dirtied
 	if (IsBlockIndexOnEastEdge(blockIndex) && m_eastNeighbor != nullptr)
@@ -531,7 +531,7 @@ RGBA Chunk::GetLightingTintForBlock(const BlockLocator & block)
 {
 	uchar indoor = block.GetIndoorLightLevel();
 	uchar outdoor = block.GetOutdoorLightLevel();
-	float indoorScale = RangeMapFloat((float)indoor, 0.f, 15.f, .1f, 1.f);
+	float indoorScale = RangeMapFloat((float)indoor, 0.f, 15.f, 0.f, 1.f);
 	float outdoorScale = RangeMapFloat((float)outdoor, 0.f, 15.f, 0.f, 1.f);
 
 	float finalScale = indoorScale;

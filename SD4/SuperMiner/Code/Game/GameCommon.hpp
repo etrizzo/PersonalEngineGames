@@ -57,6 +57,9 @@ constexpr int	CHUNK_MASK_Z = (CHUNK_SIZE_Z - 1) << (CHUNK_BITS_X + CHUNK_BITS_Y)
 
 constexpr float	SEA_LEVEL = (float) CHUNK_SIZE_Z * .43f;
 
+constexpr float SECONDS_PER_DAY = 1000.f;
+constexpr float FRAME_TIME_SCALE = (1.f / SECONDS_PER_DAY);
+
 constexpr uchar MAX_OUTDOOR_LIGHT = (15);
 
 constexpr float RAYCAST_STEP_SIZE = .02f;

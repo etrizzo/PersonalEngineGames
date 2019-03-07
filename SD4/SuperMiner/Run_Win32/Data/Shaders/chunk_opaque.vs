@@ -22,7 +22,7 @@ out vec4 passColor;
 out vec3 passWorldPos;     
 out vec3 passWorldNormal;  
 out vec3 passViewPos;
-out float passTimeOfDay;
+out float passOutdoorScalar;
 
 // Entry Point ===========================================
 void main( void )
@@ -48,7 +48,7 @@ void main( void )
    passWorldPos = world_pos.xyz;  
    passWorldNormal = (vec4( NORMAL, 0.0f ) * MODEL).xyz; 
    passViewPos = camera_pos.xyz;
-   passTimeOfDay = TIME_OF_DAY;
+   passOutdoorScalar = TIME_OF_DAY;
    
    gl_Position = clip_pos; // we pass out a clip coordinate
    

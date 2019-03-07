@@ -114,12 +114,3 @@ private:
 };
 
 extern Game* g_theGame;
-
-
-
-bool OnAdd( NetMessage msg, net_sender_t const & from) ;
-bool OnAddResponse( NetMessage msg, net_sender_t const & from) ;
-
-//simulates the round trip time we would have with netobjects bc we're sending more often than heartbeat
-bool OnNetSyncSim( NetMessage msg, net_sender_t const& from);
-

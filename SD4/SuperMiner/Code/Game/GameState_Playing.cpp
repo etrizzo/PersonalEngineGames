@@ -70,18 +70,21 @@ void GameState_Playing::RenderGame()
 	g_theRenderer->ReleaseTexture(1);
 	g_theRenderer->ReleaseShader();
 
+	PROFILE_PUSH("DebugRenderSystem");
 	g_theGame->m_debugRenderSystem->UpdateAndRender();
+	PROFILE_POP();
 	g_theRenderer->EnableDepth( COMPARE_LESS, true ); 
 	
 }
 
 void GameState_Playing::RenderUI()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	AABB2 bounds = g_theGame->SetUICamera();
 
 	//draw time of day
-	std::string timeOfDayStr = Stringf("Time of Day: %3.2f", m_world->m_timeOfDay);
-	g_theRenderer->DrawTextInBox2D(timeOfDayStr, bounds, Vector2(0.01f, .99f), .01f);
+	std::string timeOfDayStr = Stringf("Day: %3.2f   Percentage through day: %3.2f   Time of Day: %3.2f\n Lighting: %3.2f   Glow: %3.2f", m_world->m_worldTime, m_world->m_percThroughDay, m_world->m_timeOfDay, m_world->m_lightningPerlinValue, m_world->m_glowPerlinValue);
+	g_theRenderer->DrawTextInBox2D(timeOfDayStr, bounds, Vector2(0.01f, 0.01f), .015f);
 
 
 	//draw block UI
@@ -104,6 +107,7 @@ void GameState_Playing::HandleInput()
 {
 	
 	g_theGame->m_debugRenderSystem->HandleInput();
+	m_world->HandleInput();
 
 	if (g_theInput->WasKeyJustPressed(VK_F1)){
 		g_theGame->ToggleDevMode();

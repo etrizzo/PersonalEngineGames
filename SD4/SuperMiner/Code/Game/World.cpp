@@ -19,6 +19,8 @@ World::World()
 	float fogNearPlane = fogFarPlane * .5f;
 	m_fogData;
 	m_fogData.SetFogBuffer(RGBA::BEEFEE, fogNearPlane, fogFarPlane, 0.f, 1.f);
+
+	m_worldClock = new Clock(GetMasterClock());
 }
 
 World::~World()
@@ -32,6 +34,20 @@ World::~World()
 	for (int i = 0; i < (int) chunksToDeactivate.size(); i++)
 	{
 		DeactivateChunk(chunksToDeactivate[i]);
+	}
+
+	delete m_worldClock;
+}
+
+void World::HandleInput()
+{
+	if (g_theInput->WasKeyJustPressed('T'))
+	{
+		m_worldClock->SetScale(50.f);
+	}
+	if (g_theInput->WasKeyJustReleased('T'))
+	{
+		m_worldClock->SetScale(1.f);
 	}
 }
 
@@ -54,8 +70,9 @@ void World::Render()
 	TODO("Establish best render order for chunks here");
 
 
-	
+	PROFILE_PUSH("RenderChunks");
 	RenderChunks();
+	PROFILE_POP();
 
 	if (g_theGame->IsDebugLighting())
 	{
@@ -225,15 +242,34 @@ void World::DebugDeactivateAllChunks()
 
 void World::UpdateTimeOfDay()
 {
-	m_worldTime += GetMasterClock()->GetDeltaSeconds();
-	m_timeOfDay = (SinDegreesf(m_worldTime * 10.f) + 1.f) * .5f;
-	m_outdoorLightScalar = m_timeOfDay;
+	m_worldTime += m_worldClock->GetDeltaSeconds() * FRAME_TIME_SCALE;
+	m_percThroughDay = m_worldTime - (floorf(m_worldTime));
+	m_timeOfDay = InAndOutBurger(m_percThroughDay );		//flip the cosine and range map 0-1
+	
 	/*if (m_outdoorLightScalar > .5f)
 	{
 		m_outdoorLightScalar = 1.f - m_outdoorLightScalar;
 	}*/
-	m_skyColor = Interpolate(RGBA::BLACK, RGBA::BEEFEE, m_outdoorLightScalar);
+
+	m_lightningPerlinValue = Compute1dPerlinNoise(m_worldClock->GetCurrentSeconds() * .8f, 1.8f, 9, .5f, 2.f, true, 0);
+	m_glowPerlinValue = Compute1dPerlinNoise(m_worldClock->GetCurrentSeconds(), 1.f, 1, .5f, 2.f, true, 1);
+
+
+	//range map and clamp perlin vals
+	m_lightningValue = ClampFloat(m_lightningPerlinValue, .6f, .9f);
+	m_lightningValue = RangeMapFloat(m_lightningValue, .6f, .9f, 0.f, 1.f);
+
+	m_glowPerlinValue = RangeMapFloat(m_glowPerlinValue, -1.f, 1.f, .8f, 1.f);
+
+	//update the value we're passing to the shader
+	m_outdoorLightScalar = max(m_lightningValue * .9f, m_timeOfDay);
+
+	m_skyColor = Interpolate(RGBA::NICEBLACK, RGBA::BEEFEE, m_timeOfDay);
+	m_skyColor = Interpolate(m_skyColor, RGBA::WHITE, m_lightningValue);
 	m_fogData.SetFogColor(m_skyColor);
+
+
+	
 }
 
 void World::UpdateDebugStuff()
@@ -314,7 +350,7 @@ void World::UpdateDebugLightingPoints()
 	{
 		m_debugLightingPointCPUMesh.Clear();
 		m_debugLightingPointCPUMesh.Begin(PRIMITIVE_TRIANGLES, true);
-		for (int i = 0; i < m_dirtyLightingBlocks.size(); i++)
+		for (int i = 0; i < (int) m_dirtyLightingBlocks.size(); i++)
 		{
 			Vector3 blockPoint = m_dirtyLightingBlocks[i].GetBlockCenterWorldPosition();
 			m_debugLightingPointCPUMesh.AppendCube(blockPoint, Vector3::ONE * .05f, RGBA::YELLOW, RIGHT, UP, FORWARD);
@@ -388,6 +424,7 @@ void World::RenderChunks()
 {
 	//set render state for all the chunks - we don't want to bind anything between them
 	m_chunkOpaqueMaterial->SetProperty("TIME_OF_DAY", m_outdoorLightScalar);
+	m_chunkOpaqueMaterial->SetProperty("indoorGlowValue", m_glowPerlinValue);
 	g_theRenderer->BindMaterial(m_chunkOpaqueMaterial);
 	g_theRenderer->BindModel(Matrix44::IDENTITY);
 	g_theRenderer->BindRendererUniforms();		//binds the camera for this frame
@@ -443,7 +480,7 @@ void World::UpdateDirtyBlockLighting(BlockLocator & block)
 bool World::UpdateBlockIndoorLighting(BlockLocator & block)
 {
 	//get the correct value, compare with old value.
-	uchar oldVal = block.GetBlock().GetIndoorLightLevel();
+	uchar oldVal = (uchar) block.GetBlock().GetIndoorLightLevel();
 	uchar correctVal = GetCorrectIndoorLightLevel(block);
 
 	Block& actualBlock = block.GetBlock();
@@ -459,7 +496,7 @@ bool World::UpdateBlockIndoorLighting(BlockLocator & block)
 bool World::UpdateBlockOutdoorLighting(BlockLocator & block)
 {
 	//get the correct value, compare with old value.
-	uchar oldVal = block.GetBlock().GetOutdoorLightLevel();
+	uchar oldVal = (uchar) block.GetBlock().GetOutdoorLightLevel();
 	uchar correctVal = GetCorrectOutdoorLightLevel(block);
 
 	Block& actualBlock = block.GetBlock();

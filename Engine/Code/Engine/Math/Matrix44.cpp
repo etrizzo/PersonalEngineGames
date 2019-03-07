@@ -377,7 +377,7 @@ Matrix44 Matrix44::MakePerspectiveProjection(float fov_degrees, float aspect, fl
 	return Matrix44( i, j, k, t ); 
 }
 
-Matrix44 Matrix44::LookAt(const Vector3 & position, const Vector3 & target, const Vector3 & up, bool isLeftHanded )
+Matrix44 Matrix44::LookAt(const Vector3 & position, const Vector3 & target, const Vector3 & up)
 {
 	Vector3 direction = target - position;
 	Vector3 newForward = direction.GetNormalized();
