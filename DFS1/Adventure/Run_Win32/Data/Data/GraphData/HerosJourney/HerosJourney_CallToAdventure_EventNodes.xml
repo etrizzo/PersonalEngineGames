@@ -1,0 +1,99 @@
+	<EventNode name="CallFromStranger" progression="time" actname="CallToAdventure" actRange="2">
+		<Action text="The stranger tells *0* that they have a great destiny." />
+		<Characters>
+			<Character id = "*0*" title="protagonist"/>
+		</Characters>
+
+		<StoryRequirements>
+			<Requirement tag="callIssued" target="false"/>
+			<Requirement tag="visitFromStranger" target="true" />
+			<Requirement tag="mysteriousEvent" target="true" />
+		</StoryRequirements>
+		
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="metStranger" target="true" effectType="story"/>
+				<TagChange tag="callIssued" target="true" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+	</EventNode>
+
+
+	<EventNode name="CallFromArtifact" progression="time" actname="CallToAdventure" actRange="2">
+		<Action text="*0* feels the pull of destiny coming from the artifact." />
+		<Characters>
+			<Character id = "*0*" title="protagonist"/>
+		</Characters>
+
+		<StoryRequirements>
+			<Requirement tag="callIssued" target="false"/>
+			<Requirement tag="justFoundArtifact" target="true" />
+			<Requirement tag="mysteriousEvent" target="true" />
+		</StoryRequirements>
+		
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="callIssued" target="true" effectType="story"/>
+				<TagChagne tag="foundArtifact" target="true" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+	</EventNode>
+
+	<EventNode name="CallFromCave" progression="time" actname="CallToAdventure" actRange="2">
+		<Action text="*0* sees a vision of themself in the cave painting." />
+		<Characters>
+			<Character id = "*0*" title="protagonist"/>
+		</Characters>
+
+		<StoryRequirements>
+			<Requirement tag="callIssued" target="false"/>
+			<Requirement tag="justFoundCave" target="true" />
+			<Requirement tag="mysteriousEvent" target="true" />
+		</StoryRequirements>
+		
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="callIssued" target="true" effectType="story"/>
+				<TagChagne tag="foundCave" target="true" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+	</EventNode>
+
+
+	<!-- ending nodes - leads to crossing the threshold -->
+	<EventNode name="Naptime" progression="time" actname="CallToAdvenutre" actRange="2" >
+		<Action text="*0* goes to sleep." endsAct="true"/>
+		<Characters>
+			<Character id = "*0*" title="protagonist"/>
+		</Characters>
+		
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isProtagonist" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="callIssued" target="true"/>
+			<Requirement tag="callCompleted" target="true"/>
+		</StoryRequirements>
+	</EventNode>

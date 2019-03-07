@@ -16,14 +16,6 @@ StoryDataDefinition::~StoryDataDefinition()
 
 void StoryDataDefinition::InitFromXML(tinyxml2::XMLElement* nodeElement)
 {
-	if (m_type == DETAIL_NODE){
-		InitAsOutcomeNode(nodeElement);
-		//InitAsDetailNode(nodeElement);
-	} else if (m_type == PLOT_NODE){
-		InitAsEventNode(nodeElement);
-	} else {
-		ERROR_AND_DIE("Node initialized without type.");
-	}
 	m_actRange = ParseXmlAttribute(*nodeElement, "actRange", IntRange(0, MAX_ACTS));
 	m_shouldLockIncomingEdge = ParseXmlAttribute(*nodeElement, "lockIncoming", false);
 	m_name = ParseXmlAttribute(*nodeElement, "name", "NO_NAME");
@@ -33,6 +25,16 @@ void StoryDataDefinition::InitFromXML(tinyxml2::XMLElement* nodeElement)
 	if (progression == "time")		{ m_progressionType = PROGRESSION_TIME; }
 	if (progression == "choice")	{ m_progressionType = PROGRESSION_CHOICE; }
 	if (progression == "interact")	{ m_progressionType = PROGRESSION_INTERACT; }
+
+	if (m_type == DETAIL_NODE){
+		InitAsOutcomeNode(nodeElement);
+		//InitAsDetailNode(nodeElement);
+	} else if (m_type == PLOT_NODE){
+		InitAsEventNode(nodeElement);
+	} else {
+		ERROR_AND_DIE("Node initialized without type.");
+	}
+	
 }
 
 void StoryDataDefinition::InitAsOutcomeNode(tinyxml2::XMLElement * nodeElement)

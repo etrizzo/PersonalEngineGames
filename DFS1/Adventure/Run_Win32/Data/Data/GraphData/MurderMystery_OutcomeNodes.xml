@@ -58,7 +58,7 @@
 		</CharacterRequirements>
 
 		<Actions>
-			<Action text="*0* is suspicious of *1*" chance=".5">
+			<Action text="*0* is suspicious of *1*" chance=".5" endsAct="true">
 				<EffectSet>
 					<TagChange character="*1*" tag="isSuspicious" target="true" />
 					<TagChange character="*1*" tag="wasInvestigated" target="true" />

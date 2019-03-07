@@ -754,6 +754,13 @@ bool StoryGraph::CheckForInvalidGraph()
 {
 	//if there are no nodes or no endings
 	if (m_graph.m_nodes.size() <= 1 || m_endNode->m_inboundEdges.size() < 1){
+		for (StoryNode* node : m_graph.m_nodes)
+		{
+			//if you completely broke any paths, it's wack
+			if (node->m_inboundEdges.size() == 0 || node->m_outboundEdges.size() == 0){
+				return false;
+			}
+		}
 		return true;
 	} else {
 		return false;
@@ -1697,6 +1704,10 @@ std::vector<StoryNode*> StoryGraph::GetActStartingNodes() const
 		{
 			boundaries.push_back(edge->GetEnd());
 		}
+	}
+	if (!Contains(boundaries, m_endNode))
+	{
+		boundaries.push_back(m_endNode);
 	}
 	return boundaries;
 }

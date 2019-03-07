@@ -622,7 +622,7 @@ void Game::GenerateGraph()
 		//m_graph->RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
 		m_graph->RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
 		
-		generated = true;
+		//generated = true;
 		//generated = m_graph->AddEndingsToGraph(10);
 		m_graph->AddEndingsToActBoundaryEdge(m_graph->GetEnd(), 10);
 		m_graph->RemoveBranchesWithNoEnding(m_graph->GetEnd());

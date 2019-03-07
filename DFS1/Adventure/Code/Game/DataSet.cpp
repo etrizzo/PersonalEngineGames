@@ -93,9 +93,9 @@ void DataSet::ReadEventNodesFromXML(std::string filePath)
 		if (data->IsEnding())
 		{
 			m_actEndingNodes.push_back(data);
-		} else {
-			m_eventNodes.push_back(data);		//shouldn't have endings in it... or should it???
-		}
+		} //else {
+		m_eventNodes.push_back(data);		//shouldn't have endings in it... or should it???
+		//}
 	}
 }
 
@@ -111,9 +111,9 @@ void DataSet::ReadOutcomeNodesFromXML(std::string filePath)
 		if (data->IsEnding())
 		{
 			m_actEndingNodes.push_back(data);
-		}else {
+		} //else {
 			m_outcomeNodes.push_back(data);
-		}
+		//}
 	}
 }
 

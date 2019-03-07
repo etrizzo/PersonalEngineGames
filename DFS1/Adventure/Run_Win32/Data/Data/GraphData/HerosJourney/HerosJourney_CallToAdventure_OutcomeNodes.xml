@@ -1,0 +1,146 @@
+	<OutcomeNode name="CallFromStrangerOutcome" progression="choice" actRange="1">
+		<Characters>
+			<Character id = "*0*" name="Protagonist"/>
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="callIssued" target="true" />
+			<Requirement tag="visitFromStranger" target="true"/>
+		</StoryRequirements>
+
+		<Actions>
+			<Action text="*0* runs from the stranger" chance=".5">
+				<Modifier character = "1" multiplier = "1.75"> 
+					<CharacterRequirements>
+						<Requirement tag="wantsToLeaveHome" target="false"/>
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*0*" tag="refusedCall" target="true" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*0* asks the stranger what they mean, but the stranger vanishes." chance=".5">
+				<Modifier character = "1" multiplier = "1.75"> 
+					<CharacterRequirements>
+						<Requirement tag="wantsToLeaveHome" target="true"/>
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*0*" tag="refusedCall" target="false" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="visitFromStranger" target="false" effectType="story"/>
+				<TagChange tag="callCompleted" target="true" effectType="story" />
+			</EffectSet>
+		</StoryEffects>
+	</OutcomeNode>
+
+
+
+	<OutcomeNode name="ArtifactOutcome" progression="choice" actRange="1">
+		<Characters>
+			<Character id = "*0*" name="Protagonist"/>
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="callIssued" target="true" />
+			<Requirement tag="justFoundArtifact" target="true"/>
+		</StoryRequirements>
+
+		<Actions>
+			<Action text="*0* puts the artifact back where they found it" chance=".5">
+				<Modifier character = "1" multiplier = "1.75"> 
+					<CharacterRequirements>
+						<Requirement tag="wantsToLeaveHome" target="false"/>
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*0*" tag="refusedCall" target="true" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*0* asks their uncle about the artifact, but he doesn't answer." chance=".5">
+				<Modifier character = "1" multiplier = "1.75"> 
+					<CharacterRequirements>
+						<Requirement tag="wantsToLeaveHome" target="true"/>
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*0*" tag="refusedCall" target="false" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="justFoundArtifact" target="false" effectType="story"/>
+				<TagChange tag="callCompleted" target="true" effectType="story" />
+			</EffectSet>
+		</StoryEffects>
+	</OutcomeNode>
+
+
+	<OutcomeNode name="CaveOutcome" progression="choice" actRange="1">
+		<Characters>
+			<Character id = "*0*" name="Protagonist"/>
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="callIssued" target="true" />
+			<Requirement tag="justFoundCave" target="true"/>
+		</StoryRequirements>
+
+		<Actions>
+			<Action text="*0* runs away from the cave" chance=".5">
+				<Modifier character = "1" multiplier = "1.75"> 
+					<CharacterRequirements>
+						<Requirement tag="wantsToLeaveHome" target="false"/>
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*0*" tag="refusedCall" target="true" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*0* searches the cave walls for answers, but finds none." chance=".5">
+				<Modifier character = "1" multiplier = "1.75"> 
+					<CharacterRequirements>
+						<Requirement tag="wantsToLeaveHome" target="true"/>
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*0*" tag="refusedCall" target="false" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="justFoundCave" target="false" effectType="story"/>
+				<TagChange tag="callCompleted" target="true" effectType="story" />
+			</EffectSet>
+		</StoryEffects>
+	</OutcomeNode>
