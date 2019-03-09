@@ -4,10 +4,12 @@
 #include "Game/Player.hpp"
 #include "Game/RaycastResult.hpp"
 #include "Game/DebugRenderSystem.hpp"
+#include "Game/GlowParticles.hpp"
 
 World::World()
 {
 	m_chunkOpaqueMaterial = Material::GetMaterial("chunk_opaque");
+	m_glowMaterial = Material::GetMaterial("glow_particle");
 	ASSERT_OR_DIE(m_chunkOpaqueMaterial != nullptr, "No block material loaded in material data");
 	float activationRadiusInBlocks = g_gameConfigBlackboard.GetValue("activationRadius", 100.f);
 	float deactivationRadiusInBlocks = activationRadiusInBlocks + 25.f;
@@ -72,6 +74,10 @@ void World::Render()
 
 	PROFILE_PUSH("RenderChunks");
 	RenderChunks();
+	PROFILE_POP();
+
+	PROFILE_PUSH("RenderParticles");
+	RenderGlowParticles();
 	PROFILE_POP();
 
 	if (g_theGame->IsDebugLighting())
@@ -433,6 +439,21 @@ void World::RenderChunks()
 	for (std::pair<IntVector2, Chunk*> chunkPair : World::m_chunks)
 	{
 		chunkPair.second->Render();
+	}
+}
+
+void World::RenderGlowParticles()
+{
+	TODO("Optimize binding render state for glowstone particles, probably");
+	m_glowMaterial->SetProperty("TIME_OF_DAY", m_outdoorLightScalar);
+	m_glowMaterial->SetProperty("indoorGlowValue", m_glowPerlinValue);
+	g_theRenderer->BindMaterial(m_glowMaterial);
+	for (std::pair<IntVector2, Chunk*> chunkPair : World::m_chunks)
+	{
+		if (chunkPair.second->m_isCloseToPlayer)
+		{
+			chunkPair.second->m_glowSystem->RenderForCamera((Camera*) g_theGame->m_mainCamera);
+		}
 	}
 }
 

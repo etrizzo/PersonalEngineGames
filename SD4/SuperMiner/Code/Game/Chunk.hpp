@@ -3,8 +3,9 @@
 #include "Game/Block.hpp"
 #include "Game/BlockLocator.hpp"
 class Map;
+class GlowParticles;
 
-
+constexpr int CHUNK_PARTICLES_VISIBLE_DISTANCE = 3;
 
 class Chunk{
 public:
@@ -51,6 +52,10 @@ public:
 	Chunk* m_westNeighbor  = nullptr;
 	Chunk* m_southNeighbor = nullptr;
 	Chunk* m_northNeighbor = nullptr;
+
+	GlowParticles* m_glowSystem;
+	bool m_isCloseToPlayer = false;
+
 
 private:
 	Block m_blocks[BLOCKS_PER_CHUNK];

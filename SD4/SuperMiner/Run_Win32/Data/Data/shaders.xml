@@ -23,6 +23,12 @@
 	<depth write="true" test="less"/>
 </shader>
 
+
+<shader name="glow_particle" sort="1" cull="none" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="glow_particle" />
+	<depth write="false" test="less"/>
+</shader>
+
 <!-- variations on default shader -->
 
 <shader name="unlit_alpha" sort="1" cull="none" fill="solid" frontface="ccw" blend = "alpha">

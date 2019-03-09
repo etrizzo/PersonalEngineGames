@@ -3,11 +3,14 @@
 #include "Game/BlockLocator.hpp"
 #include "Game/Game.hpp"
 #include "Game/World.hpp"
+#include "Game/Player.hpp"
+#include "Game/GlowParticles.hpp"
 
 Chunk::Chunk(IntVector2 chunkCoords)
 {
 	m_chunkCoords = chunkCoords;
 	m_cpuMesh = MeshBuilder();
+	m_glowSystem = new GlowParticles(this);
 }
 
 Chunk::~Chunk()
@@ -64,6 +67,10 @@ void Chunk::InitializeLighting()
 		{
 			BlockLocator blockLocator = BlockLocator(i, this);
 			g_theGame->GetWorld()->SetBlockLightDirty(blockLocator);
+			if (m_blocks[i].GetDefinitionInternalLightLevel() > 0)
+			{
+				m_glowSystem->AddEmitterAtBlockIndex(i);
+			}
 		}
 	}
 }
@@ -97,6 +104,10 @@ bool Chunk::DoesChunkHaveMesh() const
 
 void Chunk::DigBlock(int blockIndex, uchar newType)
 {
+	if (m_blocks[blockIndex].GetDefinitionInternalLightLevel() > 0)
+	{
+		m_glowSystem->RemoveEmitterAtBlockIndex(blockIndex);
+	}
 	SetBlockType(blockIndex, newType);
 	
 	//99% of the tim this will be true
@@ -120,7 +131,12 @@ void Chunk::DigBlock(int blockIndex, uchar newType)
 
 void Chunk::PlaceBlock(int blockIndex, uchar newType)
 {
+
 	SetBlockType(blockIndex, newType);
+	if (BlockDefinition::GetBlockDefinitionFromID(newType)->m_internalLightLevel > 0)
+	{
+		m_glowSystem->AddEmitterAtBlockIndex(blockIndex);
+	}
 
 	//if you were sky and you're now opaque, you gotta change everybody below you
 	if (m_blocks[blockIndex].IsSky() && m_blocks[blockIndex].IsFullyOpaque())
@@ -237,6 +253,18 @@ IntVector2 Chunk::GetChunkCoords()
 
 void Chunk::Update()
 {
+	
+	Vector2 chunkCenter = GetBounds().GetCenter().XY();
+	Vector2 playerPos = g_theGame->GetPlayer()->GetPosition().XY();
+	if (GetDistanceSquared(chunkCenter, playerPos) <= ((CHUNK_SIZE_X * CHUNK_PARTICLES_VISIBLE_DISTANCE) * (CHUNK_SIZE_X * CHUNK_PARTICLES_VISIBLE_DISTANCE)))
+	{
+		m_isCloseToPlayer = true;
+	} else
+	{
+		m_isCloseToPlayer = false;
+	}
+
+	m_glowSystem->Update();
 }
 
 void Chunk::Render() const

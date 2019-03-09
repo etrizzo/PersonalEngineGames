@@ -99,6 +99,12 @@
 	</properties>
 </material>
 
+<material name="glow_particle" shader="glow_particle">
+	<textures>
+		<texture type="diffuse" path="particle_pixellated.png" />
+	</textures>
+</material>
+
 <material name="normal" shader="world_normal">
 	<textures>
 		<texture type="diffuse" path="white" />

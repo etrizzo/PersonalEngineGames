@@ -13,6 +13,8 @@ public:
 	ParticleEmitter* CreateEmitter(Vector3 position);
 	ParticleEmitter* CreateEmitterUnderTransform(Transform* t);
 
+	void RemoveEmitter(ParticleEmitter* emitter);
+
 	void PreRenderForCamera(Camera* m_camera);
 
 

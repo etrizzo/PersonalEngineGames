@@ -70,6 +70,9 @@
     <ClCompile Include="BlockLocator.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="GlowParticles.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -133,6 +136,9 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="RaycastResult.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GlowParticles.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

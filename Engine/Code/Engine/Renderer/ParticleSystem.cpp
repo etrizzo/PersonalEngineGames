@@ -46,6 +46,18 @@ ParticleEmitter* ParticleSystem::CreateEmitterUnderTransform(Transform * t)
 	return emitter;
 }
 
+void ParticleSystem::RemoveEmitter(ParticleEmitter * emitter)
+{
+	for (int i = m_emitters.size() - 1; i >= 0; i--)
+	{
+		if (m_emitters[i] == emitter)
+		{
+			RemoveAtFast(m_emitters, i);
+			//delete emitter;
+		}
+	}
+}
+
 void ParticleSystem::PreRenderForCamera(Camera *camera)
 {
 	for (ParticleEmitter* em : m_emitters){

@@ -390,6 +390,7 @@
     <ClCompile Include="GameCommon.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GameState_Playing.cpp" />
+    <ClCompile Include="GlowParticles.cpp" />
     <ClCompile Include="Main_Win32.cpp" />
     <ClCompile Include="MapDefinition.cpp" />
     <ClCompile Include="MapGenStep.cpp" />
@@ -418,6 +419,7 @@
     <ClInclude Include="GameCommon.hpp" />
     <ClInclude Include="GameState.hpp" />
     <ClInclude Include="GameState_Playing.hpp" />
+    <ClInclude Include="GlowParticles.hpp" />
     <ClInclude Include="MapDefinition.hpp" />
     <ClInclude Include="MapGenStep.hpp" />
     <ClInclude Include="Menu.hpp" />

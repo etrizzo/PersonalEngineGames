@@ -27,17 +27,30 @@ pe->m_transform.SetWorldPosition(bulletPosition);
 
 
 typedef Vector3 (*SpawnVelocityCB) (Transform* t);
-typedef RGBA (*ColorOverTimeCB) (float t);
+typedef Vector3 (*SpawnPositionOffsetCB) ();
+typedef Vector3 (*SpawnForceCB)	();
+typedef RGBA (*ColorOverTimeCB) (float t, const RGBA& currentColor);
 typedef RGBA (*SpawnColorCB) ();
 typedef float (*SpawnSizeCB) ();
 typedef float (*LifetimeCB) ();
 
 
+Vector3 SphericalSpawnLocation();
+inline Vector3 DefaultSpawnLocation() { return Vector3::ZERO; };
 Vector3 DefaultSpawnVelocity(Transform* t);
+inline Vector3 NoSpawnVelocity(Transform* t) { return Vector3::ZERO; };
 RGBA DefaultSpawnColor();
-RGBA DefaultColor(float t);
+
+//color over time functions
+RGBA DefaultColorOverTime(float t, const RGBA& current);
+RGBA FadeOut(float t, const RGBA& current);
+RGBA FadeInAndOut(float t, const RGBA& current);
+
 float DefaultLifetime();
 float DefaultSpawnSize();
+
+inline Vector3 NoSpawnForce() {return Vector3::ZERO; };
+inline Vector3 GravitySpawnForceZUp() { return Vector3::Z_AXIS * 9.8f; };
 
 
 //for now, we might want a vector of emitters in Game that get updated there and passed to the renderpath
@@ -57,11 +70,13 @@ public:
 
 	bool IsDead() const;		//or "is safe to destroy"
 
-	inline void SetSpawnVelocity(SpawnVelocityCB cb)	{ m_spawnVelocityCB = cb; } ;
-	inline void SetSpawnColor(SpawnColorCB cb)			{ m_spawnColorCB = cb; };
-	inline void SetColorOverTime(ColorOverTimeCB cb)	{ m_colorCB = cb; } ;
-	inline void SetLifetime(LifetimeCB cb)				{ m_lifetimeCB = cb; } ;
-	inline void SetSpawnSize(SpawnSizeCB cb)			{ m_spawnSizeCB = cb; } ;
+	inline void SetSpawnVelocity(SpawnVelocityCB cb)				{ m_spawnVelocityCB = cb; } ;
+	inline void SetSpawnColor(SpawnColorCB cb)						{ m_spawnColorCB = cb; };
+	inline void SetColorOverTime(ColorOverTimeCB cb)				{ m_colorCB = cb; } ;
+	inline void SetLifetime(LifetimeCB cb)							{ m_lifetimeCB = cb; } ;
+	inline void SetSpawnSize(SpawnSizeCB cb)						{ m_spawnSizeCB = cb; } ;
+	inline void SetSpawnPositionOffset(SpawnPositionOffsetCB cb)	{ m_spawnPositionCB = cb; };
+	inline void SetSpawnForce(SpawnForceCB cb)						{ m_spawnForceCB = cb; };
 	void KillWhenDone(bool val = true)			{ m_killWhenDone = val; } ;
 
 public:
@@ -80,11 +95,13 @@ public:
 
 	//want to make default functions for these in case they aren't specified
 	//e.x., by default particle emitters will spawn particles with lifetime of 1
-	SpawnVelocityCB		m_spawnVelocityCB;
-	SpawnColorCB		m_spawnColorCB;
-	ColorOverTimeCB		m_colorCB;
-	SpawnSizeCB			m_spawnSizeCB;
-	LifetimeCB			m_lifetimeCB;
-	bool				m_killWhenDone;
+	SpawnVelocityCB			m_spawnVelocityCB;
+	SpawnColorCB			m_spawnColorCB;
+	ColorOverTimeCB			m_colorCB;
+	SpawnSizeCB				m_spawnSizeCB;
+	LifetimeCB				m_lifetimeCB;
+	SpawnPositionOffsetCB	m_spawnPositionCB;
+	SpawnForceCB			m_spawnForceCB;
+	bool					m_killWhenDone;
 
 };

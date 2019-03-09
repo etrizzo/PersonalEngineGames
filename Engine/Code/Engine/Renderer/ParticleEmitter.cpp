@@ -28,15 +28,24 @@ ParticleEmitter::ParticleEmitter(Vector3 position)
 	//e.x., by default particle emitters will spawn particles with lifetime of 1
 	m_spawnVelocityCB = DefaultSpawnVelocity;
 	m_spawnColorCB	  = DefaultSpawnColor;
-	m_colorCB		  = DefaultColor;
+	m_colorCB		  = DefaultColorOverTime;
 	m_lifetimeCB	  = DefaultLifetime;
 	m_spawnSizeCB	  = DefaultSpawnSize;
+	m_spawnPositionCB = DefaultSpawnLocation;
+	m_spawnForceCB	  = NoSpawnForce;
 	m_killWhenDone	  = false;
 }
 
 ParticleEmitter::~ParticleEmitter()
 {
 	delete m_builder;
+
+	//delete remaining particles
+	for (int i = (int) m_particles.size() - 1; i >= 0; i--) {
+		particle_t* p = m_particles[i];
+		RemoveAtFast(m_particles, i);
+		delete p;
+	}
 }
 
 void ParticleEmitter::Update(float ds)
@@ -48,9 +57,9 @@ void ParticleEmitter::Update(float ds)
 	}
 	for (int i = particleCount-1; i >= 0; i--){
 		particle_t* p = m_particles[i];
-		p->m_force = Vector3::ZERO;
+		p->m_force = m_spawnForceCB();
 		p->Update(ds);
-		//p->SetTint(m_colorCB(p->GetNormalizedAge(t)));
+		p->SetTint(m_colorCB(p->GetNormalizedAge(t), p->m_tint));
 
 		if (p->IsDead(t)){
 			RemoveAtFast(m_particles, i);
@@ -76,10 +85,8 @@ void ParticleEmitter::CameraPreRender(Camera * cam)
 	float t = GetMasterClock()->GetCurrentSeconds();
 	for (unsigned int i = 0; i < particleCount; i++){
 		particle_t* p = m_particles[i];
-		RGBA colorOverTime = m_colorCB(p->GetNormalizedAge(t));
-		RGBA color = Interpolate(p->m_tint, colorOverTime, .5f);
 		//color = p->m_tint;
-		m_builder->AppendPlane(p->m_position, up, right, Vector2::ONE * p->m_size, color, Vector2::ZERO, Vector2::ONE);
+		m_builder->AppendPlane(p->m_position, up, right, Vector2::ONE * p->m_size, p->m_tint, Vector2::ZERO, Vector2::ONE);
 		//m_builder->AppendCube(p->m_position, Vector3::ONE * .1f, p->m_tint);
 	}
 	m_builder->End();
@@ -95,10 +102,10 @@ void ParticleEmitter::SpawnParticle()
 	// this is how the particle will spawn
 	// We can determine these through callbacks!!
 	particle_t* p = new particle_t();
-	p->m_position = m_transform.GetWorldPosition();
+	p->m_position = m_transform.GetWorldPosition() + m_spawnPositionCB();
 	p->m_velocity = m_spawnVelocityCB(&m_transform);
 	p->m_tint = m_spawnColorCB();
-	p->m_force = Vector3::ZERO;
+	p->m_force = m_spawnForceCB();
 	p->m_mass = 1.f;
 	p->m_timeBorn = GetMasterClock()->GetCurrentSeconds();
 	p->m_timeDead = p->m_timeBorn + m_lifetimeCB();
@@ -137,6 +144,12 @@ bool ParticleEmitter::IsDead () const
 	return( m_killWhenDone && !m_spawnOverTime && m_particles.size() == 0);
 }
 
+Vector3 SphericalSpawnLocation()
+{
+	float size = 1.25f;
+	return Vector3(GetRandomFloatInRange(-size, size), GetRandomFloatInRange(-size, size), GetRandomFloatInRange(-size, size));
+}
+
 Vector3 DefaultSpawnVelocity(Transform* t)
 {
 	UNUSED(t);
@@ -151,9 +164,23 @@ RGBA DefaultSpawnColor()
 	return RGBA::WHITE;
 }
 
-RGBA DefaultColor(float t)
+RGBA DefaultColorOverTime(float t, const RGBA & current)
 {
-	return RGBA::WHITE.GetColorWithAlpha((unsigned char) (255.f * (1.f - t)));
+	UNUSED(t);
+	return current;
+}
+
+RGBA FadeOut(float t, const RGBA & current)
+{
+	return current.GetColorWithAlpha((unsigned char) (255.f * (1.f - t)));
+}
+
+RGBA FadeInAndOut(float t, const RGBA & current)
+{
+	float newT = InAndOutBurger(t);
+	newT = ClampFloat(newT, 0.001f, .999f);
+
+	return current.GetColorWithAlpha((unsigned char) (255.f * newT));
 }
 
 float DefaultLifetime()

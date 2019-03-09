@@ -58,6 +58,7 @@ private:
 
 	//render loop
 	void RenderChunks();
+	void RenderGlowParticles();
 	//must be done after everything else
 	void RenderDebugLightingPoints();
 
@@ -91,6 +92,7 @@ public:
 	std::deque<BlockLocator> m_dirtyLightingBlocks;
 
 	Material* m_chunkOpaqueMaterial;		//for convenience
+	Material* m_glowMaterial;
 	
 	MeshBuilder m_debugLightingPointCPUMesh;
 	Mesh* m_debugLightingPointGPUMesh = nullptr;
