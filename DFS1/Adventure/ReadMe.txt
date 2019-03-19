@@ -12,7 +12,7 @@ Adventure is a 2D roguelike, complete with procedurally generated maps, perma-de
 
 In adventure, the player spawns into a large map, filled with both friendly and hostile entities. The player must explore the map to complete a main quest, which will bring them to the next encounter. But, the player can spend more time searching to complete side quests, to grant them more equipment, stats, and even new party members. As the player moves through encounters, the maps get progressively harder, with more and more high-level enemies spawning. The player must survive through as many encounters as possible, until their entire party dies out. 
 
-To learn more, visit <a href="http://emilyrizzo.com/adventure.html>my portfolio website</a>
+To learn more, visit <a href="http://emilyrizzo.com/adventure.html">my portfolio website</a>
 
 --------
 Features
