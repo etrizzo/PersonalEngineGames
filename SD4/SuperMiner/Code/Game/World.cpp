@@ -336,7 +336,7 @@ void World::UpdateDebugStuff()
 			quadRight = Cross(UP, dig.m_impactNormal);
 		}
 		RGBA wireColor = RGBA::BLANCHEDALMOND.GetColorWithAlpha(100);
-		RGBA quadColor = RGBA::GREEN.GetColorWithAlpha(100);
+		RGBA quadColor = RGBA::BLANCHEDALMOND.GetColorWithAlpha(24);
 		g_theGame->m_debugRenderSystem->MakeDebugRenderQuad(0.f, blockCenter + halfNormal, Vector2::HALF * .95f, quadRight, quadUp, quadColor, quadColor, DEBUG_RENDER_IGNORE_DEPTH);
 		g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.f, blockCenter, .505f, wireColor, wireColor, DEBUG_RENDER_IGNORE_DEPTH);
 	}
