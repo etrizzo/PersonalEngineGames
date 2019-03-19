@@ -12,3 +12,4 @@ Asteroids was the first project I created in my personal engine, and my first re
 
 During the time that we were developing asteroids in-class, I enjoyed exploring ways to make the game feel unique even though we were limited to untextured lines for drawing. Even though it's a simple game to implement, I had so much fun creating asteroids that I chose to go back and continue polishing it much later, with some of the new features I had added to my engine.
 
+To learn more, visit http://emilyrizzo.com/asteroids.html
