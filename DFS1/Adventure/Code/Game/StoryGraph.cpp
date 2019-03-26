@@ -136,7 +136,8 @@ void StoryGraph::RunGenerationByActs(int numPairsToAdd)
 	int added = 0;
 	int tries = 0;
 	bool shouldSeekEnding = false;
-	while (added < numPairsToAdd)
+	TODO("Guarantee that nodes from every act are actually placed");
+	while (added < numPairsToAdd && !HavePlacedAllEndings())
 	{
 		StoryEdge* edgeWithLargeRange = GetEdgeWithLargestActRange(false);
 		StoryNode* newEventNode = AddEventNodeAtEdge(edgeWithLargeRange);
@@ -754,15 +755,21 @@ bool StoryGraph::CheckForInvalidGraph()
 {
 	//if there are no nodes or no endings
 	if (m_graph.m_nodes.size() <= 1 || m_endNode->m_inboundEdges.size() < 1){
+		
+		return true;
+	} else {
 		for (StoryNode* node : m_graph.m_nodes)
 		{
 			//if you completely broke any paths, it's wack
-			if (node->m_inboundEdges.size() == 0 || node->m_outboundEdges.size() == 0){
-				return false;
+			//everything except the start and end node should have inbound and outbound edges
+			if (node != m_startNode && node->m_inboundEdges.size() == 0)
+			{
+				return true;
+			}
+			if (node != m_endNode && node->m_outboundEdges.size() == 0) {
+				return true;
 			}
 		}
-		return true;
-	} else {
 		return false;
 	}
 }

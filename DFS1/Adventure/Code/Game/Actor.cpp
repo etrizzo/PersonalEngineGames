@@ -617,11 +617,17 @@ void Actor::ParseLayersElement()
 
 void Actor::UpdateWithController(float deltaSeconds)
 {
+	float shiftMultiplier = 1.f;
+	if (g_theInput->IsShiftDown())
+	{
+		shiftMultiplier = 6.f;
+	}
+
 	if (g_primaryController->GetLeftThumbstickMagnitude() > 0){
 		m_moving = true;
 		float mag = g_primaryController->GetLeftThumbstickMagnitude();
 		Vector2 direction = m_facing;
-		Translate(direction * mag * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * SPEED_RATIO))); 
+		Translate(direction * mag * deltaSeconds * shiftMultiplier * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * SPEED_RATIO))); 
 		//m_rotationDegrees = controller->GetLeftThumbstickAngle();
 		m_rotationDegrees = 0.f;
 		m_facing = Vector2::MakeDirectionAtDegrees(g_primaryController->GetLeftThumbstickAngle()).GetNormalized() * .5f;
@@ -642,7 +648,7 @@ void Actor::UpdateWithController(float deltaSeconds)
 
 		if (arrowDirections != Vector2::ZERO){
 			m_moving = true;
-			Translate(arrowDirections * deltaSeconds * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * SPEED_RATIO))); 
+			Translate(arrowDirections * deltaSeconds * shiftMultiplier * (m_speed + (m_stats.GetStat(STAT_MOVEMENT) * SPEED_RATIO)));
 			m_rotationDegrees = 0.f;
 			m_facing = arrowDirections;
 		} else {

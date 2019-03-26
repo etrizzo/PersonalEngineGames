@@ -6,6 +6,20 @@
        -->
       <SetSubArea subAreaSize="-0.2~1.5" type="perlin" noiseScale="20" centerDensity="1" edgeDensity="1" feather="1"/>
         <FillAndEdge edgeTile="Sand" fillTile="Grass" edgeThickness="5"/> 
+      <EndSubArea />
+
+      <FillAndEdge edgeTile="StoneBrickWall" fillTile="Water" edgeThickness="1"/> 
+      
+
+      <SetSubArea subAreaSize="-0.2~1.5" type="perlin" noiseScale="20" centerDensity="1" edgeDensity="1" feather="1"/>
+        <FillAndEdge edgeTile="Dirt" fillTile="Sand" edgeThickness="1"/> 
+        <FillAndEdge edgeTile="Sand" fillTile="Grass" edgeThickness="2" edgeDensity=".9" feather=".6"/> 
+
+        <SetSubArea subAreaSize="0.5~1.5" type="perlin" noiseScale="20" inheritSeed ="true"  />
+          <FillAndEdge edgeTile="LightFlowers" fillTile="LightFlowers" />
+          <Mutate ifType="LightFlowers" toType="Grass" chanceToMutate=".5" centerDensity=".1" />
+        <EndSubArea />
+      <EndSubArea />
 
         
         <SetSubArea subAreaSize="0.5~1.0" type="perlin" noiseScale="20" inheritSeed ="true" feather=".05" />
@@ -22,7 +36,8 @@
           <SpawnVillage type="HumanVillage" numResidents="5~7" baseTile="Grass"/>
       <EndSubArea />
 
-    
+      <SubMap map="SmoothTerrain" />
+      <FillAndEdge edgeTile="StoneBrickWall" edgeThickness="1"/> 
       
       <EndSubArea />
     </GenerationSteps>
@@ -161,7 +176,8 @@
       <SpawnItem type="Leather Chestpiece" onTileType="Wood"/>
       <SpawnItem type="Leather Leggings" onTileType="Wood"/>
       <SpawnItem type="Leather Hat" onTileType="Wood"/>
-
+      
+      <SpawnVillage type="HumanVillage" numResidents="5~7" baseTile="Grass"/>
     </GenerationSteps>
   </MapDefinition>
 
@@ -214,6 +230,12 @@
 
 <MapDefinition name="SmoothTerrain" defaultTile="Grass" width="100">
   <GenerationSteps>
+      <CellularAutomata ifType="LightFlowers" changeToType="Dirt" ifNeighborType="Dirt" iterations="5"/>
+      <CellularAutomata ifType="LightFlowers" changeToType="Dirt" ifNeighborType="Dirt" chanceToMutate=".5" iterations="3"/>
+      <CellularAutomata ifType="LightFlowers" changeToType="Water" ifNeighborType="Water" ifNeighborCount="4~8" chanceToMutate=".8" />
+      <CellularAutomata ifType="LightFlowers" changeToType="Sand" ifNeighborType="Water" ifNeighborCount="4~8" chanceToMutate=".8" />
+
+
       <CellularAutomata iterations="3" ifType="Grass" ifNeighborType="Water" changeToType="Water" ifNeighborCount="5~8"/>
       <CellularAutomata iterations="3" ifType="Sand" ifNeighborType="Water" changeToType="Water" ifNeighborCount="5~8"/>
       <CellularAutomata iterations="3" ifType="Dirt" ifNeighborType="Water" changeToType="Water" ifNeighborCount="3~8"/>
@@ -234,6 +256,7 @@
       <CellularAutomata iterations="3" ifType="Grass" ifNeighborType="Water" changeToType="Sand" ifNeighborCount="1~8" />
       <CellularAutomata iterations="3" ifType="Flowers" ifNeighborType="Water" changeToType="Sand" ifNeighborCount="1~8" />
       <CellularAutomata iterations="3" ifType="LightFlowers" ifNeighborType="Water" changeToType="Sand" ifNeighborCount="1~8" />
+      <CellularAutomata iterations="3" ifType="Water" ifNeighborType="Sand" changeToType="Sand" ifNeighborCount="5~8"/>
     <!-- -->
     </GenerationSteps>
 </MapDefinition>
