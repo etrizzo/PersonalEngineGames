@@ -33,17 +33,15 @@ Village::~Village()
 void Village::ProgressVillageStoryTime()
 {
 	StoryNode* start = m_currentEdge->GetStart();
-	if (start->m_data->GetProgressionType() == PROGRESSION_TIME) {
-		//progress to the next node
-		StoryNode* node = m_currentEdge->GetEnd();
+	if (start == m_villageGraph->GetStart() || start->m_data->GetProgressionType() == PROGRESSION_TIME) {
 
-		if (node != m_villageGraph->GetEnd() && node->m_data->GetProgressionType() == PROGRESSION_TIME) {
-			int edgeIndex = GetRandomIntLessThan(node->m_outboundEdges.size());
-			m_currentEdge = node->m_outboundEdges[edgeIndex];
-
-			//do whatever to update the state of the story according to quests & shit
-			SetResidentDialogues();
+		if (start->m_outboundEdges.size() > 1)
+		{
+			ProgressStoryOnBranch();
+		} else {
+			ProgressStoryLinear();
 		}
+		
 	}
 }
 
@@ -91,8 +89,10 @@ void Village::GenerateGraph()
 	bool generated = false;
 	while (!generated){
 		m_villageGraph->Clear();
-		m_villageGraph->RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
-		generated = m_villageGraph->AddEndingsToGraph();
+		m_villageGraph->RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
+		m_villageGraph->AddEndingsToActBoundaryEdge(m_villageGraph->GetEnd(), 10);
+		m_villageGraph->RemoveBranchesWithNoEnding(m_villageGraph->GetEnd());
+		generated = !m_villageGraph->CheckForInvalidGraph();
 	}
 
 	m_currentEdge = m_villageGraph->GetStart()->m_outboundEdges[0];
@@ -123,6 +123,31 @@ void Village::SetResidentDialogues()
 
 			resident->SetDialogFromState();
 		}
+	}
+}
+
+void Village::ProgressStoryOnBranch()
+{
+	//step back to the start, make an educated decision on which node to go to and progress to the after side of the outcome
+	StoryNode* start = m_currentEdge->GetStart();
+	TODO("Weight edge selection by current state for village progression");
+	int edgeIndex = GetRandomIntLessThan(start->m_outboundEdges.size());	//"Educated Guess"
+	m_currentEdge = start->m_outboundEdges[edgeIndex];
+	//move to the node after u
+	ProgressStoryLinear();
+}
+
+void Village::ProgressStoryLinear()
+{
+	//progress to the next node
+	StoryNode* node = m_currentEdge->GetEnd();
+
+	if (node != m_villageGraph->GetEnd() && node->m_data->GetProgressionType() == PROGRESSION_TIME) {
+		int edgeIndex = GetRandomIntLessThan(node->m_outboundEdges.size());
+		m_currentEdge = node->m_outboundEdges[edgeIndex];
+
+		//do whatever to update the state of the story according to quests & shit
+		SetResidentDialogues();
 	}
 }
 

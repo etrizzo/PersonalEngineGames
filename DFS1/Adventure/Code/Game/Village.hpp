@@ -36,6 +36,9 @@ private:
 	void GenerateGraph();
 	void SetResidentDialogues();
 
+	void ProgressStoryOnBranch();
+	void ProgressStoryLinear();
+
 	Tile* GetSpawnTileOfType(TileDefinition* def);
 
 };

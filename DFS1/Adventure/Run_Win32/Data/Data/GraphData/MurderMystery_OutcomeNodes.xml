@@ -1,4 +1,4 @@
-	<OutcomeNode name="GossipOutcome" progression="choice" actRange="1">
+	<OutcomeNode name="GossipOutcome" progression="time" actRange="1">
 		<Characters>
 			<Character id = "*0*" name="gossiper"/>
 			<Character id = "*1*" name="gossipsubject"/>
@@ -20,12 +20,15 @@
 				<EffectSet>
 					<TagChange character="*1*" tag="hasMotive" target="true" />
 					<TagChange effectType="story" tag="isDisliked" target="*0*" type="character"/>
+					<TagChange character="*0*" tag="dialogue" type="string" target="I can't believe *0* would say that about me..." />
+					<TagChange character="*1*" tag="dialogue" type="string" target="I think *1* heard me talking about them earlier...|I feel a little bad... but it's true." />
 				</EffectSet>
 			</Action>
 
 			<Action text="*1* doesn't notice the gossiping." chance=".5">
 				<EffectSet>
-					
+					<TagChange character="*0*" tag="dialogue" type="string" target="Don't tell *1* what I said earlier!" />
+					<TagChange character="*1*" tag="dialogue" type="string" target="default" />
 				</EffectSet>
 			</Action>
 		</Actions>
