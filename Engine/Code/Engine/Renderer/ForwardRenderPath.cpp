@@ -5,7 +5,7 @@
 ForwardRenderPath::ForwardRenderPath()
 {
 	m_fogData;
-	m_fogData.SetFogBuffer(RGBA::WHITE, 20.f, 45.f, 0.f, .7f);
+	m_fogData.SetFogBuffer(RGBA::WHITE, 30.f, 45.f, 0.f, .9f);
 }
 
 ForwardRenderPath::ForwardRenderPath(Renderer * r)
@@ -18,8 +18,8 @@ void ForwardRenderPath::Initialize()
 {
 	m_fogData;
 	m_fogData.SetFogBuffer(RGBA::WHITE, 20.f, 45.f, 0.f, .7f);
-	m_shadowDepthTarget = m_renderer->CreateDepthStencilTarget(2048, 2048);
-	m_shadowColorTarget = m_renderer->CreateRenderTarget(2048,2048);
+	m_shadowDepthTarget = m_renderer->CreateDepthStencilTarget(8192, 8192);
+	m_shadowColorTarget = m_renderer->CreateRenderTarget(8192, 8192);
 }
 
 void ForwardRenderPath::Render(RenderScene * scene)
@@ -264,7 +264,7 @@ void ForwardRenderPath::RenderShadowsForLight(Light * l, RenderScene * scene)
 	scene->m_shadowCamera->SetColorTarget(m_shadowColorTarget);
 	//scene->m_shadowCamera->SetDepthStencilTarget(m_renderer->m_defaultDepthTarget);
 	//scene->m_shadowCamera->SetColorTarget(m_renderer->m_defaultColorTarget);
-	scene->m_shadowCamera->SetProjectionOrtho(100, 1.f, 0.f, 100.f);
+	scene->m_shadowCamera->SetProjectionOrtho(100, 1.f, 0.f, 100.f, Vector2(-50.f,-50.f));
 	scene->m_shadowCamera->Finalize();
 	m_renderer->BindCamera(scene->m_shadowCamera);
 	m_renderer->ClearDepth(1.f);

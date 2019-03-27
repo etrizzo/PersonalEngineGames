@@ -227,44 +227,39 @@ IntVector2 Map::GetVertexCoordsFromWorldPos(Vector2 xzPos) const
 bool Map::Raycast(Contact3D & contact, int maxHits, const Ray3D & ray, float maxDistance)
 {
 	UNUSED(maxHits);
-	if (DoesIntersect(ray, m_bounds)){
-		float stepSize = .2f * m_tileSize.x;
-		if (!HitRaycastTarget(ray.m_position)){		//check that not starting inside terrain
-			//step along the ray until max distance is reached, or you cross the terrain
-			float t = stepSize;
-			Vector3 abovePoint = ray.m_position;
-			Vector3 belowPoint = ray.Evaluate(t);
-			while (!HitRaycastTarget(belowPoint) && t < maxDistance){
-				t+=stepSize;
-				abovePoint = belowPoint;
-				belowPoint = ray.Evaluate(t);
-			}
-			if ((t >= maxDistance) || !HitRaycastTarget(belowPoint)){
-				//no hit in specified distance - either went outside of terrain bounds, or went too far
-				return false;
-			}
-
-
-			//focus in by checking midpoint until you find a point close enough to the terrain
-			Vector3 avgPoint = Average(abovePoint, belowPoint);
-			int stepCount = 0;
-			while ((GetVerticalDistanceFromTerrain(avgPoint) > SMALL_VALUE) && (stepCount < MAX_STEPS)){
-				if (!HitRaycastTarget(avgPoint)){
-					abovePoint = avgPoint;
-				} else {
-					belowPoint = avgPoint;
-				}
-				avgPoint = Average(abovePoint, belowPoint);
-				stepCount++;
-			}
-			contact.m_position = avgPoint;
-			contact.m_normal = GetNormalAtPosition(avgPoint.XZ());
-			return true;
-
+	float stepSize = .2f * m_tileSize.x;
+	if (!HitRaycastTarget(ray.m_position)){		//check that you're not starting at a hit
+		//step along the ray until max distance is reached, or you hit something/cross the terrain
+		float t = stepSize;
+		Vector3 abovePoint = ray.m_position;	//the previous/current step position
+		Vector3 belowPoint = ray.Evaluate(t);	//the next step position
+		while (!HitRaycastTarget(belowPoint) && t < maxDistance){
+			t+=stepSize;
+			abovePoint = belowPoint;
+			belowPoint = ray.Evaluate(t);
 		}
-	} else {
-		//started inside the terrain
-		return false;
+		if ((t >= maxDistance) || !HitRaycastTarget(belowPoint)){
+			//no hit in specified distance - either went outside of terrain bounds, or went too far
+			return false;
+		}
+
+
+		//focus in by checking midpoint until you find a point close enough to the terrain
+		Vector3 avgPoint = Average(abovePoint, belowPoint);
+		int checkMidpointCount = 0;
+		while ((GetVerticalDistanceFromTerrain(avgPoint) > SMALL_VALUE) && (checkMidpointCount < MAX_RAYCAST_REFINEMENTS)){
+			if (!HitRaycastTarget(avgPoint)){
+				abovePoint = avgPoint;
+			} else {
+				belowPoint = avgPoint;
+			}
+			avgPoint = Average(abovePoint, belowPoint);
+			checkMidpointCount++;
+		}
+		contact.m_position = avgPoint;
+		contact.m_normal = GetNormalAtPosition(avgPoint.XZ());
+		return true;
+
 	}
 	return false;
 }

@@ -210,29 +210,47 @@ unsigned int GameState_Playing::GetNumActiveLights() const
 
 void GameState_Playing::Startup()
 {
-	m_thaShip = new Entity(Vector3(8.f, 5.f, 12.f), "scifi_fighter_mk6.obj", "normal");
-	Entity* otherShip = new Entity(Vector3(8.f, 10.f, 12.f), "scifi_fighter_mk6.obj", "normal");
+	Material* normal = Material::GetMaterial("cel_shaded_lit");
+	Material* defLit = Material::GetMaterial("default_lit");
+	m_thaShip = new Entity(Vector3(8.f, 5.f, 12.f), "scifi_fighter_mk6.obj", "cel_shaded_lit");
+	//m_thaShip = new Entity();
+	//m_thaShip->m_renderable = new Renderable(RENDERABLE_SPHERE, 3.f);
+	//m_thaShip->SetMaterial(normal);
+	//m_thaShip->SetPosition(Vector3(8.f, 5.f, 12.f));
+	Entity* otherShip = new Entity(Vector3(8.f, 10.f, 12.f), "scifi_fighter_mk6.obj", "cel_shaded_lit");
 	//m_thaShip->SetDiffuseTexture("SciFi_Fighter-MK6-diffuse.png");
+
+	//other orb
+	Entity* otherboy = new Entity();
+	otherboy->m_renderable = new Renderable(RENDERABLE_SPHERE, 3.f);
+	otherboy->SetMaterial(normal);
+	otherboy->SetPosition(Vector3(18.f, 5.f, 12.f));
 
 	m_thaMiku = new Entity(Vector3(-2.f, 3.f, 10.f), "miku.obj", "miku.mtl");
 	//m_thaMiku->Rotate(Vector3(0.f,180.f,0.f));
+	m_thaMiku->SetMaterial(defLit, 0);
+	m_thaMiku->SetMaterial(defLit, 1);
+	m_thaMiku->SetMaterial(normal, 2);
 	m_thaMiku->m_renderable->SetShader("lit_alpha", 0);
 	m_thaMiku->m_renderable->SetShader("lit_alpha", 1);
-	m_thaMiku->m_renderable->SetShader("world_normal", 2);
+	//m_thaMiku->m_renderable->SetShader("world_normal", 2);
 
 	Entity* otherMiku = new Entity(Vector3(-2.f, 8.f, 10.f), "miku.obj", "miku.mtl");
+	otherMiku->SetMaterial(defLit, 0);
+	otherMiku->SetMaterial(defLit, 1);
+	otherMiku->SetMaterial(normal, 2);
 	otherMiku->m_renderable->SetShader("lit_alpha", 0);
 	otherMiku->m_renderable->SetShader("lit_alpha", 1);
-	otherMiku->m_renderable->SetShader("world_normal", 2);
+	//otherMiku->m_renderable->SetShader("world_normal", 2);
 
 	m_thaOrb = new Entity();
-	m_thaOrb->m_renderable = new Renderable(RENDERABLE_CUBE, 3.f);
-	m_thaOrb->SetMaterial(Material::GetMaterial("normal"));
+	m_thaOrb->m_renderable = new Renderable(RENDERABLE_SPHERE, 3.f);
+	m_thaOrb->SetMaterial(normal);
 	m_thaOrb->SetPosition(Vector3(-8.f, 4.f, 10.f));
 
 	Entity* otherOrb = new Entity();
 	otherOrb->m_renderable = new Renderable(RENDERABLE_CUBE, 3.f);
-	otherOrb->SetMaterial(Material::GetMaterial("normal"));
+	otherOrb->SetMaterial(normal);
 	otherOrb->SetPosition(Vector3(-8.f, 9.f, 10.f));
 
 	m_particleSystem = new ParticleSystem();
@@ -248,6 +266,7 @@ void GameState_Playing::Startup()
 	m_scene->AddRenderable(otherShip->m_renderable);
 	m_scene->AddRenderable(otherMiku->m_renderable);
 	m_scene->AddRenderable(otherOrb->m_renderable);
+	m_scene->AddRenderable(otherboy->m_renderable);
 
 
 	//m_scene->AddNewPointLight(Vector3::ZERO, RGBA::WHITE);

@@ -13,7 +13,7 @@
 #include "Engine/Core/Clock.hpp"
 
 
-#define MAX_STEPS (16)
+#define MAX_RAYCAST_REFINEMENTS (8)
 #define SMALL_VALUE (.05f)
 
 const Vector3 RIGHT = Vector3(1.f, 0.f, 0.f);

@@ -8,7 +8,7 @@ public:
 
 	Vector2 m_positionXZ;
 	Vector2 m_direction;
-	float m_speed			= 3.f;
+	float m_speed			= 20.f;
 	float m_degPerSecond	= 180.f;
 	
 

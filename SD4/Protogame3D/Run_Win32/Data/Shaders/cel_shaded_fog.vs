@@ -33,14 +33,17 @@ void main( void )
    vec4 world_pos = MODEL * local_pos ; 
    vec4 camera_pos = VIEW * world_pos ; 
    vec4 clip_pos = PROJECTION * camera_pos ; 
+
+   
  
    passUV = UV; 
    passColor = COLOR * TINT; 
 
+   mat3 surface_to_world = mat3(transpose(inverse(MODEL)));
    // new
    passWorldPos = world_pos.xyz;  
-   passWorldNormal = (vec4( NORMAL, 0.0f ) * MODEL).xyz; 
-   passWorldTangent = TANGENT.xyz;
+   passWorldNormal = normalize( surface_to_world * NORMAL); 
+   passWorldTangent = normalize( surface_to_world * TANGENT.xyz); 
    passWorldBitangent = normalize( cross( passWorldTangent, passWorldNormal ) * TANGENT.w ); 
    passViewPos = camera_pos.xyz;
 

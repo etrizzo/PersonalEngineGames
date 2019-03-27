@@ -4,6 +4,8 @@
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 
+#define RENDERABLE_OFFSET (.25f)
+
 Player::Player(GameState_Playing* playState, Vector3 position)
 {
 	float size = 1.f;
@@ -13,16 +15,17 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	//make tank
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendCube(Vector3::ZERO, Vector3(.8f, .3f, 1.f), RGBA::GREEN, RIGHT, UP, FORWARD);
+	mb.AppendCube(Vector3::ZERO, Vector3(.8f, .3f, 1.f), RGBA::MAGENTA, RIGHT, UP, FORWARD);
+	//mb.AppendCube(Vector3(0.f, 0.f, .55f), Vector3(.5f, .2f, .2f), RGBA::RED, RIGHT, UP, FORWARD);
 	mb.End();
 	m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
 
 	//make turret
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
 	Vector3 sphere = Vector3::ZERO - (UP * .08f);
-	mb.AppendSphere(sphere, .2f, 10, 10, RGBA::RED);
+	mb.AppendSphere(sphere, .2f, 10, 10, RGBA::MAGENTA);
 	//mb.AppendCube(sphere, Vector3::ONE * .5f, RGBA::RED);
-	mb.AppendCube(FORWARD * .4f, Vector3(.1f, .1f, .8f), RGBA::RED, RIGHT, UP, FORWARD);
+	mb.AppendCube(FORWARD * .4f, Vector3(.1f, .1f, .8f), RGBA::MAGENTA, RIGHT, UP, FORWARD);
 	mb.End();
 	m_turretRenderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
 	m_turretRenderable->SetMaterial(Material::GetMaterial("cel_shaded_lit"));
@@ -110,7 +113,7 @@ void Player::Update()
 	//m_thrusterSystem->m_emitters[0]->m_transform(m_leftThruster->GetWorldPosition());
 	//m_thrusterSystem->m_emitters[1]->m_renderable->SetPosition(m_rightThruster->GetWorldPosition());
 	//Translate(GetForward() * ds * m_speed * .5f);
-	SetWorldPosition();
+	SetWorldPositionFromXZPosition();
 	//if (m_rateOfFire.CheckAndReset()){
 	//	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(1.f, GetPosition());
 	//}
@@ -247,29 +250,28 @@ float Player::GetPercentageOfHealth() const
 
 static Vector2 gPos = Vector2(0.0f, 0.0f); 
 
-void Player::SetWorldPosition()
+void Player::SetWorldPositionFromXZPosition()
 {
+	//get the world position - our XZ position at the world's height + a little padding for feel
+	Vector3 worldPos = Vector3(m_positionXZ.x, GetHeightAtCurrentPos() + RENDERABLE_OFFSET, m_positionXZ.y);
 
-	Vector3 pos = Vector3(m_positionXZ.x, GetHeightAtCurrentPos() + .3f, m_positionXZ.y);
-
+	//normal is the interpolated normal of the terrain at our XZ position
 	Vector3 normal = g_theGame->m_currentMap->GetNormalAtPosition(m_positionXZ);
 	
-
-	//maintaining Forward:
+	//want to maintain forward of the tank - cross this with our new up
 	Vector3 forward = GetForward(); 
 	Vector3 newUp = normal.GetNormalized();
 	Vector3 newRight = Cross(newUp, GetForward()).GetNormalized();
 	Vector3 newForward = Cross(newRight, newUp).GetNormalized();
 
-	Matrix44 mat = Matrix44(newRight, newUp, newForward, pos);
+	//the new transform of the tank
+	Matrix44 mat = Matrix44(newRight, newUp, newForward, worldPos);
 
+	//set the transform of the renderable (with orientation) and the position of the spherical collider and shadow camera transform
 	m_renderable->m_transform.SetLocalMatrix(mat);
-	m_collider.SetPosition(pos);
+	m_collider.SetPosition(worldPos);
+	m_shadowCameraTransform->SetLocalPosition(worldPos + m_shadowCameraOffset);
 
-
-	m_shadowCameraTransform->SetLocalPosition(pos + m_shadowCameraOffset);
-
-	//SetPosition(pos);
 }
 
 void Player::MoveTurretTowardTarget()

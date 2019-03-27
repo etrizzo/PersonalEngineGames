@@ -54,10 +54,10 @@ public:
 	float m_enemySeparateRadius = 1.5f;
 	float m_enemyAlignmentRadius = 5.f;
 	float m_enemyCohesionRadius = 5.f;
-	float m_enemySeekWeight = 1.5f;		//these are in game to make them easy to change with console commands
-	float m_enemySeparateWeight = 1.f;
-	float m_enemyAlignmentWeight = .8f;
-	float m_enemyCohesionWeight = .8f;
+	float m_enemySeekWeight = .4f;		//these are in game to make them easy to change with console commands
+	float m_enemySeparateWeight = .4f;
+	float m_enemyAlignmentWeight = 0.1f;
+	float m_enemyCohesionWeight = .1f;
 	
 
 

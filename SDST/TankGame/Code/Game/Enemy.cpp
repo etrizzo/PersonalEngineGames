@@ -93,7 +93,7 @@ void Enemy::UpdateDirection()
 {
 	//get the average of all weighted factors
 	m_direction = GetSeekDirection() + GetSeparateDirection() + GetAlignmentDirection() + GetCohesionDirection();
-	m_direction *= .25f;	
+	m_direction *= .33f;	
 }
 
 void Enemy::TurnTowardPlayer()
@@ -135,10 +135,10 @@ Vector2 Enemy::GetSeparateDirection()
 	int numToAverage = 0;
 	for(Enemy* enemy : m_playState->m_enemies){
 		if (enemy != this){
-			Vector2 displacement = m_positionXZ - enemy->m_positionXZ;
+			Vector2 displacement =enemy->m_positionXZ - m_positionXZ;
 			float distance = displacement.NormalizeAndGetLength();
 			if (distance < g_theGame->m_enemySeparateRadius){
-				dir = dir + (displacement.GetNormalized());
+				dir = dir - (displacement.GetNormalized());
 				numToAverage++;
 			}
 		}

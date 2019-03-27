@@ -5,6 +5,7 @@ layout(binding = 1) uniform sampler2D gTexNormal;
 in vec3 passNormal;
 in vec3 passTangent;
 in vec3 passBiTan;
+in vec3 passWorldNormal;
 in vec4 passColor;
 in vec2 passUV;
 out vec4 outColor;
@@ -20,10 +21,10 @@ void main( void )
    // over a surface, so renormalize it. 
    vec3 world_vnormal = normalize(passNormal);
 
-	   // Get the surface to world matrix
+	   // Get the surface to world matrix - ???
    vec3 world_vtan = normalize(passTangent); 
    vec3 world_vbitan = normalize(passBiTan); 
-   mat3 surface_to_world = transpose( mat3( world_vtan, world_vbitan, world_vnormal ) ); 
+   mat3 surface_to_world = transpose( inverse(mat3( world_vtan, world_vbitan, world_vnormal )) ); 
 
    // range map it to a surface normal
     vec3 surface_normal = normalize( ( normal_color.xyz * vec3( 2.0f, 2.0f, 1.0f )) + vec3( -1.0f, -1.0f, 0.0f ) ); 

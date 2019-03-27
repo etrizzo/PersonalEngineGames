@@ -30,7 +30,7 @@ public:
 	Vector3 m_target;
 
 private:
-	void SetWorldPosition();
+	void SetWorldPositionFromXZPosition();
 	void MoveTurretTowardTarget();
 	void UpdateTarget();
 
