@@ -440,8 +440,6 @@ void Map::DebugShowNormalsAtPoint(Vector2 xzPos)
 
 void Map::RunMapGeneration(const Image& img)
 {
-	//int numTilesWidth = (int) (m_extents.GetWidth() / m_tileSize.x	);
-	//int numTilesHeight = (int)( m_extents.GetHeight() / m_tileSize.y);
 	m_bounds = AABB3(Vector3(INFINITY, INFINITY, INFINITY), Vector3(-INFINITY, -INFINITY, -INFINITY));
 	m_heights.resize(m_dimensions.x * m_dimensions.y);
 	m_normals.resize(m_dimensions.x * m_dimensions.y);
@@ -449,18 +447,14 @@ void Map::RunMapGeneration(const Image& img)
 	for(int x = 0; x < m_dimensions.x; x++){
 		for (int y = 0; y < m_dimensions.y; y++){
 			Vector2 xzPos = Vector2(x * m_tileSize.x, y * m_tileSize.y) + m_extents.mins;
-			//if (m_extents.IsPointInside(xzPos)){
-				Vector2 uvs = m_extents.GetPercentageOfPoint(xzPos);
-				uvs = ClampVector2(uvs, Vector2::ZERO, Vector2::ONE);
-				//Vector2 coordFloat  = Vector2( percentage.x * (float)img.GetDimensions().x, percentage.y * (float) img.GetDimensions().y);
-				//IntVector2 coords = IntVector2((int)floor(coordFloat.x), (int)floor(coordFloat.y));
-				//float r = (float) img.GetTexel(coords.x, coords.y).r;
-				float r = img.GetTexelAtUVS(uvs).r;
-				int idx = GetIndexFromCoordinates(x, y, m_dimensions.x, m_dimensions.y);
-				m_heights[idx] = RangeMapFloat(r, 0, 255.f, m_heightRange.x, m_heightRange.y);
-			//}
+			Vector2 uvs = m_extents.GetPercentageOfPoint(xzPos);
+			uvs = ClampVector2(uvs, Vector2::ZERO, Vector2::ONE);
+			float r = img.GetTexelAtUVS(uvs).r;
+			int idx = GetIndexFromCoordinates(x, y, m_dimensions.x, m_dimensions.y);
+			m_heights[idx] = RangeMapFloat(r, 0, 255.f, m_heightRange.x, m_heightRange.y);
 		}
 	}
+
 	MeshBuilder mb = MeshBuilder();
 	Material* terrainMat = Material::GetMaterial("terrain");
 	for (int chunkX = 0; chunkX < m_chunkDimensions.x; chunkX++){
@@ -502,11 +496,8 @@ void Map::RunMapGeneration(const Image& img)
 
 			g_theGame->m_playState->m_scene->AddRenderable(chunk->m_renderable);
 			m_chunks.push_back(chunk);
-			//m_renderable->SetMesh(mb.CreateMesh());
-			//m_renderable->SetMaterial(terrainMat);
 		}
 	}
-	//m_renderable->SetMaterial(Material::GetMaterial("wireframe"));
 
 }
 

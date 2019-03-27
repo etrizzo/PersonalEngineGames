@@ -82,7 +82,7 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 	SortDrawCalls(drawCalls, cam);
 	//sort alpha by distance to camera, etc.
 
-	PROFILE_PUSH("ForwardRenderPath::Draw");
+	PROFILE_PUSH("FRP::Draw");
 	for(DrawCall dc: drawCalls){
 		
 		//an optimization would be to only bind the thing if it's different from the previous bind.
@@ -104,7 +104,7 @@ void ForwardRenderPath::RenderSceneForCamera(Camera * cam, RenderScene * scene)
 
 void ForwardRenderPath::ComputeMostContributingLights(Light* (&lightarray)[8], const Vector3 & position, std::vector<Light*>& lights)
 {
-	PROFILE_PUSH_FUNCTION_SCOPE();
+	PROFILE_PUSH("FRP::ComputeLights");
 	if (lights.size() <= MAX_LIGHTS){
 		for(int i = 0; i < MAX_LIGHTS; i++){
 			if (i < (int) lights.size()){
@@ -141,11 +141,12 @@ void ForwardRenderPath::ComputeMostContributingLights(Light* (&lightarray)[8], c
 			lightarray[i] = lights[i];
 		}
 	}
+	PROFILE_POP();
 }
 
 void ForwardRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls, Camera* cam)
 {
-	PROFILE_PUSH_FUNCTION_SCOPE();
+	PROFILE_PUSH("FRP::SortDrawCalls");
 	Vector3 camPos = cam->GetPosition();
 	//sort by sort layer
 	std::sort(drawCalls.begin(), drawCalls.end(), CompareDrawCallsBySortLayer);
@@ -161,6 +162,8 @@ void ForwardRenderPath::SortDrawCalls(std::vector<DrawCall>& drawCalls, Camera* 
 	}
 
 	std::sort(drawCalls.begin(), drawCalls.end(), CompareAlphaDrawCallsCameraDistance);
+
+	PROFILE_POP();
 	//for (int i = 1; i < (int) drawCalls.size(); i ++){
 	//	bool sorted = false;
 	//	for (int j = 1; j < (int) drawCalls.size(); j++){
@@ -217,13 +220,14 @@ void ForwardRenderPath::BindFog()
 
 void ForwardRenderPath::SetShadows(RenderScene* scene)
 {
-	PROFILE_PUSH_FUNCTION_SCOPE();
+	PROFILE_PUSH("FRP::RenderShadows");
 	for (Light* light : scene->m_lights){
 		if (light->UsesShadows()){
 			RenderShadowsForLight(light, scene);
 			m_usingShadows = true;
 		}
 	}
+	PROFILE_POP();
 }
 
 void ForwardRenderPath::ClearForCamera(Camera * cam)
@@ -255,7 +259,7 @@ void ForwardRenderPath::RenderSkybox(Camera * cam)
 void ForwardRenderPath::RenderShadowsForLight(Light * l, RenderScene * scene)
 {
 
-	PROFILE_PUSH_FUNCTION_SCOPE();
+	//PROFILE_PUSH_FUNCTION_SCOPE();
 	//set shadow camera's transform to be the light's transform
 	//scene->m_shadowCamera->m_transform.SetWorldMatrix(l->m_transform.GetWorldMatrix());
 	

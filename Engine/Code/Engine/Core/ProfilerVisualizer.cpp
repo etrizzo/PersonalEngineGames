@@ -4,6 +4,7 @@
 #include "Engine/Core/Clock.hpp"
 #include "Engine/Input/InputSystem.hpp"\
 
+#define PROFILER_FUNCTION_NAME_LENGTH (40)
 
 // global
 ProfilerVisualizer* ProfilerVisualizer::s_profilerVisualizerInstance;
@@ -138,7 +139,7 @@ void ProfilerVisualizer::RenderReport()
 			m_currentReport->SortByTotalTime();
 		}
 		std::string header = Stringf( "%-*s %-8s %8s %12s %8s %12s\n", 
-			32, "ID", 
+			PROFILER_FUNCTION_NAME_LENGTH, "ID",
 			"Calls",
 			"Total %",
 			"Total ms", 
@@ -265,7 +266,7 @@ std::string FormatProfilerReport(ProfilerReportEntry * entry, int parentCount)
 
 	std::string fancy = Stringf( "%*s%-*s %-8u %-8s %-12s %-8s %-12s", 
 		parentCount, "", 
-		32 - parentCount, entry->m_id.data(), 
+		PROFILER_FUNCTION_NAME_LENGTH - parentCount, entry->m_id.data(),
 		entry->m_callCount,
 		entry->GetTotalPercentTime().c_str(),
 		entry->GetTotalMillisecondsAsString().c_str(), 
