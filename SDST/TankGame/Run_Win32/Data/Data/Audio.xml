@@ -17,6 +17,9 @@
 		<Sound file="boom7.wav" />
 	</AudioGroup>
 
+	<AudioGroup name="basehit">
+		<Sound file="TestSound.mp3" />
+	</AudioGroup>
 
 	<AudioGroup name="minion">
 		<Sound file="goblin-1.wav" />

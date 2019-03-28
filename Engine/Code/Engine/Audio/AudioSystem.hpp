@@ -39,7 +39,7 @@ public:
 	//Audio Groups
 	void				LoadAudioGroupsFromFile(std::string filePath);
 	SoundID				GetRandomSoundFromGroup(std::string groupName);
-	SoundPlaybackID		PlayOneOffSoundFromGroup(std::string groupName);
+	SoundPlaybackID		PlayOneOffSoundFromGroup(std::string groupName, float volume = 1.0f);
 
 	//SoundPlaybackID				GetPlaybackID(SoundID soundID);
 

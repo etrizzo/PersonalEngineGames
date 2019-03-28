@@ -216,10 +216,10 @@ SoundID AudioSystem::GetRandomSoundFromGroup(std::string groupName)
 	return AudioGroup::GetRandomSoundFromGroup(groupName);
 }
 
-SoundPlaybackID AudioSystem::PlayOneOffSoundFromGroup(std::string groupName)
+SoundPlaybackID AudioSystem::PlayOneOffSoundFromGroup(std::string groupName, float volume)
 {
 	SoundID id = GetRandomSoundFromGroup(groupName);
-	return PlaySound(id);
+	return PlaySound(id, false, volume);
 }
 
 

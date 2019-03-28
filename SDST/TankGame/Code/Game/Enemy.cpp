@@ -70,7 +70,10 @@ void Enemy::Damage()
 {
 	m_health--;
 	if (m_health <= 0){
-		g_theAudio->PlayOneOffSoundFromGroup("minion");
+		float distToPlayer = (g_theGame->GetPlayerPositionXZ() - m_positionXZ).GetLength();
+		distToPlayer = ClampFloat(distToPlayer, 0.f, 10.f);
+		float volume = RangeMapFloat(10.f - distToPlayer, 0.f, 10.f, .3f, 1.f);
+		g_theAudio->PlayOneOffSoundFromGroup("minion", volume);
 		m_aboutToBeDeleted = true;
 	}
 }
