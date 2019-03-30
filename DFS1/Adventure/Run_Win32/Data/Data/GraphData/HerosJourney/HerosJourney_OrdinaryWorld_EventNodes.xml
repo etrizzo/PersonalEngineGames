@@ -9,6 +9,7 @@
 
 		<StoryRequirements>
 			<Requirement tag="storyBegan" target="false" weight="5"/>
+			<Requirement tag="mysteriousEvent" target="false" />
 		</StoryRequirements>
 		
 		<CharacterRequirements>
@@ -59,6 +60,7 @@
 
 		<StoryRequirements>
 			<Requirement tag="storyBegan" target="true" weight="5"/>
+			<Requirement tag="mysteriousEvent" target="false" />
 		</StoryRequirements>
 		<StoryEffects>
 			<EffectSet chance="default">
@@ -97,6 +99,7 @@
 
 		<StoryRequirements>
 			<Requirement tag="storyBegan" target="true" />
+			<Requirement tag="mysteriousEvent" target="false" />
 		</StoryRequirements>
 		<StoryEffects>
 			<EffectSet chance="default">

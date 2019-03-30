@@ -1,25 +1,25 @@
-<Character name="Stubborn">
+<Character name="StubbornCharacter">
 	<Tags>
 		<Tag tag="isAlive" value="true" type="bool"/>
 		<Tag tag="isStubborn" value="true" type="bool"/>
 	</Tags>
 </Character>
 
-<Character name="Bold">
+<Character name="BoldCharacter">
 	<Tags>
 		<Tag tag="isAlive" value="true" type="bool"/>
 		<Tag tag="isBold" value="true" type="bool"/>
 	</Tags>
 </Character>
 
-<Character name="Kind">
+<Character name="KindCharacter">
 	<Tags>
 		<Tag tag="isAlive" value="true" type="bool"/>
 		<Tag tag="isKind" value="true" type="bool"/>
 	</Tags>
 </Character>
 
-<Character name="Evil">
+<Character name="EvilCharacter">
 	<Tags>
 		<Tag tag="isAlive" value="true" type="bool"/>
 		<Tag tag="isEvil" value="true" type="bool"/>

@@ -1765,10 +1765,18 @@ StoryEdge * StoryGraph::GetEdgeWithLargestActRange(bool lookingForEndings) const
 	for (StoryEdge* edge : m_graph.m_edges)
 	{
 		if(!IsEventToOutcomeEdge(edge)){
-			if (edge->GetCost()->m_possibleActRange.GetSize() > largestRange)
+			int actRange = edge->GetCost()->m_possibleActRange.GetSize();
+			//want to make sure we add nodes until the end->end act range is 0 (so we get the last act in there.)
+			if (edge->GetEnd() == m_endNode && actRange > 0)
+			{
+				actRange++;
+			}
+			if (actRange > largestRange)
 			{
 				largestEdge = edge;
-				largestRange = edge->GetCost()->m_possibleActRange.GetSize();
+				largestRange = actRange;
+				
+				
 			}
 		}
 	}
@@ -1776,15 +1784,22 @@ StoryEdge * StoryGraph::GetEdgeWithLargestActRange(bool lookingForEndings) const
 	if (largestRange > 1 || lookingForEndings)
 	{
 		std::vector<StoryEdge*> m_largestRanges = std::vector<StoryEdge*>();
+		//go through and collect all the edges of the size we found
 		for (StoryEdge* edge : m_graph.m_edges)
 		{
 			if(!IsEventToOutcomeEdge(edge)){
-				if (edge->GetCost()->m_possibleActRange.GetSize() == largestRange)
+				int actRange = edge->GetCost()->m_possibleActRange.GetSize();
+				//want to make sure we add nodes until the end->end act range is 0 (so we get the last act in there.)
+				if (edge->GetEnd() == m_endNode && actRange > 0)
+				{
+					actRange++;
+				}
+				if (actRange == largestRange)
 				{
 					if (lookingForEndings)
 					{
 						//check to see if we're like, missing an act still.
-						if ((edge->GetEnd() == m_endNode) && (edge->GetCost()->m_possibleActRange.GetSize() != 0)) {
+						if ((edge->GetEnd() == m_endNode) && (actRange != 0)) {
 							return edge;
 						}
 						//only add edges that don't have an ending
