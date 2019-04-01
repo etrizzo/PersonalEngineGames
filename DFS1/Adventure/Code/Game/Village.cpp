@@ -142,7 +142,7 @@ void Village::ProgressStoryLinear()
 	//progress to the next node
 	StoryNode* node = m_currentEdge->GetEnd();
 
-	if (node != m_villageGraph->GetEnd() && node->m_data->GetProgressionType() == PROGRESSION_TIME) {
+	if (node != m_villageGraph->GetEnd() /*&& node->m_data->GetProgressionType() == PROGRESSION_TIME*/) {
 		int edgeIndex = GetRandomIntLessThan(node->m_outboundEdges.size());
 		m_currentEdge = node->m_outboundEdges[edgeIndex];
 

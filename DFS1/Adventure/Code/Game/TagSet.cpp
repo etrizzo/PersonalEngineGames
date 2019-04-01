@@ -10,6 +10,7 @@ TagSet::TagSet(const TagSet & copy)
 {
 	for (int i = 0; i < (int) copy.m_tags.size(); i++){
 		TagPair tag = TagPair(copy.m_tags[i].GetName(), copy.m_tags[i].GetValue(), copy.m_tags[i].GetType());
+		tag.m_expires = copy.m_tags[i].m_expires;
 		m_tags.push_back(tag);
 	}
 }
@@ -94,16 +95,18 @@ void TagSet::SetTag(const std::string & tagName)
 	}
 }
 
-void TagSet::SetTagWithValue(const std::string & tagName, const std::string & value, std::string type)
+void TagSet::SetTagWithValue(const std::string & tagName, const std::string & value, std::string type, bool expires)
 {
 	if (!HasTag(tagName)){
 		TagPair tag = TagPair(tagName, value, type);
+		tag.m_expires = expires;
 		m_tags.push_back(tag);
 	} else {
 		//set the existing value
 		for(int i = 0; i < (int) m_tags.size(); i++){
 			if (m_tags[i].GetName() == tagName){
 				m_tags[i].SetValue(value);
+				m_tags[i].m_expires = expires;
 			}
 		}
 	}
@@ -167,4 +170,14 @@ bool TagSet::ContainsTagWithAnyValue(const std::string & tagName, const std::str
 		}
 	}
 	return false;
+}
+
+void TagSet::ClearExpiredTags()
+{
+	for (int i = m_tags.size() - 1; i >= 0; i--)
+	{
+		if (m_tags[i].m_expires) {
+			RemoveTag(m_tags[i].GetName());
+		}
+	}
 }

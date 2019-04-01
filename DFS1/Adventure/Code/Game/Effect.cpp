@@ -26,13 +26,17 @@ Effect_TagChange::Effect_TagChange(tinyxml2::XMLElement * element, StoryDataDefi
 	std::string tag = ParseXmlAttribute(*element, "tag", "NO_TAG");
 	std::string value = ParseXmlAttribute(*element, "target", "true");
 	std::string type = ParseXmlAttribute(*element, "type", "boolean");
-	
+	m_doesTagExpire = ParseXmlAttribute(*element, "expires", false);
 
 	m_tag = TagPair(tag, value, type);
 }
 
 bool Effect_TagChange::ApplyToState(StoryState * state, StoryData* instancedData)
 {
+	if (m_doesTagExpire)
+	{
+		int x = 0;
+	}
 	if (m_type == EFFECT_TYPE_CHARACTER){
 		if (instancedData == nullptr)
 		{
@@ -41,14 +45,14 @@ bool Effect_TagChange::ApplyToState(StoryState * state, StoryData* instancedData
 		}
 		Character* character = instancedData->m_characters[m_characterID];
 		CharacterState* characterState = state->GetCharacterStateForCharacter(character);
-		characterState->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
+		characterState->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType(), m_doesTagExpire);
 		if (m_tag.GetType() == "character"){
 			//if you're setting a character name in the story state, read the actual name of that specific character on the node
 			std::string charName = instancedData->ReadCharacterNameFromDataString(m_characterIndexString);
-			characterState->m_tags.SetTagWithValue(m_tag.GetName(), charName, m_tag.GetType());
+			characterState->m_tags.SetTagWithValue(m_tag.GetName(), charName, m_tag.GetType(), m_doesTagExpire);
 			return true;
 		} else {
-			characterState->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
+			characterState->m_tags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType(), m_doesTagExpire);
 			return true;
 		}
 		return true;
@@ -60,10 +64,10 @@ bool Effect_TagChange::ApplyToState(StoryState * state, StoryData* instancedData
 				return false;
 			}
 			std::string charName = instancedData->ReadCharacterNameFromDataString(m_tag.GetValue());
-			state->m_storyTags.SetTagWithValue(m_tag.GetName(), charName, m_tag.GetType());
+			state->m_storyTags.SetTagWithValue(m_tag.GetName(), charName, m_tag.GetType(), m_doesTagExpire);
 			return true;
 		} else {
-			state->m_storyTags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType());
+			state->m_storyTags.SetTagWithValue(m_tag.GetName(), m_tag.GetValue(), m_tag.GetType(), m_doesTagExpire);
 			return true;
 		}
 	}

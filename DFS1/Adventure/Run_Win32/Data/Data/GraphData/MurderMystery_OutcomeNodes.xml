@@ -20,15 +20,15 @@
 				<EffectSet>
 					<TagChange character="*1*" tag="hasMotive" target="true" />
 					<TagChange effectType="story" tag="isDisliked" target="*0*" type="character"/>
-					<TagChange character="*0*" tag="dialogue" type="string" target="I can't believe *0* would say that about me..." />
-					<TagChange character="*1*" tag="dialogue" type="string" target="I think *1* heard me talking about them earlier...|I feel a little bad... but it's true." />
+					<TagChange character="*0*" tag="dialogue" type="string" target="I can't believe *0* would say that about me..." expires="true"/>
+					<TagChange character="*1*" tag="dialogue" type="string" target="I think *1* heard me talking about them earlier...|I feel a little bad... but it's true." expires="true"/>
 				</EffectSet>
 			</Action>
 
 			<Action text="*1* doesn't notice the gossiping." chance=".5">
 				<EffectSet>
-					<TagChange character="*0*" tag="dialogue" type="string" target="Don't tell *1* what I said earlier!" />
-					<TagChange character="*1*" tag="dialogue" type="string" target="default" />
+					<TagChange character="*0*" tag="dialogue" type="string" target="Don't tell *1* what I said earlier!" expires="true"/>
+					<TagChange character="*1*" tag="dialogue" type="string" target="default" expires="true"/>
 				</EffectSet>
 			</Action>
 		</Actions>
@@ -66,6 +66,8 @@
 					<TagChange character="*1*" tag="isSuspicious" target="true" />
 					<TagChange character="*1*" tag="wasInvestigated" target="true" />
 					<TagChange effectType="story" tag="suspectIdentified" target="true" />
+					<TagChange character="*0*" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+					<TagChange character="*1*" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
 				</EffectSet>
 			</Action>
 
@@ -74,6 +76,8 @@
 					<TagChange character="*1*" tag="isSuspicious" target="false" />
 					<TagChange character="*1*" tag="isProbablyInnocent" target="true" />
 					<TagChange character="*1*" tag="wasInvestigated" target="true" />
+					<TagChange character="*0*" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+					<TagChange character="*1*" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
 				</EffectSet>
 			</Action>
 		</Actions>

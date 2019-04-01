@@ -24,11 +24,12 @@ public:
 	Character*	ReadValueAsCharacter(Character* failValue = nullptr);
 	
 	Strings		ReadValueAsStrings();
-	
+	bool m_expires = false;
 
 
 private:
 	std::string m_tag;
 	std::string m_tagValue;
 	std::string m_type = "boolean";
+	
 };

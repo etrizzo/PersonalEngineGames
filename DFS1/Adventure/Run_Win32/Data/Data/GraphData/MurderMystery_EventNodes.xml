@@ -26,13 +26,20 @@
 		</StoryRequirements>
 		<StoryEffects>
 			<EffectSet chance="default">
-				<TagChange character="0" tag = "isGossip" target="true" />
-				<TagChange character="1" tag = "isGossip" target="true" />
+				
 
 				<TagChange tag="Gossiper" target="*0*" type="character" effectType="story"/>
 				<TagChange tag="GossipSubject" target="*2*" type="character" effectType="story"/>
 			</EffectSet>
 		</StoryEffects>
+
+		<CharacterEffects>
+			<TagChange character="0" tag = "isGossip" target="true" />
+			<TagChange character="1" tag = "isGossip" target="true" />
+
+			<TagChange character="0" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+			<TagChange character="1" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+		</CharacterEffects>
 	</EventNode>
 
 
@@ -92,6 +99,9 @@
 		<CharacterEffects>
 			<EffectSet>
 				<TagChange character="0" tag = "isInvestigating" target="true" />
+
+				<TagChange character="0" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+				<TagChange character="1" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
 				<!--<TagChange character="0" tag = "InvestigationTarget" target="*1*" type="character"/>-->
 			</EffectSet>
 		</CharacterEffects>
@@ -135,6 +145,8 @@
 		<CharacterEffects>
 			<EffectSet>
 				<TagChange character="0" tag = "isInvestigating" target="true" />
+				<TagChange character="0" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+				<TagChange character="1" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>
@@ -174,6 +186,9 @@
 			<EffectSet>
 				<TagChange character="0" tag = "isAccuser" target="true" />
 				<TagChange character="1" tag = "isAccused" target="*true*" />
+
+				<TagChange character="0" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+				<TagChange character="1" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>
@@ -215,6 +230,9 @@
 		<CharacterEffects>
 			<EffectSet>
 				<TagChange character="1" tag = "isBeingArrested" target="*true*" />
+
+				<TagChange character="0" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+				<TagChange character="1" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>

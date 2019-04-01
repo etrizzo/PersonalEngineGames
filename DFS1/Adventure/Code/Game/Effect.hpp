@@ -26,6 +26,8 @@ public:
 	std::string m_characterIndexString;
 	unsigned int m_characterID = (unsigned int) -1;
 	StoryDataDefinition* m_parentData = nullptr;
+
+	
 };
 
 
@@ -40,6 +42,6 @@ public:
 
 	TagPair m_tag;
 	
-
+	bool m_doesTagExpire = false;
 };
 

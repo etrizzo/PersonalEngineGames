@@ -11,7 +11,9 @@ public:
 	StoryState(const StoryState& copy);
 	StoryState(){};
 	~StoryState();
-
+	
+	//called when an outgoing edge is created - any tags that are expired are deleted
+	void ClearExpiredState();
 	void UpdateFromNode(StoryData* data);
 	void UpdateFromNodeDefinition(StoryDataDefinition* dataDef);		//only updates story state with what is concrete
 	void PredictUpdateOnCharacter(Character* character, unsigned int indexOnNode, StoryData* node);

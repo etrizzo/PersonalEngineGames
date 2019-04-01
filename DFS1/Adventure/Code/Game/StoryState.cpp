@@ -35,6 +35,16 @@ StoryState::~StoryState()
 	m_characterStates.clear();
 }
 
+void StoryState::ClearExpiredState()
+{
+	for (CharacterState* state : m_characterStates)
+	{
+		state->m_tags.ClearExpiredTags();
+	}
+
+	m_storyTags.ClearExpiredTags();
+}
+
 void StoryState::UpdateFromNode(StoryData * data)
 {
 	TODO("update effect nodes");

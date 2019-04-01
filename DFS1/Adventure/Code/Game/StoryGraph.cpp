@@ -539,6 +539,7 @@ bool StoryGraph::CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition * dataDefinit
 			//not sure what to do with cost...
 			StoryState* incomingCost = new StoryState(*edgeToAddAt->GetCost());
 			StoryState* outgoingCost = new StoryState(*edgeToAddAt->GetCost());
+			outgoingCost->ClearExpiredState();
 			outgoingCost->UpdateFromNode(newNode->m_data);
 			//clamp the incoming act range to the node's max
 			incomingCost->m_possibleActRange.max = Min(incomingCost->m_possibleActRange.max, newNode->m_data->m_definition->m_actRange.max);
@@ -922,6 +923,7 @@ void StoryGraph::AddNodeAtEdge(StoryNode * newNode, StoryEdge * existingEdge)
 	if (newNode->m_data->m_definition->m_shouldLockIncomingEdge){
 		incomingCost->m_isLocked = true;
 	}
+	outgoingCost->ClearExpiredState();
 	outgoingCost->UpdateFromNode(newNode->m_data);
 	//clamp the incoming act range to the node's max
 	incomingCost->m_possibleActRange.max = Min(incomingCost->m_possibleActRange.max, newNode->m_data->m_definition->m_actRange.max);
