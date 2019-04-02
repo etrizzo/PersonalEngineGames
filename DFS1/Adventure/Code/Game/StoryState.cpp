@@ -45,22 +45,22 @@ void StoryState::ClearExpiredState()
 	m_storyTags.ClearExpiredTags();
 }
 
-void StoryState::UpdateFromNode(StoryData * data)
+void StoryState::UpdateFromNode(StoryData * data, bool isExpired)
 {
 	TODO("update effect nodes");
 	//if (data->AreAllCharactersSet()){
 	// apply specific data effects
 	for(Effect* effect :data->m_action->m_definition->m_effects->m_effects){
-		effect->ApplyToState(this, data);
+		effect->ApplyToState(this, data, isExpired);
 	}
 	//apply the definitions default effects
 	for (Effect* effect : data->m_definition->m_guaranteedEffects->m_effects){
-		effect->ApplyToState(this, data);
+		effect->ApplyToState(this, data, isExpired);
 	}
 
 	//apply the story effects
 	for (Effect* effect : data->m_definition->m_storyEffects->m_effects){
-		effect->ApplyToState(this, data);
+		effect->ApplyToState(this, data, isExpired);
 	}
 
 	//this is an outgoing edge - clamp the act range to the node's mins.
@@ -78,7 +78,7 @@ void StoryState::UpdateFromNodeDefinition(StoryDataDefinition * dataDef)
 {
 	for (Effect* effect : dataDef->m_storyEffects->m_effects)
 	{
-		effect->ApplyToState(this, nullptr);
+		effect->ApplyToState(this, nullptr, false);
 	}
 	m_possibleActRange.min = Max(m_possibleActRange.min, dataDef->m_actRange.min);
 
@@ -88,7 +88,7 @@ void StoryState::PredictUpdateOnCharacter(Character * character, unsigned int in
 {
 	CharacterState* stateToUpdate = GetCharacterStateForCharacter(character);
 	for(Effect* effect : node->m_action->m_definition->m_effects->m_effects){
-		effect->ApplyToCharacterState(stateToUpdate);
+		effect->ApplyToCharacterState(stateToUpdate, false);
 	}
 }
 
@@ -96,7 +96,7 @@ void StoryState::PredictUpdateOnCharacterFromDefinition(Character * character, u
 {
 	CharacterState* stateToUpdate = GetCharacterStateForCharacter(character);
 	for(Effect* effect : definition->m_guaranteedEffects->m_effects){
-		effect->ApplyToCharacterState(stateToUpdate);
+		effect->ApplyToCharacterState(stateToUpdate, false);
 	}
 }
 

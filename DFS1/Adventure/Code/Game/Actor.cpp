@@ -151,9 +151,24 @@ void Actor::SetDialogFromState()
 	std::string tagString = m_tags.GetTagsAsString();
 	std::string storyString = "I am a: " + m_roleInStory;
 
-	m_dialogue->ClearDialogues();
-	m_dialogue->AddDialogueLine(tagString);
-	m_dialogue->AddDialogueLine(storyString);
+	std::string dialogue = m_tags.GetTagValue("dialogue", "none");
+	if (dialogue != "none")
+	{
+		m_dialogue->ClearDialogues();
+		Strings dialogues;
+		Split(dialogue, '|', dialogues);
+		for (std::string string : dialogues)
+		{
+			m_dialogue->AddDialogueLine(string);
+		}
+		//m_dialogue->AddDialogueLine(storyString);
+	}
+	else
+	{
+		m_dialogue->ClearDialogues();
+		m_dialogue->SetFromDefinition();
+	}
+
 
 }
 

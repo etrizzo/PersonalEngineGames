@@ -37,8 +37,8 @@
 			<TagChange character="0" tag = "isGossip" target="true" />
 			<TagChange character="1" tag = "isGossip" target="true" />
 
-			<TagChange character="0" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
-			<TagChange character="1" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+			<TagChange character="0" tag="dialogue" type="string" target="*2* is a loser. I was just telling *1* about it." expires="true"/>
+			<TagChange character="1" tag="dialogue" type="string" target="lmao *2* is so bad you should have heard what *0* was saying earlier." expires="true"/>
 		</CharacterEffects>
 	</EventNode>
 
@@ -59,6 +59,7 @@
 		<StoryEffects>
 			<EffectSet chance="default">
 				<TagChange tag="murderOcurred" target="true" effectType="story"/>
+				<TagChange tag="dialogue" type="string" target="Somebody was murdered last night." expires="true" effectType="story"/>
 			</EffectSet>
 			
 		</StoryEffects>
@@ -100,8 +101,8 @@
 			<EffectSet>
 				<TagChange character="0" tag = "isInvestigating" target="true" />
 
-				<TagChange character="0" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
-				<TagChange character="1" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+				<TagChange character="0" tag="dialogue" type="string" target="*1* has something to do with the murder. |I've been keeping an eye on them all day." expires="true"/>
+				<TagChange character="1" tag="dialogue" type="string" target="*0* keeps following me.|I don't like it." expires="true"/>
 				<!--<TagChange character="0" tag = "InvestigationTarget" target="*1*" type="character"/>-->
 			</EffectSet>
 		</CharacterEffects>
@@ -145,8 +146,8 @@
 		<CharacterEffects>
 			<EffectSet>
 				<TagChange character="0" tag = "isInvestigating" target="true" />
-				<TagChange character="0" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
-				<TagChange character="1" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+				<TagChange character="0" tag="dialogue" type="string" target="I just really don't trust *1*.|I'm going to keep an eye on them." expires="true"/>
+				<TagChange character="1" tag="dialogue" type="string" target="I think *0* is following me! I told everybody, I'm innocent!" expires="true"/>
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>
@@ -187,8 +188,8 @@
 				<TagChange character="0" tag = "isAccuser" target="true" />
 				<TagChange character="1" tag = "isAccused" target="*true*" />
 
-				<TagChange character="0" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
-				<TagChange character="1" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+				<TagChange character="0" tag="dialogue" type="string" target="*1* is the killer! I'm sure of it!" expires="true"/>
+				<TagChange character="1" tag="dialogue" type="string" target="Don't believe what *0* tells you!" expires="true"/>
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>
@@ -231,8 +232,8 @@
 			<EffectSet>
 				<TagChange character="1" tag = "isBeingArrested" target="*true*" />
 
-				<TagChange character="0" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
-				<TagChange character="1" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+				<TagChange character="0" tag="dialogue" type="string" target="I'm going to arrest *1*!" expires="true"/>
+				<TagChange character="1" tag="dialogue" type="string" target="I'm running!!!" expires="true"/>
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>

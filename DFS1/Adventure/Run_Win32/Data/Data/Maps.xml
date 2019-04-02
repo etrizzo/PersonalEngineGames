@@ -28,12 +28,10 @@
 
         <SetSubArea subAreaCenter=".2~.3" subAreaSize=".2~.25" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
           <SubMap map="SmallVillage"/>
-          <SpawnVillage type="HumanVillage" numResidents="5~7" baseTile="Grass"/>
       <EndSubArea />
 
       <SetSubArea subAreaCenter=".6~.8" subAreaSize=".2~.25" type="circle" centerDensity="1" edgeDensity=".9" feather=".1"/>
           <SubMap map="SmallVillage"/>
-          <SpawnVillage type="HumanVillage" numResidents="5~7" baseTile="Grass"/>
       <EndSubArea />
 
       <SubMap map="SmoothTerrain" />

@@ -33,7 +33,7 @@ Village::~Village()
 void Village::ProgressVillageStoryTime()
 {
 	StoryNode* start = m_currentEdge->GetStart();
-	if (start == m_villageGraph->GetStart() || start->m_data->GetProgressionType() == PROGRESSION_TIME) {
+	if (start == m_villageGraph->GetStart() || true /*|| start->m_data->GetProgressionType() == PROGRESSION_TIME*/) {
 
 		if (start->m_outboundEdges.size() > 1)
 		{
@@ -96,6 +96,8 @@ void Village::GenerateGraph()
 	}
 
 	m_currentEdge = m_villageGraph->GetStart()->m_outboundEdges[0];
+
+	SetDialogueStrings();
 }
 
 void Village::SetResidentDialogues()
@@ -122,6 +124,37 @@ void Village::SetResidentDialogues()
 			resident->m_roleInStory = residentRole;
 
 			resident->SetDialogFromState();
+		}
+	}
+}
+
+void Village::SetDialogueStrings()
+{
+	// parses the names of characters into the dialogue tags.
+	// go through each edge - if for story state and any character states, if there's a "dialogue" tag, parse the character names into it
+	// pull character names from the edge's starting node, and re-set the dialogue tag to be the string with names.
+
+	for (StoryEdge* edge : m_villageGraph->m_graph.m_edges)
+	{
+		StoryNode* startNode = edge->GetStart();
+		StoryState* edgeState = edge->GetCost();
+		for (CharacterState* character : edgeState->m_characterStates)
+		{
+			
+			std::string unparsedDialogue = character->m_tags.GetTagValue("dialogue", "none");
+			if (unparsedDialogue != "none")
+			{
+				std::string filledDialogue = startNode->m_data->ParseCharacterNamesIntoString(unparsedDialogue);
+				character->m_tags.SetTagWithValue("dialogue", filledDialogue, "string", true);
+			}
+		}
+
+		//do it on the story state as well
+		std::string unparsedStoryDialogue = edgeState->m_storyTags.GetTagValue("dialogue", "none");
+		if (unparsedStoryDialogue != "none")
+		{
+			std::string filledStoryDialogue = startNode->m_data->ParseCharacterNamesIntoString(unparsedStoryDialogue);
+			edgeState->m_storyTags.SetTagWithValue("dialogue", filledStoryDialogue, "string", true);
 		}
 	}
 }

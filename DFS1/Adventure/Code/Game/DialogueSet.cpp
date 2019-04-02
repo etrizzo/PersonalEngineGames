@@ -6,13 +6,7 @@
 DialogueSet::DialogueSet(DialogueSetDefinition * def)
 {
 	m_definition = def;
-	if (m_definition != nullptr)
-	{
-		for (Dialogue* dialog : m_definition->m_dialogues)
-		{
-			m_dialogues.push_back(new Dialogue(dialog->m_content));
-		}
-	}
+	SetFromDefinition();
 	Reset();
 }
 
@@ -76,4 +70,15 @@ void DialogueSet::ClearDialogues()
 void DialogueSet::AddDialogueLine(std::string newLine)
 {
 	m_dialogues.push_back(new Dialogue(newLine));
+}
+
+void DialogueSet::SetFromDefinition()
+{
+	if (m_definition != nullptr)
+	{
+		for (Dialogue* dialog : m_definition->m_dialogues)
+		{
+			m_dialogues.push_back(new Dialogue(dialog->m_content));
+		}
+	}
 }

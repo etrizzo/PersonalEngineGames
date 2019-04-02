@@ -186,6 +186,9 @@ public:
 
 	bool IsEventToOutcomeEdge(StoryEdge* edge) const;
 
+
+	DirectedGraph<StoryData*, StoryState*> m_graph = DirectedGraph<StoryData*, StoryState*>();
+
 protected:
 	DataSet* m_dataSet		= nullptr;
 
@@ -201,7 +204,7 @@ protected:
 	//find the edge in the graph right now which has the largest act range
 	StoryEdge* GetEdgeWithLargestActRange(bool lookingForEndings) const;
 
-	DirectedGraph<StoryData*, StoryState*> m_graph	= DirectedGraph<StoryData*, StoryState*>();
+	
 	
 	bool m_analysisHasRun = false;
 	std::vector<StoryNode*> m_branchingNodes = std::vector<StoryNode*>();

@@ -20,15 +20,15 @@
 				<EffectSet>
 					<TagChange character="*1*" tag="hasMotive" target="true" />
 					<TagChange effectType="story" tag="isDisliked" target="*0*" type="character"/>
-					<TagChange character="*0*" tag="dialogue" type="string" target="I can't believe *0* would say that about me..." expires="true"/>
-					<TagChange character="*1*" tag="dialogue" type="string" target="I think *1* heard me talking about them earlier...|I feel a little bad... but it's true." expires="true"/>
+					<TagChange character="*0*" tag="dialogue" type="string" target="I think *1* heard me talking about them earlier...|I feel a little bad... but it's true." expires="true"/>
+					<TagChange character="*1*" tag="dialogue" type="string" target="I can't believe *0* would say that about me..." expires="true"/>
+					
 				</EffectSet>
 			</Action>
 
 			<Action text="*1* doesn't notice the gossiping." chance=".5">
 				<EffectSet>
 					<TagChange character="*0*" tag="dialogue" type="string" target="Don't tell *1* what I said earlier!" expires="true"/>
-					<TagChange character="*1*" tag="dialogue" type="string" target="default" expires="true"/>
 				</EffectSet>
 			</Action>
 		</Actions>
@@ -66,8 +66,8 @@
 					<TagChange character="*1*" tag="isSuspicious" target="true" />
 					<TagChange character="*1*" tag="wasInvestigated" target="true" />
 					<TagChange effectType="story" tag="suspectIdentified" target="true" />
-					<TagChange character="*0*" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
-					<TagChange character="*1*" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+					<TagChange character="*0*" tag="dialogue" type="string" target="I think *1* had something to do with the murder." expires="true"/>
+					<TagChange character="*1*" tag="dialogue" type="string" target="I'm innocent... Really!" expires="true"/>
 				</EffectSet>
 			</Action>
 
@@ -76,8 +76,8 @@
 					<TagChange character="*1*" tag="isSuspicious" target="false" />
 					<TagChange character="*1*" tag="isProbablyInnocent" target="true" />
 					<TagChange character="*1*" tag="wasInvestigated" target="true" />
-					<TagChange character="*0*" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
-					<TagChange character="*1*" tag="dialogue" type="string" target="I have dialogue!!" expires="true"/>
+					<TagChange character="*0*" tag="dialogue" type="string" target="*1* is innocent, I think." expires="true"/>
+					<TagChange character="*1*" tag="dialogue" type="string" target="I'm innocent... Really!" expires="true"/>
 				</EffectSet>
 			</Action>
 		</Actions>
@@ -119,6 +119,8 @@
 					</StoryRequirements>
 				</Modifier>
 				<EffectSet>
+					<TagChange character="*0*" tag="dialogue" type="string" target="I have undisputable proof that *1* is the killer!" expires="true"/>
+					<TagChange character="*1*" tag="dialogue" type="string" target="I have to go!" expires="true"/>
 					<TagChange character="*1*" tag="isKiller" target="true" />
 					<TagChange character="*1*" tag="isAccused" target="true" />
 					<TagChange effectType="story" tag="killerFound" target="true" />
@@ -127,6 +129,8 @@
 
 			<Action text="*1* was found to be innocent." chance = ".5">
 				<EffectSet>
+					<TagChange character="*0*" tag="dialogue" type="string" target="I thought for sure it was *1*!" expires="true"/>
+					<TagChange character="*1*" tag="dialogue" type="string" target="I've got an alibi, I can't be the killer!" expires="true"/>
 					<TagChange character="*1*" tag="isKiller" target="false" />
 					<TagChange character="*1*" tag="isAccused" target="true" />
 					<TagChange character="*1*" tag="isInnocent" target="true" />
@@ -171,6 +175,8 @@
 					</StoryRequirements>
 				</Modifier>
 				<EffectSet>
+					<TagChange character="*0*" tag="dialogue" type="string" target="*1* escaped!" expires="true"/>
+					<TagChange character="*1*" tag="dialogue" type="string" target="I have escaped!|Don't mind me!" expires="true"/>
 					<TagChange character="*1*" tag="isKiller" target="true" />
 					<TagChange character="*1*" tag="isAccused" target="true" />
 					<TagChange effectType="story" tag="killerFound" target="true" />
@@ -179,6 +185,8 @@
 
 			<Action text="*1* is arrested and brought to justice." chance = ".7" endsAct="true">
 				<EffectSet>
+					<TagChange character="*0*" tag="dialogue" type="string" target="I'm glad that's over." expires="true"/>
+					<TagChange character="*1*" tag="dialogue" type="string" target="I've been arrested.|I'm in prison right now." expires="true"/>
 					<TagChange character="*1*" tag="isArrested" target="true" />
 				</EffectSet>
 			</Action>
@@ -213,6 +221,7 @@
 					<TagChange character="*0*" tag="isEnlightened" target="true" />
 					<TagChange tag="Investigator" target="none" type="character" effectType="story"/>
 					<TagChange tag="Suspect" target="none" type="character" effectType="story"/>
+					<TagChange character="0" tag="dialogue" type="string" target="I've got something pretty juicy. Stay tuned." expires="true"/>
 				</EffectSet>
 			</Action>
 		</Actions>

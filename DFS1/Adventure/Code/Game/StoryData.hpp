@@ -49,6 +49,8 @@ public:
 	void SetPosition(Vector2 pos);
 	Vector2 GetPosition() const;
 
+	std::string ParseCharacterNamesIntoString(std::string characterString) const;
+
 	bool operator==( const StoryData& compare ) const;
 	bool operator!=( const StoryData& compare ) const;
 

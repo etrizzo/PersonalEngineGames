@@ -570,9 +570,12 @@ bool StoryGraph::CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition * dataDefinit
 
 				for (StoryNode* reachable : reachableNodes){
 					//edge->UpdateDataFromNode(data);
-					reachable->UpdateData(newNode->m_data);
-					for (StoryEdge* edge : reachable->m_outboundEdges){
-						edge->GetCost()->UpdateFromNode(newNode->m_data);
+					if (reachable != newNode)
+					{
+						reachable->UpdateData(newNode->m_data);
+						for (StoryEdge* edge : reachable->m_outboundEdges) {
+							edge->GetCost()->UpdateFromNode(newNode->m_data, true);
+						}
 					}
 				}
 			} else {
@@ -936,9 +939,12 @@ void StoryGraph::AddNodeAtEdge(StoryNode * newNode, StoryEdge * existingEdge)
 
 	for (StoryNode* reachable : reachableNodes){
 		//edge->UpdateDataFromNode(data);
-		reachable->UpdateData(newNode->m_data);
-		for (StoryEdge* edge : reachable->m_outboundEdges){
-			edge->GetCost()->UpdateFromNode(newNode->m_data);
+		if (reachable != newNode)
+		{
+			reachable->UpdateData(newNode->m_data);
+			for (StoryEdge* edge : reachable->m_outboundEdges) {
+				edge->GetCost()->UpdateFromNode(newNode->m_data, true);
+			}
 		}
 	}
 

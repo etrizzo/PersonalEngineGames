@@ -31,11 +31,12 @@ Effect_TagChange::Effect_TagChange(tinyxml2::XMLElement * element, StoryDataDefi
 	m_tag = TagPair(tag, value, type);
 }
 
-bool Effect_TagChange::ApplyToState(StoryState * state, StoryData* instancedData)
+bool Effect_TagChange::ApplyToState(StoryState * state, StoryData* instancedData, bool isChangeExpired)
 {
-	if (m_doesTagExpire)
+	//if you're trying to apply an effect that expires to a state down the line from the actual node, dont
+	if (m_doesTagExpire && isChangeExpired)
 	{
-		int x = 0;
+		return false;
 	}
 	if (m_type == EFFECT_TYPE_CHARACTER){
 		if (instancedData == nullptr)
@@ -74,7 +75,7 @@ bool Effect_TagChange::ApplyToState(StoryState * state, StoryData* instancedData
 	return false;
 }
 
-bool Effect_TagChange::ApplyToCharacterState(CharacterState * state)
+bool Effect_TagChange::ApplyToCharacterState(CharacterState * state, bool isExpired)
 {
 	//if the tag type must be read differently (i.e. for characters), do that now
 	if (m_tag.GetType() == "character"){

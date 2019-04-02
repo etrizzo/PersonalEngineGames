@@ -18,8 +18,8 @@ public:
 	Effect(){};
 	Effect( tinyxml2::XMLElement* element, StoryDataDefinition* parentData);
 
-	virtual bool ApplyToState(StoryState* state, StoryData* instancedData) = 0;
-	virtual bool ApplyToCharacterState(CharacterState* state) = 0;
+	virtual bool ApplyToState(StoryState* state, StoryData* instancedData, bool isExpired) = 0;
+	virtual bool ApplyToCharacterState(CharacterState* state, bool isExpired) = 0;
 	virtual Effect* Clone() = 0;
 
 	eEffectType m_type = EFFECT_TYPE_CHARACTER;
@@ -36,8 +36,8 @@ public:
 	Effect_TagChange(){};
 	Effect_TagChange(tinyxml2::XMLElement* element, StoryDataDefinition* parentData);
 
-	bool ApplyToState(StoryState* state, StoryData* instancedData) override;
-	bool ApplyToCharacterState(CharacterState* state) override;
+	bool ApplyToState(StoryState* state, StoryData* instancedData, bool isExpired) override;
+	bool ApplyToCharacterState(CharacterState* state, bool isExpired = false) override;
 	Effect* Clone() override;
 
 	TagPair m_tag;

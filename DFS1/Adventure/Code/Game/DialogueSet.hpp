@@ -17,6 +17,8 @@ public:
 	void ClearDialogues();
 	void AddDialogueLine(std::string newLine);
 
+	void SetFromDefinition();
+
 	bool m_hasDefinition = true;
 	Actor* m_speaker = nullptr;
 	DialogueSetDefinition* m_definition = nullptr;

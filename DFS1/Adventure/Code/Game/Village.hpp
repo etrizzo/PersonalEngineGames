@@ -35,6 +35,7 @@ private:
 	void ConnectResidentsToGraphCharacters();
 	void GenerateGraph();
 	void SetResidentDialogues();
+	void SetDialogueStrings();
 
 	void ProgressStoryOnBranch();
 	void ProgressStoryLinear();

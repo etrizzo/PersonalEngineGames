@@ -22,6 +22,8 @@ public:
 	bool HasTagWithValue(const std::string& tagName, const std::string& value);
 	bool ContainsTagWithAnyValue(const std::string& tagName, const std::string & tagType);
 
+	std::string GetTagValue(std::string tagName, std::string defaultValue);
+
 	void ClearExpiredTags();
 	
 	std::vector<TagPair> m_tags;

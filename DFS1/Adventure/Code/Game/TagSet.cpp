@@ -172,6 +172,17 @@ bool TagSet::ContainsTagWithAnyValue(const std::string & tagName, const std::str
 	return false;
 }
 
+std::string TagSet::GetTagValue(std::string tagName, std::string defaultValue)
+{
+	for (TagPair tag : m_tags) {
+		if (tag.HasName(tagName)) {
+			return tag.GetValue();
+		}
+	}
+	//default case - does not have tag
+	return defaultValue;
+}
+
 void TagSet::ClearExpiredTags()
 {
 	for (int i = m_tags.size() - 1; i >= 0; i--)

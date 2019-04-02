@@ -78,24 +78,7 @@ std::string StoryData::GetName() const
 	}
 	if (AreAllCharactersSet()){
 		if (m_actionWithCharacters == ""){
-			//set the action string with the set characters
-			Strings splitString;
-			Split(m_action->m_definition->m_baseText, '*', splitString);
-			if (splitString.size() == 1){
-				return m_action->m_instancedText;
-				//m_actionWithCharacters = m_action->m_instancedText;
-				//return m_actionWithCharacters;
-			}
-			for (int i = 0; i < (int) splitString.size(); i++){
-				if (i % 2 != 0){
-					//if odd index, this is NOT inside *'s, so add it as usual to character string 
-					m_actionWithCharacters +=  splitString[i];
-				} else {
-					//if even index, you're inside a ** pair - parse to index
-					int charIndex = ParseStringInt(splitString[i]);
-					m_actionWithCharacters += m_characters[charIndex]->GetName();
-				}
-			}
+			m_actionWithCharacters = ParseCharacterNamesIntoString(m_action->m_definition->m_baseText);
 		}
 		m_action->m_instancedText = m_actionWithCharacters;
 		return m_actionWithCharacters;
@@ -284,6 +267,31 @@ void StoryData::SetPosition(Vector2 pos)
 Vector2 StoryData::GetPosition() const
 {
 	return m_graphPosition;
+}
+
+std::string StoryData::ParseCharacterNamesIntoString(std::string characterString) const
+{
+	std::string retString = "";
+	//set the action string with the set characters
+	Strings splitString;
+	Split(characterString, '*', splitString);
+	if (splitString.size() == 1) {
+		return characterString;
+		//m_actionWithCharacters = m_action->m_instancedText;
+		//return m_actionWithCharacters;
+	}
+	for (int i = 0; i < (int)splitString.size(); i++) {
+		if (i % 2 != 0) {
+			//if odd index, this is NOT inside *'s, so add it as usual to character string 
+			retString += splitString[i];
+		}
+		else {
+			//if even index, you're inside a ** pair - parse to index
+			int charIndex = ParseStringInt(splitString[i]);
+			retString += m_characters[charIndex]->GetName();
+		}
+	}
+	return retString;
 }
 
 
