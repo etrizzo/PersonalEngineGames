@@ -20,6 +20,8 @@ void Strip(std::string& stringToStrip, const char stripChar);
 bool Contains(std::string baseWord, std::string subString );
 bool StartsWith(std::string baseWord, std::string startString);
 
+bool IsStringInt(std::string stringToCheck);
+
 bool ContainsNumber(std::string stringToCheck);
 
 std::string ToLower(std::string stringIn);

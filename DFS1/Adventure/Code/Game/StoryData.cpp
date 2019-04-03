@@ -280,17 +280,51 @@ std::string StoryData::ParseCharacterNamesIntoString(std::string characterString
 		//m_actionWithCharacters = m_action->m_instancedText;
 		//return m_actionWithCharacters;
 	}
-	for (int i = 0; i < (int)splitString.size(); i++) {
-		if (i % 2 != 0) {
-			//if odd index, this is NOT inside *'s, so add it as usual to character string 
-			retString += splitString[i];
-		}
-		else {
-			//if even index, you're inside a ** pair - parse to index
+	
+	for (int i = 0; i < (int) splitString.size(); i++)
+	{
+		if (ContainsNumber(splitString[i]))
+		{
 			int charIndex = ParseStringInt(splitString[i]);
 			retString += m_characters[charIndex]->GetName();
+		} else
+		{
+			retString += splitString[i];
 		}
+
 	}
+
+	/*
+	//if you have an even number of splits, you're starting with a name
+	if (splitString.size() % 2 == 0)
+	{
+		for (int i = 0; i < (int)splitString.size(); i++) {
+			if (i % 2 != 0) {
+				//if odd index, this is NOT inside *'s, so add it as usual to character string 
+				retString += splitString[i];
+			}
+			else {
+				//if even index, you're inside a ** pair - parse to index
+				int charIndex = ParseStringInt(splitString[i]);
+				retString += m_characters[charIndex]->GetName();
+			}
+		}
+	} else //if you have an odd number of splits, you're starting with text
+	{
+		for (int i = 0; i < (int)splitString.size(); i++) {
+			if (i % 2 == 0) {
+				//if even index, this is NOT inside *'s, so add it as usual to character string 
+				retString += splitString[i];
+			}
+			else {
+				//if odd index, you're inside a ** pair - parse to index
+				int charIndex = ParseStringInt(splitString[i]);
+				retString += m_characters[charIndex]->GetName();
+			}
+		}
+
+	}
+	*/
 	return retString;
 }
 

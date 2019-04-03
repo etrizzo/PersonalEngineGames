@@ -136,6 +136,11 @@ const std::string Stringv(const char * format, va_list args)
 	return true;
 }
 
+ //bool IsStringInt(std::string stringToCheck)
+ //{
+
+ //}
+
  bool ContainsNumber(std::string stringToCheck)
  {
 	 return std::find_if(stringToCheck.begin(), stringToCheck.end(), ::isdigit) != stringToCheck.end();       

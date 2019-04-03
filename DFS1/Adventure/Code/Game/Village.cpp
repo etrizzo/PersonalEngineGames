@@ -90,7 +90,7 @@ void Village::GenerateGraph()
 	while (!generated){
 		m_villageGraph->Clear();
 		m_villageGraph->RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
-		m_villageGraph->AddEndingsToActBoundaryEdge(m_villageGraph->GetEnd(), 10);
+		m_villageGraph->AddEndingsToActBoundaryEdge(m_villageGraph->GetEnd(), 5);
 		m_villageGraph->RemoveBranchesWithNoEnding(m_villageGraph->GetEnd());
 		generated = !m_villageGraph->CheckForInvalidGraph();
 	}
