@@ -16,6 +16,8 @@ public:
 	virtual void Update();
 	virtual void Render();
 
+	virtual void RenderBounds();
+
 	//virtual void Render();
 	virtual void RenderDevMode();
 
@@ -25,9 +27,9 @@ public:
 
 	virtual bool IsAboutToBeDeleted();
 
-	virtual void RunCorrectivePhysics();
-	virtual void RunWorldPhysics();
-	virtual void RunEntityPhysics();
+	void RunPhysics();
+	virtual void RunPhysicsWalking();
+	virtual void RunPhysicsFlying();
 
 	//sets my camera pointer to this new camera and deletes any existing camera
 	void GiveGameCamera(GameCamera* camera);
@@ -71,9 +73,13 @@ public:
 	bool m_aboutToBeDeleted;
 	bool m_noClipMode;
 
+	Vector3 m_velocity;
+
 	Renderable* m_renderable;
 	GameState_Playing* m_playState;
 	Transform m_transform;
 	GameCamera* m_camera = nullptr;
+	eEntityPhysicsMode m_physicsMode = PHYSICS_MODE_NOCLIP;
 
+	std::string GetPhysicsModeString() const;
 };

@@ -4,6 +4,7 @@
 #include "Game/World.hpp"
 #include "Engine/Renderer/ObjLoader.hpp"
 #include "Game/GameCamera.hpp"
+#include "Game/DebugRenderSystem.hpp"
 
 Entity::~Entity()
 {
@@ -34,7 +35,7 @@ Entity::Entity(Vector3 position, std::string objFile, std::string materialFile)
 	m_noClipMode = false;
 
 	TODO("Set collision sphere on mesh entities to be the bounds of the mesh");
-	m_collider = Sphere(position, 1.f);
+	m_collider = Sphere(position, .4f);
 
 }
 
@@ -52,6 +53,15 @@ void Entity::Render()
 	g_theRenderer->BindModel(m_renderable->m_transform.GetWorldMatrix());
 	g_theRenderer->BindMaterial(m_renderable->GetEditableMaterial(0));
 	g_theRenderer->DrawMesh(m_renderable->m_mesh->m_subMeshes[0]);
+}
+
+void Entity::RenderBounds()
+{
+	//g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.f, m_collider.m_center, m_collider.m_radius, RGBA::CYAN, RGBA::CYAN, DEBUG_RENDER_HIDDEN);
+	//g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.f, m_collider.m_center, m_collider.m_radius, RGBA::RED, RGBA::RED, DEBUG_RENDER_USE_DEPTH);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.0f, m_collider.m_center, m_collider.m_radius, 10, 10, RGBA::RED.GetColorWithAlpha(32), RGBA::RED.GetColorWithAlpha(32), DEBUG_RENDER_HIDDEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.0f, m_collider.m_center, m_collider.m_radius, 10, 10, RGBA::RED, RGBA::RED, DEBUG_RENDER_USE_DEPTH);
+	
 }
 
 void Entity::RenderDevMode()
@@ -84,23 +94,49 @@ bool Entity::IsAboutToBeDeleted()
 	return m_aboutToBeDeleted;
 }
 
-void Entity::RunCorrectivePhysics()
+void Entity::RunPhysics()
 {
-	if (!m_noClipMode){
-		RunWorldPhysics();
-		RunEntityPhysics();
+	switch (m_physicsMode)
+	{
+	case (PHYSICS_MODE_NOCLIP):
+		//do no physics
+		return;
+	case (PHYSICS_MODE_WALKING):
+		RunPhysicsWalking();
+		break;
+	case (PHYSICS_MODE_FLYING):
+		RunPhysicsFlying();
+		break;
 	}
 }
 
-void Entity::RunWorldPhysics()
+void Entity::RunPhysicsWalking()
 {
-	
+	Translate(m_velocity * GetMasterClock()->GetDeltaSeconds());
 }
 
-void Entity::RunEntityPhysics()
+void Entity::RunPhysicsFlying()
 {
-	
+
 }
+
+//void Entity::RunCorrectivePhysics()
+//{
+//	if (!m_noClipMode){
+//		RunWorldPhysics();
+//		RunEntityPhysics();
+//	}
+//}
+//
+//void Entity::RunWorldPhysics()
+//{
+//	
+//}
+//
+//void Entity::RunEntityPhysics()
+//{
+//	
+//}
 
 void Entity::GiveGameCamera(GameCamera* camera)
 {
@@ -128,11 +164,13 @@ void Entity::SetTransform(Transform newT)
 {
 	m_transform = newT;
 	m_renderable->m_transform.SetParent(&m_transform);
+	m_collider.SetPosition(m_transform.GetWorldPosition());
 }
 
 void Entity::Translate(Vector3 translation)
 {
 	m_transform.TranslateLocal(translation);
+	m_collider.SetPosition(m_transform.GetWorldPosition());
 }
 
 void Entity::Rotate(float yaw, float pitch, float roll)
@@ -157,4 +195,18 @@ bool Entity::IsPointInForwardView(Vector3 point)
 	//return IsPointInConicSector2D(point, m_position, m_facing, m_forwardViewAngle, m_range);
 }
 
+std::string Entity::GetPhysicsModeString() const
+{
+	switch (m_physicsMode)
+	{
+	case PHYSICS_MODE_NOCLIP:
+		return "NO_CLIP";
+	case PHYSICS_MODE_WALKING:
+		return "WALKING";
+	case PHYSICS_MODE_FLYING:
+		return "FLYING";
+	default:
+		return "WHO ARE U";
+	}
+}
 

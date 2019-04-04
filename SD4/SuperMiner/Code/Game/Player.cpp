@@ -10,7 +10,7 @@
 Player::Player(GameState_Playing* playState, Vector3 position)
 {
 	float size = 1.f;
-	m_collider = Sphere(Vector3::ZERO, size);
+	m_collider = Sphere(Vector3::ZERO, .2f);
 	m_renderable = new Renderable();//new Renderable(RENDERABLE_CUBE, 1.f);
 	//make tank
 	MeshBuilder mb = MeshBuilder();
@@ -59,7 +59,7 @@ void Player::Update()
 	if (!g_theGame->IsDevMode()){
 		m_digRaycast = m_playState->m_world->Raycast(m_transform.GetWorldPosition(), m_transform.GetForward(), m_digDistance);
 	}
-
+	RunPhysics();
 }
 
 void Player::Render()
@@ -67,15 +67,30 @@ void Player::Render()
 	//only render if we don't have a camera / camera is not first person
 	if (m_camera == nullptr || m_camera->GetMode() != CAMERA_MODE_FIRSTPERSON)
 	{
-		g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.0f, m_transform.GetWorldPosition(), .5f, RGBA::GREEN, RGBA::GREEN);
+		//g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.0f, m_transform.GetWorldPosition(), .5f, RGBA::GREEN, RGBA::GREEN);
+		RenderBounds();
 	}
 	
 }
 
 void Player::HandleInput()
 {
+	if (g_theInput->WasKeyJustPressed('C'))
+	{
+		m_physicsMode = eEntityPhysicsMode (((int)m_physicsMode + 1) % (int)NUM_PHYSICS_MODES);
+	}
+
 //	float ds = g_theGame->GetDeltaSeconds();
-	HandleInputFreeCamera();
+	if (m_physicsMode == PHYSICS_MODE_NOCLIP)
+	{
+		HandleInputNoClip();
+	} else if (m_physicsMode == PHYSICS_MODE_WALKING){
+		HandleInputWalking();
+	} else if (m_physicsMode == PHYSICS_MODE_FLYING)
+	{
+		HandleInputFlying();
+	}
+	
 	HandleInputDigPlace();
 
 
@@ -139,7 +154,7 @@ float Player::GetPercentageOfHealth() const
 	return t;
 }
 
-void Player::HandleInputFreeCamera()
+void Player::HandleInputNoClip()
 {
 	float ds = g_theGame->GetDeltaSeconds();
 	float speed = m_speed;
@@ -147,37 +162,7 @@ void Player::HandleInputFreeCamera()
 		speed *= m_shiftMultiplier;
 	}
 
-	float deltaYaw = 0.f;
-	float deltaPitch = 0.f;
-
-	Vector2 mouseDirection = g_theInput->GetMouseDirection();
-	mouseDirection *= .5f;
-
-
-	if (g_theInput->IsKeyDown(VK_UP)){
-		deltaPitch -= 1.f;			// positive deltaPitch is from z towards x
-	}
-	if (g_theInput->IsKeyDown(VK_DOWN)){
-		deltaPitch +=1.f;
-	}
-	if (g_theInput->IsKeyDown(VK_RIGHT)){
-		deltaYaw -= 1.f;		//positive yaw is from right to left
-	}
-	if (g_theInput->IsKeyDown(VK_LEFT)){
-		deltaYaw +=1.f;		
-	}
-
-	deltaPitch += 1.f * mouseDirection.y;		//up and down is  deltaPitch
-	deltaYaw += -1.f * mouseDirection.x;				//left and right is yaw
-
-	Vector2 controllerRotation = g_theInput->GetController(0)->GetRightThumbstickCoordinates();
-	deltaYaw += -1.f * controllerRotation.x;
-	deltaPitch += -1.f * controllerRotation.y;
-
-	/*deltaYaw *= degPerSecond * ds;
-	deltaPitch *= degPerSecond * ds;
-	*/
-	Rotate(deltaYaw, deltaPitch, 0.f);
+	HandleRotationInputMouse();
 
 	Vector3 forward = GetForward();
 	Vector3 forwardLockedVertical = Vector3(forward.x, forward.y, 0.f);
@@ -209,6 +194,90 @@ void Player::HandleInputFreeCamera()
 	Translate(GetRight() * controllerTranslation.x * ds * speed);
 
 
+}
+
+void Player::HandleInputWalking()
+{
+	float ds = g_theGame->GetDeltaSeconds();
+
+	HandleRotationInputMouse();
+
+	Vector3 forward = GetForward();
+	Vector3 forwardLockedVertical = Vector3(forward.x, forward.y, 0.f);
+	forwardLockedVertical.NormalizeAndGetLength();
+
+	if (IsRightDown())
+	{
+		m_velocity+= GetRight() * m_speed * ds;
+	}
+	if (IsUpDown())
+	{
+		m_velocity+= forwardLockedVertical * m_speed * ds;
+	}
+	if (IsLeftDown())
+	{
+		m_velocity+= -GetRight() * m_speed * ds;
+	}
+	if (IsDownDown())
+	{
+		m_velocity+= -forwardLockedVertical * m_speed * ds;
+	}
+	if (g_theInput->IsShiftDown())
+	{
+		m_velocity+= -UP * m_speed * ds;
+	}
+	if (g_theInput->IsKeyDown(VK_SPACE))
+	{
+		m_velocity+= UP * m_speed * ds;
+	}
+
+
+	if (g_theInput->IsKeyDown('S') && g_theInput->IsControlDown())
+	{
+		m_velocity = Vector3::ZERO;
+	}
+
+}
+
+void Player::HandleInputFlying()
+{
+	TODO("Flying controls");
+	HandleInputWalking();
+}
+
+void Player::HandleRotationInputMouse()
+{
+	float deltaYaw = 0.f;
+	float deltaPitch = 0.f;
+
+	Vector2 mouseDirection = g_theInput->GetMouseDirection();
+	mouseDirection *= .5f;
+
+
+	if (g_theInput->IsKeyDown(VK_UP)){
+		deltaPitch -= 1.f;			// positive deltaPitch is from z towards x
+	}
+	if (g_theInput->IsKeyDown(VK_DOWN)){
+		deltaPitch +=1.f;
+	}
+	if (g_theInput->IsKeyDown(VK_RIGHT)){
+		deltaYaw -= 1.f;		//positive yaw is from right to left
+	}
+	if (g_theInput->IsKeyDown(VK_LEFT)){
+		deltaYaw +=1.f;		
+	}
+
+	deltaPitch += 1.f * mouseDirection.y;		//up and down is  deltaPitch
+	deltaYaw += -1.f * mouseDirection.x;				//left and right is yaw
+
+	Vector2 controllerRotation = g_theInput->GetController(0)->GetRightThumbstickCoordinates();
+	deltaYaw += -1.f * controllerRotation.x;
+	deltaPitch += -1.f * controllerRotation.y;
+
+	/*deltaYaw *= degPerSecond * ds;
+	deltaPitch *= degPerSecond * ds;
+	*/
+	Rotate(deltaYaw, deltaPitch, 0.f);
 }
 
 void Player::HandleInputDigPlace()

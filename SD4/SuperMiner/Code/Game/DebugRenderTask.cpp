@@ -134,7 +134,9 @@ DebugRenderTask_Sphere::DebugRenderTask_Sphere(Vector3 center, float radius, int
 void DebugRenderTask_Sphere::Render()
 {
 	RGBA color = Interpolate(m_info.m_startColor, m_info.m_endColor, m_info.m_age / m_info.m_lifetime);
-	g_theRenderer->UseShader("wireframe");
+	//g_theRenderer->UseShader("wireframe");
+	g_theRenderer->EnableFillMode(FILL_MODE_WIRE);
+
 	g_theRenderer->DrawSphere(m_sphere, color);
 	g_theRenderer->ReleaseShader();
 }
@@ -148,7 +150,7 @@ DebugRenderTask_AABB3::DebugRenderTask_AABB3(Vector3 center, float size, float l
 void DebugRenderTask_AABB3::Render()
 {
 	RGBA color = Interpolate(m_info.m_startColor, m_info.m_endColor, m_info.m_age / m_info.m_lifetime);
-	g_theRenderer->UseShader("wireframe");
+	g_theRenderer->EnableFillMode(FILL_MODE_WIRE);
 	g_theRenderer->DrawCube(m_cube.GetCenter(), m_cube.GetDimensions(), color);
 	g_theRenderer->ReleaseShader();
 }

@@ -78,6 +78,7 @@ void DebugRenderSystem::UpdateAndRender()
 		}*/
 	}
 	DestroyTasks();
+	g_theRenderer->ResetFillMode();
 }
 
 void DebugRenderSystem::HandleInput()
@@ -554,20 +555,25 @@ void DebugRenderSystem::SetRendererDrawMode(DebugRenderTask* task)
 	switch (task->m_info.m_mode){
 	case DEBUG_RENDER_USE_DEPTH:
 		g_theRenderer->EnableDepth(COMPARE_LESS, true);
+		g_theRenderer->SetFillMode(FILL_MODE_FILL);
 		break;
 	case DEBUG_RENDER_HIDDEN:
 		g_theRenderer->EnableDepth(COMPARE_GREATER, false);
+		g_theRenderer->SetFillMode(FILL_MODE_FILL);
 		break;
 	case DEBUG_RENDER_IGNORE_DEPTH:
 		//g_theRenderer->EnableDepth(COMPARE_ALWAYS, false);
 		g_theRenderer->DisableDepth();
+		g_theRenderer->SetFillMode(FILL_MODE_FILL);
 		break;
 	case DEBUG_RENDER_XRAY:
 		g_theRenderer->EnableDepth(COMPARE_GREATER, false);
+		g_theRenderer->SetFillMode(FILL_MODE_FILL);
 		g_theRenderer->BindShaderProgram("inverse");
 		task->Render();
 		//g_theRenderer->ReleaseShaderProgram();
 		g_theRenderer->EnableDepth(COMPARE_LESS, true);
+		g_theRenderer->SetFillMode(FILL_MODE_FILL);
 		break;
 	}
 }

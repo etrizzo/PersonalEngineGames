@@ -80,6 +80,14 @@ enum eCameraMode
 	NUM_CAMERA_MODES
 };
 
+enum eEntityPhysicsMode
+{
+	PHYSICS_MODE_NOCLIP,
+	PHYSICS_MODE_WALKING,
+	PHYSICS_MODE_FLYING,
+	NUM_PHYSICS_MODES
+};
+
 
 //const static Matrix44 WORLD_BASIS = Matrix44(RIGHT, UP, FORWARD);
 

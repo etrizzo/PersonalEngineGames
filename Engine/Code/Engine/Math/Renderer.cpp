@@ -1099,6 +1099,16 @@ void Renderer::ClearDepth(float depth)
 	glClear( GL_DEPTH_BUFFER_BIT );
 }
 
+void Renderer::EnableFillMode(eFillMode newMode)
+{
+	m_defaultShader->m_state.m_fillMode = newMode;
+}
+
+void Renderer::ResetFillMode()
+{
+	m_defaultShader->m_state.m_fillMode = FILL_MODE_FILL;
+}
+
 void Renderer::EndFrame(HDC displayContext)
 {
 	// copies the default camera's framebuffer to the "null" framebuffer, 

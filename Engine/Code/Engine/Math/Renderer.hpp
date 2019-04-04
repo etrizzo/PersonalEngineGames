@@ -217,6 +217,9 @@ public:
 	void EnableDepth( eCompare compare, bool should_write );
 	void DisableDepth();
 	void ClearDepth(float depth = 1.f);
+
+	void EnableFillMode(eFillMode newMode);
+	void ResetFillMode();		//resets to filled
 	
 	void EndFrame(HDC displayContext);
 	bool CopyFrameBuffer( FrameBuffer* dst, FrameBuffer* src);

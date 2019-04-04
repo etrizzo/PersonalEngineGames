@@ -21,7 +21,7 @@ public:
 	uchar m_currentPlaceBlockType = 1;
 
 	Vector2 m_positionXZ;
-	float m_speed				= 10.f;
+	float m_speed				= 5.f;
 	float m_shiftMultiplier		= 6.f;
 	float m_degPerSecond	= 60.f;
 
@@ -33,6 +33,11 @@ public:
 
 private:
 
-	void HandleInputFreeCamera();
+	void HandleInputNoClip();
+	void HandleInputWalking();
+	void HandleInputFlying();
+
+	void HandleRotationInputMouse();
+
 	void HandleInputDigPlace();
 };

@@ -90,6 +90,11 @@ void GameState_Playing::RenderUI()
 	g_theRenderer->DrawTextInBox2D(timeOfDayStr, bounds, Vector2(0.01f, 0.01f), .015f);
 
 
+	//draw player debugt text
+	IntVector2 chunkCoords = m_world->GetChunkCoordinatesFromWorldCoordinates(m_player->GetPosition());
+	std::string playerDebug = Stringf("Physics mode: %s    Velocity: (%3.2f, %3.2f, %3.2f)   ChunkCoords: (%i, %i)", m_player->GetPhysicsModeString(), m_player->m_velocity.x, m_player->m_velocity.y, m_player->m_velocity.z, chunkCoords.x, chunkCoords.y);
+	g_theRenderer->DrawTextInBox2D(playerDebug, bounds, Vector2(0.01f, .99f), .015f);
+
 	//draw block UI
 	BlockDefinition* playerPlaceBlock = BlockDefinition::GetBlockDefinitionFromID(m_player->m_currentPlaceBlockType);
 	AABB2 blockUI = bounds.GetPercentageBox(.95f, .01f, .99f, .05f);
