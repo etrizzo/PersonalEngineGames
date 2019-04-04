@@ -1,3 +1,5 @@
 quit
+debug_detach_camera
+debug_reattach_camera
 profiler
 recompile_shaders

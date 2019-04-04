@@ -3,23 +3,29 @@
 #include "Game/Tile.hpp"
 #include "Game/World.hpp"
 #include "Engine/Renderer/ObjLoader.hpp"
+#include "Game/GameCamera.hpp"
 
 Entity::~Entity()
 {
-
+	if (m_camera != nullptr)
+	{
+		delete m_camera;
+	}
 }
 
 Entity::Entity()
 {
 	m_renderable = new Renderable();
+	m_renderable->m_transform.SetParent(&m_transform);
 }
 
 Entity::Entity(Vector3 position, std::string objFile, std::string materialFile)
 {
 	m_renderable = new Renderable(objFile, materialFile);
+	m_renderable->m_transform.SetParent(&m_transform);
 	//wm_renderable->m_transform.SetLocalMatrix(matrix);
 	//m_renderable->m_transform.SetLocalMatrix(g_worldToEngine);
-	m_renderable->m_transform.TranslateLocal(position);
+	m_transform.TranslateLocal(position);
 
 	m_spinDegreesPerSecond = 45.f;
 	m_ageInSeconds = 0.f;
@@ -39,6 +45,13 @@ void Entity::Update()
 	m_ageInSeconds+=ds;
 	PROFILE_POP();
 
+}
+
+void Entity::Render()
+{
+	g_theRenderer->BindModel(m_renderable->m_transform.GetWorldMatrix());
+	g_theRenderer->BindMaterial(m_renderable->GetEditableMaterial(0));
+	g_theRenderer->DrawMesh(m_renderable->m_mesh->m_subMeshes[0]);
 }
 
 void Entity::RenderDevMode()
@@ -89,6 +102,22 @@ void Entity::RunEntityPhysics()
 	
 }
 
+void Entity::GiveGameCamera(GameCamera* camera)
+{
+	if (m_camera != nullptr)
+	{
+		//uhhhh panic?
+		ConsolePrintf(RGBA::RED, "Entity already had camera - deleting it i guess");
+		delete m_camera;
+	}
+	m_camera = camera;
+}
+
+void Entity::RemoveGameCamera()
+{
+	m_camera = nullptr;
+}
+
 IntVector2 Entity::GetCurrentChunkCoordinates() const
 {
 	return g_theGame->GetWorld()->GetChunkCoordinatesFromWorldCoordinates(GetPosition());
@@ -97,28 +126,29 @@ IntVector2 Entity::GetCurrentChunkCoordinates() const
 
 void Entity::SetTransform(Transform newT)
 {
-	m_renderable->m_transform = newT;
+	m_transform = newT;
+	m_renderable->m_transform.SetParent(&m_transform);
 }
 
 void Entity::Translate(Vector3 translation)
 {
-	m_renderable->m_transform.TranslateLocal(translation);
+	m_transform.TranslateLocal(translation);
 }
 
 void Entity::Rotate(float yaw, float pitch, float roll)
 {
-	m_renderable->m_transform.RotateByEuler(yaw, pitch, roll);
+	m_transform.RotateByEuler(yaw, pitch, roll);
 }
 
 void Entity::SetPosition(Vector3 newPos)
 {
-	m_renderable->m_transform.SetLocalPosition(newPos);
+	m_transform.SetLocalPosition(newPos);
 	m_collider.SetPosition(newPos);
 }
 
 void Entity::SetScale(Vector3 scale)
 {
-	m_renderable->m_transform.SetScale(scale);
+	m_transform.SetScale(scale);
 }
 
 bool Entity::IsPointInForwardView(Vector3 point)

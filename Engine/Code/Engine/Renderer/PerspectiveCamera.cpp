@@ -6,7 +6,8 @@ PerspectiveCamera::PerspectiveCamera(PerspectiveCamera * camera)
 	//duplicate transform and matrices
 	m_transform = Transform();
 	m_transform.SetParent(nullptr);
-	m_transform.SetLocalMatrix(camera->m_transform.GetWorldMatrix());
+	m_transform.SetLocalPosition(camera->m_transform.GetWorldPosition());
+	//m_transform.SetLocalMatrix(camera->m_transform.GetWorldMatrix());
 	//m_projMatrix = camera->m_projMatrix;    
 	GetViewMatrix();		//refreshes the view matrix
 

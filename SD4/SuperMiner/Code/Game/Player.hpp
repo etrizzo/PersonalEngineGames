@@ -8,6 +8,7 @@ public:
 	~Player();
 
 	void Update() override;
+	void Render() override;
 	void HandleInput();
 	
 	void Damage();
@@ -28,7 +29,7 @@ public:
 
 	RaycastResult m_digRaycast;
 
-	Transform* m_cameraTarget;
+	//Transform* m_cameraTarget;
 
 private:
 

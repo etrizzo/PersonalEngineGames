@@ -6,6 +6,7 @@
 #include "Game/DebugRenderSystem.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
+#include "Game/GameCamera.hpp"
 
 
 GameState_Playing::GameState_Playing()
@@ -70,6 +71,8 @@ void GameState_Playing::RenderGame()
 	g_theRenderer->ReleaseTexture(1);
 	g_theRenderer->ReleaseShader();
 
+	m_player->Render();
+
 	PROFILE_PUSH("DebugRenderSystem");
 	g_theGame->m_debugRenderSystem->UpdateAndRender();
 	PROFILE_POP();
@@ -121,6 +124,15 @@ void GameState_Playing::HandleInput()
 	}
 	if (g_theInput->WasKeyJustReleased('T')){
 		g_theGame->m_gameClock->SetScale(1.f);
+	}
+
+
+	if (g_theInput->WasKeyJustPressed('V')){
+		if (m_gameCamera->GetMode() == CAMERA_MODE_FIRSTPERSON) { 
+			m_gameCamera->SetMode(CAMERA_MODE_THIRDPERSON) ;
+		} else {
+			m_gameCamera->SetMode(CAMERA_MODE_FIRSTPERSON);
+		}
 	}
 
 
@@ -178,7 +190,9 @@ void GameState_Playing::SpawnPlayer(Vector3 pos)
 	m_player = new Player(this, pos);
 
 	//g_theGame->m_mainCamera->Translate(pos);
-	g_theGame->m_mainCamera->m_transform.SetParent(m_player->m_cameraTarget);
+	//g_theGame->m_mainCamera->m_transform.SetParent(&(m_player->m_transform));
+
+	m_gameCamera = new GameCamera(g_theGame->m_mainCamera, m_player);
 }
 
 

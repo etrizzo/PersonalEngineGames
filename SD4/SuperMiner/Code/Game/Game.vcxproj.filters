@@ -73,6 +73,9 @@
     <ClCompile Include="GlowParticles.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="GameCamera.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -139,6 +142,9 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="GlowParticles.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCamera.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

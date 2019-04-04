@@ -4,8 +4,8 @@
 #include "Engine/Math/Transform.hpp"
 #include "Engine/Renderer/Renderable.hpp"
 
-class Map;
 class GameState_Playing;
+class GameCamera;
 
 class Entity{
 public:
@@ -14,6 +14,7 @@ public:
 	Entity(Vector3 position, std::string objFile, std::string material = "default");
 
 	virtual void Update();
+	virtual void Render();
 
 	//virtual void Render();
 	virtual void RenderDevMode();
@@ -28,6 +29,11 @@ public:
 	virtual void RunWorldPhysics();
 	virtual void RunEntityPhysics();
 
+	//sets my camera pointer to this new camera and deletes any existing camera
+	void GiveGameCamera(GameCamera* camera);
+	//take away my reference to the camera I owned - DOES NOT delete camera
+	void RemoveGameCamera();
+
 	IntVector2 GetCurrentChunkCoordinates() const;
 
 	void SetTransform(Transform newT);
@@ -39,12 +45,12 @@ public:
 
 
 	//Getters
-	inline Vector3 GetForward() const { return m_renderable->m_transform.GetForward(); }
-	inline Vector3 GetUp() const { return m_renderable->m_transform.GetUp(); }
-	inline Vector3 GetRight() const { return m_renderable->m_transform.GetRight(); }
+	inline Vector3 GetForward() const { return m_transform.GetForward(); }
+	inline Vector3 GetUp() const { return m_transform.GetUp(); }
+	inline Vector3 GetRight() const { return m_transform.GetRight(); }
 
-	inline Transform GetTransform() const { return m_renderable->m_transform; };
-	inline Vector3 GetPosition() const { return m_renderable->GetPosition(); };
+	inline Transform GetTransform() const { return m_transform; };
+	inline Vector3 GetPosition() const { return m_transform.GetWorldPosition(); };
 
 	bool IsPointInForwardView(Vector3 point);
 
@@ -67,5 +73,7 @@ public:
 
 	Renderable* m_renderable;
 	GameState_Playing* m_playState;
+	Transform m_transform;
+	GameCamera* m_camera = nullptr;
 
 };

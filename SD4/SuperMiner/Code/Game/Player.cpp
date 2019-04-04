@@ -4,6 +4,7 @@
 #include "Game/DebugRenderSystem.hpp"
 #include "Game/Chunk.hpp"
 #include "Game/BlockDefinition.hpp"
+#include "Game/GameCamera.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 
 Player::Player(GameState_Playing* playState, Vector3 position)
@@ -17,8 +18,9 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	mb.AppendCube(Vector3(0.f, 0.f, 0.f), Vector3::ONE * .5f, RGBA::GREEN, RIGHT, UP, FORWARD);
 	mb.End();
 	m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
+	m_renderable->SetMaterial(Material::GetMaterial("default_unlit"));
 
-
+	m_renderable->m_transform.SetParent(&m_transform);
 
 	m_spinDegreesPerSecond = 45.f;
 	m_ageInSeconds = 0.f;
@@ -39,8 +41,6 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	m_health = 50;
 	m_maxHealth = m_health;
 
-	m_cameraTarget = new Transform();
-	m_cameraTarget->SetParent(&m_renderable->m_transform);
 
 	SetPosition(position);
 	SetScale(Vector3(size,size,size));
@@ -57,9 +57,19 @@ void Player::Update()
 	float ds = g_theGame->GetDeltaSeconds();
 	m_ageInSeconds+=ds;
 	if (!g_theGame->IsDevMode()){
-		m_digRaycast = m_playState->m_world->Raycast(m_cameraTarget->GetWorldPosition(), m_cameraTarget->GetForward(), m_digDistance);
+		m_digRaycast = m_playState->m_world->Raycast(m_transform.GetWorldPosition(), m_transform.GetForward(), m_digDistance);
 	}
 
+}
+
+void Player::Render()
+{
+	//only render if we don't have a camera / camera is not first person
+	if (m_camera == nullptr || m_camera->GetMode() != CAMERA_MODE_FIRSTPERSON)
+	{
+		g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.0f, m_transform.GetWorldPosition(), .5f, RGBA::GREEN, RGBA::GREEN);
+	}
+	
 }
 
 void Player::HandleInput()

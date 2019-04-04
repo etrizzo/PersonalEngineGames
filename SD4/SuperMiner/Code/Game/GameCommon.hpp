@@ -72,6 +72,15 @@ const static Matrix44 g_worldToEngine = Matrix44(Vector3(0.f, 0.f, 1.f), 		//rig
 
 
 
+enum eCameraMode
+{
+	CAMERA_MODE_FIRSTPERSON,
+	CAMERA_MODE_THIRDPERSON,
+	//CAMERA_MODE_FIXEDANGLE,
+	NUM_CAMERA_MODES
+};
+
+
 //const static Matrix44 WORLD_BASIS = Matrix44(RIGHT, UP, FORWARD);
 
 

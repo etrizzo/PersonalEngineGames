@@ -38,7 +38,7 @@ typedef float (*LifetimeCB) ();
 Vector3 SphericalSpawnLocation();
 inline Vector3 DefaultSpawnLocation() { return Vector3::ZERO; };
 Vector3 DefaultSpawnVelocity(Transform* t);
-inline Vector3 NoSpawnVelocity(Transform* t) { return Vector3::ZERO; };
+inline Vector3 NoSpawnVelocity(Transform* t) { UNUSED(t); return Vector3::ZERO; };
 RGBA DefaultSpawnColor();
 
 //color over time functions

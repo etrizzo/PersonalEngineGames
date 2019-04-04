@@ -7,14 +7,11 @@ class PerspectiveCamera;
 class DebugRenderSystem;
 class Entity;
 class Player;
-class Enemy;
-class Spawner;
-class Light;
-class SpotLight;
 class ParticleSystem;
 class ForwardRenderPath;
 //class RenderScene;
 class World;
+class GameCamera;
 
 class GameState_Playing: public GameState{
 public:
@@ -39,7 +36,6 @@ public:
 	void RespawnPlayer();
 
 
-	unsigned int GetNumActiveLights() const;
 
 	//RenderScene* GetScene() { return m_scene; }
 
@@ -48,6 +44,7 @@ public:
 	bool m_playing = false;
 	Light* m_sun;
 
+	GameCamera* m_gameCamera = nullptr;
 
 protected:
 
