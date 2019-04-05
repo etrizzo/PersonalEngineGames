@@ -28,8 +28,8 @@ public:
 	virtual bool IsAboutToBeDeleted();
 
 	void RunPhysics();
-	virtual void RunPhysicsWalking();
-	virtual void RunPhysicsFlying();
+	void RunCorrectivePhysics();
+
 
 	//sets my camera pointer to this new camera and deletes any existing camera
 	void GiveGameCamera(GameCamera* camera);
@@ -73,11 +73,20 @@ public:
 	bool m_aboutToBeDeleted;
 	bool m_noClipMode;
 
+	float m_walkingSpeed = 5.f;
+	float m_accelerationXY = 160.f;
+
+	Vector3 m_moveIntention;
+	Vector3 m_gravity = Vector3(0.f, 0.f, 0.0f);
+
+
 	Vector3 m_velocity;
 
 	Renderable* m_renderable;
 	GameState_Playing* m_playState;
 	Transform m_transform;
+	Transform* m_eyePosition;
+	float m_eyeHeight = 0.0f;
 	GameCamera* m_camera = nullptr;
 	eEntityPhysicsMode m_physicsMode = PHYSICS_MODE_NOCLIP;
 

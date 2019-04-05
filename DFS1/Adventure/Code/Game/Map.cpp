@@ -354,7 +354,7 @@ void Map::RemoveDoomedEntities()
 			if (entity!= nullptr){
 				g_theGame->m_currentState->m_currentAdventure->GetScene()->RemoveRenderable(entity->m_healthRenderable);
 			}
-			delete(entity);
+ 			delete(entity);
 		}
 	}
 

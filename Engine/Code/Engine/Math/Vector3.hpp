@@ -34,6 +34,9 @@ public:
 	float GetLength() const;										//returns length of vector
 	float GetLengthSquared() const;									//returns length of vector squared
 	float NormalizeAndGetLength();							//normalizes vector and returns length (1.0)
+
+	void ClampLength(float newLength);
+	
 	Vector3 GetNormalized() const;									//returns a new normalized copy of the vector
 	float GetOrientationDegrees() const;							//return orientation degrees for the vector (with east being 0)
 	static Vector3 MakeDirectionAtDegrees( float degrees);			//Creates a vector at angle specified

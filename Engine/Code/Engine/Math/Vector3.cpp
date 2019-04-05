@@ -171,6 +171,18 @@ float Vector3::NormalizeAndGetLength()
 
 }
 
+void Vector3::ClampLength(float maxLength)
+{
+	//if the vector is longer than newlength, normalize and multiply by maxLength;
+	if (GetLengthSquared() > (maxLength * maxLength))
+	{
+		NormalizeAndGetLength();
+		x *= maxLength;
+		y *= maxLength;
+		z *= maxLength;
+	}
+}
+
 Vector3 Vector3::GetNormalized() const
 {
 	return Vector3(this->x, this->y, this->z)/this->GetLength();

@@ -2,7 +2,7 @@
   AttractMusic="Data/Audio/TownTheme.mp3"
   VictoryMusic="Data/Audio/Lively Meadow Victory Fanfare.mp3"
 
-  ThesisOnlyMode="true"
+  ThesisOnlyMode="false"
   numCharacters="5"
   windowAspect="1.77"
   width="40.0"

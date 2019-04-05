@@ -96,29 +96,53 @@ bool Entity::IsAboutToBeDeleted()
 
 void Entity::RunPhysics()
 {
+	float ds = GetMasterClock()->GetDeltaSeconds();
 	switch (m_physicsMode)
 	{
 	case (PHYSICS_MODE_NOCLIP):
 		//do no physics
 		return;
 	case (PHYSICS_MODE_WALKING):
-		RunPhysicsWalking();
+		//set walking variables
 		break;
 	case (PHYSICS_MODE_FLYING):
-		RunPhysicsFlying();
+		//set flying variables
 		break;
 	}
-}
 
-void Entity::RunPhysicsWalking()
-{
+	//compute friction force
+	Vector3 frictionForce = -m_velocity * 1.f;
+
+	//compute willpower force
+	Vector3 willpowerForce = m_moveIntention * m_accelerationXY;
+
+	//compute total force (gravity + willpower + friction in XY and Z)
+	Vector3 totalForceDelta = (m_gravity + willpowerForce + frictionForce) * ds;
+
+	//save current speed, apply change to velocity, and then get speed after change in velocity
+	float unchangedSpeed = m_velocity.GetLength();
+	m_velocity += totalForceDelta;
+	float changedSpeed = m_velocity.GetLength();
+
+	//if your speed after change > speed before change, clamp it to Max(speedbeforechange, maxspeed)
+	if (changedSpeed > unchangedSpeed)
+	{
+		float maxSpeed = Max(unchangedSpeed, m_walkingSpeed);
+		m_velocity.ClampLength(maxSpeed);
+	}
+
+	//do the physics
 	Translate(m_velocity * GetMasterClock()->GetDeltaSeconds());
+
+	RunCorrectivePhysics();
 }
 
-void Entity::RunPhysicsFlying()
+void Entity::RunCorrectivePhysics()
 {
-
+	//get your blocc
 }
+
+
 
 //void Entity::RunCorrectivePhysics()
 //{

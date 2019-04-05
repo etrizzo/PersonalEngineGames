@@ -199,6 +199,7 @@ void Player::HandleInputNoClip()
 void Player::HandleInputWalking()
 {
 	float ds = g_theGame->GetDeltaSeconds();
+	m_moveIntention = Vector3::ZERO;
 
 	HandleRotationInputMouse();
 
@@ -208,33 +209,34 @@ void Player::HandleInputWalking()
 
 	if (IsRightDown())
 	{
-		m_velocity+= GetRight() * m_speed * ds;
+		m_moveIntention+= GetRight() * m_speed * ds;
 	}
 	if (IsUpDown())
 	{
-		m_velocity+= forwardLockedVertical * m_speed * ds;
+		m_moveIntention += forwardLockedVertical * m_speed * ds;
 	}
 	if (IsLeftDown())
 	{
-		m_velocity+= -GetRight() * m_speed * ds;
+		m_moveIntention += -GetRight() * m_speed * ds;
 	}
 	if (IsDownDown())
 	{
-		m_velocity+= -forwardLockedVertical * m_speed * ds;
+		m_moveIntention += -forwardLockedVertical * m_speed * ds;
 	}
 	if (g_theInput->IsShiftDown())
 	{
-		m_velocity+= -UP * m_speed * ds;
+		m_moveIntention += -UP * m_speed * ds;
 	}
 	if (g_theInput->IsKeyDown(VK_SPACE))
 	{
-		m_velocity+= UP * m_speed * ds;
+		m_moveIntention += UP * m_speed * ds;
 	}
 
 
 	if (g_theInput->IsKeyDown('S') && g_theInput->IsControlDown())
 	{
 		m_velocity = Vector3::ZERO;
+		m_moveIntention = Vector3::ZERO;
 	}
 
 }
