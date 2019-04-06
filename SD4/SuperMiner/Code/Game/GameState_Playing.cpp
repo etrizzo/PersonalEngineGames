@@ -92,7 +92,7 @@ void GameState_Playing::RenderUI()
 
 	//draw player debugt text
 	IntVector2 chunkCoords = m_world->GetChunkCoordinatesFromWorldCoordinates(m_player->GetPosition());
-	std::string playerDebug = Stringf("Physics mode: %s    Velocity: (%3.2f, %3.2f, %3.2f)   ChunkCoords: (%i, %i)", m_player->GetPhysicsModeString(), m_player->m_velocity.x, m_player->m_velocity.y, m_player->m_velocity.z, chunkCoords.x, chunkCoords.y);
+	std::string playerDebug = Stringf("Physics mode: %s    Velocity: (%3.2f, %3.2f, %3.2f)   ChunkCoords: (%i, %i)", m_player->GetPhysicsModeString().c_str(), m_player->m_velocity.x, m_player->m_velocity.y, m_player->m_velocity.z, chunkCoords.x, chunkCoords.y);
 	g_theRenderer->DrawTextInBox2D(playerDebug, bounds, Vector2(0.01f, .99f), .015f);
 
 	//draw block UI
@@ -159,7 +159,7 @@ void GameState_Playing::RespawnPlayer()
 void GameState_Playing::Startup()
 {
 	m_world = new World();
-	SpawnPlayer(Vector3(-4.f,0.f, (float) CHUNK_SIZE_Z * .5f));
+	SpawnPlayer(Vector3(-4.f,0.f, 120.0f));
 
 	//m_world->ActivateChunk(IntVector2(0,3));
 	//m_world->ActivateChunk(IntVector2(0,2));

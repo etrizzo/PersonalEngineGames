@@ -183,6 +183,17 @@ void Vector3::ClampLength(float maxLength)
 	}
 }
 
+void Vector3::ClampLengthXY(float maxXYLength)
+{
+	if (XY().GetLengthSquared() > (maxXYLength * maxXYLength))
+	{
+		Vector2 XYnormalized = XY().GetNormalized();
+		XYnormalized *= maxXYLength;
+		x = XYnormalized.x;
+		y = XYnormalized.y;
+	}
+}
+
 Vector3 Vector3::GetNormalized() const
 {
 	return Vector3(this->x, this->y, this->z)/this->GetLength();

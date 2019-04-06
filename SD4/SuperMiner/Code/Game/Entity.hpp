@@ -3,6 +3,7 @@
 #include "Game/Tile.hpp"
 #include "Engine/Math/Transform.hpp"
 #include "Engine/Renderer/Renderable.hpp"
+#include "Game/BlockLocator.hpp"
 
 class GameState_Playing;
 class GameCamera;
@@ -29,6 +30,11 @@ public:
 
 	void RunPhysics();
 	void RunCorrectivePhysics();
+
+	void PushOutOfBlock(const BlockLocator& block);
+
+	std::vector<BlockLocator> GetFirstCheckNeighbors(const BlockLocator& myBlock);
+	std::vector<BlockLocator> GetSecondCheckNeighbors(const BlockLocator& myBlock);
 
 
 	//sets my camera pointer to this new camera and deletes any existing camera
@@ -57,11 +63,20 @@ public:
 	bool IsPointInForwardView(Vector3 point);
 
 
+	AABB3 GetBounds();
+	//sets the colliders position based on the entity's transform - virtual for different kinds of colliders
+	virtual void SyncColliderPosition();
+
+
 	//Transform m_transform;
 	//Mesh* m_mesh;
 	//Texture* m_texture;
 
 	Sphere m_collider;
+
+	float m_height = 1.8f;
+	float m_eyeHeight = 1.65f;
+	float m_radius = .3f;
 
 	float m_spinDegreesPerSecond;
 	float m_ageInSeconds;
@@ -77,7 +92,7 @@ public:
 	float m_accelerationXY = 160.f;
 
 	Vector3 m_moveIntention;
-	Vector3 m_gravity = Vector3(0.f, 0.f, 0.0f);
+	Vector3 m_gravity = Vector3(0.f, 0.f, -9.8f);
 
 
 	Vector3 m_velocity;
@@ -85,8 +100,7 @@ public:
 	Renderable* m_renderable;
 	GameState_Playing* m_playState;
 	Transform m_transform;
-	Transform* m_eyePosition;
-	float m_eyeHeight = 0.0f;
+	//Transform* m_eyePosition;
 	GameCamera* m_camera = nullptr;
 	eEntityPhysicsMode m_physicsMode = PHYSICS_MODE_NOCLIP;
 

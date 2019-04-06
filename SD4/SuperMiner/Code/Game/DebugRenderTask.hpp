@@ -75,9 +75,11 @@ public:
 class DebugRenderTask_AABB3: public DebugRenderTask{
 public:
 	DebugRenderTask_AABB3(Vector3 center, float size, float lifetime = 0.f, RGBA startColor = RGBA::WHITE, RGBA endColor = RGBA::WHITE, DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH);
+	DebugRenderTask_AABB3(const AABB3& box, float lifetime = 0.f, RGBA startColor = RGBA::WHITE, RGBA endColor = RGBA::WHITE, DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH);
+
 	void Render() override;
 
-	AABB3 m_cube;
+	AABB3 m_box;
 };
 
 class DebugRenderTask_Line3: public DebugRenderTask{

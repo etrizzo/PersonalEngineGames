@@ -8,10 +8,12 @@ public:
 	BlockDefinition(uchar ID, bool isFullyOpaque, AABB2 topUV, AABB2 sideUV, AABB2 botUVs);
 
 	bool IsFullyOpaque() const		{ return m_isFullyOpaque; };
+	bool IsSolid() const			{ return m_isSolid; };
 	
 	std::string m_name = "Air";
 	uchar m_blockID = BLOCK_AIR;
 	bool m_isFullyOpaque = true;
+	bool m_isSolid = false;
 
 	int m_internalLightLevel = 0U;
 

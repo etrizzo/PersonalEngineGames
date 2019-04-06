@@ -371,6 +371,12 @@ void DebugRenderSystem::MakeDebugRenderWireAABB3(float lifetime, Vector3 pos, fl
 	m_tasks3D.push_back((DebugRenderTask*) cube);
 }
 
+void DebugRenderSystem::MakeDebugRenderWireAABB3(float lifetime, AABB3 box, RGBA const & start_color, RGBA const & end_color, DebugRenderMode const mode)
+{
+	DebugRenderTask_AABB3* cube = new DebugRenderTask_AABB3(box, lifetime, start_color, end_color, mode);
+	m_tasks3D.push_back((DebugRenderTask*)cube);
+}
+
 void DebugRenderSystem::MakeDebugRenderQuad(float lifetime, Vector3 center, Vector2 size,Vector3 right, Vector3 up, RGBA startColor, RGBA endColor, DebugRenderMode mode)
 {
 

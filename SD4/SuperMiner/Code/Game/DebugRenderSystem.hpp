@@ -206,6 +206,12 @@ public:
 		RGBA const &end_color = RGBA::GREEN, 
 		DebugRenderMode const mode = DEBUG_RENDER_USE_DEPTH); 
 
+	void MakeDebugRenderWireAABB3(float lifetime,
+		AABB3 box,
+		RGBA const &start_color = RGBA::RED,
+		RGBA const &end_color = RGBA::GREEN,
+		DebugRenderMode const mode = DEBUG_RENDER_USE_DEPTH);
+
 	void MakeDebugRenderQuad( float lifetime, 
 		Vector3 center = Vector3::ZERO, 
 		Vector2 size = Vector2::HALF,

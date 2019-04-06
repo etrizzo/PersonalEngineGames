@@ -10,17 +10,21 @@
 Player::Player(GameState_Playing* playState, Vector3 position)
 {
 	float size = 1.f;
-	m_collider = Sphere(Vector3::ZERO, .2f);
+	m_collider = Sphere(Vector3::ZERO, m_radius);
+	//m_eyePosition->SetParent(&m_transform);
+	//m_eyePosition->SetLocalPosition(UP * m_eyeHeight);
+
 	m_renderable = new Renderable();//new Renderable(RENDERABLE_CUBE, 1.f);
-	//make tank
-	MeshBuilder mb = MeshBuilder();
-	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendCube(Vector3(0.f, 0.f, 0.f), Vector3::ONE * .5f, RGBA::GREEN, RIGHT, UP, FORWARD);
-	mb.End();
-	m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
-	m_renderable->SetMaterial(Material::GetMaterial("default_unlit"));
+	//MeshBuilder mb = MeshBuilder();
+	//mb.Begin(PRIMITIVE_TRIANGLES, true);
+	//mb.AppendCube(Vector3(0.f, 0.f, 0.f), Vector3::ONE * .5f, RGBA::GREEN, RIGHT, UP, FORWARD);
+	//mb.End();
+	//m_renderable->SetMesh(mb.CreateMesh(VERTEX_TYPE_LIT));
+	//m_renderable->SetMaterial(Material::GetMaterial("default_unlit"));
 
 	m_renderable->m_transform.SetParent(&m_transform);
+	
+	m_physicsMode = PHYSICS_MODE_WALKING;
 
 	m_spinDegreesPerSecond = 45.f;
 	m_ageInSeconds = 0.f;
@@ -78,6 +82,11 @@ void Player::HandleInput()
 	if (g_theInput->WasKeyJustPressed('C'))
 	{
 		m_physicsMode = eEntityPhysicsMode (((int)m_physicsMode + 1) % (int)NUM_PHYSICS_MODES);
+	}
+
+	if (g_theInput->WasKeyJustPressed('O'))
+	{
+		SetPosition(Vector3(-4.0f, 0.0f, 120.0f));
 	}
 
 //	float ds = g_theGame->GetDeltaSeconds();

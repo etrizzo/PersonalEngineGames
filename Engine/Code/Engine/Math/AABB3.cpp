@@ -136,11 +136,18 @@ float AABB3::GetHeight() const
 	return maxs.y - mins.y;
 }
 
-Vector2 AABB3::GetRandomPointInBox() const
+Vector3 AABB3::GetRandomPointInBox() const
 {
 	float x = GetRandomFloatInRange(mins.x, maxs.x);
 	float y = GetRandomFloatInRange(mins.y, maxs.y);
-	return Vector2(x,y);
+	float z = GetRandomFloatInRange(mins.z, maxs.z);
+	return Vector3(x,y,z);
+}
+
+Vector3 AABB3::GetClosestPoint(const Vector3& point) const
+{
+	Vector3 clamped = ClampVector3(point, mins, maxs);
+	return clamped;
 }
 
 void AABB3::operator+=(const Vector3 & translation)

@@ -36,6 +36,7 @@ public:
 	float NormalizeAndGetLength();							//normalizes vector and returns length (1.0)
 
 	void ClampLength(float newLength);
+	void ClampLengthXY(float newXYLength);
 	
 	Vector3 GetNormalized() const;									//returns a new normalized copy of the vector
 	float GetOrientationDegrees() const;							//return orientation degrees for the vector (with east being 0)

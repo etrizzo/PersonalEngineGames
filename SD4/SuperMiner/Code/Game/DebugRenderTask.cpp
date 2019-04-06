@@ -144,14 +144,20 @@ void DebugRenderTask_Sphere::Render()
 DebugRenderTask_AABB3::DebugRenderTask_AABB3(Vector3 center, float size, float lifetime, RGBA startColor, RGBA endColor, DebugRenderMode mode)
 	:DebugRenderTask(lifetime, startColor, endColor, mode)
 {
-	m_cube = AABB3(center, size, size, size);
+	m_box = AABB3(center, size, size, size);
+}
+
+DebugRenderTask_AABB3::DebugRenderTask_AABB3(const AABB3 & box, float lifetime, RGBA startColor, RGBA endColor, DebugRenderMode mode)
+	: DebugRenderTask(lifetime, startColor, endColor, mode)
+{
+	m_box = box;
 }
 
 void DebugRenderTask_AABB3::Render()
 {
 	RGBA color = Interpolate(m_info.m_startColor, m_info.m_endColor, m_info.m_age / m_info.m_lifetime);
 	g_theRenderer->EnableFillMode(FILL_MODE_WIRE);
-	g_theRenderer->DrawCube(m_cube.GetCenter(), m_cube.GetDimensions(), color);
+	g_theRenderer->DrawCube(m_box.GetCenter(), m_box.GetDimensions(), color);
 	g_theRenderer->ReleaseShader();
 }
 

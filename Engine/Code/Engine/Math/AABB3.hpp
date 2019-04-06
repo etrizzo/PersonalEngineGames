@@ -37,7 +37,8 @@ public:
 	Vector3 GetCenter() const;
 	float GetWidth() const;
 	float GetHeight() const;
-	Vector2 GetRandomPointInBox() const;
+	Vector3 GetRandomPointInBox() const;
+	Vector3 GetClosestPoint(const Vector3& point) const;
 
 	//Operators
 	void operator+=(const Vector3& translation);

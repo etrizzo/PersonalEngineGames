@@ -20,6 +20,7 @@ public:
 	inline bool IsValid() const { return m_chunk != nullptr; }
 	inline bool IsBlockFullyOpaque() const;			
 	inline bool IsBlockAir() const;
+	inline bool IsBlockSolid() const;
 	inline uchar GetIndoorLightLevel() const;
 	inline uchar GetOutdoorLightLevel() const;
 	AABB3 GetBlockBounds() const;
@@ -51,6 +52,11 @@ bool BlockLocator::IsBlockFullyOpaque() const
 bool BlockLocator::IsBlockAir() const
 {
 	return GetBlock().GetBlockID() == BLOCK_AIR;
+}
+
+inline bool BlockLocator::IsBlockSolid() const
+{
+	return GetBlock().IsSolid();
 }
 
 inline uchar BlockLocator::GetIndoorLightLevel() const

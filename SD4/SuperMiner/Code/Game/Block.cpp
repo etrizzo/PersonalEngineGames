@@ -22,12 +22,22 @@ void Block::SetType(uchar newType)
 
 	//m_lighting = (uchar) newDefinition->m_internalLightLevel;
 
+	//set your bits
 	if (newDefinition->IsFullyOpaque())
 	{
 		SetBits(m_bits, BLOCK_BIT_IS_FULL_OPAQUE);
 	}
 	else {
 		ClearBits(m_bits, BLOCK_BIT_IS_FULL_OPAQUE);
+	}
+
+	if (newDefinition->IsSolid())
+	{
+		SetBits(m_bits, BLOCK_BIT_IS_SOLID);
+	}
+	else
+	{
+		ClearBits(m_bits, BLOCK_BIT_IS_SOLID);
 	}
 }
 

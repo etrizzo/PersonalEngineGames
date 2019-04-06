@@ -27,6 +27,7 @@ BlockDefinition::BlockDefinition(tinyxml2::XMLElement * blockElement)
 
 	//parse block attributes
 	m_isFullyOpaque = ParseXmlAttribute(*blockElement, "isFullyOpaque", true);
+	m_isSolid = ParseXmlAttribute(*blockElement, "isSolid", true);
 	m_internalLightLevel = ParseXmlAttribute(*blockElement, "lightLevel", 0);
 	
 
