@@ -54,6 +54,11 @@ void Entity::Update()
 	PROFILE_PUSH_FUNCTION();
 	float ds = g_theGame->GetDeltaSeconds();
 	m_ageInSeconds+=ds;
+
+	if (m_camera != nullptr)
+	{
+		m_camera->Update();
+	}
 	PROFILE_POP();
 
 }
@@ -71,8 +76,11 @@ void Entity::RenderBounds()
 	g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.0f, m_collider.m_center, m_collider.m_radius, 10, 10, RGBA::RED.GetColorWithAlpha(32), RGBA::RED.GetColorWithAlpha(32), DEBUG_RENDER_HIDDEN);
 	g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.0f, m_collider.m_center, m_collider.m_radius, 10, 10, RGBA::RED, RGBA::RED, DEBUG_RENDER_USE_DEPTH);
 	
-	g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.0f, GetBounds(), RGBA::BLANCHEDALMOND.GetColorWithAlpha(32), RGBA::BLANCHEDALMOND.GetColorWithAlpha(32), DEBUG_RENDER_HIDDEN);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.0f, GetBounds(), RGBA::BLANCHEDALMOND, RGBA::BLANCHEDALMOND, DEBUG_RENDER_USE_DEPTH);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.0f, GetBounds(), RGBA::CYAN.GetColorWithAlpha(32), RGBA::CYAN.GetColorWithAlpha(32), DEBUG_RENDER_HIDDEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.0f, GetBounds(), RGBA::CYAN, RGBA::CYAN, DEBUG_RENDER_USE_DEPTH);
+
+	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.0f, m_collider.m_center - (UP * m_collider.m_radius), RGBA::CYAN.GetColorWithAlpha(32), RGBA::CYAN.GetColorWithAlpha(32), DEBUG_RENDER_HIDDEN);
+	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.0f, m_collider.m_center - (UP * m_collider.m_radius), RGBA::CYAN, RGBA::CYAN, DEBUG_RENDER_USE_DEPTH);
 
 	//g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.0f, m_eyePosition->GetWorldPosition(), RGBA::CYAN, RGBA::CYAN, DEBUG_RENDER_HIDDEN);
 	//g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.0f, m_eyePosition->GetWorldPosition(), RGBA::CYAN, RGBA::CYAN, DEBUG_RENDER_USE_DEPTH);
@@ -112,8 +120,12 @@ void Entity::RunPhysics()
 {
 	float ds = GetMasterClock()->GetDeltaSeconds();
 	//clamp ds
-	ds = ClampFloat(ds, 0.0f, .016f);
+	ds = ClampFloat(ds, 0.0f, .022f);	//clamp it to like 40FPS frame rate
 
+	float gravityScale = 1.0f;
+	float maxSpeed = m_walkingSpeed;
+	float frictionCoefficientXY = -6.f;
+	float frictionCoefficientZ = 0.0f;
 
 	switch (m_physicsMode)
 	{
@@ -122,9 +134,21 @@ void Entity::RunPhysics()
 		return;
 	case (PHYSICS_MODE_WALKING):
 		//set walking variables
+		if (m_isOnGround)
+		{
+			frictionCoefficientXY = -7.f;
+		}
+		else
+		{
+			frictionCoefficientXY = -2.f;
+		}
 		break;
 	case (PHYSICS_MODE_FLYING):
 		//set flying variables
+		gravityScale = 0.0f;
+		maxSpeed = m_flyingSpeed;
+		frictionCoefficientXY = -5.f;
+		frictionCoefficientZ = -5.f;
 		break;
 	}
 
@@ -134,7 +158,7 @@ void Entity::RunPhysics()
 	Vector3 willpowerForce = m_moveIntention * m_accelerationXY;
 
 	//compute total force (gravity + willpower + friction in XY and Z)
-	Vector3 totalForceDelta = (m_gravity + willpowerForce) * ds;
+	Vector3 totalForceDelta = ((m_gravity * gravityScale) + willpowerForce) * ds;
 
 	//save current speed, apply change to velocity, and then get speed after change in velocity
 	float unchangedSpeed = m_velocity.GetLength();
@@ -144,13 +168,17 @@ void Entity::RunPhysics()
 	//if your speed after change > speed before change, clamp it to Max(speedbeforechange, maxspeed)
 	if (changedSpeed > unchangedSpeed)
 	{
-		float maxSpeed = Max(unchangedSpeed, m_walkingSpeed);
-		//m_velocity.ClampLength(20.0f);
-		m_velocity.ClampLengthXY(maxSpeed);
+		float clampValue = Max(unchangedSpeed, maxSpeed);
+		if (m_physicsMode == PHYSICS_MODE_FLYING)
+		{
+			m_velocity.ClampLength(clampValue);
+		} else {
+			m_velocity.ClampLengthXY(clampValue);
+		}
 	}
 
 	//compute friction force
-	Vector3 frictionForce = Vector3(m_velocity.XY() * -5.f, 0.0f);
+	Vector3 frictionForce = Vector3(m_velocity.XY() * frictionCoefficientXY, m_velocity.z * frictionCoefficientZ);
 	//apply friction
 	m_velocity += (frictionForce * ds);
 
@@ -158,7 +186,7 @@ void Entity::RunPhysics()
 	//float ds2 = ds;
 	//ds2 = ClampFloat(ds2, 0.0f, .016f);
 	Translate(m_velocity * ds);
-
+	UpdateIsOnGround();
 	RunCorrectivePhysics();
 }
 
@@ -217,6 +245,30 @@ void Entity::PushOutOfBlock(const BlockLocator & block)
 		}
 	}
 
+}
+
+void Entity::UpdateIsOnGround()
+{
+	BlockLocator blocc = g_theGame->GetWorld()->GetBlockLocatorAtWorldPosition(m_collider.m_center);
+	if (blocc.IsValid())
+	{
+		BlockLocator downn = blocc.GetDown();
+		if (downn.IsBlockSolid())
+		{
+			AABB3 blockBounds = downn.GetBlockBounds();
+
+			Vector3 closestPoint = blockBounds.GetClosestPoint(m_collider.m_center);
+			if (m_collider.IsPointInside(closestPoint))
+			{
+				//you are colliding with a solid block below you, you are on the ground
+				m_isOnGround = true;
+			}
+			else
+			{
+				m_isOnGround = false;
+			}
+		}
+	}
 }
 
 std::vector<BlockLocator> Entity::GetFirstCheckNeighbors(const BlockLocator & myBlock)

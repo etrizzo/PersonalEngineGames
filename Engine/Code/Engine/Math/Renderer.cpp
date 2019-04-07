@@ -2136,7 +2136,7 @@ void Renderer::PostStartup()
 
 	m_defaultCamera->SetProjectionOrtho(1.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.f,100.f);
 	Vector2 center = m_defaultCamera->GetBounds().GetCenter();
-	m_defaultCamera->LookAt( Vector3( center.x, center.y, -1.f ), Vector3(center.x, center.y, .5f)); 
+	//m_defaultCamera->LookAt( Vector3( center.x, center.y, -1.f ), Vector3(center.x, center.y, .5f)); 
 
 	m_effectCamera = new Camera();
 	m_effectCamera->SetColorTarget(m_defaultColorTarget);

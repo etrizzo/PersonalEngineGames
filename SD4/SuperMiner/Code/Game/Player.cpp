@@ -58,12 +58,12 @@ Player::~Player()
 void Player::Update()
 {
 
-	float ds = g_theGame->GetDeltaSeconds();
-	m_ageInSeconds+=ds;
+	
 	if (!g_theGame->IsDevMode()){
 		m_digRaycast = m_playState->m_world->Raycast(m_transform.GetWorldPosition(), m_transform.GetForward(), m_digDistance);
 	}
 	RunPhysics();
+	Entity::Update();
 }
 
 void Player::Render()
@@ -79,10 +79,7 @@ void Player::Render()
 
 void Player::HandleInput()
 {
-	if (g_theInput->WasKeyJustPressed('C'))
-	{
-		m_physicsMode = eEntityPhysicsMode (((int)m_physicsMode + 1) % (int)NUM_PHYSICS_MODES);
-	}
+
 
 	if (g_theInput->WasKeyJustPressed('O'))
 	{
@@ -167,8 +164,8 @@ void Player::HandleInputNoClip()
 {
 	float ds = g_theGame->GetDeltaSeconds();
 	float speed = m_speed;
-	if (g_theInput->IsKeyDown(VK_SHIFT)){
-		speed *= m_shiftMultiplier;
+	if (g_theInput->IsControlDown()){
+		speed *= m_controlMultiplier;
 	}
 
 	HandleRotationInputMouse();
@@ -190,10 +187,10 @@ void Player::HandleInputNoClip()
 	if (g_theInput->IsKeyDown('S')){
 		Translate(forwardLockedVertical * ds * speed * -1.f);
 	}
-	if (g_theInput->IsKeyDown('E') || g_theInput->GetController(0)->IsButtonDown(XBOX_BUMPER_RIGHT)){
+	if (g_theInput->IsKeyDown(VK_SPACE) || g_theInput->GetController(0)->IsButtonDown(XBOX_BUMPER_RIGHT)){
 		Translate(UP * ds* speed );		//going off of camera's up feels very weird when it's not perfectly upright
 	}
-	if (g_theInput->IsKeyDown('Q') || g_theInput->GetController(0)->IsButtonDown(XBOX_BUMPER_LEFT)){
+	if (g_theInput->IsShiftDown() || g_theInput->GetController(0)->IsButtonDown(XBOX_BUMPER_LEFT)){
 		Translate(UP * ds * speed * -1.f);
 	}
 
@@ -207,7 +204,6 @@ void Player::HandleInputNoClip()
 
 void Player::HandleInputWalking()
 {
-	float ds = g_theGame->GetDeltaSeconds();
 	m_moveIntention = Vector3::ZERO;
 
 	HandleRotationInputMouse();
@@ -216,29 +212,30 @@ void Player::HandleInputWalking()
 	Vector3 forwardLockedVertical = Vector3(forward.x, forward.y, 0.f);
 	forwardLockedVertical.NormalizeAndGetLength();
 
+	float groundScale = 1.f;
+	if (!m_isOnGround && m_physicsMode != PHYSICS_MODE_FLYING)
+	{
+		groundScale = .01f;
+	}
 	if (IsRightDown())
 	{
-		m_moveIntention+= GetRight() * m_speed * ds;
+		m_moveIntention += GetRight() * m_speed * groundScale;
 	}
 	if (IsUpDown())
 	{
-		m_moveIntention += forwardLockedVertical * m_speed * ds;
+		m_moveIntention += forwardLockedVertical * m_speed * groundScale;
 	}
 	if (IsLeftDown())
 	{
-		m_moveIntention += -GetRight() * m_speed * ds;
+		m_moveIntention += -GetRight() * m_speed * groundScale;
 	}
 	if (IsDownDown())
 	{
-		m_moveIntention += -forwardLockedVertical * m_speed * ds;
+		m_moveIntention += -forwardLockedVertical * m_speed * groundScale;
 	}
-	if (g_theInput->IsShiftDown())
+	if (g_theInput->WasKeyJustPressed(VK_SPACE) && m_isOnGround)
 	{
-		m_moveIntention += -UP * m_speed * ds;
-	}
-	if (g_theInput->IsKeyDown(VK_SPACE))
-	{
-		m_moveIntention += UP * m_speed * ds;
+		m_velocity += m_jumpForce;
 	}
 
 
@@ -254,6 +251,15 @@ void Player::HandleInputFlying()
 {
 	TODO("Flying controls");
 	HandleInputWalking();
+
+	if (g_theInput->IsShiftDown())
+	{
+		m_moveIntention += -UP * m_speed;
+	}
+	if (g_theInput->IsKeyDown(VK_SPACE))
+	{
+		m_moveIntention += UP * m_speed;
+	}
 }
 
 void Player::HandleRotationInputMouse()

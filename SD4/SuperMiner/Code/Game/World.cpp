@@ -5,6 +5,7 @@
 #include "Game/RaycastResult.hpp"
 #include "Game/DebugRenderSystem.hpp"
 #include "Game/GlowParticles.hpp"
+#include "Game/GameCamera.hpp"
 
 World::World()
 {
@@ -300,7 +301,7 @@ void World::UpdateDebugStuff()
 
 	//draw the debug raycast
 	RaycastResult dig = g_theGame->GetPlayer()->m_digRaycast;
-	if (g_theGame->IsDevMode()) {
+	if (g_theGame->IsDevMode() || g_theGame->GetPlayer()->m_playState->m_gameCamera->GetMode() != CAMERA_MODE_FIRSTPERSON) {
 		
 
 		if (dig.DidImpact())
@@ -308,12 +309,11 @@ void World::UpdateDebugStuff()
 			pointColor = RGBA::GREEN;
 			raycastColor = RGBA::GREEN;
 		}
-		if (g_theGame->IsDevMode()) {
-			RGBA xrayColor = RGBA::GRAY;
-			RGBA visibleColor = raycastColor;
-			g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(dig.m_ray.m_position, dig.m_endPosition, xrayColor, xrayColor, 0.f, xrayColor, xrayColor, DEBUG_RENDER_HIDDEN);
-			g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(dig.m_ray.m_position, dig.m_impactPosition, visibleColor, visibleColor, 0.f, visibleColor, visibleColor, DEBUG_RENDER_USE_DEPTH);
-		}
+		
+		RGBA xrayColor = RGBA::GRAY;
+		RGBA visibleColor = raycastColor;
+		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(dig.m_ray.m_position, dig.m_endPosition, xrayColor, xrayColor, 0.f, xrayColor, xrayColor, DEBUG_RENDER_HIDDEN);
+		g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(dig.m_ray.m_position, dig.m_impactPosition, visibleColor, visibleColor, 0.f, visibleColor, visibleColor, DEBUG_RENDER_USE_DEPTH);
 
 		g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, dig.m_impactPosition, RGBA::BLACK, RGBA::BLACK, DEBUG_RENDER_HIDDEN);
 		g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.f, dig.m_impactPosition, pointColor, pointColor, DEBUG_RENDER_USE_DEPTH);
@@ -335,10 +335,10 @@ void World::UpdateDebugStuff()
 			quadUp = UP;
 			quadRight = Cross(UP, dig.m_impactNormal);
 		}
-		RGBA wireColor = RGBA::BLANCHEDALMOND.GetColorWithAlpha(100);
-		RGBA quadColor = RGBA::BLANCHEDALMOND.GetColorWithAlpha(24);
+		//RGBA wireColor = RGBA::BLANCHEDALMOND.GetColorWithAlpha(100);
+		RGBA quadColor = RGBA::BLANCHEDALMOND.GetColorWithAlpha(32);
 		g_theGame->m_debugRenderSystem->MakeDebugRenderQuad(0.f, blockCenter + halfNormal, Vector2::HALF * .95f, quadRight, quadUp, quadColor, quadColor, DEBUG_RENDER_IGNORE_DEPTH);
-		g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.f, blockCenter, .505f, wireColor, wireColor, DEBUG_RENDER_IGNORE_DEPTH);
+		//g_theGame->m_debugRenderSystem->MakeDebugRenderWireAABB3(0.f, blockCenter, .505f, wireColor, wireColor, DEBUG_RENDER_IGNORE_DEPTH);
 	}
 
 	if (g_theGame->IsDebugLighting())

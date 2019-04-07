@@ -14,6 +14,7 @@ public:
 	Camera* GetCamera()		{ return m_camera; };
 	Entity* GetOwner()		{ return m_myDaddy; };
 	eCameraMode GetMode()	{ return m_mode; };
+	std::string GetModeString();
 
 	void SetOwner(Entity* owner);
 	void SetMode(eCameraMode newMode);
@@ -25,5 +26,10 @@ private:
 
 	void UpdateFirstPerson();
 	void UpdateThirdPerson();
+	void UpdateFixedAngle();
 
+	void FinishMode();
+	void InitForNewMode();
+
+	Vector3 m_fixedAngleOffset = Vector3(6.f, 4.f, 5.f);
 };

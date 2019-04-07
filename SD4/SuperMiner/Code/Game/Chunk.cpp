@@ -520,36 +520,42 @@ void Chunk::AddVertsForBlockAtIndex(int blockIndex)
 		if (!me.GetUp().IsBlockFullyOpaque()){
 			//Add verts for top (abfe)					//up	//right
 			tint = GetLightingTintForBlock(me.GetUp());
+			tint.b = 255;
 			m_cpuMesh.AppendPlane(center + topOffset, FORWARD, RIGHT, Vector2::HALF, tint, blockDef->m_topUVs.mins, blockDef->m_topUVs.maxs);
 		}
 
 		if (!me.GetSouth().IsBlockFullyOpaque()){
 			//add verts for right (dhfb)
 			tint = GetLightingTintForBlock(me.GetSouth());
+			tint.b = 206;
 			m_cpuMesh.AppendPlane(center + rightOffset, UP, FORWARD, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 
 		if (!me.GetNorth().IsBlockFullyOpaque()){
 			//add verts for left (gcae)
 			tint = GetLightingTintForBlock(me.GetNorth());
+			tint.b = 206;
 			m_cpuMesh.AppendPlane(center - rightOffset, UP, -FORWARD, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 
 		if (!me.GetEast().IsBlockFullyOpaque()){
 			//add verts for front (hgef)
 			tint = GetLightingTintForBlock(me.GetEast());
+			tint.b = 232;
 			m_cpuMesh.AppendPlane(center + forwardOffset, UP, -RIGHT, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 
 		if (!me.GetWest().IsBlockFullyOpaque()){
 			//add verts for back (cdba)
 			tint = GetLightingTintForBlock(me.GetWest());
+			tint.b = 232;
 			m_cpuMesh.AppendPlane(center - forwardOffset, UP, RIGHT, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 
 		if (!me.GetDown().IsBlockFullyOpaque()){
 			//add verts for bottom (hgcd)
 			tint = GetLightingTintForBlock(me.GetDown());
+			tint.b = 255;
 			m_cpuMesh.AppendPlane(center - topOffset, FORWARD, -RIGHT, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 	}

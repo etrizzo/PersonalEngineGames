@@ -92,7 +92,16 @@ void GameState_Playing::RenderUI()
 
 	//draw player debugt text
 	IntVector2 chunkCoords = m_world->GetChunkCoordinatesFromWorldCoordinates(m_player->GetPosition());
-	std::string playerDebug = Stringf("Physics mode: %s    Velocity: (%3.2f, %3.2f, %3.2f)   ChunkCoords: (%i, %i)", m_player->GetPhysicsModeString().c_str(), m_player->m_velocity.x, m_player->m_velocity.y, m_player->m_velocity.z, chunkCoords.x, chunkCoords.y);
+	std::string playerDebug = Stringf("Physics mode: %s(F4)   Camera mode: %s(F5)   \nVelocity: (%3.2f, %3.2f, %3.2f) (Magnitude: %3.2f)   OnGround?: %s   ChunkCoords: (%i, %i)  ",
+		m_player->GetPhysicsModeString().c_str(),
+		m_gameCamera->GetModeString().c_str(),
+		m_player->m_velocity.x, 
+		m_player->m_velocity.y, 
+		m_player->m_velocity.z,
+		m_player->m_velocity.GetLength(),
+		ToString(m_player->m_isOnGround).c_str(),
+		chunkCoords.x, 
+		chunkCoords.y);
 	g_theRenderer->DrawTextInBox2D(playerDebug, bounds, Vector2(0.01f, .99f), .015f);
 
 	//draw block UI
@@ -132,12 +141,13 @@ void GameState_Playing::HandleInput()
 	}
 
 
-	if (g_theInput->WasKeyJustPressed('V')){
-		if (m_gameCamera->GetMode() == CAMERA_MODE_FIRSTPERSON) { 
-			m_gameCamera->SetMode(CAMERA_MODE_THIRDPERSON) ;
-		} else {
-			m_gameCamera->SetMode(CAMERA_MODE_FIRSTPERSON);
-		}
+	if (g_theInput->WasKeyJustPressed(VK_F4))
+	{
+		m_player->m_physicsMode = eEntityPhysicsMode(((int)m_player->m_physicsMode + 1) % (int)NUM_PHYSICS_MODES);
+	}
+
+	if (g_theInput->WasKeyJustPressed(VK_F5)){
+		m_gameCamera->SetMode(eCameraMode(((int)m_gameCamera->GetMode() + 1) % (int)NUM_CAMERA_MODES));
 	}
 
 

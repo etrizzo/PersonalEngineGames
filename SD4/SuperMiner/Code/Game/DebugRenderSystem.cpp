@@ -455,6 +455,9 @@ void DebugRenderSystem::Render3D()
 					}*/
 				}
 			}
+
+			//draw basis
+			MakeDebugRenderBasis(0.0f, m_gameCamera->GetPosition(), 1.f, m_gameCamera->m_transform.GetWorldMatrix());
 		}
 		for(DebugRenderTask* task : m_tasks3D){
 			SetRendererDrawMode(task);

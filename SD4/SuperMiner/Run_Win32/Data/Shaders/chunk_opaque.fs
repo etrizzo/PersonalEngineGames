@@ -33,9 +33,11 @@ void main( void )
 	vec3 lightRGB = max(indoorRGB, outdoorRGB);
 
 	vec4 lightColor = vec4(lightRGB.r, lightRGB.g , lightRGB.b , 1.0);
+	lightColor *= passColor.b;		//blue value is for slightly different tints per side
+	lightColor.a = 1.0f;
 
 	//lightColor = vec4(indoor, outdoor, 0.0, 1.0);
 
-	outColor = diffuse * lightColor;
+	outColor = diffuse * lightColor; 
 	outColor = ApplyFog( outColor, passViewPos.x);
 }

@@ -136,6 +136,17 @@ const std::string Stringv(const char * format, va_list args)
 	return true;
 }
 
+ std::string ToString(bool boolean)
+ {
+	 if (boolean)
+	 {
+		 return "true";
+	 }
+	 else {
+		 return "false";
+	 }
+ }
+
  //bool IsStringInt(std::string stringToCheck)
  //{
 

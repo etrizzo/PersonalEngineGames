@@ -22,7 +22,7 @@ public:
 
 	Vector2 m_positionXZ;
 	float m_speed				= 5.f;
-	float m_shiftMultiplier		= 6.f;
+	float m_controlMultiplier		= 6.f;
 	float m_degPerSecond	= 60.f;
 
 	float m_digDistance = 8.f;

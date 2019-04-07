@@ -1,5 +1,6 @@
 #include "Matrix44.hpp"
 #include "Game/EngineBuildPreferences.hpp"
+#include "Engine/Core/EngineCommon.hpp"
 
 const Matrix44 Matrix44::IDENTITY = Matrix44();
 
@@ -387,7 +388,8 @@ Matrix44 Matrix44::LookAt(const Vector3 & position, const Vector3 & target, cons
 	Vector3 newUp = Cross(newForward, newRight).GetNormalized();
 	Matrix44 lookMatrix;
 #ifdef USE_X_FORWARD_Z_UP
-	lookMatrix = Matrix44(newForward, newRight, newUp, position);
+	lookMatrix = Matrix44(newForward, -newRight, newUp, position);
+	//lookMatrix = Matrix44(newRight, newUp, newForward, position);
 #else
 	lookMatrix = Matrix44(newRight, newUp, newForward, position);
 #endif
@@ -546,7 +548,25 @@ Vector3 Matrix44::GetEulerAngles() const
 	float x;
 	float y;
 	float z;
+#ifdef USE_X_FORWARD_Z_UP
+	TODO("Yell at forseth for giving us this code and then fix this for different coordinate system");
+	float sx = Ky;
+	sx = ClampFloat(sx, -1.f, 1.f);
+	// pitch (was x)
+	y = -ConvertRadiansToDegrees(asinf(sx));
 
+	float cx = CosDegreesf(y);
+	if (cx != 0.f) {
+		z = Atan2Degreesf(Kx, Kz);		//yaw (was y)
+		x = Atan2Degreesf(Iy, Jy);		//roll (was z)
+	}
+	else {
+		x = 0.f;						//roll (was z)
+		z = Atan2Degreesf(Jx, Ix);		//yaw (was y)
+	}
+
+	return Vector3(y, z, x);
+#else
 	float sx = Ky;
 	sx = ClampFloat(sx, -1.f, 1.f);
 	x = ConvertRadiansToDegrees(asinf(sx));
@@ -559,7 +579,8 @@ Vector3 Matrix44::GetEulerAngles() const
 		z = 0.f;
 		y = Atan2Degreesf(Jx, Ix);
 	}
-	
+	return Vector3(x, y, z);
+#endif
 	//x = Atan2Degreesf(Iy, Ix);
 	//y = Atan2Degreesf(-Iz, sqrtf((Jz * Jz) + (Kz*Kz)));
 	//z = Atan2Degreesf(Jz, Kz)
@@ -570,7 +591,7 @@ Vector3 Matrix44::GetEulerAngles() const
 	//z = Atan2Degreesf(Jx, Ix)
 
 
-	return Vector3(x,y,z);
+	
 }
 
 Vector3 Matrix44::GetPosition() const

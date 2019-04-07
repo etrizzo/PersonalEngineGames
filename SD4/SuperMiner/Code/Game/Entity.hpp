@@ -32,6 +32,7 @@ public:
 	void RunCorrectivePhysics();
 
 	void PushOutOfBlock(const BlockLocator& block);
+	void UpdateIsOnGround();
 
 	std::vector<BlockLocator> GetFirstCheckNeighbors(const BlockLocator& myBlock);
 	std::vector<BlockLocator> GetSecondCheckNeighbors(const BlockLocator& myBlock);
@@ -89,11 +90,14 @@ public:
 	bool m_noClipMode;
 
 	float m_walkingSpeed = 5.f;
+	float m_flyingSpeed = 10.f;
 	float m_accelerationXY = 160.f;
 
-	Vector3 m_moveIntention;
-	Vector3 m_gravity = Vector3(0.f, 0.f, -9.8f);
+	Vector3 m_moveIntention = Vector3::ZERO;
+	Vector3 m_gravity = Vector3(0.f, 0.f, -20.f);
+	Vector3 m_jumpForce = Vector3(0.f, 0.f, 8.f);
 
+	bool m_isOnGround = false;
 
 	Vector3 m_velocity;
 
