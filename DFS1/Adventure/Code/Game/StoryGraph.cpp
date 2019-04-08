@@ -108,6 +108,24 @@ void StoryGraph::HandleInput(const AABB2& bounds)
 	}
 }
 
+void StoryGraph::RunGenerationFinal()
+{
+	//srand(1);
+	bool generated = false;
+	while (!generated) {
+		Clear();
+		//m_graph->RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
+		RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
+
+		//generated = true;
+		//generated = m_graph->AddEndingsToGraph(10);
+		AddEndingsToActBoundaryEdge(GetEnd(), 10);
+		RemoveBranchesWithNoEnding(GetEnd());
+		generated = !CheckForInvalidGraph();
+
+	}
+}
+
 void StoryGraph::RunGenerationPairs(int numPairs)
 {
 	Clear();

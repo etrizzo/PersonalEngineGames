@@ -67,6 +67,9 @@ public:
 	Generation Functions
 	=====================
 	*/
+
+	void RunGenerationFinal();
+
 	void RunGenerationPairs(int numPairs);
 	void RunGenerationPlotAndDetail(int numPlotNodes = 3, int desiredSize = 10);
 	void RunGenerationByActs(int numPairsToAdd);		//targets edges with the largest act range

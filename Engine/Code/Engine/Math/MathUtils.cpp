@@ -53,9 +53,9 @@ Vector2 CartesianToPolar(float x, float y)
 
 Vector3 SphericalToCartesian(float radius, float theta, float azimuth)
 {
-	float x = radius * CosDegreesf(azimuth) * CosDegreesf(theta);
-	float y = radius * SinDegreesf(azimuth);
-	float z = -radius * CosDegreesf(azimuth) * SinDegreesf(theta);
+	float x = radius * CosDegreesf(azimuth) * CosDegreesf(theta);		//pitch
+	float y = radius * SinDegreesf(azimuth);							//yaw
+	float z = -radius * CosDegreesf(azimuth) * SinDegreesf(theta);		//roll
 	return Vector3(x,y,z);
 }
 
