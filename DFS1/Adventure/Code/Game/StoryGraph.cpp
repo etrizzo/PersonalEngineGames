@@ -110,15 +110,47 @@ void StoryGraph::HandleInput(const AABB2& bounds)
 
 void StoryGraph::RunGenerationFinal()
 {
+
+	//while you can place nodes, and you don't have endings, all acts haven't been placed, and acts don't meet the requisite number of nodes:
+		// create a priority list of nodes to place this iteration
+			// decides priority based on which acts to place next & number of times a node has been used already
+			// equal priority nodes are shuffled in place
+		// Shuffle edges with some priority towards higher act range edges being sorted earlier
+		// For each edge, check each 
+
 	//srand(1);
 	bool generated = false;
 	while (!generated) {
+		//RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
 		Clear();
-		//m_graph->RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
-		RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
+		GenerateStartAndEnd();
+		int added = 0;
+		int tries = 0;
+		bool shouldSeekEnding = false;
+		TODO("Guarantee that nodes from every act are actually placed");
+		while (added < numPairsToAdd && !HavePlacedAllEndings())
+		{
+			StoryEdge* edgeWithLargeRange = GetEdgeWithLargestActRange(false);
+			StoryNode* newEventNode = AddEventNodeAtEdge(edgeWithLargeRange);
+			if (newEventNode != nullptr) {
+				added++;
+				AddOutcomeNodesToEventNode(newEventNode);
+			}
+			//else
+			//{
+			//	//maybe the case where you didn't get an outcome adding on to the initial edge??
+			//	if (edgeWithLargeRange->GetStart()->m_data->m_type == PLOT_NODE && edgeWithLargeRange->GetEnd()->m_data->m_type != DETAIL_NODE)
+			//	{
+			//		AddOutcomeNodesToEventNode(edgeWithLargeRange->GetStart());
+			//	}
+			//}
 
-		//generated = true;
-		//generated = m_graph->AddEndingsToGraph(10);
+
+			tries++;
+		}
+		
+
+
 		AddEndingsToActBoundaryEdge(GetEnd(), 10);
 		RemoveBranchesWithNoEnding(GetEnd());
 		generated = !CheckForInvalidGraph();
