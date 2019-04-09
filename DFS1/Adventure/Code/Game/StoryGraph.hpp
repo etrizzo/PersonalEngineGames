@@ -218,8 +218,6 @@ protected:
 	std::vector<StoryNode*> m_pathFound				= std::vector<StoryNode*>();
 	std::string m_pathString						= "";
 	
-	std::vector<StoryEdge*> m_edgesToVoid = std::vector<StoryEdge*>();
-
 
 	//float m_nodeSize							= .05f;
 	StoryNode* m_hoveredNode					= nullptr;

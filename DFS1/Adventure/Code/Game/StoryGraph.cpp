@@ -268,7 +268,7 @@ StoryNode * StoryGraph::AddEventNodeAtEdge(StoryEdge * edge)
 	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge, false);
 	bool added = (addedNode != nullptr);
 	int tries = 0;
-	int maxTries = 100;
+	int maxTries = 10;
 	
 	while (tries < maxTries && !added){
 		StoryDataDefinition* sourceNode = m_dataSet->GetEventNodeWithWeights(edge->GetCost(), .75f);
