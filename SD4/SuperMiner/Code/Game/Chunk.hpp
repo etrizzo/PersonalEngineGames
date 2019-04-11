@@ -37,7 +37,7 @@ public:
 	inline static int GetBlockXCoordinate(int blockIndex);
 	inline static int GetBlockYCoordinate(int blockIndex);
 	inline static int GetBlockZCoordinate(int blockIndex);
-	static int GetBlockIndexForBlockCoordinates(const IntVector3& blockCoords);
+	inline static int GetBlockIndexForBlockCoordinates(const IntVector3& blockCoords);
 	static IntVector3 GetBlockCoordinatesForBlockIndex(int blockIndex);
 	static std::string GetChunkFileFormatForChunkCoords(const IntVector2& chunkCoords);
 	

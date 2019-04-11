@@ -118,7 +118,7 @@ void StoryGraph::RunGenerationFinal()
 		// Shuffle edges with some priority towards higher act range edges being sorted earlier
 		// For each edge, check each 
 
-	//srand(1);
+	srand(1);
 	bool generated = false;
 	while (!generated) {
 		//RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
@@ -128,7 +128,7 @@ void StoryGraph::RunGenerationFinal()
 		int tries = 0;
 		bool shouldSeekEnding = false;
 		TODO("Guarantee that nodes from every act are actually placed");
-		while (added < numPairsToAdd && !HavePlacedAllEndings())
+		while (added < NUM_NODE_PAIRS_TO_GENERATE && !HavePlacedAllEndings())
 		{
 			StoryEdge* edgeWithLargeRange = GetEdgeWithLargestActRange(false);
 			StoryNode* newEventNode = AddEventNodeAtEdge(edgeWithLargeRange);

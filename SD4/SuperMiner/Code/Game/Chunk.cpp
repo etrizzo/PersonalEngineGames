@@ -336,26 +336,47 @@ Block & Chunk::GetBlock(int blockIndex)
 
 void Chunk::GenerateBlocks()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	uchar stoneBlock = BlockDefinition::GetBlockIDFromName("Stone");
 	uchar grassBlock = BlockDefinition::GetBlockIDFromName("Grass");
 	uchar seaBlock = BlockDefinition::GetBlockIDFromName("Snow");
+
+	float heights[CHUNK_SIZE_X * CHUNK_SIZE_Y];
+
+	PROFILE_PUSH("Height Generation");
+	for (int y = 0; y < CHUNK_SIZE_Y; y++)
+	{
+		for (int x = 0; x < CHUNK_SIZE_X; x++)
+		{
+			//scoot over to the chunks position for the noise computation
+			int worldX = x + (m_chunkCoords.x * CHUNK_SIZE_X);
+			int worldY = y + (m_chunkCoords.y * CHUNK_SIZE_Y);
+
+			int index = GetIndexFromCoordinates(x,y,CHUNK_SIZE_X, CHUNK_SIZE_Y);
+			float height = Compute2dPerlinNoise((float) worldX, (float) worldY,  300.f, 4);
+			//range map perlin noise from -1 to 1 into [0,128]
+			float heightMapped = RangeMapFloat(height, -1.f, 1.f, (float) CHUNK_SIZE_Z * .25f, (float) CHUNK_SIZE_Z * .65f);
+			heights[index] = heightMapped;
+		}
+	}
+	PROFILE_POP();
+
+	PROFILE_PUSH("Block Setting");
 	for (int z = 0; z < CHUNK_SIZE_Z; z++)
 	{
 		for (int y = 0; y < CHUNK_SIZE_Y; y++)
 		{
 			for (int x = 0; x < CHUNK_SIZE_X; x++)
 			{
-				//scoot over to the chunks position for the noise computation
-				int worldX = x + (m_chunkCoords.x * CHUNK_SIZE_X);
-				int worldY = y + (m_chunkCoords.y * CHUNK_SIZE_Y);
-				float height = Compute2dPerlinNoise((float) worldX, (float) worldY,  300.f, 4);
-				float heightMapped = RangeMapFloat(height, -1.f, 1.f, (float) CHUNK_SIZE_Z * .25f, (float) CHUNK_SIZE_Z * .65f);		//range map perlin noise from -1 to 1 into [0,128]
+				
+				float height = heights[GetIndexFromCoordinates(x,y,CHUNK_SIZE_X,CHUNK_SIZE_Y)];
+				
 				int blockIndex = Chunk::GetBlockIndexForBlockCoordinates(IntVector3(x,y,z));
 
 				//later choose different things for different heights u kno
-				if ((float) z < heightMapped )
+				if ((float) z < height )
 				{
-					if (z < heightMapped - 3.f){
+					if (z < height - 3.f){
 						m_blocks[blockIndex].SetType(stoneBlock);
 					} else {
 						m_blocks[blockIndex].SetType(grassBlock);
@@ -373,10 +394,12 @@ void Chunk::GenerateBlocks()
 			}
 		}
 	}
+	PROFILE_POP();
 }
 
 bool Chunk::LoadFromDisk()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	//for now, try to load from disk (we'll be touching disk for every load, FOR NOW)
 	std::string filePath = Chunk::GetChunkFileFormatForChunkCoords(m_chunkCoords);      //returns Chunk_x,y.chunk
 

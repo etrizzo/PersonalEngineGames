@@ -37,7 +37,9 @@ public:
 
 	StoryDataDefinition* GetEndingNode(StoryState* edge);
 
+	//calculate the approximate fitness of a node that doesn't have characters assigned yet
 	float CalculateEdgeFitnessForNewDataZeroToOne(StoryState* edge, StoryDataDefinition* data);
+	//calculate the fitness for a node that already exists
 	float CalculateEdgeFitnessForData(StoryState* edge, StoryDataDefinition* data);
 
 	float GetNodeLikelihoodToLeadToEnding(StoryDataDefinition* nodeDef);

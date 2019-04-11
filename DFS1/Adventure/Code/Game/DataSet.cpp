@@ -340,6 +340,7 @@ float DataSet::CalculateEdgeFitnessForNewDataZeroToOne(StoryState* edge, StoryDa
 	float numReqs = 0.f;
 	float fitness = 0.f;
 	//because the data doesn't have characters yet, look at what character requirments the data has instead
+	//kind of a light-mode of actual character assignment...
 	for (CharacterRequirementSet* reqSet : data->m_characterReqs)
 	{
 		float maxFitness = 0.f;
