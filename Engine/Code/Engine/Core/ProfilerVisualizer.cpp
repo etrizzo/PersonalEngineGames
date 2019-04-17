@@ -128,11 +128,26 @@ ProfilerVisualizer * ProfilerVisualizer::GetInstance(Renderer * renderer, InputS
 	return s_profilerVisualizerInstance;
 }
 
+void ProfilerVisualizer::RenderHighlightBar()
+{
+	if (m_reportArea.IsPointInside(m_mousePos))
+	{
+		Vector2 mousePercentage = m_reportArea.GetPercentageOfPoint(m_mousePos);
+		float textHeight = m_reportArea.GetHeight() * .05f;
+		
+		AABB2 bar = m_reportArea.GetPercentageBox(0.f, mousePercentage.y - (textHeight * .5f), 1.f, mousePercentage.y + (textHeight * .5f));
+	
+		m_renderer->DrawAABB2(bar, RGBA(255, 255, 255, 64));
+	}
+}
+
 void ProfilerVisualizer::RenderReport()
 {
 	if (m_currentReport->m_root == nullptr){
 		m_renderer->DrawTextInBox2D("Loading report...", m_reportArea, Vector2::HALF, .1f * m_reportArea.GetHeight(), TEXT_DRAW_SHRINK_TO_FIT, m_outlineColor);
 	} else {
+		RenderHighlightBar();
+
 		if (m_selfSort){
 			m_currentReport->SortBySelfTime();
 		} else {

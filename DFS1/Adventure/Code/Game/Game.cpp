@@ -616,19 +616,20 @@ void Game::InitCharacterArray()
 void Game::GenerateGraph()
 {
 	//srand(1);
-	bool generated = false;
-	while (!generated){
-		ClearGraph();
-		//m_graph->RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
-		m_graph->RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
-		
-		//generated = true;
-		//generated = m_graph->AddEndingsToGraph(10);
-		m_graph->AddEndingsToActBoundaryEdge(m_graph->GetEnd(), 10);
-		m_graph->RemoveBranchesWithNoEnding(m_graph->GetEnd());
-		generated = !m_graph->CheckForInvalidGraph();
-		
-	}
+	//bool generated = false;
+	//while (!generated){
+	//	ClearGraph();
+	//	//m_graph->RunGenerationPairs(NUM_NODE_PAIRS_TO_GENERATE);
+	//	m_graph->RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
+	//	
+	//	//generated = true;
+	//	//generated = m_graph->AddEndingsToGraph(10);
+	//	m_graph->AddEndingsToActBoundaryEdge(m_graph->GetEnd(), 10);
+	//	m_graph->RemoveBranchesWithNoEnding(m_graph->GetEnd());
+	//	generated = !m_graph->CheckForInvalidGraph();
+	//	
+	//}
+	m_graph->RunGenerationFinal();
 	m_graph->AnalyzeGraph();
 }
 

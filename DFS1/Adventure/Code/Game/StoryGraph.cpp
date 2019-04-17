@@ -111,44 +111,13 @@ void StoryGraph::HandleInput(const AABB2& bounds)
 void StoryGraph::RunGenerationFinal()
 {
 
-	//while you can place nodes, and you don't have endings, all acts haven't been placed, and acts don't meet the requisite number of nodes:
-		// create a priority list of nodes to place this iteration
-			// decides priority based on which acts to place next & number of times a node has been used already
-			// equal priority nodes are shuffled in place
-		// Shuffle edges with some priority towards higher act range edges being sorted earlier
-		// For each edge, check each 
-
-	srand(1);
+	//srand(1);
 	bool generated = false;
 	while (!generated) {
 		//RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
 		Clear();
 		GenerateStartAndEnd();
-		int added = 0;
-		int tries = 0;
-		bool shouldSeekEnding = false;
-		TODO("Guarantee that nodes from every act are actually placed");
-		while (added < NUM_NODE_PAIRS_TO_GENERATE && !HavePlacedAllEndings())
-		{
-			StoryEdge* edgeWithLargeRange = GetEdgeWithLargestActRange(false);
-			StoryNode* newEventNode = AddEventNodeAtEdge(edgeWithLargeRange);
-			if (newEventNode != nullptr) {
-				added++;
-				AddOutcomeNodesToEventNode(newEventNode);
-			}
-			//else
-			//{
-			//	//maybe the case where you didn't get an outcome adding on to the initial edge??
-			//	if (edgeWithLargeRange->GetStart()->m_data->m_type == PLOT_NODE && edgeWithLargeRange->GetEnd()->m_data->m_type != DETAIL_NODE)
-			//	{
-			//		AddOutcomeNodesToEventNode(edgeWithLargeRange->GetStart());
-			//	}
-			//}
-
-
-			tries++;
-		}
-		
+		GenerateInitialNodesForGraph();
 
 
 		AddEndingsToActBoundaryEdge(GetEnd(), 10);
@@ -158,141 +127,279 @@ void StoryGraph::RunGenerationFinal()
 	}
 }
 
-void StoryGraph::RunGenerationPairs(int numPairs)
+void StoryGraph::GenerateInitialNodesForGraph()
 {
-	Clear();
-	GenerateStartAndEnd();
-	//generate node pairs
-	for (int i = 0; i < numPairs; i++){
-		//add an event node
-		StoryNode* newNode = AddSingleEventNode();
-		//add an outcome node that works off of that event node
-		AddOutcomeNodesToEventNode(newNode);
-	}
-	RunNodeAdjustments();
-}
+	//while you can place nodes, and you don't have endings, all acts haven't been placed, and acts don't meet the requisite number of nodes:
+		// create a priority list of nodes to place this iteration
+			// decides priority based on which acts to place next & number of times a node has been used already
+			// equal priority nodes are shuffled in place
+		// Shuffle edges with some priority towards higher act range edges being sorted earlier
+		// For each edge, check each 
+	bool canPlace = true;
 
-void StoryGraph::RunGenerationPlotAndDetail(int numPlotNodes, int desiredSize)
-{
-	GenerateSkeleton(numPlotNodes);
-	RunNodeAdjustments();
-	AddDetailNodesToDesiredSize(desiredSize);
-}
-
-void StoryGraph::RunGenerationByActs(int numPairsToAdd)
-{
-	Clear();
-	GenerateStartAndEnd();
-	int added = 0;
-	int tries = 0;
-	bool shouldSeekEnding = false;
-	TODO("Guarantee that nodes from every act are actually placed");
-	while (added < numPairsToAdd && !HavePlacedAllEndings())
+	while (canPlace && !AreAllActsFinished())
 	{
-		StoryEdge* edgeWithLargeRange = GetEdgeWithLargestActRange(false);
-		StoryNode* newEventNode = AddEventNodeAtEdge(edgeWithLargeRange);
-		if (newEventNode != nullptr) {
-			added++;
-			AddOutcomeNodesToEventNode(newEventNode);
+		std::vector<StoryDataDefinition*> prioritizedEvents = m_dataSet->GetPrioritizedEventNodes();
+		std::vector<StoryDataDefinition*> prioritizedOutcomes = m_dataSet->GetPrioritizedOutcomes();
+
+		std::vector<StoryEdge*> prioritizedEdges = GetPrioritizedEdges();
+		canPlace = false;		//assume we can't place any nodes with the current configuration of edges/nodes
+		for (int edgeNum = 0; edgeNum < prioritizedEdges.size(); edgeNum++)
+		{
+			StoryEdge* edgeToCheck = prioritizedEdges[edgeNum];
+			for (int eventNum = 0; eventNum < prioritizedEvents.size(); eventNum++)
+			{
+				//try to place the event at the current edge to check
+				StoryNode* newEvent = TryToAddEventNodeAtEdge(prioritizedEvents[eventNum], edgeToCheck);
+				if (newEvent != nullptr)
+				{
+					canPlace = true;
+					//tell the dataset you used that node
+					m_dataSet->MarkEventNodeUsed(prioritizedEvents[eventNum]);
+					//try to add an outcome node and break
+					for (int outcomeNum = 0; outcomeNum < prioritizedOutcomes.size(); outcomeNum++)
+					{
+						//try to add the outcome definitiona fter the new event node
+						bool addedOutcome = TryToAddOutcomesAtEventNode(prioritizedOutcomes[outcomeNum], newEvent);
+						if (addedOutcome)
+						{
+							m_dataSet->MarkOutcomeNodeUsed(prioritizedOutcomes[outcomeNum]);
+							//u did it get outta there
+							break;
+						}
+					}
+
+				}
+			}
 		}
-		//else
-		//{
-		//	//maybe the case where you didn't get an outcome adding on to the initial edge??
-		//	if (edgeWithLargeRange->GetStart()->m_data->m_type == PLOT_NODE && edgeWithLargeRange->GetEnd()->m_data->m_type != DETAIL_NODE)
-		//	{
-		//		AddOutcomeNodesToEventNode(edgeWithLargeRange->GetStart());
-		//	}
-		//}
 
-
-		tries++;
 	}
 }
+
+StoryNode * StoryGraph::TryToAddEventNodeAtEdge(StoryDataDefinition * definitionToPlace, StoryEdge * edge)
+{
+	//StoryDataDefinition* sourceNode = m_dataSet->GetEventNodeWithWeights(edge->GetCost(), .75f);
+	StoryNode* addedNode = nullptr;
+	bool added = false;
+	//try to add the node
+	if (definitionToPlace != nullptr && StoryRequirementsMet(definitionToPlace, edge)) {
+		//if the story requirements are met, check character requirements
+		std::vector<Character*> charsForNode = GetCharactersForNode(definitionToPlace, edge);
+		//if you found characters for the node, add the node.
+		if (charsForNode.size() != 0) {
+			addedNode = CreateAndAddEventNodeAtEdge(definitionToPlace, edge, charsForNode);		//always does it
+			if (addedNode != nullptr) {
+				added = true;
+			}
+		}
+	}
+
+	if (added)
+	{
+		UpdateDepths();
+	}
+
+	return addedNode;
+}
+
+bool StoryGraph::TryToAddOutcomesAtEventNode(StoryDataDefinition * definitionToPlace, StoryNode * eventnode)
+{
+
+	bool added = false;
+	//sourceNode is the definition
+	//try to add the node
+	for (int i = eventnode->m_inboundEdges.size() - 1; i >= 0; i--)
+	{
+		StoryEdge* edge = eventnode->m_inboundEdges[i];
+		if (StoryRequirementsMet(definitionToPlace, edge)) {
+			//if the story requirements are met, check character requirements
+			std::vector<Character*> charsForNode = GetCharactersForNode(definitionToPlace, edge);
+			//if you found characters for the node, add the node.
+			if (charsForNode.size() != 0) {
+				if (CreateAndAddOutcomeNodeAtEdge(definitionToPlace, edge, charsForNode)) {
+					//m_usedDetailNodes.push_back(definitionToPlace);
+					added = true;
+					break;
+				}
+			}
+		}
+	}
+
+	if (added)
+	{
+		UpdateDepths();
+	}
+
+	return added;
+	
+}
+
+bool StoryGraph::AreAllActsFinished() const
+{
+	//figure out how many nodes we have in each act
+
+	std::vector<int> numNodesPerAct;
+	for (int i = 0; i < m_dataSet->GetNumActs(); i++)
+	{
+		numNodesPerAct.push_back(0);
+	}
+	
+	for (StoryNode* node : m_graph.m_nodes)
+	{
+		if (node != m_startNode && node != m_endNode)
+		{
+			int act = node->m_data->GetAct();
+			numNodesPerAct[act] = numNodesPerAct[act] + 1;
+		}
+	}
+
+	//check if number of nodes in each act meets the dataset's requirements
+	for (int i = 0; i < numNodesPerAct.size(); i++)
+	{
+		if (!m_dataSet->DoesActMeetNumNodeRequirement(i, numNodesPerAct[i]))
+		{
+			return false;
+		}
+	}
+	//if we reach this point, all acts met the number of requirements
+	return true;
+}
+
+//void StoryGraph::RunGenerationPairs(int numPairs)
+//{
+//	Clear();
+//	GenerateStartAndEnd();
+//	//generate node pairs
+//	for (int i = 0; i < numPairs; i++){
+//		//add an event node
+//		StoryNode* newNode = AddSingleEventNode();
+//		//add an outcome node that works off of that event node
+//		AddOutcomeNodesToEventNode(newNode);
+//	}
+//	RunNodeAdjustments();
+//}
+
+//void StoryGraph::RunGenerationPlotAndDetail(int numPlotNodes, int desiredSize)
+//{
+//	GenerateSkeleton(numPlotNodes);
+//	RunNodeAdjustments();
+//	AddDetailNodesToDesiredSize(desiredSize);
+//}
+
+//void StoryGraph::RunGenerationByActs(int numPairsToAdd)
+//{
+//	Clear();
+//	GenerateStartAndEnd();
+//	int added = 0;
+//	int tries = 0;
+//	bool shouldSeekEnding = false;
+//	TODO("Guarantee that nodes from every act are actually placed");
+//	while (added < numPairsToAdd && !HavePlacedAllEndings())
+//	{
+//		StoryEdge* edgeWithLargeRange = GetEdgeWithLargestActRange(false);
+//		StoryNode* newEventNode = AddEventNodeAtEdge(edgeWithLargeRange);
+//		if (newEventNode != nullptr) {
+//			added++;
+//			AddOutcomeNodesToEventNode(newEventNode);
+//		}
+//		//else
+//		//{
+//		//	//maybe the case where you didn't get an outcome adding on to the initial edge??
+//		//	if (edgeWithLargeRange->GetStart()->m_data->m_type == PLOT_NODE && edgeWithLargeRange->GetEnd()->m_data->m_type != DETAIL_NODE)
+//		//	{
+//		//		AddOutcomeNodesToEventNode(edgeWithLargeRange->GetStart());
+//		//	}
+//		//}
+//
+//
+//		tries++;
+//	}
+//}
 
 bool StoryGraph::HavePlacedAllEndings() const
 {
 	return m_dataSet->m_unusedEndNodes.size() == 0;
 }
 
-void StoryGraph::GenerateSkeleton(int numPlotNodes)
-{
-	ClearSavedState();
-	GenerateStartAndEnd();
-	StoryNode* addNode = nullptr;
-	StoryData* newData = nullptr;
-	while((int) GetNumNodes() < numPlotNodes){
-		//re-roll if you get a duplicate node.
-		StoryDataDefinition* sourceNode = m_dataSet->GetRandomEventNode();
-		bool alreadyUsed = false;
-		if (Contains(m_usedPlotNodes, sourceNode)){
-			alreadyUsed = true;
-			if (CheckRandomChance(REROLL_REPEAT_PLOT_NODE_CHANCE)){
-				sourceNode =  m_dataSet->GetRandomEventNode();
-			}
-		}
+//void StoryGraph::GenerateSkeleton(int numPlotNodes)
+//{
+//	ClearSavedState();
+//	GenerateStartAndEnd();
+//	StoryNode* addNode = nullptr;
+//	StoryData* newData = nullptr;
+//	while((int) GetNumNodes() < numPlotNodes){
+//		//re-roll if you get a duplicate node.
+//		StoryDataDefinition* sourceNode = m_dataSet->GetRandomEventNode();
+//		bool alreadyUsed = false;
+//		if (Contains(m_usedPlotNodes, sourceNode)){
+//			alreadyUsed = true;
+//			if (CheckRandomChance(REROLL_REPEAT_PLOT_NODE_CHANCE)){
+//				sourceNode =  m_dataSet->GetRandomEventNode();
+//			}
+//		}
+//
+//		//clone data
+//		newData = new StoryData(sourceNode);
+//		addNode = new StoryNode(newData);
+//		//try to add the cloned data, if it doesn't work, clean up
+//		if (!FindEdgeForNewEventNodeAndAdd(addNode)){
+//			delete newData;
+//			delete addNode;
+//			newData = nullptr;
+//			addNode = nullptr;
+//		} else {
+//			if (!alreadyUsed){
+//				//add node to used plot node list
+//				m_usedPlotNodes.push_back(sourceNode);
+//			}
+//		}
+//	}
+//}
 
-		//clone data
-		newData = new StoryData(sourceNode);
-		addNode = new StoryNode(newData);
-		//try to add the cloned data, if it doesn't work, clean up
-		if (!FindEdgeForNewEventNodeAndAdd(addNode)){
-			delete newData;
-			delete addNode;
-			newData = nullptr;
-			addNode = nullptr;
-		} else {
-			if (!alreadyUsed){
-				//add node to used plot node list
-				m_usedPlotNodes.push_back(sourceNode);
-			}
-		}
-	}
-}
-
-
-StoryNode * StoryGraph::AddSingleEventNode()
-{
-	
-	bool added = false;
-	StoryNode* addNode = nullptr;
-	StoryData* newData = nullptr;
-	while(!added){
-		//re-roll if you get a duplicate node.
-		StoryDataDefinition* sourceNode = m_dataSet->GetRandomEventNode();
-		bool alreadyUsed = true;
-		int rerollRepeatTries = 0;
-		while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
-			if (Contains(m_usedPlotNodes, sourceNode)){
-				alreadyUsed = true;
-				if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
-					sourceNode = m_dataSet->GetRandomEventNode();
-				} else {
-					alreadyUsed = false;		//let it slide based on chance
-				}
-			} else {
-				alreadyUsed = false;
-			}
-		}
-
-		//clone data
-		newData = new StoryData(sourceNode);
-		addNode = new StoryNode(newData);
-		//try to add the cloned data, if it doesn't work, clean up
-		if (!FindEdgeForNewEventNodeAndAdd(addNode)){
-			delete newData;
-			delete addNode;
-			newData = nullptr;
-			addNode = nullptr;
-		} else {
-			added = true;
-			if (!alreadyUsed){
-				//add node to used plot node list
-				m_usedPlotNodes.push_back(sourceNode);
-			}
-		}
-	}
-	return addNode;
-}
+//
+//StoryNode * StoryGraph::AddSingleEventNode()
+//{
+//	
+//	bool added = false;
+//	StoryNode* addNode = nullptr;
+//	StoryData* newData = nullptr;
+//	while(!added){
+//		//re-roll if you get a duplicate node.
+//		StoryDataDefinition* sourceNode = m_dataSet->GetRandomEventNode();
+//		bool alreadyUsed = true;
+//		int rerollRepeatTries = 0;
+//		while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
+//			if (Contains(m_usedPlotNodes, sourceNode)){
+//				alreadyUsed = true;
+//				if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
+//					sourceNode = m_dataSet->GetRandomEventNode();
+//				} else {
+//					alreadyUsed = false;		//let it slide based on chance
+//				}
+//			} else {
+//				alreadyUsed = false;
+//			}
+//		}
+//
+//		//clone data
+//		newData = new StoryData(sourceNode);
+//		addNode = new StoryNode(newData);
+//		//try to add the cloned data, if it doesn't work, clean up
+//		if (!FindEdgeForNewEventNodeAndAdd(addNode)){
+//			delete newData;
+//			delete addNode;
+//			newData = nullptr;
+//			addNode = nullptr;
+//		} else {
+//			added = true;
+//			if (!alreadyUsed){
+//				//add node to used plot node list
+//				m_usedPlotNodes.push_back(sourceNode);
+//			}
+//		}
+//	}
+//	return addNode;
+//}
 
 StoryNode * StoryGraph::AddEventNodeAtEdge(StoryEdge * edge)
 {
@@ -381,108 +488,69 @@ void StoryGraph::GenerateStartAndEnd()
 	
 }
 
-bool StoryGraph::TryToAddOutcomeNodeAtEdge(StoryEdge * edge, int maxTries)
-{
-	//try to add an ending node first.
-	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge, true);
-	bool added = (addedNode != nullptr);
-	//bool added = false;
-	int tries = 0;
-	while (tries < maxTries && !added){
-		//reroll if you get a duplicate node.
-		StoryDataDefinition* sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), .75f);
-		bool alreadyUsed = true;
-		int rerollRepeatTries = 0;
-		while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
-			if (Contains(m_usedDetailNodes, sourceNode)){
-				alreadyUsed = true;
-				if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
-					if (rerollRepeatTries < (float) MAX_REPEAT_REROLLS * .5f){
-						sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), .8f);
-					} else {
-						sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), .5f);
-					}
-				} else {
-					alreadyUsed = false;		//let it slide based on chance
-				}
-			} else {
-				alreadyUsed = false;
-			}
-		}
-		if (sourceNode == nullptr)
-		{
-			//there are no outcome nodes that can be added in this act - early out
-			return false;
-		}
-
-		//sourceNode is the definition
-		//try to add the node
-		if (StoryRequirementsMet(sourceNode, edge)){
-			//if the story requirements are met, check character requirements
-			std::vector<Character*> charsForNode = GetCharactersForNode(sourceNode, edge);
-			//if you found characters for the node, add the node.
-			if (charsForNode.size() != 0){
-				if (CreateAndAddOutcomeNodeAtEdge(sourceNode, edge, charsForNode)){
-					m_usedDetailNodes.push_back(sourceNode);
-					added = true;
-				} else {
-					tries++;
-				}
-			} else {
-				tries++;
-			}
-		} else {
-			tries++;
-		}
-	}
-
-	if (added)
-	{
-		UpdateDepths();
-	}
-
-	return added;
-	//StoryNode* addNode = nullptr;
-	//StoryData* newData = nullptr;
-	//int tries = 0;
-	//bool added = false;
-	//while(tries < 100 && !added){
-	//	//reroll if you get a duplicate node.
-	//	StoryDataDefinition* sourceNode = StoryGraph::GetRandomDetailNode();
-	//	bool alreadyUsed = false;
-	//	if (Contains(m_usedDetailNodes, sourceNode)){
-	//		alreadyUsed = true;
-	//		if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
-	//			sourceNode =  StoryGraph::GetRandomDetailNode();
-	//		}
-	//	}
-
-	//	//clone data
-	//	newData = new StoryData(sourceNode, 0);
-	//	addNode = new StoryNode(newData);
-	//	//try to add the cloned data, if it doesn't work, clean up
-	//	added = AddDetailNode(addNode);
-	//	if (!added){
-	//		delete newData;
-	//		delete addNode;
-	//		newData = nullptr;
-	//		addNode = nullptr;
-	//	} else {
-	//		//add node to used detail node list
-	//		if (!alreadyUsed){
-	//			m_usedDetailNodes.push_back(sourceNode);
-	//		}
-	//		//add all actions to this branch
-	//		for (int i = 1; i < sourceNode->m_actions.size(); i++){
-	//			StoryData* branchData = new StoryData(sourceNode, i);
-	//			StoryNode* branchNode = new StoryNode(branchData);
-	//			AddBranchAroundNode(addNode, branchNode, true);
-	//		}
-	//	}
-	//	tries++;
-	//}
-	//return added;	
-}
+//bool StoryGraph::TryToAddOutcomeNodeAtEdge(StoryEdge * edge, int maxTries)
+//{
+//	//try to add an ending node first.
+//	StoryNode* addedNode = TryToAddEndNodeAtEdge(edge, true);
+//	bool added = (addedNode != nullptr);
+//	//bool added = false;
+//	int tries = 0;
+//	while (tries < maxTries && !added){
+//		//reroll if you get a duplicate node.
+//		StoryDataDefinition* sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), .75f);
+//		bool alreadyUsed = true;
+//		int rerollRepeatTries = 0;
+//		while (alreadyUsed && rerollRepeatTries < MAX_REPEAT_REROLLS){
+//			if (Contains(m_usedDetailNodes, sourceNode)){
+//				alreadyUsed = true;
+//				if (CheckRandomChance(REROLL_REPEAT_DETAIL_NODE_CHANCE)){
+//					if (rerollRepeatTries < (float) MAX_REPEAT_REROLLS * .5f){
+//						sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), .8f);
+//					} else {
+//						sourceNode = m_dataSet->GetOutcomeNodeWithWeights(edge->GetCost(), .5f);
+//					}
+//				} else {
+//					alreadyUsed = false;		//let it slide based on chance
+//				}
+//			} else {
+//				alreadyUsed = false;
+//			}
+//		}
+//		if (sourceNode == nullptr)
+//		{
+//			//there are no outcome nodes that can be added in this act - early out
+//			return false;
+//		}
+//
+//		//sourceNode is the definition
+//		//try to add the node
+//		if (StoryRequirementsMet(sourceNode, edge)){
+//			//if the story requirements are met, check character requirements
+//			std::vector<Character*> charsForNode = GetCharactersForNode(sourceNode, edge);
+//			//if you found characters for the node, add the node.
+//			if (charsForNode.size() != 0){
+//				if (CreateAndAddOutcomeNodeAtEdge(sourceNode, edge, charsForNode)){
+//					m_usedDetailNodes.push_back(sourceNode);
+//					added = true;
+//				} else {
+//					tries++;
+//				}
+//			} else {
+//				tries++;
+//			}
+//		} else {
+//			tries++;
+//		}
+//	}
+//
+//	if (added)
+//	{
+//		UpdateDepths();
+//	}
+//
+//	return added;
+//	
+//}
 
 bool StoryGraph::FindEdgeForNewEventNodeAndAdd(StoryNode* newPlotNode)
 {
@@ -703,6 +771,20 @@ bool StoryGraph::AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToA
 	}
 	return added;
 }
+
+std::vector<StoryEdge*> StoryGraph::GetPrioritizedEdges()
+{
+	std::vector<StoryEdge*> sortedEdges;
+	for (StoryEdge* edge : m_graph.m_edges)
+	{
+		sortedEdges.push_back(edge);
+	}
+	Shuffle(sortedEdges);
+	std::sort(sortedEdges.begin(), sortedEdges.end(), CompareEdgesByPriority);
+	return sortedEdges;
+}
+
+
 
 bool StoryGraph::AddEndingsToGraph(int maxTries)
 {
@@ -1573,8 +1655,8 @@ void StoryGraph::Clear()
 	m_graph.Clear();
 	m_pathFound.clear();
 
-	m_usedPlotNodes.clear();
-	m_usedDetailNodes.clear();
+	//m_usedPlotNodes.clear();
+	//m_usedDetailNodes.clear();
 	m_startNode = nullptr;
 	m_endNode = nullptr;
 
@@ -1587,7 +1669,7 @@ void StoryGraph::Clear()
 	m_mergingNodes.clear();
 	m_analysisHasRun = false;
 	if (m_dataSet != nullptr){
-		m_dataSet->ResetUsedEndNodes();
+		m_dataSet->ResetDataSet();
 	}
 }
 
@@ -2069,4 +2151,9 @@ StoryState * CalculateChanceHeuristic(StoryEdge * edge)
 	//edge->GetCost()->m_characterStates.size();
 	TODO("Fix story state on heuristic to use the right graph");
 	return new StoryState(cost, edge->GetCost()->m_characterStates.size(), nullptr) ;
+}
+
+bool CompareEdgesByPriority(StoryEdge * a, StoryEdge * b)
+{
+	return (a->GetCost()->m_possibleActRange.GetSize() < b->GetCost()->m_possibleActRange.GetSize());
 }

@@ -43,6 +43,7 @@ void Chunk::LoadOrGenerateBlocks()
 
 void Chunk::CreateMesh()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	m_cpuMesh.Clear();
 	m_cpuMesh.Begin(PRIMITIVE_TRIANGLES, true);
 	m_cpuMesh.ReserveVerts( CHUNK_LAYER_DIMS_XY * 8 * 6);		//~ 4 faces for the top and bottom of a chunk 
@@ -512,6 +513,7 @@ void Chunk::AppendBlocksToBufferRLE(std::vector<unsigned char>& buffer) const
 
 void Chunk::AddVertsForBlockAtIndex(int blockIndex)
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	unsigned char blockType = m_blocks[blockIndex].GetBlockID();
 	if (blockType == 0U)
 	{

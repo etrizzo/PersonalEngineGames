@@ -129,6 +129,121 @@ void DataSet::ReadCharactersFromXML(std::string filePath)
 	}
 }
 
+void DataSet::MarkEventNodeUsed(StoryDataDefinition * eventNodeDef)
+{
+	m_usedEventNodes.push_back(eventNodeDef);		//don't care if there are duplicates?
+}
+
+void DataSet::MarkOutcomeNodeUsed(StoryDataDefinition * outcomeNodeDef)
+{
+	m_usedOutcomeNodes.push_back(outcomeNodeDef);
+}
+
+std::vector<StoryDataDefinition*> DataSet::GetPrioritizedEventNodes()
+{
+	// decides priority based on which acts to place next & number of times a node has been used already
+	// equal priority nodes are shuffled in place
+	std::vector<StoryDataDefinition*> shuffledBois = std::vector<StoryDataDefinition*>();
+	for (StoryDataDefinition* def : m_eventNodes)
+	{
+		shuffledBois.push_back(def);
+	}
+
+	Shuffle(shuffledBois);
+
+	std::vector<SortableNode> allNodesWithPriority;
+	for (StoryDataDefinition* def : shuffledBois)
+	{
+		int priority = CalculateNodePriority(def);
+		if (priority > 0)
+		{
+			SortableNode node;
+			node.definition = def;
+			node.priority = priority;
+			allNodesWithPriority.push_back(node);
+		}
+		
+	}
+	
+	std::sort(allNodesWithPriority.begin(), allNodesWithPriority.end());
+
+	std::vector<StoryDataDefinition*> prioritizedNodes = std::vector<StoryDataDefinition*>();
+	
+	for (int i = 0; i < allNodesWithPriority.size(); i++)
+	{
+		prioritizedNodes.push_back(allNodesWithPriority[i].definition);
+	}
+
+	return prioritizedNodes;
+}
+
+std::vector<StoryDataDefinition*> DataSet::GetPrioritizedOutcomes()
+{
+	// decides priority based on which acts to place next & number of times a node has been used already
+	// equal priority nodes are shuffled in place
+	std::vector<StoryDataDefinition*> shuffledBois = std::vector<StoryDataDefinition*>();
+	for (StoryDataDefinition* def : m_outcomeNodes)
+	{
+		shuffledBois.push_back(def);
+	}
+
+	Shuffle(shuffledBois);
+
+	std::vector<SortableNode> allNodesWithPriority;
+	for (StoryDataDefinition* def : shuffledBois)
+	{
+		int priority = CalculateNodePriority(def);
+		if (priority > 0)
+		{
+			SortableNode node;
+			node.definition = def;
+			node.priority = priority;
+			allNodesWithPriority.push_back(node);
+		}
+
+	}
+
+	std::sort(allNodesWithPriority.begin(), allNodesWithPriority.end());
+
+	std::vector<StoryDataDefinition*> prioritizedNodes = std::vector<StoryDataDefinition*>();
+
+	for (int i = 0; i < allNodesWithPriority.size(); i++)
+	{
+		prioritizedNodes.push_back(allNodesWithPriority[i].definition);
+	}
+
+	return prioritizedNodes;
+}
+
+int DataSet::CalculateNodePriority(StoryDataDefinition * def) const
+{
+	//get whether or not this act has been used
+	TODO("improve this");
+	int priority = 0;
+	bool isActNeeded = true;
+	//go through each used node. if this def is in there, subtract from priority.
+	//if a node is in the same act, mark as "not needed"
+	for (StoryDataDefinition* eventDef : m_usedEventNodes)
+	{
+		if (def == eventDef)
+		{
+			priority -= 10;
+		}
+		if (eventDef->m_actRange.min == def->m_actRange.min)
+		{
+			isActNeeded = false;
+		}
+	}
+
+	if (isActNeeded)
+	{
+		priority += 10;
+	}
+
+
+	return priority;
+}
+
 void DataSet::ResetUsedEndNodes()
 {
 	m_unusedEndNodes = std::vector<StoryDataDefinition*>();
@@ -137,6 +252,13 @@ void DataSet::ResetUsedEndNodes()
 		m_unusedEndNodes.push_back(ending);
 	}
 	Shuffle(m_unusedEndNodes);
+}
+
+void DataSet::ResetDataSet()
+{
+	m_usedEventNodes.clear();
+	m_usedOutcomeNodes.clear();
+	ResetUsedEndNodes();
 }
 
 StoryDataDefinition * DataSet::GetRandomEventNode()
@@ -177,6 +299,13 @@ int DataSet::GetFinalActNumber() const
 		maxNum = Max(maxNum, m_actsInOrder[i].m_number);
 	}
 	return maxNum;
+}
+
+bool DataSet::DoesActMeetNumNodeRequirement(int actNumber, int numNodes)
+{
+	UNUSED(actNumber);
+	TODO("parse a required number of nodes for each act at creation");
+	return (numNodes > 0);
 }
 
 StoryDataDefinition * DataSet::GetOutcomeNodeWithWeights(StoryState * edge, float minFitness)
@@ -436,4 +565,9 @@ DataSet * DataSet::GetDataSet(std::string dataSetName)
 bool CompareActsByNumber(const Act & first, const Act & second)
 {
 	return first.m_number < second.m_number;
+}
+
+bool SortableNode::operator<(const SortableNode & compare) const
+{
+	return priority < compare.priority;
 }

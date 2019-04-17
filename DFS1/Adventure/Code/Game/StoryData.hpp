@@ -22,6 +22,8 @@ public:
 	std::string GetName() const;
 	std::string ToString() const;
 
+	int GetAct() const;
+
 	float UpdateAndGetChance(StoryState* incomingEdge);
 
 	//state utilities

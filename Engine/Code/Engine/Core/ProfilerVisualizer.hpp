@@ -57,6 +57,7 @@ public:
 	int m_currentFrameSelectionIndex = -1;
 
 protected:
+	void RenderHighlightBar();
 	void RenderReport();
 	void RenderGraph();
 	void RenderInfo();

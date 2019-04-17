@@ -56,6 +56,7 @@ void World::HandleInput()
 
 void World::Update()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	UpdateTimeOfDay();
 	//we want block placement/digging to happen before chunk management so that we can mark the changed chunk for re-building mesh THAT FRAME (bc it's usually the closest dirty chunk)
 	UpdateBlockPlacementAndDigging();
@@ -249,6 +250,7 @@ void World::DebugDeactivateAllChunks()
 
 void World::UpdateTimeOfDay()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	m_worldTime += m_worldClock->GetDeltaSeconds() * FRAME_TIME_SCALE;
 	m_percThroughDay = m_worldTime - (floorf(m_worldTime));
 	m_timeOfDay = InAndOutBurger(m_percThroughDay );		//flip the cosine and range map 0-1
@@ -281,7 +283,7 @@ void World::UpdateTimeOfDay()
 
 void World::UpdateDebugStuff()
 {
-	
+	PROFILE_PUSH_FUNCTION_SCOPE();
 
 	RGBA raycastColor = RGBA::RED;
 	RGBA pointColor = RGBA::WHITE;
@@ -374,6 +376,7 @@ void World::UpdateBlockPlacementAndDigging()
 
 void World::UpdateChunks()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	for (std::pair<IntVector2, Chunk*> chunkPair : World::m_chunks)
 	{
 		chunkPair.second->Update();
@@ -382,6 +385,7 @@ void World::UpdateChunks()
 
 void World::UpdateDirtyLighting()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	if (!g_theGame->IsDebugLighting())
 	{
 		//m_dirtyLihgtingBlocks is a queue of dirty blocks 
@@ -421,6 +425,7 @@ void World::UpdateDirtyLighting()
 
 void World::ManageChunks()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	TryToActivateChunks();
 	TryToBuildChunkMesh();
 	TryToDeactivateChunks();
@@ -638,6 +643,7 @@ void World::SetBlockLightDirty(BlockLocator & block)
 
 void World::TryToActivateChunks()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	IntVector2 playerChunk = g_theGame->GetPlayer()->GetCurrentChunkCoordinates();
 	for (int i = 0; i < (int) m_chunkActivationOffsetsSortedByDistance.size(); i++)
 	{
@@ -651,6 +657,7 @@ void World::TryToActivateChunks()
 
 void World::TryToDeactivateChunks()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	float furthestDistance = -1.f;
 	Chunk* chunkToDeactivate = nullptr;
 	float deactivateRadiusSquared = m_chunkDeactivationRadiusChunkDistance * m_chunkDeactivationRadiusChunkDistance;
@@ -679,6 +686,7 @@ void World::TryToDeactivateChunks()
 
 void World::TryToBuildChunkMesh()
 {
+	PROFILE_PUSH_FUNCTION_SCOPE();
 	IntVector2 playerChunk = g_theGame->GetPlayer()->GetCurrentChunkCoordinates();
 	for (int i = 0; i < (int) m_chunkActivationOffsetsSortedByDistance.size(); i++)
 	{

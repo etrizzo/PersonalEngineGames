@@ -94,6 +94,11 @@ std::string StoryData::ToString() const
 	return m_action->m_instancedText;
 }
 
+int StoryData::GetAct() const
+{
+	return m_definition->m_actRange.min;
+}
+
 float StoryData::UpdateAndGetChance(StoryState * incomingEdge)
 {
 	m_action->SetChanceFromEdge(this, incomingEdge);

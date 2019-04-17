@@ -1113,9 +1113,9 @@ void Renderer::EndFrame(HDC displayContext)
 {
 	// copies the default camera's framebuffer to the "null" framebuffer, 
 	// also known as the back buffer.
-	PROFILE_PUSH("EndFrame::CopyFrameBuffer");
+	//PROFILE_PUSH("EndFrame::CopyFrameBuffer");
 	CopyFrameBuffer( nullptr, &m_defaultCamera->m_output );			//m_current camera?
-	PROFILE_POP();
+	//PROFILE_POP();
 	PROFILE_PUSH("EndFrame::SwapBuffers");
 	SwapBuffers( displayContext ); // Note: call this once at the end of each frame
 	PROFILE_POP();

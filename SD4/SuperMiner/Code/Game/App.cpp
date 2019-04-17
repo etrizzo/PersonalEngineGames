@@ -80,26 +80,26 @@ App::App(HINSTANCE applicationInstanceHandle)
 void App::RunFrame()
 {
 	Profiler::GetInstance()->MarkFrame();
-	PROFILE_PUSH("APP::BEGINFRAME");
+	//PROFILE_PUSH("APP::BEGINFRAME");
 	GetMasterClock()->BeginFrame();
 	g_theGame->SetGameCamera();
 	g_theRenderer->BeginFrame(m_nearBottomLeft, m_farTopRight, m_backgroundColor);
 	g_theInput->BeginFrame();
 	g_theAudio->BeginFrame();
-	PROFILE_POP();
+	//PROFILE_POP();
 	Update();
 	Render();
-	PROFILE_PUSH("APP::ENDFRAME");
-		PROFILE_PUSH("Audio::EndFrame");
+	//PROFILE_PUSH("APP::ENDFRAME");
+		//PROFILE_PUSH("Audio::EndFrame");
 	g_theAudio->EndFrame();
-		PROFILE_POP();
-		PROFILE_PUSH("Input::EndFrame");
+		//PROFILE_POP();
+		//PROFILE_PUSH("Input::EndFrame");
 	g_theInput->EndFrame();
-		PROFILE_POP();
-		PROFILE_PUSH("Renderer::EndFrame");
+		//PROFILE_POP();
+		//PROFILE_PUSH("Renderer::EndFrame");
 	g_theRenderer->EndFrame(g_Window->m_displayContext);
-		PROFILE_POP();
-	PROFILE_POP();
+		//PROFILE_POP();
+	 //PROFILE_POP();
 	
 }
 

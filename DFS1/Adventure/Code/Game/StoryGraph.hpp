@@ -69,6 +69,14 @@ public:
 	*/
 
 	void RunGenerationFinal();
+	
+	void GenerateInitialNodesForGraph();
+
+	StoryNode* TryToAddEventNodeAtEdge(StoryDataDefinition* definitionToPlace, StoryEdge* edge);
+	bool TryToAddOutcomesAtEventNode(StoryDataDefinition* definitionToPlace, StoryNode* eventnode);
+
+	//looks at the nodes we have right now and compares to the expected number of nodes in the dataset
+	bool AreAllActsFinished() const;
 
 	void RunGenerationPairs(int numPairs);
 	void RunGenerationPlotAndDetail(int numPlotNodes = 3, int desiredSize = 10);
@@ -89,6 +97,8 @@ public:
 	bool CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode, bool onlyAddEndings = false);
 	StoryNode* CreateAndAddEventNodeAtEdge(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode);
 	bool AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToAdd, bool branchToFutureNodesIfNecessary);
+
+	std::vector<StoryEdge*> GetPrioritizedEdges();
 
 	//looks backwards from the end node and adds nodes to edges that don't have an end.
 	// returns true if successful, returns false if the graph was unsalvagable (indicating that whoever called this should regenerate).
@@ -255,8 +265,8 @@ protected:
 
 	RGBA m_pathColor = RGBA::GREEN;
 
-	std::vector<StoryDataDefinition*> m_usedPlotNodes;
-	std::vector<StoryDataDefinition*> m_usedDetailNodes;
+	//std::vector<StoryDataDefinition*> m_usedPlotNodes;
+	//std::vector<StoryDataDefinition*> m_usedDetailNodes;
 public:
 	
 };
@@ -266,3 +276,6 @@ StoryState* ShortestPathHeuristic(StoryEdge* edge);
 
 StoryState* RandomPathHeuristic(StoryEdge* edge);
 StoryState* CalculateChanceHeuristic(StoryEdge* edge);
+
+
+bool CompareEdgesByPriority(StoryEdge* a, StoryEdge* b);
