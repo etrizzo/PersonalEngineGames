@@ -80,8 +80,6 @@ private:
 
 bool CompareActsByNumber(const Act& first, const Act& second);
 
-
-
 struct SortableNode
 {
 	StoryDataDefinition* definition;
@@ -89,3 +87,6 @@ struct SortableNode
 
 	bool operator<(const SortableNode& compare) const;
 };
+
+bool CompareNodesByPriority(const SortableNode& first, const SortableNode& second);
+

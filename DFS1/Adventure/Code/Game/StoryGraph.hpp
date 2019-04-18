@@ -70,7 +70,8 @@ public:
 
 	void RunGenerationFinal();
 	
-	void GenerateInitialNodesForGraph();
+	bool GenerateInitialNodesForGraph();
+	void AddASingleSetOfNodes();
 
 	StoryNode* TryToAddEventNodeAtEdge(StoryDataDefinition* definitionToPlace, StoryEdge* edge);
 	bool TryToAddOutcomesAtEventNode(StoryDataDefinition* definitionToPlace, StoryNode* eventnode);
@@ -107,7 +108,7 @@ public:
 	bool AddEndingsToActBoundaryEdge(StoryNode* nextActStartingNode, int maxTries = 20);
 	void RemoveBranchesWithNoEnding(StoryNode* nextActStartingNode);
 	//if no paths had an ending and the graph is now just an end node, this will return true
-	bool CheckForInvalidGraph();
+	bool IsGraphInvalid();
 
 	StoryNode* TryToAddEndNodeAtEdge(StoryEdge* edgeState, bool isOutcome);
 
@@ -197,7 +198,7 @@ public:
 	void RenderEdge(StoryEdge* edge, RGBA color = RGBA::WHITE) const;
 
 
-	bool IsEventToOutcomeEdge(StoryEdge* edge) const;
+
 
 
 	DirectedGraph<StoryData*, StoryState*> m_graph = DirectedGraph<StoryData*, StoryState*>();
@@ -279,3 +280,5 @@ StoryState* CalculateChanceHeuristic(StoryEdge* edge);
 
 
 bool CompareEdgesByPriority(StoryEdge* a, StoryEdge* b);
+
+bool IsEventToOutcomeEdge(StoryEdge* edge);

@@ -74,6 +74,12 @@ void StoryGraph::RunNodeAdjustments()
 void StoryGraph::HandleInput(const AABB2& bounds)
 {
 	Vector2 mousePos = g_theInput->GetMouseNormalizedScreenPosition(bounds);
+
+	if (g_theInput->WasKeyJustPressed('L'))
+	{
+		AddASingleSetOfNodes();
+	}
+
 	if (!g_theInput->IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
 		m_hoveredNode = nullptr;
 		m_hoveredEdge = nullptr;
@@ -122,12 +128,12 @@ void StoryGraph::RunGenerationFinal()
 
 		AddEndingsToActBoundaryEdge(GetEnd(), 10);
 		RemoveBranchesWithNoEnding(GetEnd());
-		generated = !CheckForInvalidGraph();
+		generated = !IsGraphInvalid();
 
 	}
 }
 
-void StoryGraph::GenerateInitialNodesForGraph()
+bool StoryGraph::GenerateInitialNodesForGraph()
 {
 	//while you can place nodes, and you don't have endings, all acts haven't been placed, and acts don't meet the requisite number of nodes:
 		// create a priority list of nodes to place this iteration
@@ -168,11 +174,52 @@ void StoryGraph::GenerateInitialNodesForGraph()
 							break;
 						}
 					}
-
+					break;		//we placed a node, break out of the edge checking
 				}
 			}
 		}
+	}
+	return canPlace;
+}
 
+void StoryGraph::AddASingleSetOfNodes()
+{
+	std::vector<StoryDataDefinition*> prioritizedEvents = m_dataSet->GetPrioritizedEventNodes();
+	std::vector<StoryDataDefinition*> prioritizedOutcomes = m_dataSet->GetPrioritizedOutcomes();
+
+	std::vector<StoryEdge*> prioritizedEdges = GetPrioritizedEdges();
+	//canPlace = false;		//assume we can't place any nodes with the current configuration of edges/nodes
+	bool added = false;
+	for (int eventNum = 0; eventNum < prioritizedEvents.size(); eventNum++)
+	{
+		for (int edgeNum = 0; edgeNum < prioritizedEdges.size(); edgeNum++)
+		{
+			StoryEdge* edgeToCheck = prioritizedEdges[edgeNum];
+			//try to place the event at the current edge to check
+			StoryNode* newEvent = TryToAddEventNodeAtEdge(prioritizedEvents[eventNum], edgeToCheck);
+			
+			if (newEvent != nullptr)
+			{
+				added = true;
+				//canPlace = true;
+				//tell the dataset you used that node
+				m_dataSet->MarkEventNodeUsed(prioritizedEvents[eventNum]);
+				//try to add an outcome node and break
+				for (int outcomeNum = 0; outcomeNum < prioritizedOutcomes.size(); outcomeNum++)
+				{
+					//try to add the outcome definitiona fter the new event node
+					bool addedOutcome = TryToAddOutcomesAtEventNode(prioritizedOutcomes[outcomeNum], newEvent);
+					if (addedOutcome)
+					{
+						m_dataSet->MarkOutcomeNodeUsed(prioritizedOutcomes[outcomeNum]);
+						//u did it get outta there
+						break;
+					}
+				}
+				break;		//we placed a node, break out of the edge checking
+			}
+		}
+		if (added) {break;}
 	}
 }
 
@@ -180,13 +227,14 @@ StoryNode * StoryGraph::TryToAddEventNodeAtEdge(StoryDataDefinition * definition
 {
 	//StoryDataDefinition* sourceNode = m_dataSet->GetEventNodeWithWeights(edge->GetCost(), .75f);
 	StoryNode* addedNode = nullptr;
+
 	bool added = false;
 	//try to add the node
 	if (definitionToPlace != nullptr && StoryRequirementsMet(definitionToPlace, edge)) {
 		//if the story requirements are met, check character requirements
 		std::vector<Character*> charsForNode = GetCharactersForNode(definitionToPlace, edge);
 		//if you found characters for the node, add the node.
-		if (charsForNode.size() != 0) {
+		if (charsForNode.size() == definitionToPlace->GetNumCharacters()) {
 			addedNode = CreateAndAddEventNodeAtEdge(definitionToPlace, edge, charsForNode);		//always does it
 			if (addedNode != nullptr) {
 				added = true;
@@ -208,14 +256,14 @@ bool StoryGraph::TryToAddOutcomesAtEventNode(StoryDataDefinition * definitionToP
 	bool added = false;
 	//sourceNode is the definition
 	//try to add the node
-	for (int i = eventnode->m_inboundEdges.size() - 1; i >= 0; i--)
+	for (int i = eventnode->m_outboundEdges.size() - 1; i >= 0; i--)
 	{
-		StoryEdge* edge = eventnode->m_inboundEdges[i];
+		StoryEdge* edge = eventnode->m_outboundEdges[i];
 		if (StoryRequirementsMet(definitionToPlace, edge)) {
 			//if the story requirements are met, check character requirements
 			std::vector<Character*> charsForNode = GetCharactersForNode(definitionToPlace, edge);
 			//if you found characters for the node, add the node.
-			if (charsForNode.size() != 0) {
+			if (charsForNode.size() >= definitionToPlace->GetNumCharacters()) {
 				if (CreateAndAddOutcomeNodeAtEdge(definitionToPlace, edge, charsForNode)) {
 					//m_usedDetailNodes.push_back(definitionToPlace);
 					added = true;
@@ -249,14 +297,14 @@ bool StoryGraph::AreAllActsFinished() const
 		if (node != m_startNode && node != m_endNode)
 		{
 			int act = node->m_data->GetAct();
-			numNodesPerAct[act] = numNodesPerAct[act] + 1;
+			numNodesPerAct[act-1] = numNodesPerAct[act-1] + 1;
 		}
 	}
 
 	//check if number of nodes in each act meets the dataset's requirements
 	for (int i = 0; i < numNodesPerAct.size(); i++)
 	{
-		if (!m_dataSet->DoesActMeetNumNodeRequirement(i, numNodesPerAct[i]))
+		if (!m_dataSet->DoesActMeetNumNodeRequirement(i + 1, numNodesPerAct[i]))
 		{
 			return false;
 		}
@@ -486,6 +534,11 @@ void StoryGraph::GenerateStartAndEnd()
 		AddEdge(m_startNode, m_endNode, startingEdge);
 	}
 	
+}
+
+bool StoryGraph::TryToAddOutcomeNodeAtEdge(StoryEdge* edge, int maxTries /*= 10*/)
+{
+	return false;
 }
 
 //bool StoryGraph::TryToAddOutcomeNodeAtEdge(StoryEdge * edge, int maxTries)
@@ -777,7 +830,10 @@ std::vector<StoryEdge*> StoryGraph::GetPrioritizedEdges()
 	std::vector<StoryEdge*> sortedEdges;
 	for (StoryEdge* edge : m_graph.m_edges)
 	{
-		sortedEdges.push_back(edge);
+		if (!IsEventToOutcomeEdge(edge))
+		{ 
+			sortedEdges.push_back(edge); 
+		}
 	}
 	Shuffle(sortedEdges);
 	std::sort(sortedEdges.begin(), sortedEdges.end(), CompareEdgesByPriority);
@@ -794,7 +850,7 @@ bool StoryGraph::AddEndingsToGraph(int maxTries)
 		AddEndingsToActBoundaryEdge(nextActStart, maxTries);
 		RemoveBranchesWithNoEnding(nextActStart);
 	}
-	return !CheckForInvalidGraph();
+	return !IsGraphInvalid();
 }
 
 bool StoryGraph::AddEndingsToActBoundaryEdge(StoryNode* nextActStartingNode, int maxTries)
@@ -887,8 +943,14 @@ void StoryGraph::RemoveBranchesWithNoEnding(StoryNode* nextActStartingNode)
 	}
 }
 
-bool StoryGraph::CheckForInvalidGraph()
+bool StoryGraph::IsGraphInvalid()
 {
+	//if all acts are not finished, it's invalid
+	if (!AreAllActsFinished())
+	{
+		return true;
+	}
+
 	//if there are no nodes or no endings
 	if (m_graph.m_nodes.size() <= 1 || m_endNode->m_inboundEdges.size() < 1){
 		
@@ -1444,7 +1506,7 @@ void StoryGraph::RenderDebugInfo(const AABB2& bounds) const
 		selectedBox.AddPaddingToSides(-.005f, -.005f);
 		std::string selectedString = "Selected Edge:\n";
 		selectedString += m_selectedEdge->GetCost()->GetDevString();
-		g_theRenderer->DrawTextInBox2D(selectedString, selectedBox, Vector2::ALIGN_CENTER_LEFT, EDGE_FONT_SIZE, TEXT_DRAW_SHRINK_TO_FIT, RGBA::WHITE);
+		g_theRenderer->DrawTextInBox2D(selectedString, selectedBox, Vector2::TOP_LEFT_PADDED, EDGE_FONT_SIZE, TEXT_DRAW_OVERRUN, RGBA::WHITE);
 	}
 
 	if (m_hoveredEdge != nullptr){
@@ -1735,7 +1797,7 @@ bool StoryGraph::NodeRequirementsAreMet(StoryNode * newNode, StoryEdge* atEdge)
 
 bool StoryGraph::StoryRequirementsMet(StoryDataDefinition * node, StoryEdge * atEdge)
 {
-	if (node->DoesEdgeMeetStoryRequirements(atEdge->GetCost())){
+	if (DoRangesOverlap(node->m_actRange, atEdge->GetCost()->m_possibleActRange) && node->DoesEdgeMeetStoryRequirements(atEdge->GetCost())){
 		//meets the requirements for the incoming edge - now we just need to check if the node after you will be invalidated by the new node
 		StoryState* newEdge = new StoryState(*atEdge->GetCost());
 		newEdge->UpdateFromNodeDefinition(node);
@@ -2063,14 +2125,6 @@ void StoryGraph::RenderEdge(StoryEdge * edge, RGBA color) const
 }
 
 
-bool StoryGraph::IsEventToOutcomeEdge(StoryEdge* edge) const
-{
-	if (edge->GetStart()->m_data->m_type == PLOT_NODE && edge->GetEnd()->m_data->m_type == DETAIL_NODE)
-	{
-		return true;
-	}
-	return false;
-}
 
 
 void StoryGraph::UpdateDepths()
@@ -2155,5 +2209,16 @@ StoryState * CalculateChanceHeuristic(StoryEdge * edge)
 
 bool CompareEdgesByPriority(StoryEdge * a, StoryEdge * b)
 {
-	return (a->GetCost()->m_possibleActRange.GetSize() < b->GetCost()->m_possibleActRange.GetSize());
+
+	return (a->GetCost()->m_possibleActRange.GetSize() > b->GetCost()->m_possibleActRange.GetSize());
+}
+
+
+bool IsEventToOutcomeEdge(StoryEdge* edge)
+{
+	if (edge->GetStart()->m_data->m_type == PLOT_NODE && edge->GetEnd()->m_data->m_type == DETAIL_NODE)
+	{
+		return true;
+	}
+	return false;
 }

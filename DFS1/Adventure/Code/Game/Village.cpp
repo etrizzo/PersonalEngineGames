@@ -86,15 +86,15 @@ void Village::ConnectResidentsToGraphCharacters()
 
 void Village::GenerateGraph()
 {
-	bool generated = false;
-	while (!generated){
-		m_villageGraph->Clear();
-		m_villageGraph->RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
-		m_villageGraph->AddEndingsToActBoundaryEdge(m_villageGraph->GetEnd(), 5);
-		m_villageGraph->RemoveBranchesWithNoEnding(m_villageGraph->GetEnd());
-		generated = !m_villageGraph->CheckForInvalidGraph();
-	}
-
+	//bool generated = false;
+	//while (!generated){
+	//	m_villageGraph->Clear();
+	//	m_villageGraph->RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
+	//	m_villageGraph->AddEndingsToActBoundaryEdge(m_villageGraph->GetEnd(), 5);
+	//	m_villageGraph->RemoveBranchesWithNoEnding(m_villageGraph->GetEnd());
+	//	generated = !m_villageGraph->CheckForInvalidGraph();
+	//}
+	m_villageGraph->RunGenerationFinal();
 	m_currentEdge = m_villageGraph->GetStart()->m_outboundEdges[0];
 
 	SetDialogueStrings();

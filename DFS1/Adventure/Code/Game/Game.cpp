@@ -640,25 +640,25 @@ void Game::ClearGraph()
 
 void Game::GeneratePlotNodes(int numToGenerate)
 {
-	m_graph->GenerateSkeleton(numToGenerate);
+	//m_graph->GenerateSkeleton(numToGenerate);
 }
 
 void Game::GenerateDetailNodes(int numToGenerate)
 {
-	m_graph->AddDetailNodesToDesiredSize(numToGenerate + m_graph->GetNumNodes());
+	//m_graph->AddDetailNodesToDesiredSize(numToGenerate + m_graph->GetNumNodes());
 }
 
 void Game::GenerateNodePairs(int numToGenerate)
 {
-	for (int i = 0; i < numToGenerate; i++){
-		AddPlotAndOutcomeNodeInPair();
-	}
+	//for (int i = 0; i < numToGenerate; i++){
+	//	AddPlotAndOutcomeNodeInPair();
+	//}
 }
 
 void Game::AddPlotAndOutcomeNodeInPair()
 {
-	StoryNode* newNode = m_graph->AddSingleEventNode();
-	m_graph->AddOutcomeNodesToEventNode(newNode);
+	//StoryNode* newNode = m_graph->AddSingleEventNode();
+	//m_graph->AddOutcomeNodesToEventNode(newNode);
 }
 
 

@@ -165,7 +165,7 @@ std::vector<StoryDataDefinition*> DataSet::GetPrioritizedEventNodes()
 		
 	}
 	
-	std::sort(allNodesWithPriority.begin(), allNodesWithPriority.end());
+	std::sort(allNodesWithPriority.begin(), allNodesWithPriority.end(), CompareNodesByPriority);
 
 	std::vector<StoryDataDefinition*> prioritizedNodes = std::vector<StoryDataDefinition*>();
 	
@@ -219,7 +219,7 @@ int DataSet::CalculateNodePriority(StoryDataDefinition * def) const
 {
 	//get whether or not this act has been used
 	TODO("improve this");
-	int priority = 0;
+	int priority = 5;
 	bool isActNeeded = true;
 	//go through each used node. if this def is in there, subtract from priority.
 	//if a node is in the same act, mark as "not needed"
@@ -227,7 +227,7 @@ int DataSet::CalculateNodePriority(StoryDataDefinition * def) const
 	{
 		if (def == eventDef)
 		{
-			priority -= 10;
+			priority -= 4;
 		}
 		if (eventDef->m_actRange.min == def->m_actRange.min)
 		{
@@ -565,6 +565,11 @@ DataSet * DataSet::GetDataSet(std::string dataSetName)
 bool CompareActsByNumber(const Act & first, const Act & second)
 {
 	return first.m_number < second.m_number;
+}
+
+bool CompareNodesByPriority(const SortableNode& first, const SortableNode& second)
+{
+	return first.priority > second.priority;
 }
 
 bool SortableNode::operator<(const SortableNode & compare) const

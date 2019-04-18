@@ -94,6 +94,6 @@
 
 		<StoryRequirements>
 			<Requirement tag="callIssued" target="true"/>
-			<Requirement tag="callCompleted" target="true"/>
+			<!--<Requirement tag="callCompleted" target="true"/>-->
 		</StoryRequirements>
 	</EventNode>
