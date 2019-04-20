@@ -297,7 +297,14 @@ bool StoryGraph::AreAllActsFinished() const
 		if (node != m_startNode && node != m_endNode)
 		{
 			int act = node->m_data->GetAct();
-			numNodesPerAct[act-1] = numNodesPerAct[act-1] + 1;
+			if (act == 0)
+			{
+				numNodesPerAct[act] = numNodesPerAct[act] + 1;
+			}
+			else {
+				numNodesPerAct[act - 1] = numNodesPerAct[act - 1] + 1;
+			}
+			
 		}
 	}
 

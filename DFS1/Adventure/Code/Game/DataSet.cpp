@@ -203,7 +203,7 @@ std::vector<StoryDataDefinition*> DataSet::GetPrioritizedOutcomes()
 
 	}
 
-	std::sort(allNodesWithPriority.begin(), allNodesWithPriority.end());
+	std::sort(allNodesWithPriority.begin(), allNodesWithPriority.end(), CompareNodesByPriority);
 
 	std::vector<StoryDataDefinition*> prioritizedNodes = std::vector<StoryDataDefinition*>();
 
