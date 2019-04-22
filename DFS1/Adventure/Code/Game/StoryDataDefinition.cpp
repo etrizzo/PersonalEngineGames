@@ -216,7 +216,6 @@ bool StoryDataDefinition::IsEnding() const
 
 bool StoryDataDefinition::DoesCharacterMeetSlotRequirementsAtEdge(Character * character, unsigned int charSlot, StoryEdge * atEdge)
 {
-	TODO("Implement checks on character requirements at edge.");
 	//maybe edge needs character states?
 	StoryState* edgeState = atEdge->GetCost();
 	StoryState* resultState = new StoryState(*edgeState);

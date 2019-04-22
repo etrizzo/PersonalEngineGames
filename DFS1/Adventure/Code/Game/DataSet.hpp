@@ -76,6 +76,7 @@ private:
 	void ReadEventNodesFromXML(std::string filePath);
 	void ReadOutcomeNodesFromXML(std::string filePath);
 	void ReadCharactersFromXML(std::string filePath);
+
 };
 
 bool CompareActsByNumber(const Act& first, const Act& second);

@@ -119,6 +119,7 @@ void StoryGraph::RunGenerationFinal()
 
 	//srand(1);
 	bool generated = false;
+	int tries = 0;
 	while (!generated) {
 		//RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
 		Clear();
@@ -129,6 +130,15 @@ void StoryGraph::RunGenerationFinal()
 		AddEndingsToActBoundaryEdge(GetEnd(), 10);
 		RemoveBranchesWithNoEnding(GetEnd());
 		generated = !IsGraphInvalid();
+		if (!generated)
+		{
+			tries++;
+			if (tries > 15)
+			{
+				ConsolePrintf(RGBA::RED, "No valid graph possible with current dataset");
+				return;
+			}
+		}
 
 	}
 }
@@ -142,9 +152,11 @@ bool StoryGraph::GenerateInitialNodesForGraph()
 		// Shuffle edges with some priority towards higher act range edges being sorted earlier
 		// For each edge, check each 
 	bool canPlace = true;
+	int tries = 0;
 
 	while (canPlace && !AreAllActsFinished())
 	{
+		
 		std::vector<StoryDataDefinition*> prioritizedEvents = m_dataSet->GetPrioritizedEventNodes();
 		std::vector<StoryDataDefinition*> prioritizedOutcomes = m_dataSet->GetPrioritizedOutcomes();
 
@@ -276,6 +288,7 @@ bool StoryGraph::TryToAddOutcomesAtEventNode(StoryDataDefinition * definitionToP
 	if (added)
 	{
 		UpdateDepths();
+		SetNodePositionsByDepth();
 	}
 
 	return added;
@@ -1903,9 +1916,31 @@ std::vector<Character*> StoryGraph::GetCharactersForNode(StoryDataDefinition* no
 		}
 	}
 	
-	//if we've saved any permutations that work, choose a random one.
+	//if we've saved any permutations that work, choose a random one that doesn't violate a future node.
 	if (possiblePermutations.size() > 0){
-		return possiblePermutations[GetRandomIntLessThan(possiblePermutations.size())];
+		Shuffle(possiblePermutations);
+		for (int i = 0; i < possiblePermutations.size(); i++)
+		{
+			std::vector<Character*> charactersForNode = possiblePermutations[i];
+			//see if this permutation works with the next node
+			StoryData* newData = new StoryData(nodeDefinition);
+			newData->SetCharacters(charactersForNode);
+			StoryState* newEdge = new StoryState(*atEdge->GetCost());
+			newEdge->UpdateFromNode(newData);
+
+			if (atEdge->GetEnd()->m_data->IsCompatibleWithIncomingEdge(newEdge))
+			{
+				delete newData;
+				delete newEdge;
+				return charactersForNode;
+			} else 
+			{
+				delete newData;
+				delete newEdge;
+				//keep checking new permutations
+			}
+
+		}
 	}
 	//if not, there's no permutation of characters that satisfy the node right now.
 	return std::vector<Character*>();
@@ -2035,7 +2070,7 @@ StoryEdge * StoryGraph::GetEdgeWithLargestActRange(bool lookingForEndings) const
 
 void StoryGraph::RenderNode(StoryNode * node, Vector2 position, RGBA color) const
 {
-	if (node->m_data->m_type == DETAIL_NODE){
+	if (node->m_data->m_type == DETAIL_NODE && !(color == m_pathColor)){
 		color = RGBA::BEEFEE;
 	}
 

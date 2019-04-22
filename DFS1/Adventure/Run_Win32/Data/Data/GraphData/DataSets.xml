@@ -48,16 +48,16 @@
 
 	<DataSet name="Default">
 		<Acts>
-			<!--<File name="Data/Data/GraphData/MurderMystery_Acts.xml" />-->
+			<File name="Data/Data/GraphData/DefaultData_Acts.xml" />
 		</Acts>
 		<Characters>
-			<File name="Data/Data/GraphData/Characters.xml" />
+			<File name="Data/Data/GraphData/DefaultData_Characters.xml" />
 		</Characters>
 		<EventNodes>
-			<File name="Data/Data/GraphData/PlotGrammars.xml" />
+			<File name="Data/Data/GraphData/DefaultData_EventNodes.xml" />
 		</EventNodes>
 		<OutcomeNodes>
-			<File name="Data/Data/GraphData/DetailGrammars.xml" />
+			<File name="Data/Data/GraphData/DefaultData_OutcomeNodes.xml" />
 		</OutcomeNodes>
 	</DataSet>
 </DataSets>

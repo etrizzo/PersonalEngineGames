@@ -282,7 +282,7 @@ bool Contains(std::vector<T*>& array, T* obj){
 }
 
 template <typename T>
-void Shuffle(std::vector<T*>& array, unsigned int numTimesToShuffle = 2)
+void Shuffle(std::vector<T>& array, unsigned int numTimesToShuffle = 2)
 {
 	for (unsigned int i = 0; i < numTimesToShuffle; i++)
 	{

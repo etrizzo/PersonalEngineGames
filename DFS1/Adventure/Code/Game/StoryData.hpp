@@ -35,7 +35,7 @@ public:
 	void ClearCharacters();
 	void SetCharacter(int charSlot, Character* charToSet);
 	unsigned int GetNumCharacters() const;
-	bool DoesCharacterMeetSlotRequirementsAtEdge(Character* character, unsigned int charSlot, StoryEdge* atEdge);
+	
 	CharacterRequirementSet* GetRequirementsForCharacter(Character* character);
 
 	void SetCharacters(std::vector<Character*> characters);
@@ -61,22 +61,6 @@ public:
 	std::string m_name;
 	Action* m_action;
 	StoryDataDefinition* m_definition = nullptr;
-
-
-
-
-
-	//Strings m_actions;		//detail nodes 4 now
-	//Strings m_actionsWithCharacters;	//detail nodes 4 now
-	//std::vector<CharacterRequirementSet*> m_characterReqs;
-	//StoryRequirements m_storyReqs;
-	//EffectSet* m_effectSet;
-
-	//test bits
-
-	//float m_value;
-
-	//generation info
 
 	mutable std::string m_actionWithCharacters;		//mutable to update in GetString
 	eNodeType m_type;

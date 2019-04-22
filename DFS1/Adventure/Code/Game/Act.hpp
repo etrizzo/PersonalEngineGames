@@ -7,6 +7,7 @@ struct Act
 	Act(tinyxml2::XMLElement* actElement);
 	std::string m_name		= "";
 	int			m_number	= 0;
+	int			m_minNodes	= 1;
 };
 
 

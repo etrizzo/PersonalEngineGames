@@ -1,5 +1,36 @@
+	<EventNode name="start" actRange="1">
+		<Action text="*0* sets out to find some treasure" />
+		<Characters>
+			<Character id="0" title="protaganist" />
+		</Characters>
 
-	<EventNode>
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="isMainCharacter" target="false" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="mainCharacterChosen" target="false" weight="5"/>
+		</StoryRequirements>
+
+
+		<CharacterEffects>
+			<EffectSet>
+				<TagChange character="0" tag = "isMainCharacter" target="true"/>
+			</EffectSet>
+		</CharacterEffects>
+
+		<StoryEffects>
+			<EffectSet>
+				<TagChange tag="mainCharacterChosen" target="true" type="boolean" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+	</EventNode>
+
+
+	<EventNode name="Fight" actRange="1">
 		<!-- *[X]* indicates a character name who should be replaced at rutntime -->
 		<Action text="*0* fights *1*" />
 		<Characters>
@@ -20,18 +51,15 @@
 			<StoryRequirement feeling="tension" value="15" compare="greater" />
 		</StoryRequirements>
 		<CharacterEffects>
-			<EffectSet chance="default">
-				<TraitChange character="0" trait="Social" change="-10" />
-				<TraitChange character="1" trait="Social" change="-10" />
+			<EffectSet >
 				<TagChange character="1" tag = "isAngry" target="*0*" type="character"/>
 				<TagChange character="0" tag = "isFighting" target="*1*" type="character"/>
 				<TagChange character="1" tag = "isFighting" target="*0*" type="character"/>
-				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>
 
-	<EventNode>
+	<EventNode name="ForkCave" actRange="1">
 		<Action text="*0* comes to a fork in the cave - one path is dimly lit, the other is dark." />
 		<Characters>
 			<Character id="0" title="adventurer" />
@@ -41,6 +69,7 @@
 				<Requirement tag="isAlive" target="true" />
 				<Requirement tag="inCave" target="true" />
 				<Requirement tag="isLost" target="false" />
+				<Requirement tag="isMainCharacter" target="true" />
 			</Character>
 		</CharacterRequirements>
 		<CharacterEffects>
@@ -57,7 +86,7 @@
 		</StoryEffects>
 	</EventNode>
 
-	<EventNode>
+	<EventNode name="ForkDungeon" actRange="1">
 		<Action text="*0* comes to a fork in the dungeon - one path is dimly lit, the other is dark." />
 		<Characters>
 			<Character id="0" title="adventurer" />
@@ -67,6 +96,7 @@
 				<Requirement tag="isAlive" target="true" />
 				<Requirement tag="inDungeon" target="true" />
 				<Requirement tag="isLost" target="false" />
+				<Requirement tag="isMainCharacter" target="true" />
 			</Character>
 		</CharacterRequirements>
 		<CharacterEffects>
@@ -83,10 +113,10 @@
 		</StoryEffects>
 	</EventNode>
 
-	<EventNode>
+	<EventNode name="StealsTreasure" actRange="1">
 		<Action text="*0* steals *1*'s treasure" />
 		<Characters>
-			<Character id="0" title="instigator" />
+			<Character id="0" title="thief" />
 			<Character id="1" title="victim" />
 		</Characters>
 		<CharacterRequirements>
@@ -109,7 +139,7 @@
 	</EventNode>
 
 
-	<EventNode>
+	<EventNode name="QuestCave" actRange="1">
 		<Action text="*0* goes on a quest to a cave" />
 		<Characters>
 			<Character id="0" title="adventurer" />
@@ -118,6 +148,8 @@
 			<Character index="0">
 				<Requirement tag="isAlive" target="true"/>
 				<Requirement tag="onQuest" target="false" />
+				<Requirement tag="isWounded" target="false" />
+				<Requirement tag="isMainCharacter" target="true" />
 			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>
@@ -125,15 +157,13 @@
 		</StoryRequirements>
 		<CharacterEffects>
 			<EffectSet chance="default">
-				<TraitChange character="0" trait="Social" change="-10" />
 				<TagChange character="0" tag = "onQuest" target="true" />
 				<TagChange character="0" tag = "inCave" target="true" />
-				<StoryChange Action="+5" Tension="+10" /> 
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>
 
-<!--
+
 	<EventNode>
 		<Action text="*0* goes on a quest to a dungeon" />
 		<Characters>
@@ -143,23 +173,24 @@
 			<Character index="0">
 				<Requirement tag="isAlive" target="true"/>
 				<Requirement tag="onQuest" target="false" />
+				<Requirement tag="isWounded" target="false" />
+				<Requirement tag="isMainCharacter" target="true" />
 			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>
-			<StoryRequirement feeling="tension" value="15" compare="greater" />
+			
 		</StoryRequirements>
 		<CharacterEffects>
 			<EffectSet chance="default">
-				<TraitChange character="0" trait="Social" change="-10" />
 				<TagChange character="0" tag = "onQuest" target="true" />
 				<TagChange character="0" tag = "inDungeon" target="true" />
-				<StoryChange Action="+5" Tension="+10" /> 
+
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>
--->
 
-	<EventNode>
+
+	<EventNode name="CaveTreasure" actRange="1">
 		<Action text="*0* finds a cave treasure" />
 		<Characters>
 			<Character id="0" title="adventurer" />
@@ -168,7 +199,8 @@
 			<Character index="0">
 				<Requirement tag="isAlive" target="true" />
 				<Requirement tag="inCave" target="true" />
-
+				<Requirement tag="isWounded" target="false" />
+				<Requirement tag="isMainCharacter" target="true" />
 			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>
@@ -184,7 +216,7 @@
 
 
 
-	<EventNode>
+	<EventNode name="DungeonTreasure" actRange="1">
 		<Action text="*0* finds a dungeon treasure" />
 		<Characters>
 			<Character id="0" title="adventurer" />
@@ -193,6 +225,7 @@
 			<Character index="0">
 				<Requirement tag="isAlive" target="true" />
 				<Requirement tag="inDungeon" target="true" />
+				<Requirement tag="isMainCharacter" target="true" />
 			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>
@@ -207,7 +240,7 @@
 	</EventNode>
 
 
-<EventNode>
+<EventNode name="CaveJelly" actRange="1">
 		<Action text="*0* fights a cave jelly" />
 		<Characters>
 			<Character id="0" title="adventurer" />
@@ -216,6 +249,7 @@
 			<Character index="0">
 				<Requirement tag="isAlive" target="true" />
 				<Requirement tag="inCave" target="true" />
+				<Requirement tag="isMainCharacter" target="true" />
 			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>
@@ -230,7 +264,7 @@
 	</EventNode>
 
 
-	<EventNode>
+	<EventNode name="DungeonMonster" actRange="1">
 		<Action text="*0* fights a dungeon monster" />
 		<Characters>
 			<Character id="0" title="adventurer" />
@@ -239,6 +273,7 @@
 			<Character index="0">
 				<Requirement tag="isAlive" target="true" />
 				<Requirement tag="inDungeon" target="true" />
+				<Requirement tag="isMainCharacter" target="true" />
 			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>
@@ -252,7 +287,7 @@
 		</CharacterEffects>
 	</EventNode>
 
-	<EventNode>
+	<EventNode name="FindsExit" actRange="1">
 		<Action text="*0* finds an exit to the cave" />
 		<Characters>
 			<Character id="0" title="adventurer" />
@@ -261,18 +296,35 @@
 		<CharacterRequirements>
 			<Character index="0">
 				<Requirement tag="inCave" target="true" />
+				<Requirement tag="isMainCharacter" target="true" />
 			</Character>
 		</CharacterRequirements>
 
 		<StoryRequirements>
-			<StoryRequirement tag="foundExit" target="none" type="character" />
+			<StoryRequirement tag="foundExit" target="false" />
 		</StoryRequirements>
 
 		<StoryEffects>
 			<EffectSet chance="default">
-				<TagChange tag="foundExit" target="*0*" type="character" effectType="story"/>
+				<TagChange tag="foundExit" target="true" type="boolean" effectType="story"/>
 			</EffectSet>
 		</StoryEffects>
 	</EventNode>
 
+<!--
+	<EventNode name="headedHomeWounded" actRange="1">
+		<Action text="*0* heads for home, wounded" />
+		<Character>
+			<Character id="0" title="adventurer" />
+		</Character>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="onQuest" target="false" />
+				<Requirement tag="isWounded" target="true" />
+				<Requirement tag="isMainCharacter" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+-->
 

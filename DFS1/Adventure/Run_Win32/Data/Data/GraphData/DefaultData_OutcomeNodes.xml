@@ -2,7 +2,7 @@
 	Sample new format:
 -->
 
-	<OutcomeNode name="Fight">
+	<OutcomeNode name="FightOutcome" actRange="1">
 		<Characters>
 			<Character id = "*0*" title="fighter"/>
 		</Characters>
@@ -62,7 +62,7 @@
 	</OutcomeNode>
 
 
-	<OutcomeNode name="GetLostDungeon" chanceToPlace=".1">
+	<OutcomeNode name="GetLostDungeon" actRange="1" chanceToPlace=".1">
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -91,12 +91,13 @@
 		</Actions>
 		
 		<StoryRequirements>
+			<Requirement tag="atCrossroad" target="none" type="character" />
 		</StoryRequirements>
 		<StoryEffects>
 		</StoryEffects>
 	</OutcomeNode>
 
-<!--
+
 	<OutcomeNode name="GetLostCave" chanceToPlace=".4">>
 		<Characters>
 			<Character id = "*0*" />
@@ -142,13 +143,14 @@
 		</Actions>
 
 		<StoryRequirements>
+			<Requirement tag="atCrossroad" target="none" type="character" />
 		</StoryRequirements>
 		<StoryEffects>
 		</StoryEffects>
 	</OutcomeNode>
--->
 
-	<OutcomeNode name="CrossroadOutcome">
+
+	<OutcomeNode name="CrossroadOutcome" actRange="1">
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -196,7 +198,7 @@
 
 
 
-	<OutcomeNode name="ExitOutcome">
+	<OutcomeNode name="ExitOutcome" actRange="1">
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -233,7 +235,7 @@
 
 
 
-	<OutcomeNode name="FindWayAndStay" chanceToPlace=".5">>
+	<OutcomeNode name="FindWayAndStay" actRange="1" chanceToPlace=".5">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -252,7 +254,7 @@
 		</CharacterRequirements>
 	</OutcomeNode>
 
-	<OutcomeNode name="LosesHope" chanceToPlace=".1">>
+	<OutcomeNode name="LosesHope" actRange="1" chanceToPlace=".1">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -271,7 +273,7 @@
 		</CharacterRequirements>
 	</OutcomeNode>
 
-	<OutcomeNode name="StarveWhileLost" chanceToPlace=".3">>
+	<OutcomeNode name="StarveWhileLost" actRange="1" chanceToPlace=".3">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -291,7 +293,7 @@
 		</CharacterRequirements>
 	</OutcomeNode>
 
-	<OutcomeNode name="FindWayAndLeaveCave" chanceToPlace=".5">
+	<OutcomeNode name="FindWayAndLeaveCave" actRange="1" chanceToPlace=".5">
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -313,7 +315,7 @@
 		</CharacterRequirements>
 	</OutcomeNode>
 
-	<OutcomeNode name="FindWayAndLeaveDung" chanceToPlace=".5">>
+	<OutcomeNode name="FindWayAndLeaveDung" actRange="1" chanceToPlace=".5">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>

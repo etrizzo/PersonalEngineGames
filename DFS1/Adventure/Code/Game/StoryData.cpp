@@ -144,43 +144,6 @@ unsigned int StoryData::GetNumCharacters() const
 	return m_numCharacters;
 }
 
-bool StoryData::DoesCharacterMeetSlotRequirementsAtEdge(Character * character, unsigned int charSlot, StoryEdge * atEdge)
-{
-	TODO("Implement checks on character requirements at edge.");
-	//maybe edge needs character states?
-	StoryState* edgeState = atEdge->GetCost();
-	StoryState* resultState = new StoryState(*edgeState);
-	resultState->PredictUpdateOnCharacter(character, charSlot, this);
-	//resultState->UpdateFromNode(this);		//apply the potential new node's effects to see if the result still fits the graph
-
-	CharacterState* charState = edgeState->GetCharacterStateForCharacter(character);
-	CharacterState* resultingState = resultState->GetCharacterStateForCharacter(character);
-	
-	//check if the change would fit on this edge
-	bool meetsExistingConditions = m_definition->m_characterReqs[charSlot]->DoesCharacterMeetAllRequirements(character, edgeState);
-	if (meetsExistingConditions){
-		//check if the change would fuck up future nodes
-		StoryData* endData = atEdge->GetEnd()->m_data;
-		//if this character has future requirements, have to meet them
-		//NOTE: this should maybe be a recursive call to DoesCharacterMeetSlotRequirements?
-		CharacterRequirementSet* charReqs = endData->GetRequirementsForCharacter(character);
-		if (charReqs != nullptr){
-			bool meetsFutureConditions = charReqs->DoesCharacterMeetAllRequirements(character, resultState);
-			if (meetsFutureConditions){
-				delete resultingState;
-				return true;
-			}
-		} else {
-			//if there are no requirements for this character on the end node, it's chill
-			delete resultingState;
-			return true;
-		}
-	}
-
-	return false;
-	//return true;
-}
-
 CharacterRequirementSet* StoryData::GetRequirementsForCharacter(Character * character)
 {
 	if (m_definition != nullptr){

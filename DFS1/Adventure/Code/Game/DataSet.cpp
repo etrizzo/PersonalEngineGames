@@ -303,9 +303,9 @@ int DataSet::GetFinalActNumber() const
 
 bool DataSet::DoesActMeetNumNodeRequirement(int actNumber, int numNodes)
 {
-	UNUSED(actNumber);
-	TODO("parse a required number of nodes for each act at creation");
-	return (numNodes > 0);
+	//UNUSED(actNumber);
+	//TODO("parse a required number of nodes for each act at creation");
+	return (numNodes > m_actsInOrder[actNumber-1].m_minNodes);
 }
 
 StoryDataDefinition * DataSet::GetOutcomeNodeWithWeights(StoryState * edge, float minFitness)

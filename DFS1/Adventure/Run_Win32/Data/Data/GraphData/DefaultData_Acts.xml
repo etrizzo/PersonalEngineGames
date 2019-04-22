@@ -1,0 +1,9 @@
+<Act name="Introduction" number="1" minNodes="10"/>
+
+
+<!--
+	Might need to be a universal act that spans all data sets.
+	- Kind of weird because we want to support multiple endings, so we shouldn't require any concrete ending tags(i.e. "the killer was arrested" vs. "the killer escapes")
+	- unless there's just multiple conclusion acts, but that breaks the "linear & ordered" rule
+<Act name="Conclusion" number="4" />
+-->
