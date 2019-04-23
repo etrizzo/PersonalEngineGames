@@ -24,7 +24,8 @@ void StoryGraph::SelectCharactersForGraph(int numCharacters)
 {
 	m_characters.clear();
 	if (numCharacters == 0){
-		numCharacters = g_gameConfigBlackboard.GetValue("numCharacters", (int) m_dataSet->m_characters.size());
+		//numCharacters = g_gameConfigBlackboard.GetValue("numCharacters", (int) m_dataSet->m_characters.size());
+		numCharacters = m_dataSet->m_numCharactersToUse.GetRandomInRange();
 	}
 	if (numCharacters >= (int) m_dataSet->m_characters.size()){
 		for(Character* character :  m_dataSet->m_characters){
@@ -122,7 +123,7 @@ void StoryGraph::RunGenerationFinal()
 	int tries = 0;
 	while (!generated) {
 		//RunGenerationByActs(NUM_NODE_PAIRS_TO_GENERATE);
-		Clear();
+		Reset();
 		GenerateStartAndEnd();
 		GenerateInitialNodesForGraph();
 
@@ -1722,7 +1723,7 @@ StoryNode * StoryGraph::AddEnd(StoryNode * endNode)
 	return m_endNode;
 }
 
-void StoryGraph::Clear()
+void StoryGraph::Reset()
 {
 	TODO("define whether directed graph should delete its nodes...");
 	for (int i = 0; i < (int) m_graph.m_nodes.size(); i++){
@@ -1752,7 +1753,10 @@ void StoryGraph::Clear()
 	m_analysisHasRun = false;
 	if (m_dataSet != nullptr){
 		m_dataSet->ResetDataSet();
+		SelectCharactersForGraph();
 	}
+
+	
 }
 
 StoryEdge * StoryGraph::GetEdge(StoryNode * start, StoryNode * end) const

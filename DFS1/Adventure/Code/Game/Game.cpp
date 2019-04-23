@@ -635,7 +635,7 @@ void Game::GenerateGraph()
 
 void Game::ClearGraph()
 {
-	m_graph->Clear();
+	m_graph->Reset();
 }
 
 void Game::GeneratePlotNodes(int numToGenerate)

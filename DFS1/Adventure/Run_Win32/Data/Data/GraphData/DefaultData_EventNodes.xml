@@ -153,7 +153,7 @@
 			</Character>
 		</CharacterRequirements>
 		<StoryRequirements>
-			<StoryRequirement feeling="tension" value="15" compare="greater" />
+			
 		</StoryRequirements>
 		<CharacterEffects>
 			<EffectSet chance="default">
@@ -281,7 +281,6 @@
 		</StoryRequirements>
 		<CharacterEffects>
 			<EffectSet chance="default">
-				<StoryChange Action="+5" Tension="+10" /> 
 				<TagChange character="0" tag="isFighting" target="true" type="boolean"/>
 			</EffectSet>
 		</CharacterEffects>
@@ -309,14 +308,19 @@
 				<TagChange tag="foundExit" target="true" type="boolean" effectType="story"/>
 			</EffectSet>
 		</StoryEffects>
+		<CharacterEffects>
+			<EffectSet chance="default">
+				<TagChange character="0" tag="atExit" target="true" type="boolean"/>
+			</EffectSet>
+		</CharacterEffects>
 	</EventNode>
 
-<!--
+
 	<EventNode name="headedHomeWounded" actRange="1">
 		<Action text="*0* heads for home, wounded" />
-		<Character>
+		<Characters>
 			<Character id="0" title="adventurer" />
-		</Character>
+		</Characters>
 
 		<CharacterRequirements>
 			<Character index="0">
@@ -326,5 +330,88 @@
 			</Character>
 		</CharacterRequirements>
 
--->
+		<StoryRequirements>
+		</StoryRequirements>
 
+		<CharacterEffects>
+			<EffectSet chance="default">
+				<TagChange character="0" tag="headingHomeWounded" target="true" type="boolean"/>
+			</EffectSet>
+		</CharacterEffects>
+
+	</EventNode>
+
+	<EventNode>
+		<Action text="*0* dies on the road" endsAct="true"/>
+		<Characters>
+			<Character id="0" title="adventurer" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isPassedOutOnRoad" target="true" />
+				<Requirement tag="isMainCharacter" target="true" />
+				<Requirement tag="isAlive" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+		</StoryRequirements>
+
+		<CharacterEffects>
+			<EffectSet chance="default">
+				<TagChange character="0" tag="isAlive" target="false" type="boolean"/>
+			</EffectSet>
+		</CharacterEffects>
+	</EventNode>
+
+	<EventNode>
+		<Action text="A stranger helps *0* to their home, but steals their treasure." endsAct="true"/>
+		<Characters>
+			<Character id="0" title="adventurer" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isPassedOutOnRoad" target="true" />
+				<Requirement tag="isMainCharacter" target="true" />
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="hasTreasure" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+		</StoryRequirements>
+
+		<CharacterEffects>
+			<EffectSet chance="default">
+				<TagChange character="0" tag="isHome" target="true" type="boolean"/>
+				<TagChange character="0" tag="hasTreasure" target="false" type="boolean"/>
+			</EffectSet>
+		</CharacterEffects>
+	</EventNode>
+
+	<EventNode>
+		<Action text="A stranger helps *0* to their home" endsAct="true"/>
+		<Characters>
+			<Character id="0" title="adventurer" />
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isPassedOutOnRoad" target="true" />
+				<Requirement tag="isMainCharacter" target="true" />
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="isLucky" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+		</StoryRequirements>
+
+		<CharacterEffects>
+			<EffectSet chance="default">
+				<TagChange character="0" tag="isHome" target="true" type="boolean"/>
+			</EffectSet>
+		</CharacterEffects>
+	</EventNode>

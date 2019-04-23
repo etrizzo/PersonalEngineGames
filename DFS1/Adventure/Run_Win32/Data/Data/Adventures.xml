@@ -1,7 +1,7 @@
 <AdventureDefinitions>
 
   <AdventureDefinition name="Balrog" title="Kill the Balrog">
-    <StartConditions startMap="Zoo" startOnTileType="Grass"/>
+    <StartConditions startMap="Large Map" startOnTileType="Grass"/>
     <Quests>
       
       <Quest name="KillOrcs" />

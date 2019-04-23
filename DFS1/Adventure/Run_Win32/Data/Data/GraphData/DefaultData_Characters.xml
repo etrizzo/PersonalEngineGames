@@ -1,6 +1,5 @@
 
 	<Character name="Abby">
-
 		<Tags>
 			<Tag tag="isAlive" value="true" type="bool"/>
 			<Tag tag="hasNightVision" value="true" type="bool" />
@@ -11,6 +10,18 @@
 		<Tags>
 			<Tag tag="isAlive" value="true" type="bool"/>
 		</Tags>
-
 	</Character>
 
+	<Character name="Carl">
+		<Tags>
+			<Tag tag="isAlive" value="true" type="bool"/>
+			<Tag tag="isLucky" value="true" type="bool" />
+		</Tags>
+	</Character>
+
+	<Character name="Debby">
+		<Tags>
+			<Tag tag="isAlive" value="true" type="bool"/>
+			<Tag tag="isLucky" value="true" type="bool" />
+		</Tags>
+	</Character>

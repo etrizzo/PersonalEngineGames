@@ -173,7 +173,7 @@ public:
 	StoryNode* AddEnd(StoryData* data);
 	StoryNode* AddEnd(StoryNode* endNode);
 
-	void Clear();
+	void Reset();
 
 	//Getters
 	StoryEdge* GetEdge(StoryNode* start, StoryNode* end)	const;

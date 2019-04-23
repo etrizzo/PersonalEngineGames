@@ -31,7 +31,7 @@
 				</EffectSet>
 			</Action>
 
-			<Action text="*0* loses the fight and flees for home." chance=".3" endsAct="true">
+			<Action text="*0* loses the fight and flees for home." chance=".3">
 				<Modifier character="0" multiplier="1.5">
 					<CharacterRequirements>
 						<Requirement tag="isWounded" target="true" multiplier="1.5" />
@@ -315,7 +315,7 @@
 		</CharacterRequirements>
 	</OutcomeNode>
 
-	<OutcomeNode name="FindWayAndLeaveDung" actRange="1" chanceToPlace=".5">>
+	<OutcomeNode name="FindWayAndLeaveDung" actRange="1" chanceToPlace=".5">
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -337,149 +337,33 @@
 		</CharacterRequirements>
 	</OutcomeNode>
 
+	<OutcomeNode name="GoingHomeWounded" actRange="1">
+		<Characters>
+			<Character id = "*0*"/>
+		</Characters>
+		<Actions>
+			<Action text="*0* makes it home safely" endsAct="true">
+				<EffectSet>
+					<Modifier character = "0" multiplier = "10.00"> 
+						<CharacterRequirements>
+							<Requirement tag="isLucky" target="true"/>
+						</CharacterRequirements>
+					</Modifier>
+					<TagChange character="*0*" tag="isHome" target="true" />
+				</EffectSet>
+			</Action>
 
-<!--
+			<Action text="*0*'s wounds cause them to pass out">
+				<EffectSet>
+					<TagChange character="*0*" tag="isPassedOutOnRoad" target="true" />
+				</EffectSet>
+			</Action>
+		</Actions>
 
-	<OutcomeNode>
-		<Action text="*0* talks to *1* about *0_TAG*" />
-		<CharacterRequirements>
-			<Character number="0">
-				<Requirement trait="Social" value="60" compare="greater" />
-			</Character>
-		</CharacterRequirements>
-		<StoryRequirements>
-			<A tag = "isAlive" 	target="true"/> 
-			<B tag = "isAlive" 	target="true"/>
-			<A tag = "isAngryAt" target="! *0*" />
-		</StoryRequirements>
-		<StoryEffects>
-
-			<EffectSet chance="default">
-				<TraitChange character="0" trait="Social" change="-10" />
-				<TraitChange character="1" trait="Social" change="-10" />
-				<TagChange character="1" tag = "isAngry" target="*A" />
-				<StoryChange Action="+5" Tension="+10" /> 
-			</EffectSet>
-		</StoryEffects>
-	</OutcomeNode>
-
-	<OutcomeNode>
-		<Action text="*0* chats with *1*" />
-		<CharacterRequirements>
-			<Character number="0">
-				<Requirement trait="Social" value="60" compare="greater" />
-				<Requirement tag="isAlive" target="true"/>
-				<Requirement tag="isAngryAt" target="*1*"/>
-			</Character>
-			<Character number="1">
-				<Requirement tag="isAlive" target="true" />
-			</Character>
-		</CharacterRequirements>
-		<StoryRequirements>
-			<StoryRequirement feeling="tension" value="15" compare="greater" />
-		</StoryRequirements>
-		<StoryEffects>
-			<EffectSet chance="default">
-				<TraitChange character="0" trait="Social" change="-10" />
-				<TraitChange character="1" trait="Social" change="-10" />
-				<TagChange character="1" tag = "isAngry" target="*0*" />
-				<StoryChange Action="+5" Tension="+10" /> 
-			</EffectSet>
-		</StoryEffects>
-	</OutcomeNode>
--->
-
-<!--
-	<OutcomeNode>
-		<Action text="*0* fights a cave jelly" />
 		<CharacterRequirements>
 			<Character index="0">
-				<Requirement tag="isAlive" target="true" />
-				<Requirement tag="inCave" target="true" />
+				<Requirement tag="headingHomeWounded" target="true" weight="5"/>
 			</Character>
 		</CharacterRequirements>
-		<StoryRequirements>
-			<StoryRequirement feeling="tension" value="15" compare="greater" />
-		</StoryRequirements>
-		<StoryEffects>
-			<EffectSet chance="default">
-				<StoryChange Action="+5" Tension="+10" /> 
-				<TagChange character="0" tag="isFighting" target="true" type="boolean"/>
-			</EffectSet>
-		</StoryEffects>
+
 	</OutcomeNode>
-
-
-
-	<OutcomeNode>
-		<Action text="*0* fights a dungeon monster" />
-		<CharacterRequirements>
-			<Character index="0">
-				<Requirement tag="isAlive" target="true" />
-				<Requirement tag="inDungeon" target="true" />
-			</Character>
-		</CharacterRequirements>
-		<StoryRequirements>
-			<StoryRequirement feeling="tension" value="15" compare="greater" />
-		</StoryRequirements>
-		<StoryEffects>
-			<EffectSet chance="default">
-				<StoryChange Action="+5" Tension="+10" /> 
-				<TagChange character="0" tag="isFighting" target="true" type="boolean"/>
-			</EffectSet>
-		</StoryEffects>
-	</OutcomeNode>
--->
-
-
-	<!-- fighting a thing? -->
-	<!--
-	<OutcomeNode>
-		<Action text="*0* wins the fight." chance=".5"/>
-		<CharacterRequirements>
-			<Character index="0">
-				<Requirement tag="isAlive" target="true" />
-				<Requirement tag="isFighting" target="true" type="boolean"/>
-			</Character>
-		</CharacterRequirements>
-		<StoryRequirements>
-			<StoryRequirement feeling="tension" value="15" compare="greater" />
-		</StoryRequirements>
-		<StoryEffects>
-			<EffectSet chance="default">
-				<StoryChange Action="+5" Tension="+10" /> 
-				<TagChange character="0" tag="isFighting" target="false" />
-			</EffectSet>
-		</StoryEffects>
-	</OutcomeNode>
-
-
-	<OutcomeNode>
-		<Action text="*0* wins the fight with *1*." />
-		<CharacterRequirements>
-			<Character index="0">
-				<Requirement tag="isAlive" target="true" />
-				<Requirement tag="isFighting" target="*1*" type="character"/>
-			</Character>
-		</CharacterRequirements>
-		<StoryRequirements>
-			<StoryRequirement feeling="tension" value="15" compare="greater" />
-		</StoryRequirements>
-		<StoryEffects>
-			<EffectSet chance="default">
-				<StoryChange Action="+5" Tension="+10" /> 
-				<TagChange character="0" tag="isFighting" target="false" />
-				<TagChange character="1" tag="isFighting" target="false" />
-			</EffectSet>
-		</StoryEffects>
-	</OutcomeNode>
--->
-
-				<!--
-			<EffectSet chance="*B_INVERSE_TRAIT1"/>
-				<TraitChange character="*A" trait="Social" change="+10" />
-				<TraitChange character="*B" trait="Social" change="+10" />
-				<TagChange character="*B" tag = "isTrusting" target="*A" />
-				<StoryChange Action="+5" Romance="+10" /> 
-			</EffectSet>
-		-->

@@ -39,6 +39,8 @@ void DataSet::ParseActs(tinyxml2::XMLElement * actElement)
 
 void DataSet::ParseCharacters(tinyxml2::XMLElement * charElement)
 {
+	m_numCharactersToUse = ParseXmlAttribute(*charElement, "numCharacters", m_numCharactersToUse);
+
 	tinyxml2::XMLElement* fileElement = charElement->FirstChildElement("File");
 	while (fileElement != nullptr)
 	{

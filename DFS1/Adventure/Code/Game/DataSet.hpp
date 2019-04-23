@@ -65,6 +65,8 @@ public:
 	static std::map<std::string, DataSet*> s_dataSets;
 	static DataSet* GetDataSet(std::string dataSetName);
 
+	IntRange m_numCharactersToUse = IntRange(1);
+
 private:
 
 	//initialization

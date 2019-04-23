@@ -3,7 +3,7 @@
 		<Acts>
 			<File name="Data/Data/GraphData/MurderMystery_Acts.xml" />
 		</Acts>
-		<Characters>
+		<Characters numCharacters="4~5">
 			<File name="Data/Data/GraphData/MurderMystery_Characters.xml" />
 		</Characters>
 		<EventNodes>
@@ -18,7 +18,7 @@
 		<Acts>
 			<File name="Data/Data/GraphData/MurderMystery_Acts.xml" />
 		</Acts>
-		<Characters>
+		<Characters numCharacters="4~5">
 			<File name="Data/Data/GraphData/MurderMystery_Characters.xml" />
 		</Characters>
 		<EventNodes>
@@ -33,7 +33,7 @@
 		<Acts>
 			<File name="Data/Data/GraphData/HerosJourney/HerosJourney_Acts.xml" />
 		</Acts>
-		<Characters>
+		<Characters numCharacters="4">
 			<File name="Data/Data/GraphData/HerosJourney/HerosJourney_Characters.xml" />
 		</Characters>
 		<EventNodes>
@@ -50,7 +50,7 @@
 		<Acts>
 			<File name="Data/Data/GraphData/DefaultData_Acts.xml" />
 		</Acts>
-		<Characters>
+		<Characters numCharacters="2">
 			<File name="Data/Data/GraphData/DefaultData_Characters.xml" />
 		</Characters>
 		<EventNodes>
