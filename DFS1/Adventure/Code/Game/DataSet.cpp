@@ -222,7 +222,8 @@ int DataSet::CalculateNodePriority(StoryDataDefinition * def) const
 	//get whether or not this act has been used
 	TODO("improve this");
 	int priority = 5;
-	bool isActNeeded = true;
+
+	int numNodesAlreadyUsedInAct = 0;
 	//go through each used node. if this def is in there, subtract from priority.
 	//if a node is in the same act, mark as "not needed"
 	for (StoryDataDefinition* eventDef : m_usedEventNodes)
@@ -233,9 +234,10 @@ int DataSet::CalculateNodePriority(StoryDataDefinition * def) const
 		}
 		if (eventDef->m_actRange.min == def->m_actRange.min)
 		{
-			isActNeeded = false;
+			numNodesAlreadyUsedInAct++;
 		}
 	}
+	bool isActNeeded = !DoesActMeetNumNodeRequirement(def->m_actRange.min, numNodesAlreadyUsedInAct);
 
 	if (isActNeeded)
 	{
@@ -307,7 +309,7 @@ int DataSet::GetFinalActNumber() const
 	return maxNum;
 }
 
-bool DataSet::DoesActMeetNumNodeRequirement(int actNumber, int numNodes)
+bool DataSet::DoesActMeetNumNodeRequirement(int actNumber, int numNodes) const
 {
 	//UNUSED(actNumber);
 	//TODO("parse a required number of nodes for each act at creation");

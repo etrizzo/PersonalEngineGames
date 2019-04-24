@@ -1208,8 +1208,8 @@ void StoryGraph::FindPathSimple()
 	StoryNode* currentNode = m_startNode;
 	int tries = 0;
 	bool pathFound = false;
-	while (!pathFound && tries < 25) {
-		while (currentNode != m_endNode) {
+	//while (!pathFound ) {
+		while (currentNode != m_endNode && tries < 25) {
 			m_pathFound.push_back(currentNode);
 			StoryNode* nextNode = nullptr;
 			if (currentNode->m_outboundEdges.size() == 0) {
@@ -1258,16 +1258,20 @@ void StoryGraph::FindPathSimple()
 				//ConsolePrintf(RGBA::RED, "path could not be found");
 
 				//reset the search
-				delete cumulativeState;
-				cumulativeState = new StoryState(*m_startNode->m_outboundEdges[0]->GetCost());
-				m_pathFound.clear();
-				currentNode = m_startNode;
+				if (tries < 24)
+				{
+					delete cumulativeState;
+					cumulativeState = new StoryState(*m_startNode->m_outboundEdges[0]->GetCost());
+					m_pathFound.clear();
+					currentNode = m_startNode;
+					
+				}
 				tries++;
 				
 			}
 			
 				
-		}
+		//}
 	}
 	if (!pathFound)
 	{
