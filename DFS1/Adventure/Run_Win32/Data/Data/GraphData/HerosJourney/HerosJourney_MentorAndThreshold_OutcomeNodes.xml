@@ -1,0 +1,149 @@
+	<OutcomeNode name="StrangerMentorOutcome" actRange="3">
+		<Characters>
+			<Character id = "*0*" name="Protagonist"/>
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="meetingMentor" target="true" />
+			<Requirement tag="metStranger" target="true"/>
+		</StoryRequirements>
+
+		<Actions>
+			<Action text="The stranger explains an ancient prophecy, with *0* at the center" >
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="meetingMentor" target="false" effectType="story"/>
+				<TagChange tag="hasMetMentor" target="true" effectType="story" />
+			</EffectSet>
+		</StoryEffects>
+	</OutcomeNode>
+
+
+
+	<OutcomeNode name="UncleMentorArtifactOutcome" actRange="3">
+		<Characters>
+			<Character id = "*0*" name="Protagonist"/>
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="meetingMentor" target="true" />
+			<Requirement tag="metStranger" target="false"/>
+			<Requirement tag="foundArtifact" target="true"/>
+		</StoryRequirements>
+
+		<Actions>
+			<Action text="Uncle explains the ancient power of the artifact, and tells *0* they must take it." >
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="meetingMentor" target="false" effectType="story"/>
+				<TagChange tag="hasMetMentor" target="true" effectType="story" />
+			</EffectSet>
+		</StoryEffects>
+	</OutcomeNode>
+
+	<OutcomeNode name="UncleMentorCaveOutcome" progression="choice" actRange="3">
+		<Characters>
+			<Character id = "*0*" name="Protagonist"/>
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="meetingMentor" target="true" />
+			<Requirement tag="metStranger" target="false"/>
+			<Requirement tag="foundCave" target="true"/>
+		</StoryRequirements>
+
+		<Actions>
+			<Action text="Uncle explains the magical nature of the cave, and shares the prophecy of the paintings with *0*." >
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="meetingMentor" target="false" effectType="story"/>
+				<TagChange tag="hasMetMentor" target="true" effectType="story" />
+			</EffectSet>
+		</StoryEffects>
+	</OutcomeNode>
+
+
+	<OutcomeNode name="RaidOutcome" actRange="3">
+		<Characters>
+			<Character id = "*0*" name="Protagonist"/>
+			<Character id = "*1*" name="Friend"/>
+			<Character id = "*2*" name="Friend"/>
+		</Characters>
+
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true" />
+			</Character>
+			<Character index="1">
+				<Requirement tag="isAntagonist" target="false" />
+			</Character>
+			<Character index="2">
+				<Requirement tag="isAntagonist" target="false" />
+			</Character>
+		</CharacterRequirements>
+
+		<StoryRequirements>
+			<Requirement tag="homeUnderAttack" target="true" />
+			<Requirement tag="hasMetMentor" target="true"/>
+			<Requirement tag="escapedRaid" target="false"/>
+		</StoryRequirements>
+
+		<Actions>
+			<Action text="*0* escapes, but *1* and *2* are kidnapped!" chance=".5">
+				<EffectSet>
+					<TagChange character="*0*" tag="hasFriends" target="false" />
+					<TagChange character="*1*" tag="kidnapped" target="true" />
+					<TagChange character="*2*" tag="kidnapped" target="true" />
+				</EffectSet>
+			</Action>
+
+			<Action text="*0*, *1* and *2* all manage to escape together!." chance=".5">
+				<Modifier character = "1" multiplier = "1.75"> 
+					<CharacterRequirements>
+						<Requirement tag="isBold" target="true"/>
+					</CharacterRequirements>
+				</Modifier>
+				<Modifier character = "2" multiplier = "1.75"> 
+					<CharacterRequirements>
+						<Requirement tag="isStubborn" target="true"/>
+					</CharacterRequirements>
+				</Modifier>
+				<EffectSet>
+					<TagChange character="*0*" tag="hasFriends" target="true" />
+				</EffectSet>
+			</Action>
+		</Actions>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="escapedRaid" target="true" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+	</OutcomeNode>

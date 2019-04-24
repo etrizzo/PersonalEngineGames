@@ -1,0 +1,129 @@
+	<EventNode name="StrangerIsMentor" progression="time" actname="MentorAndThreshold" actRange="3">
+		<Action text="The next day, the stranger knocks at *0*'s door" />
+		<Characters>
+			<Character id = "*0*" title="protagonist"/>
+		</Characters>
+
+		<StoryRequirements>
+			<Requirement tag="metStranger" target="true" />
+			<Requirement tag="homeUnderAttack" target="false" />
+			<Requirement tag="hasMetMentor" target="false" />
+			<Requirement tag="meetingMentor" target="false" />
+		</StoryRequirements>
+		
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="meetingMentor" target="true" effectType="story" expires="true"/>
+			</EffectSet>
+		</StoryEffects>
+	</EventNode>
+
+
+	<EventNode name="UncleIsMentor" progression="time" actname="MentorAndThreshold" actRange="3">
+		<Action text="The next day, *0*'s uncle stops by." />
+		<Characters>
+			<Character id = "*0*" title="protagonist"/>
+		</Characters>
+
+		<StoryRequirements>
+			<Requirement tag="metStranger" target="false" />
+			<Requirement tag="homeUnderAttack" target="false" />
+			<Requirement tag="hasMetMentor" target="false" />
+			<Requirement tag="meetingMentor" target="false" />
+		</StoryRequirements>
+		
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="meetingMentor" target="true" effectType="story" expires="true"/>
+			</EffectSet>
+		</StoryEffects>
+	</EventNode>
+
+
+	<EventNode name="Raid" progression="time" actname="MentorAndThreshold" actRange="3">
+		<Action text="Suddenly, *0*'s home is attacked by monsters" />
+		<Characters>
+			<Character id = "*0*" title="protagonist"/>
+		</Characters>
+
+		<StoryRequirements>
+			<Requirement tag="hasMetMentor" target="true" />
+			<Requirement tag="homeUnderAttack" target="false" />
+			<Requirement tag="escapedRaid" target="false" />
+		</StoryRequirements>
+		
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="homeUnderAttack" target="true" effectType="story" expires="true"/>
+			</EffectSet>
+		</StoryEffects>
+	</EventNode>
+
+
+	<EventNode name="EscapeBoat" actname="MentorAndThreshold" actRange="3">
+		<Action text="*0* takes a boat and they sail away." endsAct="true"/>
+		<Characters>
+			<Character id = "*0*" title="protagonist"/>
+		</Characters>
+
+		<StoryRequirements>
+			<Requirement tag="escapedRaid" target="true" />
+			<Requirement tag="onBoat" target="false" />
+			<Requirement tag="onLand" target="false" />
+		</StoryRequirements>
+		
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="onBoat" target="true" effectType="story" expires="true"/>
+			</EffectSet>
+		</StoryEffects>
+	</EventNode>
+
+	<EventNode name="EscapeLand" actname="MentorAndThreshold" actRange="3">
+		<Action text="*0* takes some supplies and they run away." endsAct="true"/>
+		<Characters>
+			<Character id = "*0*" title="protagonist"/>
+		</Characters>
+
+		<StoryRequirements>
+			<Requirement tag="escapedRaid" target="true" />
+			<Requirement tag="onBoat" target="false" />
+			<Requirement tag="onLand" target="false" />
+		</StoryRequirements>
+		
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isProtagonist" target="true"/>
+			</Character>
+		</CharacterRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="onLand" target="true" effectType="story" expires="true"/>
+			</EffectSet>
+		</StoryEffects>
+	</EventNode>

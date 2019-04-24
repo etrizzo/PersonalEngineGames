@@ -44,7 +44,7 @@ public:
 	int GetNumActs() const;
 	int GetFinalActNumber() const;
 
-	bool DoesActMeetNumNodeRequirement(int actNumber, int numNodes);
+	bool DoesActMeetNumNodeRequirement(int actNumber, int numNodes) const;
 
 
 	StoryDataDefinition* GetOutcomeNodeWithWeights(StoryState* edge, float minFitness = .75f);

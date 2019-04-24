@@ -1,2 +1,3 @@
-<Act name="OrdinaryWorld" number="1" />
-<Act name="CallToAdventure" number="2" />
+<Act name="OrdinaryWorld" number="1" minNodes="2" />
+<Act name="CallToAdventure" number="2" minNodes="2" />
+<Act name="MentorAndThreshold" number="3" minNodes="2" />

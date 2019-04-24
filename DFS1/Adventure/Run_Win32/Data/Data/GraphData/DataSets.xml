@@ -39,10 +39,12 @@
 		<EventNodes>
 			<File name="Data/Data/GraphData/HerosJourney/HerosJourney_OrdinaryWorld_EventNodes.xml" />
 			<File name="Data/Data/GraphData/HerosJourney/HerosJourney_CallToAdventure_EventNodes.xml" />
+			<File name="Data/Data/GraphData/HerosJourney/HerosJourney_MentorAndThreshold_EventNodes.xml" />
 		</EventNodes>
 		<OutcomeNodes>
 			<File name="Data/Data/GraphData/HerosJourney/HerosJourney_OrdinaryWorld_OutcomeNodes.xml" />
 			<File name="Data/Data/GraphData/HerosJourney/HerosJourney_CallToAdventure_OutcomeNodes.xml" />
+			<File name="Data/Data/GraphData/HerosJourney/HerosJourney_MentorAndThreshold_OutcomeNodes.xml" />
 		</OutcomeNodes>
 	</DataSet>
 

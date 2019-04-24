@@ -8,6 +8,7 @@
 			<Requirement tag="callIssued" target="false"/>
 			<Requirement tag="visitFromStranger" target="true" />
 			<Requirement tag="mysteriousEvent" target="true" />
+			<Requirement tag="inBed" target="false"/>
 		</StoryRequirements>
 		
 		<CharacterRequirements>
@@ -35,6 +36,7 @@
 			<Requirement tag="callIssued" target="false"/>
 			<Requirement tag="justFoundArtifact" target="true" />
 			<Requirement tag="mysteriousEvent" target="true" />
+			<Requirement tag="inBed" target="false"/>
 		</StoryRequirements>
 		
 		<CharacterRequirements>
@@ -61,6 +63,7 @@
 			<Requirement tag="callIssued" target="false"/>
 			<Requirement tag="justFoundCave" target="true" />
 			<Requirement tag="mysteriousEvent" target="true" />
+			<Requirement tag="inBed" target="false"/>
 		</StoryRequirements>
 		
 		<CharacterRequirements>
@@ -72,14 +75,14 @@
 		<StoryEffects>
 			<EffectSet chance="default">
 				<TagChange tag="callIssued" target="true" effectType="story"/>
-				<TagChagne tag="foundCave" target="true" effectType="story"/>
+				<TagChange tag="foundCave" target="true" effectType="story"/>
 			</EffectSet>
 		</StoryEffects>
 	</EventNode>
 
 
 	<!-- ending nodes - leads to crossing the threshold -->
-	<EventNode name="Naptime" progression="time" actname="CallToAdvenutre" actRange="2" >
+	<EventNode name="Naptime" progression="time" actname="CallToAdventure" actRange="2" >
 		<Action text="*0* goes to sleep." endsAct="true"/>
 		<Characters>
 			<Character id = "*0*" title="protagonist"/>
@@ -93,7 +96,13 @@
 		</CharacterRequirements>
 
 		<StoryRequirements>
-			<Requirement tag="callIssued" target="true"/>
-			<!--<Requirement tag="callCompleted" target="true"/>-->
+			<!--<Requirement tag="callIssued" target="true"/>-->
+			<Requirement tag="inBed" target="false"/>
 		</StoryRequirements>
+
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="inBed" target="true" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
 	</EventNode>
