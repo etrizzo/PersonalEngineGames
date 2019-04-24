@@ -15,7 +15,6 @@
 			<Requirement tag="mainCharacterChosen" target="false" weight="5"/>
 		</StoryRequirements>
 
-
 		<CharacterEffects>
 			<EffectSet>
 				<TagChange character="0" tag = "isMainCharacter" target="true"/>
@@ -30,14 +29,16 @@
 	</EventNode>
 
 
+
+
 	<EventNode name="Fight" actRange="1">
-		<!-- *[X]* indicates a character name who should be replaced at rutntime -->
+		<!-- *[X]* indicates a character name who should be replaced at runtime -->
 		<Action text="*0* fights *1*" />
 		<Characters>
 			<Character id="0" title="instigator" />
 			<Character id="1" title="victim" />
 		</Characters>
-
+		<!-- node placement requirements for each of the characters specified above -->
 		<CharacterRequirements>
 			<Character index="0">
 				<Requirement tag="isAlive" target="true"/>
@@ -47,9 +48,12 @@
 				<Requirement tag="isAlive" target="true" type="bool"/>
 			</Character>
 		</CharacterRequirements>
+		<!-- node placement requirements for each of the overall storystate -->
 		<StoryRequirements>
-			<StoryRequirement feeling="tension" value="15" compare="greater" />
+			
 		</StoryRequirements>
+
+		<!-- effects that should be executed after this node is placed -->
 		<CharacterEffects>
 			<EffectSet >
 				<TagChange character="1" tag = "isAngry" target="*0*" type="character"/>

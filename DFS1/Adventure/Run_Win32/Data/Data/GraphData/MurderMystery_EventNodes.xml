@@ -24,10 +24,9 @@
 		<StoryRequirements>
 			<Requirement tag="murderOcurred" target="false" />
 		</StoryRequirements>
+
 		<StoryEffects>
 			<EffectSet chance="default">
-				
-
 				<TagChange tag="Gossiper" target="*0*" type="character" effectType="story"/>
 				<TagChange tag="GossipSubject" target="*2*" type="character" effectType="story"/>
 			</EffectSet>
@@ -103,7 +102,6 @@
 
 				<TagChange character="0" tag="dialogue" type="string" target="*1* has something to do with the murder. |I've been keeping an eye on them all day." expires="true"/>
 				<TagChange character="1" tag="dialogue" type="string" target="*0* keeps following me.|I don't like it." expires="true"/>
-				<!--<TagChange character="0" tag = "InvestigationTarget" target="*1*" type="character"/>-->
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>

@@ -30,10 +30,12 @@ StoryData::StoryData(StoryDataDefinition * definition, int actionIndex)
 	m_graphPosition =  Vector2(GetRandomFloatInRange(.4f, .7f), GetRandomFloatInRange(.4f, .7f));
 }
 
-StoryData::StoryData(std::string name)
+StoryData::StoryData(std::string name, int defaultAct)
 {
 	m_name = name;
 	m_type = DEFAULT_NODE;
+
+	m_defaultAct = defaultAct;
 }
 
 StoryData::StoryData( eNodeType type)
@@ -96,7 +98,12 @@ std::string StoryData::ToString() const
 
 int StoryData::GetAct() const
 {
-	return m_definition->m_actRange.min;
+	if (m_definition != nullptr)
+	{	
+		return m_definition->m_actRange.min;
+	} else {
+		return m_defaultAct;
+	}
 }
 
 float StoryData::UpdateAndGetChance(StoryState * incomingEdge)

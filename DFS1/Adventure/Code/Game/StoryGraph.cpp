@@ -574,8 +574,8 @@ void StoryGraph::AddDetailNodesToDesiredSize(int desiredSize)
 void StoryGraph::GenerateStartAndEnd()
 {
 	if (m_startNode == nullptr && m_endNode == nullptr){
-		AddStart(new StoryNode(new StoryData("START")));
-		AddEnd(new StoryNode(new StoryData("END")));
+		AddStart(new StoryNode(new StoryData("START", 1)));
+		AddEnd(new StoryNode(new StoryData("END", m_dataSet->GetFinalActNumber())));
 		StoryState* startingEdge = new StoryState(1.f, m_characters.size(), this);
 		startingEdge->m_possibleActRange = IntRange(1, m_dataSet->GetFinalActNumber());
 		AddEdge(m_startNode, m_endNode, startingEdge);
@@ -916,13 +916,25 @@ bool StoryGraph::AddEndingsToActBoundaryEdge(StoryNode* nextActStartingNode, int
 		{
 			//if you find a node before the end node that doesn't end the act, need to add to it
 			StoryData* startNode = incomingEdge->GetStart()->m_data;
-			if (!startNode->DoesNodeEndAct())
+			if (!startNode->DoesNodeEndAct() || ((nextActStartingNode == m_endNode) && incomingEdge->GetCost()->m_possibleActRange.GetSize() > 0))
 			{
 				allPathsHaveEndings = false;
 				//add event/outcome pairs until it does
 				StoryNode* newNode = AddEventNodeAtEdge(incomingEdge);
 				if (newNode !=nullptr){
-					AddOutcomeNodesToEventNode(newNode);
+					//add an outcome node
+					std::vector<StoryDataDefinition*> prioritizedOutcomes = m_dataSet->GetPrioritizedOutcomes();
+					for (int outcomeNum = 0; outcomeNum < prioritizedOutcomes.size(); outcomeNum++)
+					{
+						//try to add the outcome definitiona fter the new event node
+						bool addedOutcome = TryToAddOutcomesAtEventNode(prioritizedOutcomes[outcomeNum], newNode);
+						if (addedOutcome)
+						{
+							m_dataSet->MarkOutcomeNodeUsed(prioritizedOutcomes[outcomeNum]);
+							//u did it get outta there
+							break;
+						}
+					}
 					addedNodes++;
 				}
 				
@@ -947,7 +959,7 @@ void StoryGraph::RemoveBranchesWithNoEnding(StoryNode* nextActStartingNode)
 			//if you find a node before the end node that doesn't end the act, need to add to it
 			nodeToDelete = incomingEdge->GetStart();
 			//StoryData* nodeToDelete = incomingEdge->GetStart()->m_data;
-			if (!nodeToDelete->m_data->DoesNodeEndAct())
+			if (!nodeToDelete->m_data->DoesNodeEndAct()  || ((nextActStartingNode == m_endNode) && incomingEdge->GetCost()->m_possibleActRange.GetSize() > 0))
 			{
 				allPathsHaveEndings = false;
 				break;
@@ -1028,13 +1040,13 @@ StoryNode * StoryGraph::TryToAddEndNodeAtEdge(StoryEdge * edge, bool isOutcome)
 	}
 	StoryState* edgeState = edge->GetCost();
 	
-	Shuffle(m_dataSet->m_unusedEndNodes);
+	Shuffle(m_dataSet->m_actEndingNodes);
 
-	for(int i = 0; i < (int) m_dataSet->m_unusedEndNodes.size(); i++)
+	for(int i = 0; i < (int) m_dataSet->m_actEndingNodes.size(); i++)
 	{
-		if (DoRangesOverlap(m_dataSet->m_unusedEndNodes[i]->m_actRange, edgeState->m_possibleActRange)) {
-			if (m_dataSet->m_unusedEndNodes[i]->DoesEdgeMeetStoryRequirements(edgeState)){
-				StoryDataDefinition* endingDef = m_dataSet->m_unusedEndNodes[i];
+		if (DoRangesOverlap(m_dataSet->m_actEndingNodes[i]->m_actRange, edgeState->m_possibleActRange)) {
+			if (m_dataSet->m_actEndingNodes[i]->DoesEdgeMeetStoryRequirements(edgeState)){
+				StoryDataDefinition* endingDef = m_dataSet->m_actEndingNodes[i];
 				bool added = false;
 				StoryNode* newNode = nullptr;
 				//check that we can actually add it first

@@ -13,7 +13,7 @@ class StoryData{
 public:
 	StoryData(){};
 	StoryData(StoryDataDefinition* definition, int actionIndex = -1);
-	StoryData(std::string name);
+	StoryData(std::string name, int defaultAct);
 	StoryData( eNodeType type);
 	StoryData(StoryData* clone);
 	~StoryData();
@@ -69,4 +69,6 @@ public:
 	std::vector<Character*> m_characters;
 
 	Vector2 m_graphPosition = Vector2::HALF;
+
+	int m_defaultAct = 1;
 };

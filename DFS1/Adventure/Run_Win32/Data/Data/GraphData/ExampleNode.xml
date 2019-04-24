@@ -1,0 +1,38 @@
+	<EventNode name="ExampleNode" actRange="1">
+		<!-- NODE INFORMATION -->
+		<!-- *[X]* indicates a character name who should be replaced at generation -->
+		<Action text="*0* fights *1*" />
+		<Characters>
+			<Character id="0" title="attacker" />
+			<Character id="1" title="victim" />
+		</Characters>
+		<!-- REQUIREMENTS -->
+		<!-- node placement requirements for each of the characters specified above -->
+		<CharacterRequirements>
+			<Character index="0">
+				<Requirement tag="isAlive" target="true"/>
+				<Requirement tag="isAngry" target="*1*" type="character"/>
+			</Character>
+			<Character index="1">
+				<Requirement tag="isAlive" target="true" type="bool"/>
+			</Character>
+		</CharacterRequirements>
+		<!-- node placement requirements for the overall story state -->
+		<StoryRequirements>
+			<Requirement tag="fightOccurred" target="false" />
+		</StoryRequirements>
+
+		<!-- EFFECTS -->
+		<!-- effects that should be executed on character states after this node is placed -->
+		<CharacterEffects>
+			<TagChange character="1" tag = "isAngry" target="*0*" type="character"/>
+			<TagChange character="0" tag = "isFighting" target="*1*" type="character"/>
+			<TagChange character="1" tag = "isFighting" target="*0*" type="character"/>
+		</CharacterEffects>
+		<!-- effects that should be executed on the overall story state after this node is placed -->
+		<StoryEffects>
+			<EffectSet chance="default">
+				<TagChange tag="fightOccurred" target="true" type="boolean" effectType="story"/>
+			</EffectSet>
+		</StoryEffects>
+	</EventNode>

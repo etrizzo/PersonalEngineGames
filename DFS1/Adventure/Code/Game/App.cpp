@@ -461,8 +461,8 @@ void CommandGeneratePairs(Command & cmd)
 void CommandAddEndings(Command & cmd)
 {
 	UNUSED(cmd);
-	g_theGame->m_graph->AddEndingsToGraph(15);
-	//g_theGame->m_graph->AddEndingsToActBoundaryEdge(g_theGame->m_graph->GetEnd());
+	//g_theGame->m_graph->AddEndingsToGraph(15);
+	g_theGame->m_graph->AddEndingsToActBoundaryEdge(g_theGame->m_graph->GetEnd());
 }
 
 void CommandTrimBadBranches(Command & cmd)
