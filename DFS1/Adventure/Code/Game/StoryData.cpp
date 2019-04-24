@@ -105,6 +105,11 @@ float StoryData::UpdateAndGetChance(StoryState * incomingEdge)
 	return m_action->m_instancedChance;
 }
 
+float StoryData::GetModifierWeight(StoryState * incomingEdge)
+{
+	return m_action->GetModifierWeightFromEdge(this, incomingEdge);
+}
+
 //void StoryData::UpdateState(EffectSet * effects)
 //{
 //	for (StoryEdge* edge 

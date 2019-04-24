@@ -389,7 +389,8 @@ void CommandFindPath(Command & cmd)
 		ConsolePrintf("Calculating path with seed %i", randoSeed);
 	}
 	//g_theGame->m_graph->FindPath(RandomPathHeuristic);
-	g_theGame->m_graph->FindPath(CalculateChanceHeuristic);
+	//g_theGame->m_graph->FindPath(CalculateChanceHeuristic);
+	g_theGame->m_graph->FindPathSimple();
 }
 
 

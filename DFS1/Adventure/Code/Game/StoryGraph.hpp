@@ -123,6 +123,7 @@ public:
 
 	void SetBranchChance(float branchChance = DEFAULT_BRANCH_CHANCE_ON_FAIL);
 
+	void FindPathSimple();
 	void FindPath( StoryHeuristicCB heuristic );
 	void PrintPath() ;
 

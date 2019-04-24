@@ -22,3 +22,14 @@ void Action::SetChanceFromEdge(StoryData * parentData, StoryState * edge)
 		}
 	}
 }
+
+float Action::GetModifierWeightFromEdge(StoryData * parentData, StoryState * edge)
+{
+	float modifierWeight = 1.f;
+	for (ActionModifier* modifier : m_definition->m_modifiers) {
+		if (modifier->PassesForEdge(parentData, edge)) {
+			modifierWeight *= modifier->m_multiplier;
+		}
+	}
+	return modifierWeight;
+}

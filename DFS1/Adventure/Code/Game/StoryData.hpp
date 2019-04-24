@@ -26,6 +26,7 @@ public:
 
 	float UpdateAndGetChance(StoryState* incomingEdge);
 
+	float GetModifierWeight(StoryState* incomingEdge);
 	//state utilities
 	//updates node's story state w/ outbound edges with the effects set
 	void AddData(StoryData* data);

@@ -15,4 +15,5 @@ public:
 
 	bool DoesActionEndAct() const;
 	void SetChanceFromEdge(StoryData* parentData, StoryState* edge);
+	float GetModifierWeightFromEdge(StoryData* parentData, StoryState* edge);
 };

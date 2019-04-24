@@ -1174,6 +1174,84 @@ void StoryGraph::SetBranchChance(float branchChance)
 	m_branchChance = branchChance;
 }
 
+void StoryGraph::FindPathSimple()
+{
+	////traverse nodes in order 
+	StoryState* cumulativeState = new StoryState(*m_startNode->m_outboundEdges[0]->GetCost());
+	m_pathFound = std::vector<StoryNode*>();
+	StoryNode* currentNode = m_startNode;
+	int tries = 0;
+	bool pathFound = false;
+	while (!pathFound && tries < 25) {
+		while (currentNode != m_endNode) {
+			m_pathFound.push_back(currentNode);
+			StoryNode* nextNode = nullptr;
+			if (currentNode->m_outboundEdges.size() == 0) {
+				ConsolePrintf("Node with no outbound edges?");
+			}
+			std::vector<StoryNode*> weightedViableNodes = std::vector<StoryNode*>();
+			//look at all choices for your next node - weight the choice for where you go next based on modifiers
+			for (StoryEdge* edge : currentNode->m_outboundEdges) {
+				StoryNode* endNode = edge->GetEnd();
+				
+				StoryData* nodeData = edge->GetEnd()->m_data;
+				//if you can do the path at all, add the node
+				if (nodeData->IsCompatibleWithIncomingEdge(cumulativeState)){
+					weightedViableNodes.push_back(endNode);
+					if (endNode == m_endNode)
+					{
+						weightedViableNodes.clear();
+						weightedViableNodes.push_back(m_endNode);
+						break;
+					}
+					else {
+						float modifierWeight = nodeData->GetModifierWeight(cumulativeState);
+						while (modifierWeight > 1.0f)
+						{
+							weightedViableNodes.push_back(endNode);
+							modifierWeight -= 1.f;		//lmao;
+						}
+					}
+				}
+			}
+			if (weightedViableNodes.size() > 0) {
+				//pick a random node from the weighted list
+				Shuffle(weightedViableNodes);
+				nextNode = weightedViableNodes[0];
+				//you've made your choice - update your cumulative state
+				if (nextNode != m_endNode)
+				{
+					cumulativeState->UpdateFromNode(nextNode->m_data);
+				}
+				currentNode = nextNode;
+				if (currentNode == m_endNode)
+				{
+					pathFound = true;
+				}
+			} else{
+				//ConsolePrintf(RGBA::RED, "path could not be found");
+
+				//reset the search
+				delete cumulativeState;
+				cumulativeState = new StoryState(*m_startNode->m_outboundEdges[0]->GetCost());
+				m_pathFound.clear();
+				currentNode = m_startNode;
+				tries++;
+				
+			}
+			
+				
+		}
+	}
+	if (!pathFound)
+	{
+		ConsolePrintf(RGBA::RED, "Valid path could not be found");
+	}
+	else {
+		m_pathFound.push_back(m_endNode);
+	}
+}
+
 void StoryGraph::FindPath(StoryHeuristicCB heuristic)
 {
 	for (StoryNode* node : m_graph.m_nodes){
