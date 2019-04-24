@@ -46,18 +46,21 @@ void StoryGraph::SelectCharactersForGraph(int numCharacters)
 
 void StoryGraph::UpdateNodePositions()
 {
-	for(int i = 0; i < (int) m_graph.m_nodes.size(); i++){
-		StoryNode* node = m_graph.m_nodes[i];
-		if (node == m_startNode){
-			//node->m_data->SetPosition(START_NODE_POSITION);
-		}
-		else if (node == m_endNode){
-			//node->m_data->SetPosition(END_NODE_POSITION);
-		} else {
-			Vector2 nodeForce = CalculateNodeForces(node);
-			if (nodeForce.GetLengthSquared() > (MIN_DISTANCE_TO_MOVE * MIN_DISTANCE_TO_MOVE)){
-				Vector2 newNodePos = (nodeForce * .016f) + node->m_data->GetPosition();
-				node->m_data->SetPosition(newNodePos);
+	if (m_shouldUpdateNodePositions)
+	{
+		for(int i = 0; i < (int) m_graph.m_nodes.size(); i++){
+			StoryNode* node = m_graph.m_nodes[i];
+			if (node == m_startNode){
+				//node->m_data->SetPosition(START_NODE_POSITION);
+			}
+			else if (node == m_endNode){
+				//node->m_data->SetPosition(END_NODE_POSITION);
+			} else {
+				Vector2 nodeForce = CalculateNodeForces(node);
+				if (nodeForce.GetLengthSquared() > (MIN_DISTANCE_TO_MOVE * MIN_DISTANCE_TO_MOVE)){
+					Vector2 newNodePos = (nodeForce * .016f) + node->m_data->GetPosition();
+					node->m_data->SetPosition(newNodePos);
+				}
 			}
 		}
 	}
@@ -76,11 +79,18 @@ void StoryGraph::HandleInput(const AABB2& bounds)
 {
 	Vector2 mousePos = g_theInput->GetMouseNormalizedScreenPosition(bounds);
 
+	/**************  DEBUG STUFF  *************/
 	if (g_theInput->WasKeyJustPressed('L'))
 	{
 		AddASingleSetOfNodes();
 	}
 
+	if (g_theInput->WasKeyJustPressed('F'))
+	{
+		ToggleNodeMoving();
+	}
+
+	/**************  Node/Edge Moving/Hovering  *************/
 	if (!g_theInput->IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
 		m_hoveredNode = nullptr;
 		m_hoveredEdge = nullptr;
@@ -115,6 +125,11 @@ void StoryGraph::HandleInput(const AABB2& bounds)
 	}
 }
 
+void StoryGraph::RunGenerationDebug()
+{
+
+}
+
 void StoryGraph::RunGenerationFinal()
 {
 
@@ -127,9 +142,9 @@ void StoryGraph::RunGenerationFinal()
 		GenerateStartAndEnd();
 		GenerateInitialNodesForGraph();
 
-
-		AddEndingsToActBoundaryEdge(GetEnd(), 10);
-		RemoveBranchesWithNoEnding(GetEnd());
+		AddEndingsToGraph(15);
+		//AddEndingsToActBoundaryEdge(GetEnd(), 10);
+		//RemoveBranchesWithNoEnding(GetEnd());
 		generated = !IsGraphInvalid();
 		if (!generated)
 		{
@@ -176,6 +191,7 @@ bool StoryGraph::GenerateInitialNodesForGraph()
 					//tell the dataset you used that node
 					m_dataSet->MarkEventNodeUsed(prioritizedEvents[eventNum]);
 					//try to add an outcome node and break
+					
 					for (int outcomeNum = 0; outcomeNum < prioritizedOutcomes.size(); outcomeNum++)
 					{
 						//try to add the outcome definitiona fter the new event node
@@ -189,6 +205,16 @@ bool StoryGraph::GenerateInitialNodesForGraph()
 					}
 					break;		//we placed a node, break out of the edge checking
 				}
+				if (canPlace)
+				{
+					//we placed a node, go to the top of the while loop
+					break;
+				}
+			}
+			if (canPlace)
+			{
+				//we placed a node, go to the top of the while loop
+				break;
 			}
 		}
 	}
@@ -2299,6 +2325,11 @@ bool StoryGraph::AreAllCharactersSet(const std::vector<Character*>& chars) const
 		}
 	}
 	return true;
+}
+
+void StoryGraph::ToggleNodeMoving()
+{
+	m_shouldUpdateNodePositions = !m_shouldUpdateNodePositions;
 }
 
 StoryState* ShortestPathHeuristic(StoryEdge * edge)

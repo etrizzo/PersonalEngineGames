@@ -241,6 +241,10 @@ int DataSet::CalculateNodePriority(StoryDataDefinition * def) const
 	{
 		priority += 10;
 	}
+	if (def->IsEnding())
+	{
+		priority+=1;
+	}
 
 
 	return priority;

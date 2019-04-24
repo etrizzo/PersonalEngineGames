@@ -20,6 +20,14 @@ class Character;
 #define REROLL_REPEAT_DETAIL_NODE_CHANCE (.95f)
 #define MAX_REPEAT_REROLLS (30)
 
+
+enum eGenerationStage {
+	GENERATION_STAGE_NODES,
+	GENERATION_STAGE_ENDINGS,
+	GENERATION_STAGE_CLEANUP,
+	NUM_GENERATION_STAGES
+};
+
 //comparison for 
 typedef StoryState* (*StoryHeuristicCB) (StoryEdge* edge);
 
@@ -68,6 +76,14 @@ public:
 	=====================
 	*/
 
+	void RunGenerationDebug();	//manually advance generation steps
+
+	//debug things
+	bool m_isDebugGenerating = false;
+	bool m_isDoneGenerating = false;
+	StoryNode* m_endingNodeToFix = nullptr;
+	eGenerationStage m_generationStage = GENERATION_STAGE_NODES;
+
 	void RunGenerationFinal();
 	
 	bool GenerateInitialNodesForGraph();
@@ -78,16 +94,17 @@ public:
 
 	//looks at the nodes we have right now and compares to the expected number of nodes in the dataset
 	bool AreAllActsFinished() const;
-
-	void RunGenerationPairs(int numPairs);
-	void RunGenerationPlotAndDetail(int numPlotNodes = 3, int desiredSize = 10);
-	void RunGenerationByActs(int numPairsToAdd);		//targets edges with the largest act range
-	
 	bool HavePlacedAllEndings() const;
 
-	void GenerateSkeleton(int numPlotNodes);
-	//void AddPlotNodes(int numPlotNodes);
-	StoryNode* AddSingleEventNode();
+	//deprecated:
+	//void RunGenerationPairs(int numPairs);
+	//void RunGenerationPlotAndDetail(int numPlotNodes = 3, int desiredSize = 10);
+	//void RunGenerationByActs(int numPairsToAdd);		//targets edges with the largest act range
+
+
+	//void GenerateSkeleton(int numPlotNodes);
+	////void AddPlotNodes(int numPlotNodes);
+	//StoryNode* AddSingleEventNode();
 	StoryNode* AddEventNodeAtEdge(StoryEdge* edge);
 	void AddOutcomeNodesToEventNode(StoryNode* plotNode);
 	void AddDetailNodesToDesiredSize(int desiredSize = 10);
@@ -250,6 +267,8 @@ protected:
 	std::vector<Character*> ClearCharacterArray(int numCharacters);
 	bool AreAllCharactersSet(const std::vector<Character*>& chars) const;
 
+	void ToggleNodeMoving();
+
 	/*
 	==============
 	Visual Tweaks
@@ -267,8 +286,7 @@ protected:
 
 	RGBA m_pathColor = RGBA::GREEN;
 
-	//std::vector<StoryDataDefinition*> m_usedPlotNodes;
-	//std::vector<StoryDataDefinition*> m_usedDetailNodes;
+	bool m_shouldUpdateNodePositions = true;
 public:
 	
 };
