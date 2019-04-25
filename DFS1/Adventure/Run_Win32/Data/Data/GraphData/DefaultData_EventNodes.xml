@@ -43,9 +43,11 @@
 			<Character index="0">
 				<Requirement tag="isAlive" target="true"/>
 				<Requirement tag="isAngry" target="*1*" type="character"/>
+				<Requirement tag="isHome" target="false" />
 			</Character>
 			<Character index="1">
 				<Requirement tag="isAlive" target="true" type="bool"/>
+				<Requirement tag="isHome" target="false" />
 			</Character>
 		</CharacterRequirements>
 		<!-- node placement requirements for each of the overall storystate -->
@@ -131,6 +133,7 @@
 			<Character index="1">
 				<Requirement tag="isAlive" target="true" />
 				<Requirement tag="hasTreasure" target="true" />
+				<Requirement tag="isHome" target="false" />
 			</Character>
 		</CharacterRequirements>
 		<CharacterEffects>
@@ -168,7 +171,7 @@
 	</EventNode>
 
 
-	<EventNode>
+	<EventNode name="QuestDungeon" actRange="1">
 		<Action text="*0* goes on a quest to a dungeon" />
 		<Characters>
 			<Character id="0" title="adventurer" />
@@ -300,6 +303,7 @@
 			<Character index="0">
 				<Requirement tag="inCave" target="true" />
 				<Requirement tag="isMainCharacter" target="true" />
+				<Requirement tag="isAlive" target="true" />
 			</Character>
 		</CharacterRequirements>
 
@@ -315,6 +319,7 @@
 		<CharacterEffects>
 			<EffectSet chance="default">
 				<TagChange character="0" tag="atExit" target="true" type="boolean"/>
+				<TagChange character="*0*" tag="isLost" target="false" type="boolean"/>
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>
@@ -331,6 +336,8 @@
 				<Requirement tag="onQuest" target="false" />
 				<Requirement tag="isWounded" target="true" />
 				<Requirement tag="isMainCharacter" target="true" />
+				<Requirement tag="isAlive" target="true" />
+				<Requirement tag="headingHomeWounded" target="false" type="boolean" />
 			</Character>
 		</CharacterRequirements>
 
@@ -345,7 +352,7 @@
 
 	</EventNode>
 
-	<EventNode>
+	<EventNode name="DiesOnRoad" actRange="1">
 		<Action text="*0* dies on the road" endsAct="true"/>
 		<Characters>
 			<Character id="0" title="adventurer" />
@@ -369,7 +376,7 @@
 		</CharacterEffects>
 	</EventNode>
 
-	<EventNode>
+	<EventNode name="StrangerStealsTreasure" actRange="1">
 		<Action text="A stranger helps *0* to their home, but steals their treasure." endsAct="true"/>
 		<Characters>
 			<Character id="0" title="adventurer" />
@@ -391,11 +398,12 @@
 			<EffectSet chance="default">
 				<TagChange character="0" tag="isHome" target="true" type="boolean"/>
 				<TagChange character="0" tag="hasTreasure" target="false" type="boolean"/>
+				<TagChange character="0" tag="isPassedOutOnRoad" target="false" />
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>
 
-	<EventNode>
+	<EventNode name="StrangerHelps" actRange="1">
 		<Action text="A stranger helps *0* to their home" endsAct="true"/>
 		<Characters>
 			<Character id="0" title="adventurer" />
@@ -416,6 +424,7 @@
 		<CharacterEffects>
 			<EffectSet chance="default">
 				<TagChange character="0" tag="isHome" target="true" type="boolean"/>
+				<TagChange character="0" tag="isPassedOutOnRoad" target="false" />
 			</EffectSet>
 		</CharacterEffects>
 	</EventNode>

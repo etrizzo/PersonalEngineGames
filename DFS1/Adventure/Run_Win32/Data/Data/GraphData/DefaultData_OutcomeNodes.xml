@@ -38,7 +38,6 @@
 					</CharacterRequirements>
 				</Modifier>
 				<EffectSet>
-					<!--<TagChange character="*0*" tag="isFighting" target="false" />-->
 					<TagChange character="*0*" tag="onQuest" target="false" />
 					<TagChange character="*0*" tag="inCave" target="false" />
 					<TagChange character="*0*" tag="inDungeon" target="false" />
@@ -53,7 +52,6 @@
 					</CharacterRequirements>
 				</Modifier>
 				<EffectSet>
-					<!--<TagChange character="*0*" tag="isFighting" target="false" />-->
 					<TagChange character="*0*" tag="onQuest" target="false" />
 					<TagChange character="*0*" tag="isAlive" target="false" />
 				</EffectSet>
@@ -98,7 +96,7 @@
 	</OutcomeNode>
 
 
-	<OutcomeNode name="GetLostCave" chanceToPlace=".4">>
+	<OutcomeNode name="GetLostCave"  actRange="1" chanceToPlace=".4">>
 		<Characters>
 			<Character id = "*0*" />
 		</Characters>
@@ -311,6 +309,7 @@
 			<Character index="0">
 				<Requirement tag="isLost" target="true" weight="5"/>
 				<Requirement tag="inCave" target="true" />
+				<Requirement tag="isAlive" target="true" />
 			</Character>
 		</CharacterRequirements>
 	</OutcomeNode>
@@ -333,6 +332,7 @@
 			<Character index="0">
 				<Requirement tag="isLost" target="true" weight="5"/>
 				<Requirement tag="inDungeon" target="true" />
+				<Requirement tag="isAlive" target="true" />
 			</Character>
 		</CharacterRequirements>
 	</OutcomeNode>
@@ -363,6 +363,7 @@
 		<CharacterRequirements>
 			<Character index="0">
 				<Requirement tag="headingHomeWounded" target="true" weight="5"/>
+				<Requirement tag="isAlive" target="true" />
 			</Character>
 		</CharacterRequirements>
 
