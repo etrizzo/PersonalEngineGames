@@ -42,10 +42,8 @@ void GameState_Graph::RenderUI()
 {
 	AABB2 bounds = SetGraphCamera();
 	RenderGraph(bounds);
-	g_theRenderer->DrawTextInBox2D(m_graphName, bounds, Vector2::ALIGN_CENTER_TOP, bounds.GetHeight() * .03f);
-	g_theRenderer->DrawTextInBox2D(bounds.ToString(), bounds, Vector2::ONE, bounds.GetHeight() * .02f);
-	
-	
+	g_theRenderer->DrawTextInBox2D(m_graphName, bounds, Vector2::ALIGN_CENTER_TOP, bounds.GetHeight() * .015f);
+	//g_theRenderer->DrawTextInBox2D(bounds.ToString(), bounds, Vector2::ONE, bounds.GetHeight() * .02f);
 }
 
 void GameState_Graph::HandleInput()

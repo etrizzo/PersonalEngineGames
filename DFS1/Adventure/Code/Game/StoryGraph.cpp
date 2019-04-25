@@ -125,10 +125,6 @@ void StoryGraph::HandleInput(const AABB2& bounds)
 	}
 }
 
-void StoryGraph::RunGenerationDebug()
-{
-
-}
 
 void StoryGraph::RunGenerationFinal()
 {
@@ -1620,8 +1616,6 @@ Vector2 StoryGraph::CalculateNodePush(StoryNode * node) const
 
 void StoryGraph::RenderGraph(const AABB2& bounds) const
 {
-	//std::string graphText = g_theGame->m_graph.ToString();
-	g_theRenderer->DrawTextInBox2D(m_pathString, bounds, Vector2(0.f, 1.f), .01f, TEXT_DRAW_SHRINK_TO_FIT);
 
 	for (StoryEdge* edge : m_graph.m_edges){
 		RenderEdge(edge);
@@ -1632,17 +1626,17 @@ void StoryGraph::RenderGraph(const AABB2& bounds) const
 	}
 	RenderPath();
 
-	RenderAnalysis(bounds);
+	//RenderAnalysis(bounds);
 
 	RenderDebugInfo(bounds);
 }
 
 void StoryGraph::RenderDebugInfo(const AABB2& bounds) const
 {
-	AABB2 selectedBox = bounds.GetPercentageBox(Vector2(.01f, .7f), Vector2(.2f, .99f));
-	AABB2 hoveredBox = bounds.GetPercentageBox(Vector2(.8f, .7f), Vector2(.99f, .99f));
+	AABB2 selectedBox = bounds.GetPercentageBox(Vector2(.01f, .01f), Vector2(.2f, .99f));
+	AABB2 hoveredBox = bounds.GetPercentageBox(Vector2(.8f, .01f), Vector2(.99f, .99f));
 	if (m_selectedEdge != nullptr){
-		g_theRenderer->DrawAABB2(selectedBox, m_edgeSelectColor.GetColorWithAlpha(100));
+		g_theRenderer->DrawAABB2(selectedBox, m_edgeSelectColor);
 		g_theRenderer->DrawAABB2Outline(selectedBox, RGBA::WHITE);
 		selectedBox.AddPaddingToSides(-.005f, -.005f);
 		std::string selectedString = "Selected Edge:\n";
@@ -1654,19 +1648,14 @@ void StoryGraph::RenderDebugInfo(const AABB2& bounds) const
 		if (m_selectedEdge == nullptr){
 			hoveredBox = selectedBox;
 		}
-		g_theRenderer->DrawAABB2(hoveredBox, m_edgeHoverColor.GetColorWithAlpha(80));
-		g_theRenderer->DrawAABB2Outline(hoveredBox, RGBA::WHITE.GetColorWithAlpha(128));
+		g_theRenderer->DrawAABB2(hoveredBox, m_edgeHoverColor);
+		g_theRenderer->DrawAABB2Outline(hoveredBox, RGBA::WHITE.GetColorWithAlpha(180));
 		hoveredBox.AddPaddingToSides(-.005f, -.005f);
 		std::string hoveredString = "Hovered Edge:\n";
 		hoveredString += m_hoveredEdge->GetCost()->GetDevString();
-		g_theRenderer->DrawTextInBox2D(hoveredString, hoveredBox, Vector2::ALIGN_CENTER_LEFT, EDGE_FONT_SIZE, TEXT_DRAW_SHRINK_TO_FIT, RGBA::LIGHTGRAY);
+		g_theRenderer->DrawTextInBox2D(hoveredString, hoveredBox, Vector2::TOP_LEFT_PADDED, EDGE_FONT_SIZE, TEXT_DRAW_OVERRUN, RGBA::LIGHTGRAY);
 	}
-	//std::string characters = "Characters: \n";
-	//for (Character* c : m_characters){
-	//	characters += c->GetName();
-	//	characters += "\n";
-	//}
-	//g_theRenderer->DrawTextInBox2D(characters, bounds, Vector2(1.f, 1.f), .01f, TEXT_DRAW_SHRINK_TO_FIT);
+
 }
 
 void StoryGraph::RenderPath() const

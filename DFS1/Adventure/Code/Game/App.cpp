@@ -162,23 +162,23 @@ void App::RegisterCommands()
 
 	//thesis
 	CommandRegister("set_seed", CommandSetSeed, "Sets the random seed for the program", "set_seed <int>");
-	CommandRegister("output_graph_to_console", CommandPrintGraph, "Prints current graph as text");
+	//CommandRegister("output_graph_to_console", CommandPrintGraph, "Prints current graph as text");
 	CommandRegister("generate_graph", CommandGenerateGraph, "Re-generates story graph");
-	CommandRegister("generate_skeleton", CommandGenerateSkeleton, "Generates n plot nodes for a graph", "generate_skeleton, <int>");
-	CommandRegister("generate_details", CommandAddDetails, "Generates n detail nodes", "generate_details <int>");
+	//CommandRegister("generate_skeleton", CommandGenerateSkeleton, "Generates n plot nodes for a graph", "generate_skeleton, <int>");
+	//CommandRegister("generate_details", CommandAddDetails, "Generates n detail nodes", "generate_details <int>");
 	CommandRegister("find_path", CommandFindPath, "Finds the shortest path in the graph");
 	CommandRegister("print_story", CommandPrintStory, "Prints the current story to the screen");
-	CommandRegister("add_branches", CommandFindBranches, "Adds branches to the graph");
-	CommandRegister("set_branch_chance", CommandSetBranchChance, "Sets the chance to branch nodes on failure to place node.", "set_branch_chance <float 0-1>");
+	//CommandRegister("add_branches", CommandFindBranches, "Adds branches to the graph");
+	//CommandRegister("set_branch_chance", CommandSetBranchChance, "Sets the chance to branch nodes on failure to place node.", "set_branch_chance <float 0-1>");
 
-	CommandRegister("generate_pairs", CommandGeneratePairs, "Generates a plot node and outcome node as a pair", "generate_pairs <numPairs>");
+	//CommandRegister("generate_pairs", CommandGeneratePairs, "Generates a plot node and outcome node as a pair", "generate_pairs <numPairs>");
 	CommandRegister("add_endings", CommandAddEndings, "Adds ending nodes to the graph");
 	CommandRegister("remove_bad_endings", CommandTrimBadBranches, "Removes branches with no ending from the graph.");
 	CommandRegister("reset_graph", CommandResetGraph, "resets the graph to start->end");
 
-	CommandRegister("read_default_data", CommandReadDefaultData, "reads the default data set into the graph and resets it.");
+	CommandRegister("read_explorer_data", CommandReadDefaultData, "reads the default data set into the graph and resets it.");
 	CommandRegister("read_murder_data", CommandReadMurderData, "reads the murder mystery data set into the graph and resets it.");
-	CommandRegister("read_dialogue_data", CommandReadDialogueData, "reads the dialogue data set into the graph and resets it.");
+	//CommandRegister("read_dialogue_data", CommandReadDialogueData, "reads the dialogue data set into the graph and resets it.");
 	CommandRegister("read_hero_data", CommandReadHeroData, "reads the hero's journey data set into the graph and resets it.");
 
 	CommandRegister("progress_story", CommandProgressStory, "Progresses the story graph for all villages");

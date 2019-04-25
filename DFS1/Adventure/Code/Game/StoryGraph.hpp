@@ -76,13 +76,6 @@ public:
 	=====================
 	*/
 
-	void RunGenerationDebug();	//manually advance generation steps
-
-	//debug things
-	bool m_isDebugGenerating = false;
-	bool m_isDoneGenerating = false;
-	StoryNode* m_endingNodeToFix = nullptr;
-	eGenerationStage m_generationStage = GENERATION_STAGE_NODES;
 
 	void RunGenerationFinal();
 	
@@ -275,8 +268,8 @@ protected:
 	==============
 	*/
 	RGBA m_edgeDefaultColor = RGBA::DARKGRAY;
-	RGBA m_edgeHoverColor = RGBA::CYAN;
-	RGBA m_edgeSelectColor = RGBA::BLUE;
+	RGBA m_edgeHoverColor = RGBA(0, 90, 90, 255);
+	RGBA m_edgeSelectColor = RGBA(0,0,128,255);
 
 	RGBA m_nodeDefaultColor = RGBA::BLANCHEDALMOND;
 	RGBA m_nodeHoverColor = RGBA::MAGENTA;

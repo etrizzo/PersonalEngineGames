@@ -118,7 +118,8 @@ Vector2 Game::GetPlayerPosition() const
 void Game::PostStartup()
 {
 	m_graph = new StoryGraph();
-	InitGraphMurder();
+	InitGraphDefault();
+	//InitGraphMurder();
 	//GenerateGraph();
 }
 
