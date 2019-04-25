@@ -137,27 +137,27 @@ void App::RegisterCommands()
 {
 	//should this be registered in Command::CommandRegister or nah? uses g_theRenderer which is kinda sorta game specific, idk
 	CommandRegister("recompile_shaders", CommandRecompileShaders, "Recompiles all shaders registered to the renderer");		
-	CommandRegister("show_stats", CommandShowStats, "Shows the stats for all actors on the current map");
+	//CommandRegister("show_stats", CommandShowStats, "Shows the stats for all actors on the current map");
 	CommandRegister("toggle_god_mode", CommandToggleGodMode, "Toggles god mode for player");
 	CommandRegister("tgm", CommandToggleGodMode, "Toggles god mode for player");
-	CommandRegister("set_difficulty", CommandSetDifficulty, "Sets difficulty for current adventure and reloads", "set_difficulty <int>");
+	//CommandRegister("set_difficulty", CommandSetDifficulty, "Sets difficulty for current adventure and reloads", "set_difficulty <int>");
 	CommandRegister("go_to_map", CommandGoToMap, "Goes to map with specified name", "go_to_map \"MapName\"" );
-	CommandRegister("print_map_names", CommandPrintMapNames, "Prints map names for current adventure");
+	//CommandRegister("print_map_names", CommandPrintMapNames, "Prints map names for current adventure");
 	CommandRegister("win_adventure", CommandWinAdventure, "Automatically wins current adventure");
 	CommandRegister("complete_quest", CommandCompleteQuest, "Automatically completes the quest at specified index", "complete_quest <index>");
-	CommandRegister("set_speed", CommandSetSpeed, "Sets player walking speed", "set_speed <int>");
-	CommandRegister("spawn_actor", CommandSpawnActor, "Spawns an actor of the specified type near the player", "spawn_actor \"Actor Name\"");
-	CommandRegister("spawn_item", CommandSpawnItem, "Spawns an item of the specified type near the player", "spawn_item \"Item Name\"");
+	//CommandRegister("set_speed", CommandSetSpeed, "Sets player walking speed", "set_speed <int>");
+	//CommandRegister("spawn_actor", CommandSpawnActor, "Spawns an actor of the specified type near the player", "spawn_actor \"Actor Name\"");
+	//CommandRegister("spawn_item", CommandSpawnItem, "Spawns an item of the specified type near the player", "spawn_item \"Item Name\"");
 	
-	CommandRegister("toggle_edges", CommandToggleEdges, "Sets whether or not the map should render edge tiles", "toggle_edges <bool>");
-	CommandRegister("edge_remove_invalid", CommandRemoveInvalidTiles, "Removes un-edgable tiles from the map");
-	CommandRegister("edge_tufts", CommandAddTufts, "Adds \"tufts\" on high level tiles surrounded by lower-level tiles");
-	CommandRegister("edge_shore", CommandEdgeShore, "Edges the shoreline");
-	CommandRegister("edge_high", CommandEdgeHighPriority, "Edges high-to-low ground levels");
-	CommandRegister("edge_low", CommandEdgeLowPriority, "Edges different tiles of the same ground level (dirt -> sand, eg.)");
-	CommandRegister("edge_map", CommandEdgeTiles, "Goes through the entire tile-edging process.");
+	//CommandRegister("toggle_edges", CommandToggleEdges, "Sets whether or not the map should render edge tiles", "toggle_edges <bool>");
+	//CommandRegister("edge_remove_invalid", CommandRemoveInvalidTiles, "Removes un-edgable tiles from the map");
+	//CommandRegister("edge_tufts", CommandAddTufts, "Adds \"tufts\" on high level tiles surrounded by lower-level tiles");
+	//CommandRegister("edge_shore", CommandEdgeShore, "Edges the shoreline");
+	//CommandRegister("edge_high", CommandEdgeHighPriority, "Edges high-to-low ground levels");
+	//CommandRegister("edge_low", CommandEdgeLowPriority, "Edges different tiles of the same ground level (dirt -> sand, eg.)");
+	//CommandRegister("edge_map", CommandEdgeTiles, "Goes through the entire tile-edging process.");
 	
-	CommandRegister("reroll_appearance", CommandRerollPlayerAppearance, "Rerolls the sprite/portrait appearance for the current player");
+	//CommandRegister("reroll_appearance", CommandRerollPlayerAppearance, "Rerolls the sprite/portrait appearance for the current player");
 	
 
 	//thesis
