@@ -53,7 +53,7 @@ void GameState_Graph::HandleInput()
 		g_theGame->ToggleDevMode();
 	}
 
-	if (g_theInput->WasKeyJustPressed(VK_F7)){
+	if (WasStartJustPressed()){
 		g_theGame->TransitionToState(m_previousState);
 	}
 	

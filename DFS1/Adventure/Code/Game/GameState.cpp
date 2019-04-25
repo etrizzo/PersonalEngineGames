@@ -102,28 +102,28 @@ void GameState_Attract::RenderUI()
 	AABB2 screenBounds = g_theGame->SetUICamera();
 	//g_theRenderer->SetOrtho(Vector3(0.f,0.f, 0.f), Vector3((float) m_screenWidth, (float) m_screenWidth, 2.f));
 	g_theRenderer->DrawAABB2(screenBounds, RGBA(64,128,0,255));
-	g_theRenderer->DrawTextInBox2D("Adventure", screenBounds, Vector2(.5f,.5f), screenBounds.GetHeight() * .08f);
-	g_theRenderer->DrawTextInBox2D("Press Start", screenBounds, Vector2(.5f,.3f), screenBounds.GetHeight() * .03f);
+	g_theRenderer->DrawTextInBox2D("Procedural Narrative Structures", screenBounds, Vector2(.5f,.5f), screenBounds.GetHeight() * .04f, TEXT_DRAW_SHRINK_TO_FIT);
+	g_theRenderer->DrawTextInBox2D("Press Enter", screenBounds, Vector2(.5f,.3f), screenBounds.GetHeight() * .025f);
 
 	//Texture* dispTexture = g_theRenderer->CreateOrGetTexture("Noise/heat_displacements.png");
 	//g_theRenderer->BindTexture(*dispTexture, 4);
-	g_theRenderer->ApplyEffect("watercolor");
-	g_theRenderer->ReleaseTexture(4);
-	g_theRenderer->FinishEffects();
+	//g_theRenderer->ApplyEffect("watercolor");
+	//g_theRenderer->ReleaseTexture(4);
+	//g_theRenderer->FinishEffects();
 	//g_theGame->SetMainCamera();
 }
 
 void GameState_Attract::HandleInput()
 {
 	if (!g_theGame->m_thesisMode){
-		if (WasStartJustPressed()){
+		if (g_theInput->WasKeyJustPressed(VK_F7)){
 			//g_theGame->StartStateTransition(STATE_PLAYING, 1.f);
 			g_theGame->TransitionToState(new GameState_Encounter("Balrog"));
 			
 			//g_theGame->StartAdventure("Balrog");
 		}
 	}
-	if (g_theInput->WasKeyJustPressed(VK_F7)){
+	if (WasStartJustPressed()){
 		g_theGame->TransitionToState(new GameState_Graph(this));
 	}
 

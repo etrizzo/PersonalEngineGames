@@ -109,23 +109,23 @@ void GameState_Encounter::HandleInput()
 	if (g_theInput->WasKeyJustPressed(VK_F1)){
 		g_theGame->ToggleDevMode();
 	}
-	if (g_theInput->WasKeyJustPressed('P') || g_theInput->GetController(0)->WasButtonJustPressed(XBOX_START) ){
-		g_theGame->TransitionToState(new GameState_Paused(this));
-	}
+	//if (g_theInput->WasKeyJustPressed('P') || g_theInput->GetController(0)->WasButtonJustPressed(XBOX_START) ){
+	//	g_theGame->TransitionToState(new GameState_Paused(this));
+	//}
 
-	if (WasPauseJustPressed() || g_theInput->WasKeyJustPressed(VK_ESCAPE)){
-		//g_theGame->StartStateTransition(STATE_PAUSED, .15f, RGBA(0,0,0,200));
-		g_theGame->TransitionToState(new GameState_Paused(this));
-	}
-	if (g_theInput->WasKeyJustPressed('I') || g_primaryController->WasButtonJustPressed(XBOX_BACK)){
-		g_theGame->TransitionToState(new GameState_Paused(this));
-	}
+	//if (WasPauseJustPressed() || g_theInput->WasKeyJustPressed(VK_ESCAPE)){
+	//	//g_theGame->StartStateTransition(STATE_PAUSED, .15f, RGBA(0,0,0,200));
+	//	g_theGame->TransitionToState(new GameState_Paused(this));
+	//}
+	//if (g_theInput->WasKeyJustPressed('I') || g_primaryController->WasButtonJustPressed(XBOX_BACK)){
+	//	g_theGame->TransitionToState(new GameState_Paused(this));
+	//}
 
 	if (g_theInput->WasKeyJustPressed('M')){
 		g_theGame->ToggleState(g_theGame->m_fullMapMode);		//change later to open map screen
 	}
 
-	if (g_theInput->WasKeyJustPressed(VK_F7)){
+	if (WasStartJustPressed()){
 		g_theGame->TransitionToState(new GameState_Graph(this, true));
 	}
 

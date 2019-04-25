@@ -2,7 +2,7 @@
 
 <Act name="Investigation" number="2" minNodes="1"/>
 
-<Act name="Arrest" number="3" minNodes="2"/>
+<Act name="Arrest" number="3" minNodes="1"/>
 
 <!--
 	Might need to be a universal act that spans all data sets.
