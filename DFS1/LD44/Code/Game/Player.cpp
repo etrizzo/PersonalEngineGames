@@ -5,6 +5,7 @@
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 #include "Engine/Renderer/Sprite.hpp"
 #include "Game/FlowerPot.hpp"
+#include "Game/Enemy.hpp"
 
 Player::Player(GameState_Playing* playState, Vector3 position)
 {
@@ -30,10 +31,6 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 	//set up auxilary transforms: camera target, turret renderable, barrel fire position, laser sight...
 	m_cameraTarget = new Transform();
 	m_cameraTarget->SetLocalPosition(Vector3::ZERO);
-
-	//m_turretRenderable->m_transform.SetParent(m_cameraTarget);
-
-	m_playState = playState;
 
 	m_health = PLAYER_MAX_HEALTH;
 
@@ -68,6 +65,13 @@ void Player::Update()
 	SetWorldPosition();
 
 	m_cameraTarget->SetLocalPosition(GetPosition() + GetUp() * .25f);
+}
+
+void Player::Render()
+{
+	Entity::Render();
+	
+	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(GetPosition() + UP - FORWARD, GetPosition() + m_facing + UP - FORWARD, RGBA::WHITE, RGBA::YELLOW, 0.0f);
 }
 
 void Player::HandleInput()
@@ -142,14 +146,24 @@ void Player::HandleMovementInput()
 		movement += ds * m_speed * -1.f;
 	}
 
-
+	
 	Vector2 controllerTranslation = g_theInput->GetController(0)->GetLeftThumbstickCoordinates();
 
 	movement += (controllerTranslation.x * ds * m_speed);
 
+	if (movement < 0.0f)
+	{
+		m_facing = -1.f * RIGHT;
+	}
+	else if (movement > 0.0f)
+	{
+		m_facing = RIGHT;
+	}
+	//if movement = 0, don't change the direction you're facing.
+
 	float newX = m_positionXY.x + movement;
-	float radius = g_theGame->m_currentMap->m_collider.m_radius;
-	m_positionXY.x = ClampFloat(newX, -radius * WALKABLE_AREA_AS_PERCENTAGE_OF_RADIUS, radius * WALKABLE_AREA_AS_PERCENTAGE_OF_RADIUS);
+	float walkableRadius = g_theGame->m_currentMap->GetWalkableRadius();
+	m_positionXY.x = ClampFloat(newX, -walkableRadius, walkableRadius);
 
 	m_positionXY.y = GetHeightAtCurrentPos();
 
@@ -161,6 +175,7 @@ void Player::HandleActionInput()
 	if (g_theInput->IsKeyDown(VK_SPACE) || g_theInput->IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 		if (m_rateOfAttack.CheckAndReset()) {
 			g_theAudio->PlayOneOffSoundFromGroup("laser1");
+			Attack();
 		}
 	}
 
@@ -195,6 +210,21 @@ void Player::RecoverHealth()
 	if (m_health < PLAYER_MAX_HEALTH)
 	{
 		m_health += m_regenerationSpeed * GetMasterClock()->GetDeltaSeconds();
+	}
+}
+
+void Player::Attack()
+{
+	float attackRangeX = m_facing.x * 2.f;
+	float myX = GetPosition().x;
+	for (Enemy* enemy : g_theGame->m_playState->m_enemies)
+	{
+		float xDistance = enemy->GetPosition().x - myX;
+		if (AreSameSign(xDistance, attackRangeX) && (fabs(xDistance) < 2.f))
+		{
+			//damage the enemy;
+			enemy->Damage();
+		}
 	}
 }
 

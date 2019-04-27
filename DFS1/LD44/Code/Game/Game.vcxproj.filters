@@ -58,6 +58,12 @@
     <ClCompile Include="Player.cpp">
       <Filter>General\Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>General\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemySpawner.cpp">
+      <Filter>General\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -103,6 +109,12 @@
       <Filter>General\Entities</Filter>
     </ClInclude>
     <ClInclude Include="Missile.hpp">
+      <Filter>General\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.hpp">
+      <Filter>General\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemySpawner.hpp">
       <Filter>General\Entities</Filter>
     </ClInclude>
   </ItemGroup>

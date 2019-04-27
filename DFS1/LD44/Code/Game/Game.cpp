@@ -67,7 +67,7 @@ Game::Game()
 void Game::PostStartup()
 {
 	PROFILE_LOG_SCOPE_FUNCTION();
-	m_soundTrackID = g_theAudio->CreateOrGetSound("Data/Audio/OrbitalColossus.mp3");
+	//m_soundTrackID = g_theAudio->CreateOrGetSound("Data/Audio/OrbitalColossus.mp3");
 
 	m_currentMap = nullptr;
 	m_playState = new GameState_Playing();
@@ -79,7 +79,7 @@ void Game::PostStartup()
 	
 
 	m_currentState = new GameState_Attract();
-	m_currentMap = new Map(Vector3::ZERO, 20.f);
+	m_currentMap = new Map(Vector3::ZERO, 40.f);
 
 	//m_soundtrackPlayback = g_theAudio->PlaySound(m_soundTrackID, true, .5f);
 

@@ -10,7 +10,10 @@ public:
 	~Player();
 
 	void Update() override;
+	void Render() override;
 	void HandleInput();
+
+
 	
 	void Damage();
 	void Respawn();
@@ -32,9 +35,11 @@ protected:
 	void HandleActionInput();
 	void TryToLoadCannon();
 	void RecoverHealth();
+	void Attack();
 
 	Vector2 m_positionXY;
 	Vector3 m_worldPos;
+	Vector3 m_facing = Vector3::X_AXIS;
 	void SetWorldPosition();
 	void MoveTurretTowardTarget();
 

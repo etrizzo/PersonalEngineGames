@@ -16,7 +16,7 @@
 #define SMALL_VALUE .05f
 #define MAX_STEPS 16
 
-const int TILE_WIDTH = 1;
+constexpr unsigned int MAX_ENEMIES_SPAWNED = 50;
 
 class Renderer;
 class InputSystem;

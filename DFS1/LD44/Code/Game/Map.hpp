@@ -2,7 +2,7 @@
 #include "Game/Entity.hpp"
 
 
-#define WALKABLE_AREA_AS_PERCENTAGE_OF_RADIUS (.7f)
+#define WALKABLE_AREA_AS_PERCENTAGE_OF_RADIUS (.5f)
 
 class Map{
 	
@@ -30,6 +30,8 @@ public:
 	bool IsPointAboveTerrain(const Vector3& point) const;
 	bool HitRaycastTarget(const Vector3& point) const;
 	float GetVerticalDistanceFromTerrain(const Vector3& point) const;
+
+	float GetWalkableRadius() const;
 
 	Renderable* m_renderable;
 	Renderable* m_waterRenderable;

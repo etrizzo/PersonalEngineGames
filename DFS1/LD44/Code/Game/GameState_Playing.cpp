@@ -6,6 +6,8 @@
 #include "Game/FlowerPot.hpp"
 #include "Game/Asteroid.hpp"
 #include "Game/Missile.hpp"
+#include "Game/Enemy.hpp"
+#include "Game/EnemySpawner.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 
@@ -26,7 +28,7 @@ GameState_Playing::GameState_Playing()
 	//m_scene->SetShadowCameraTransform(m_sun->m_transform);
 
 	m_scene->AddCamera(g_theGame->m_currentCamera);
-	g_theGame->m_mainCamera->AddSkybox("galaxy2.png", RIGHT, UP, FORWARD);
+	//g_theGame->m_mainCamera->AddSkybox("galaxy2.png", RIGHT, UP, FORWARD);
 	m_renderPath->SetFogColor(RGBA(40, 10, 90));
 }
 
@@ -63,11 +65,14 @@ void GameState_Playing::Update(float ds)
 	{
 		missile->Update();
 	}
-
-
-	//for (Entity* entity : m_allEntities){
-	//	entity->Update();
-	//}
+	for (Enemy* enemy : m_enemies)
+	{
+		enemy->Update();
+	}
+	for (EnemySpawner* spawner : m_spawners)
+	{
+		spawner->Update();
+	}
 
 	if (m_asteroidSpawnClock.CheckAndReset())
 	{
@@ -78,8 +83,6 @@ void GameState_Playing::Update(float ds)
 	CheckForVictory();
 	CheckForDefeat();
 
-	
-	
 }
 
 void GameState_Playing::RenderGame()
@@ -169,6 +172,39 @@ void GameState_Playing::SpawnMissile(Vector3 position, Asteroid * target)
 	Missile* missile = new Missile(position, target);
 	m_missiles.push_back(missile);
 	m_allEntities.push_back((Entity*)missile);
+}
+
+void GameState_Playing::SpawnEnemy(const Vector3 & position)
+{
+	Entity* target = GetClosestAlliedEntity(position);
+	Enemy* newEnemy = new Enemy(position, target);
+	m_enemies.push_back(newEnemy);
+	m_allEntities.push_back((Entity*) newEnemy);
+
+}
+
+Entity * GameState_Playing::GetClosestAlliedEntity(const Vector3 & position)
+{
+	Entity* target = nullptr;
+	float shortestDistance = 100000.f;
+	for (FlowerPot* pot : m_flowerPots)
+	{
+		float distance = GetDistanceSquared(position, pot->GetPosition());
+		if (distance < shortestDistance)
+		{
+			shortestDistance = distance;
+			target = (Entity*)pot;
+		}
+	}
+
+	float playerDist = GetDistanceSquared(position, m_player->GetPosition());
+	if (playerDist < shortestDistance)
+	{
+		shortestDistance = playerDist;
+		target = (Entity*) m_player;
+	}
+
+	return target;
 }
 
 
@@ -262,11 +298,15 @@ void GameState_Playing::Startup()
 
 	SpawnPlayer(Vector3::ZERO);
 	
-	float mapRadius = g_theGame->GetMap()->GetRadius();
+	float walkingRadius = g_theGame->GetMap()->GetWalkableRadius();
 
-	SpawnFlowerPot(RangeMapFloat(.25f, 0.f, 1.f, -mapRadius, mapRadius));
-	SpawnFlowerPot(RangeMapFloat(.5f, 0.f, 1.f, -mapRadius, mapRadius));
-	SpawnFlowerPot(RangeMapFloat(.75f, 0.f, 1.f, -mapRadius, mapRadius));
+	SpawnFlowerPot(RangeMapFloat(.25f, 0.f, 1.f, -walkingRadius, walkingRadius));
+	SpawnFlowerPot(RangeMapFloat(.5f, 0.f, 1.f, -walkingRadius, walkingRadius));
+	SpawnFlowerPot(RangeMapFloat(.75f, 0.f, 1.f, -walkingRadius, walkingRadius));
+
+	float mapRadius = g_theGame->GetMap()->GetRadius();
+	CreateSpawner(Vector3(-mapRadius, g_theGame->GetMap()->GetHeightFromXPosition(-mapRadius), g_theGame->GetMap()->GetCenter().z));
+	CreateSpawner(Vector3(mapRadius, g_theGame->GetMap()->GetHeightFromXPosition(-mapRadius), g_theGame->GetMap()->GetCenter().z));
 }
 
 void GameState_Playing::RenderPlayerHealthBar(const AABB2 & uiBounds)
@@ -321,7 +361,7 @@ void GameState_Playing::SpawnPlayer(Vector3 pos)
 
 	
 	g_theGame->m_mainCamera->m_transform.SetParent(m_player->m_cameraTarget);
-	g_theGame->m_mainCamera->m_transform.SetLocalPosition(Vector3(0.f, 5.f, -15.f));
+	g_theGame->m_mainCamera->m_transform.SetLocalPosition(Vector3(0.f, 2.f, -12.f));
 }
 
 void GameState_Playing::SpawnFlowerPot(float xPosition)
@@ -336,7 +376,7 @@ void GameState_Playing::SpawnAsteroid()
 	float randomStartX = GetRandomFloatInRange(-g_theGame->m_currentMap->GetRadius(), g_theGame->m_currentMap->GetRadius());
 	float randomTargetX = GetRandomFloatInRange(-g_theGame->m_currentMap->GetRadius(), g_theGame->m_currentMap->GetRadius());
 
-	float startY = 40;
+	float startY = g_theGame->GetMap()->GetRadius() * 2.f;
 	float targetY = g_theGame->m_currentMap->GetHeightFromXPosition(randomTargetX);
 
 	float z = g_theGame->m_currentMap->GetCenter().z;
@@ -345,6 +385,13 @@ void GameState_Playing::SpawnAsteroid()
 	m_asteroids.push_back(newAsteroid);
 	m_allEntities.push_back((Entity*)newAsteroid);
 
+}
+
+void GameState_Playing::CreateSpawner(Vector3 pos)
+{
+	EnemySpawner* spawner = new EnemySpawner(pos);
+	m_spawners.push_back(spawner);
+	m_allEntities.push_back((Entity*)spawner);
 }
 
 void GameState_Playing::DeleteEntities()
@@ -374,6 +421,15 @@ void GameState_Playing::DeleteEntities()
 		if (missile->m_aboutToBeDeleted)
 		{
 			RemoveAtFast(m_missiles, i);
+		}
+	}
+
+	for (int i = (int)m_enemies.size() - 1; i >= 0; i--)
+	{
+		Enemy* enemy = m_enemies[i];
+		if (enemy->m_aboutToBeDeleted)
+		{
+			RemoveAtFast(m_enemies, i);
 		}
 	}
 

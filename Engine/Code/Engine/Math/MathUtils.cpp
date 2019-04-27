@@ -283,6 +283,11 @@ float Max(const float & x, const float & y)
 	}
 }
 
+bool AreSameSign(float v1, float v2)
+{
+	return ((v1 * v2) > 0.f);
+}
+
 const float Interpolate(const float&  start, const float&  end, const float&  fractionTowardEnd)
 {
 	

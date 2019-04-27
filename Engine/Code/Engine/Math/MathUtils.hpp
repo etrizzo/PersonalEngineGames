@@ -90,6 +90,8 @@ int Max(const int& x, const int& y);
 float Max(const float& x, const float& y);
 
 
+bool AreSameSign(float v1, float v2);
+
 
 template <typename T>
 bool CycleLess(T a, T b)

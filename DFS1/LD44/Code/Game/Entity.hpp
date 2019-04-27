@@ -58,6 +58,6 @@ public:
 	bool m_noClipMode;
 
 	Sprite* m_sprite;
-	GameState_Playing* m_playState;
+	//GameState_Playing* m_playState;
 
 };

@@ -290,6 +290,8 @@
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="DebugRenderSystem.cpp" />
     <ClCompile Include="DebugRenderTask.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemySpawner.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="FlowerPot.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -312,6 +314,8 @@
     <ClInclude Include="Asteroid.hpp" />
     <ClInclude Include="DebugRenderSystem.hpp" />
     <ClInclude Include="DebugRenderTask.hpp" />
+    <ClInclude Include="Enemy.hpp" />
+    <ClInclude Include="EnemySpawner.hpp" />
     <ClInclude Include="EngineBuildPreferences.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="FlowerPot.hpp" />

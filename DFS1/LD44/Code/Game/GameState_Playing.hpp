@@ -17,6 +17,8 @@ class RenderScene;
 class FlowerPot;
 class Asteroid;
 class Missile;
+class Enemy;
+class EnemySpawner;
 
 class GameState_Playing: public GameState{
 public:
@@ -33,6 +35,8 @@ public:
 	std::vector<FlowerPot*> m_flowerPots;
 	std::vector<Asteroid*> m_asteroids;
 	std::vector<Missile*> m_missiles;
+	std::vector < Enemy*> m_enemies;
+	std::vector<EnemySpawner*> m_spawners;
 
 	void EnterState() override;
 	void Update(float ds);
@@ -43,6 +47,9 @@ public:
 	void RespawnPlayer();
 
 	void SpawnMissile(Vector3 position, Asteroid* target);
+	void SpawnEnemy(const Vector3& position);
+
+	Entity* GetClosestAlliedEntity(const Vector3& position);
 
 	Light* AddNewLight(std::string type, RGBA color = RGBA::WHITE);		//adds in front of camera
 	Light* AddNewLight(std::string type, Vector3 pos, RGBA color = RGBA::WHITE);
@@ -83,6 +90,8 @@ protected:
 	void SpawnPlayer(Vector3 pos);
 	void SpawnFlowerPot(float xPosition);
 	void SpawnAsteroid();
+
+	void CreateSpawner(Vector3 pos);
 
 	void DeleteEntities();
 

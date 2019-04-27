@@ -32,10 +32,11 @@ Map::Map(Vector3 position, float radius)
 	m_waterRenderable = new Renderable();
 	MeshBuilder watermb = MeshBuilder();
 	watermb.Begin(PRIMITIVE_TRIANGLES, true);
-	watermb.AppendPlane(planeCenter, FORWARD, RIGHT, Vector2(-100.f, 100.f), RGBA::WHITE.GetColorWithAlpha(200), Vector2::ZERO, (Vector2::ONE * 128));
+	watermb.AppendPlane(Vector3::ZERO, FORWARD, RIGHT, Vector2(-100.f, 100.f), RGBA::WHITE.GetColorWithAlpha(200), Vector2::ZERO, (Vector2::ONE * 128));
 	watermb.End();
 	m_waterRenderable->SetMesh(watermb.CreateMesh());
 	m_waterRenderable->SetMaterial(Material::GetMaterial("water"));
+	m_waterRenderable->SetPosition(Vector3(0.f, waterHeight, 0.0f));
 	g_theGame->m_playState->m_scene->AddRenderable(m_waterRenderable);
 
 
@@ -74,6 +75,11 @@ Vector3 Map::GetCenter() const
 
 float Map::GetHeightFromXPosition(float xCoord) const
 {
+	if (fabs(xCoord) > (m_collider.m_radius * WALKABLE_AREA_AS_PERCENTAGE_OF_RADIUS))
+	{
+		//we're off the orbb
+		return m_waterRenderable->GetPosition().y;
+	}
 	float xSquared = (xCoord - m_collider.m_center.x) * (xCoord - m_collider.m_center.x);
 	float rSquared = m_collider.m_radius * m_collider.m_radius;
 
@@ -121,6 +127,11 @@ float Map::GetVerticalDistanceFromTerrain(const Vector3 & point) const
 	float terrainHeight = GetHeightFromXPosition(point.x);
 	float dist = point.y - terrainHeight;
 	return fabs(dist);
+}
+
+float Map::GetWalkableRadius() const
+{
+	return m_collider.m_radius * WALKABLE_AREA_AS_PERCENTAGE_OF_RADIUS;
 }
 
 
