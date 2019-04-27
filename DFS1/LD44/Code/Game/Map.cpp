@@ -1,6 +1,5 @@
 #include "Map.hpp"
 #include "Game.hpp"
-#include "Game/MapGenStep.hpp"
 #include "DebugRenderSystem.hpp"
 
 
@@ -58,26 +57,19 @@ void Map::Update(float deltaSeconds)
 
 	//RunPhysics();
 
-	CheckEntityInteractions();
 
 }
 
-
-void Map::CheckEntityInteractions()
+float Map::GetRadius() const
 {
-	
-
+	return m_collider.m_radius;
 }
 
 
-int Map::GetWidth() const 
-{
-	return m_dimensions.x;
-}
 
-int Map::GetHeight() const 
+Vector3 Map::GetCenter() const
 {
-	return m_dimensions.y;
+	return m_collider.m_center;
 }
 
 float Map::GetHeightFromXPosition(float xCoord) const

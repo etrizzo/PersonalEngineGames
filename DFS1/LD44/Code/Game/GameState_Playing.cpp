@@ -3,6 +3,9 @@
 #include "Game/Map.hpp"
 #include "Game/Player.hpp"
 #include "Game/DebugRenderSystem.hpp"
+#include "Game/FlowerPot.hpp"
+#include "Game/Asteroid.hpp"
+#include "Game/Missile.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 
@@ -48,14 +51,34 @@ void GameState_Playing::Update(float ds)
 	m_player->Update();
 	m_particleSystem->Update(ds);
 	//Update spawners before the rest of entities bc it can add entities
-	for (Entity* entity : m_allEntities){
-		entity->Update();
+	for (FlowerPot* pot : m_flowerPots)
+	{
+		pot->Update();
+	}
+	for (Asteroid* ast : m_asteroids)
+	{
+		ast->Update();
+	}
+	for (Missile* missile : m_missiles)
+	{
+		missile->Update();
+	}
+
+
+	//for (Entity* entity : m_allEntities){
+	//	entity->Update();
+	//}
+
+	if (m_asteroidSpawnClock.CheckAndReset())
+	{
+		SpawnAsteroid();
 	}
 
 	DeleteEntities();
 	CheckForVictory();
 	CheckForDefeat();
 
+	
 	
 }
 
@@ -101,6 +124,11 @@ void GameState_Playing::RenderEntities()
 void GameState_Playing::RenderUI()
 {
 	AABB2 bounds = g_theGame->SetUICamera();
+
+	std::string debugText = Stringf("Player pos: (%3.2f, %3.2f)", g_theGame->GetPlayerPositionXY().x, g_theGame->GetPlayerPositionXY().y);
+	g_theRenderer->DrawTextInBox2D(debugText, bounds, Vector2::TOP_LEFT_PADDED, .02f, TEXT_DRAW_SHRINK_TO_FIT);
+
+	RenderPlayerHealthBar(bounds);
 }
 
 void GameState_Playing::HandleInput()
@@ -122,17 +150,6 @@ void GameState_Playing::HandleInput()
 		g_theGame->m_gameClock->SetScale(1.f);
 	}
 
-	if (g_theInput->WasKeyJustPressed(VK_OEM_6)){
-		UpdateShader(1);
-	}
-	if (g_theInput->WasKeyJustPressed(VK_OEM_4)){
-		UpdateShader(-1);
-	}
-
-
-	if (g_theInput->WasKeyJustPressed('L')){
-		AddNewPointLight( g_theGame->m_currentCamera->GetPosition() + g_theGame->m_currentCamera->GetForward(), RGBA::WHITE);
-	}
 
 	if (!g_theGame->m_debugRenderSystem->m_isDetached){
 		if (!m_gameLost){
@@ -145,6 +162,13 @@ void GameState_Playing::RespawnPlayer()
 {
 	m_player->Respawn();
 	m_gameLost = false;
+}
+
+void GameState_Playing::SpawnMissile(Vector3 position, Asteroid * target)
+{
+	Missile* missile = new Missile(position, target);
+	m_missiles.push_back(missile);
+	m_allEntities.push_back((Entity*)missile);
 }
 
 
@@ -217,8 +241,6 @@ unsigned int GameState_Playing::GetNumActiveLights() const
 
 void GameState_Playing::Startup()
 {
-
-
 	m_particleSystem = new ParticleSystem();
 	m_particleSystem->CreateEmitter(Vector3(0.f, 10.f, 15.f));
 	m_particleSystem->m_emitters[0]->SetSpawnRate(200.f);
@@ -235,7 +257,42 @@ void GameState_Playing::Startup()
 	//m_cameraLight = m_scene->m_lights[0];
 	//m_orbitLight = (SpotLight*) m_scene->m_lights[1];
 
+	m_asteroidSpawnClock = StopWatch();
+	m_asteroidSpawnClock.SetTimer(1.f);
+
 	SpawnPlayer(Vector3::ZERO);
+	
+	float mapRadius = g_theGame->GetMap()->GetRadius();
+
+	SpawnFlowerPot(RangeMapFloat(.25f, 0.f, 1.f, -mapRadius, mapRadius));
+	SpawnFlowerPot(RangeMapFloat(.5f, 0.f, 1.f, -mapRadius, mapRadius));
+	SpawnFlowerPot(RangeMapFloat(.75f, 0.f, 1.f, -mapRadius, mapRadius));
+}
+
+void GameState_Playing::RenderPlayerHealthBar(const AABB2 & uiBounds)
+{
+	float percentageOfHealth = m_player->GetPercentageOfHealth();
+
+	AABB2 healthBox = uiBounds.GetPercentageBox(.1f, .05f, .9f, .1f);
+	g_theRenderer->DrawAABB2(healthBox, RGBA::BLACK);
+	float healthHeight = healthBox.GetHeight();
+
+	healthBox.AddPaddingToSides(healthHeight * -.1f, healthHeight * -.1f);
+	g_theRenderer->DrawAABB2(healthBox, RGBA::RED);
+
+	AABB2 actualHealthArea = healthBox.GetPercentageBox(0.f, 0.f, percentageOfHealth, 1.f);
+	g_theRenderer->DrawAABB2(actualHealthArea, RGBA::GREEN);
+
+	//draw reload points
+	float percentageOfHealthForReload = RELOAD_HEALTH_COST / PLAYER_MAX_HEALTH;
+	float percentageToDrawAt = percentageOfHealthForReload;
+	float barWidth = .001f;
+	while (percentageToDrawAt < 1.f)
+	{
+		AABB2 barToDraw = healthBox.GetPercentageBox(percentageToDrawAt - barWidth, 0.0f, percentageToDrawAt + barWidth, 1.0f);
+		g_theRenderer->DrawAABB2(barToDraw, RGBA::YELLOW);
+		percentageToDrawAt += percentageOfHealthForReload;
+	}
 }
 
 void GameState_Playing::CheckForVictory()
@@ -264,27 +321,70 @@ void GameState_Playing::SpawnPlayer(Vector3 pos)
 
 	
 	g_theGame->m_mainCamera->m_transform.SetParent(m_player->m_cameraTarget);
-	g_theGame->m_mainCamera->m_transform.SetLocalPosition(Vector3(0.f, 0.f, -15.f));
+	g_theGame->m_mainCamera->m_transform.SetLocalPosition(Vector3(0.f, 5.f, -15.f));
 }
 
-void GameState_Playing::UpdateShader(int direction)
+void GameState_Playing::SpawnFlowerPot(float xPosition)
 {
-	//m_debugShader= eDebugShaders(ClampInt(m_debugShader + direction, 0, NUM_DEBUG_SHADERS - 1));
-	int newShader = m_debugShader + direction + NUM_DEBUG_SHADERS;
-	m_debugShader= eDebugShaders(newShader % NUM_DEBUG_SHADERS);
+	FlowerPot* flowerPot = new FlowerPot(xPosition);
+	m_flowerPots.push_back(flowerPot);
+	m_allEntities.push_back((Entity*)flowerPot);
+}
+
+void GameState_Playing::SpawnAsteroid()
+{
+	float randomStartX = GetRandomFloatInRange(-g_theGame->m_currentMap->GetRadius(), g_theGame->m_currentMap->GetRadius());
+	float randomTargetX = GetRandomFloatInRange(-g_theGame->m_currentMap->GetRadius(), g_theGame->m_currentMap->GetRadius());
+
+	float startY = 40;
+	float targetY = g_theGame->m_currentMap->GetHeightFromXPosition(randomTargetX);
+
+	float z = g_theGame->m_currentMap->GetCenter().z;
+
+	Asteroid* newAsteroid = new Asteroid(Vector3(randomStartX, startY, z), Vector3(randomTargetX, targetY, z));
+	m_asteroids.push_back(newAsteroid);
+	m_allEntities.push_back((Entity*)newAsteroid);
 
 }
 
 void GameState_Playing::DeleteEntities()
 {
-	for (int i = (int) m_allEntities.size() - 1; i >= 0; i--){
-		Entity* entity = m_allEntities[i];
-		if (entity->m_aboutToBeDeleted){
-			RemoveAtFast(m_allEntities, i);
-			//delete entity;
+	//remove entities from special lists
+	for (int i = (int)m_asteroids.size() - 1; i >= 0; i--)
+	{
+		Asteroid* asteroid = m_asteroids[i];
+		if (asteroid->m_aboutToBeDeleted)
+		{
+			RemoveAtFast(m_asteroids, i);
 		}
 	}
 
-	
+	for (int i = (int)m_flowerPots.size() - 1; i >= 0; i--)
+	{
+		FlowerPot* flowerpot = m_flowerPots[i];
+		if (flowerpot->m_aboutToBeDeleted)
+		{
+			RemoveAtFast(m_flowerPots, i);
+		}
+	}
+
+	for (int i = (int)m_missiles.size() - 1; i >= 0; i--)
+	{
+		Missile* missile = m_missiles[i];
+		if (missile->m_aboutToBeDeleted)
+		{
+			RemoveAtFast(m_missiles, i);
+		}
+	}
+
+
+	//remove and delete from AllEntities
+	for (int i = (int)m_allEntities.size() - 1; i >= 0; i--) {
+		Entity* entity = m_allEntities[i];
+		if (entity->m_aboutToBeDeleted) {
+			RemoveAtFast(m_allEntities, i);
+			delete entity;
+		}
+	}
 }
 

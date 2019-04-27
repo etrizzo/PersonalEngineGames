@@ -1,5 +1,4 @@
 #include "Game.hpp"
-#include "Game/TileDefinition.hpp"
 #include "Game/Map.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 #include "Game/DebugRenderSystem.hpp"
@@ -166,6 +165,11 @@ Player * Game::GetPlayer() const
 		return m_playState->m_player;
 	}
 	return nullptr;
+}
+
+Map * Game::GetMap() const
+{
+	return m_currentMap;
 }
 
 
@@ -337,24 +341,6 @@ unsigned int Game::GetNumActiveLights() const
 		ConsolePrintf(RGBA::RED, "no play state!");
 		return 0;
 	}
-}
-
-
-
-
-void Game::LoadTileDefinitions()
-{
-	tinyxml2::XMLDocument tileDefDoc;
-	tileDefDoc.LoadFile("Data/Data/Tiles.xml");
-
-
-	tinyxml2::XMLElement* root = tileDefDoc.FirstChildElement("TileDefinitions");
-	for (tinyxml2::XMLElement* tileDefElement = root->FirstChildElement("TileDefinition"); tileDefElement != NULL; tileDefElement = tileDefElement->NextSiblingElement("TileDefinition")){
-		TileDefinition newDefinition = TileDefinition(tileDefElement);
-		TileDefinition::s_definitions.insert(std::pair<std::string, TileDefinition>(newDefinition.m_name, newDefinition));
-	}
-
-
 }
 
 

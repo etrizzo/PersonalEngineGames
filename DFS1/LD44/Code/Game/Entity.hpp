@@ -1,15 +1,16 @@
 #pragma once
 #include "Game/GameCommon.hpp"
-#include "Game/Tile.hpp"
 #include "Engine/Math/Transform.hpp"
 #include "Engine/Renderer/Renderable.hpp"
+#include "Engine/Renderer/PerspectiveCamera.hpp"
+#include "Engine/Renderer/Sprite.hpp"
 
 class Map;
 class GameState_Playing;
 
 class Entity{
 public:
-	~Entity();									
+	virtual ~Entity();									
 
 	virtual void Update();
 
@@ -45,8 +46,6 @@ public:
 
 
 	Transform m_transform;
-	//Mesh* m_mesh;
-	//Texture* m_texture;
 
 	Sphere m_collider;
 
@@ -54,13 +53,10 @@ public:
 	float m_ageInSeconds;
 
 	float m_range;
-	int m_health;
-	int m_maxHealth;
 
 	bool m_aboutToBeDeleted;
 	bool m_noClipMode;
 
-	//Renderable* m_renderable;
 	Sprite* m_sprite;
 	GameState_Playing* m_playState;
 

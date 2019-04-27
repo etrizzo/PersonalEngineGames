@@ -14,6 +14,9 @@ class SpotLight;
 class ParticleSystem;
 class ForwardRenderPath;
 class RenderScene;
+class FlowerPot;
+class Asteroid;
+class Missile;
 
 class GameState_Playing: public GameState{
 public:
@@ -27,6 +30,9 @@ public:
 	RenderScene* m_scene;
 
 	std::vector<Entity*> m_allEntities;
+	std::vector<FlowerPot*> m_flowerPots;
+	std::vector<Asteroid*> m_asteroids;
+	std::vector<Missile*> m_missiles;
 
 	void EnterState() override;
 	void Update(float ds);
@@ -35,6 +41,8 @@ public:
 	void RenderUI();
 	void HandleInput();
 	void RespawnPlayer();
+
+	void SpawnMissile(Vector3 position, Asteroid* target);
 
 	Light* AddNewLight(std::string type, RGBA color = RGBA::WHITE);		//adds in front of camera
 	Light* AddNewLight(std::string type, Vector3 pos, RGBA color = RGBA::WHITE);
@@ -63,9 +71,9 @@ public:
 protected:
 
 	void Startup();
+	
+	void RenderPlayerHealthBar(const AABB2& uiBounds);
 
-	float m_specAmount = .5f;
-	float m_specFactor = 3.f;
 	int m_numActiveLights = 0;
 
 	eDebugShaders m_debugShader = SHADER_LIT;
@@ -73,11 +81,12 @@ protected:
 	void CheckForVictory();
 	void CheckForDefeat();
 	void SpawnPlayer(Vector3 pos);
-
-	void UpdateShader(int direction);
+	void SpawnFlowerPot(float xPosition);
+	void SpawnAsteroid();
 
 	void DeleteEntities();
 
+	StopWatch m_asteroidSpawnClock;
 
 	//for objects drawn using drawmeshimmediate
 	Material* m_couchMaterial;

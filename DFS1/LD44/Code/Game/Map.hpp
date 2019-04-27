@@ -1,6 +1,6 @@
 #pragma once
 #include "Game/Entity.hpp"
-#include "Game/MapDefinition.hpp"
+
 
 #define WALKABLE_AREA_AS_PERCENTAGE_OF_RADIUS (.7f)
 
@@ -14,18 +14,14 @@ public:
 
 	std::string m_name;
 
-	AABB2 m_extents;
-	IntVector2 m_dimensions;
 	Sphere m_collider;
 
 	void Render();
 
 	void Update(float deltaSeconds);
 
-	void CheckEntityInteractions();
-
-	int GetWidth() const;
-	int GetHeight() const;
+	float GetRadius() const;
+	Vector3 GetCenter() const;
 
 	float GetHeightFromXPosition(float xCoord) const;
 	Vector3 GetPositionAtXCoord(float x) const;

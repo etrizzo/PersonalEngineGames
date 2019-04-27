@@ -1,6 +1,5 @@
 #include "Entity.hpp"
 #include "Game/Game.hpp"
-#include "Game/Tile.hpp"
 #include "Game/Map.hpp"
 #include "Engine/Renderer/ObjLoader.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
@@ -42,6 +41,7 @@ void Entity::Update()
 
 void Entity::Render()
 {
+	g_theRenderer->BindShader(Shader::GetShader("cutout"));
 	g_theGame->m_debugRenderSystem->MakeDebugRenderPoint(0.0f, m_transform.GetWorldPosition());
 	g_theRenderer->DrawSprite(m_transform.GetWorldPosition(), m_sprite, g_theGame->m_mainCamera->GetRight(), Vector3::Y_AXIS);
 }
@@ -92,6 +92,7 @@ void Entity::SetTransform(Transform newT)
 void Entity::Translate(Vector3 translation)
 {
 	m_transform.TranslateLocal(translation);
+	m_collider.SetPosition(m_transform.GetWorldPosition());
 }
 
 void Entity::Rotate(Vector3 rotation)

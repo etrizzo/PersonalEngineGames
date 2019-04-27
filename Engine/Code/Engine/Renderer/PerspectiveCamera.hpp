@@ -1,3 +1,4 @@
+#pragma once
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Renderer/Camera.hpp"
 

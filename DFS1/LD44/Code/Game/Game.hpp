@@ -74,6 +74,7 @@ public:
 	float GetDeltaSeconds();
 	Vector2 GetPlayerPositionXY() const;
 	Player* GetPlayer() const;
+	Map* GetMap() const;
 
 	AABB2 SetMainCamera();
 	AABB2 SetUICamera();
@@ -117,9 +118,6 @@ public:
 	bool m_godMode;
 
 private:
-
-	void LoadTileDefinitions();
-
 	void RenderGame();
 	void RenderUI();
 
