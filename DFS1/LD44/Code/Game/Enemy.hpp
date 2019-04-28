@@ -10,14 +10,19 @@ public:
 
 	void Update() override;
 
-	void Damage();
+	void TakeDamage() override;
+	void ExecuteAttack() override;
 
 	float GetPercentageOfHealth() const;
 
+	eEnemyBehavior m_currentBehavior = BEHAVIOR_FOLLOW_TARGET;
 
 	int m_health = ENEMY_MAX_HEALTH;
-	float m_speed = 5.f;
+	float m_speed = 2.f;
 	StopWatch m_rateOfAttack;
+
+	float m_attackRange = 2.f;
+	float m_stopDistanceSquared;
 	
 	
 
@@ -27,4 +32,7 @@ protected:
 	void SetWorldPosition();
 	float GetHeightAtCurrentPos();
 
+	void UpdateBehavior();
+	void RunBehaviorFollow();
+	void RunBehaviorAttack();
 };

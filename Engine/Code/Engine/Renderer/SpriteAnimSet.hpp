@@ -17,6 +17,7 @@ public:
 	AABB2 GetUVsForAnim(std::string animName, float time = 0.f);
 
 	bool IsCurrentAnimFinished();
+	float GetPercentageThroughCurrentAnim() const;
 
 private:
 	void LoadAnims();

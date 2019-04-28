@@ -5,6 +5,7 @@
 #include "Game/Player.hpp"
 #include "Engine/Renderer/Light.hpp"
 #include "Engine/Renderer/ParticleSystem.hpp"
+#include "Engine/Renderer/SpriteAnimSetDef.hpp"
 #include <map>
 #include "Engine/Networking/UDPTests.hpp"
 #include "Engine/Networking/NetSession.hpp"
@@ -68,6 +69,7 @@ void Game::PostStartup()
 {
 	PROFILE_LOG_SCOPE_FUNCTION();
 	//m_soundTrackID = g_theAudio->CreateOrGetSound("Data/Audio/OrbitalColossus.mp3");
+	SpriteAnimSetDef::LoadSetsFromFile("Sprites.xml");
 
 	m_currentMap = nullptr;
 	m_playState = new GameState_Playing();
@@ -80,6 +82,8 @@ void Game::PostStartup()
 
 	m_currentState = new GameState_Attract();
 	m_currentMap = new Map(Vector3::ZERO, 40.f);
+
+	
 
 	//m_soundtrackPlayback = g_theAudio->PlaySound(m_soundTrackID, true, .5f);
 

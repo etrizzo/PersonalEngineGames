@@ -9,11 +9,12 @@
 
 Player::Player(GameState_Playing* playState, Vector3 position)
 {
+	m_animSet = new SpriteAnimSet(g_theGame->m_playState->m_playerAnimDefinition);
 	float size = 1.f;
 	m_collider = Sphere(Vector3::ZERO, size);
 
 
-	m_sprite = new Sprite(g_theRenderer->CreateOrGetTexture("TestTexture.png"), AABB2::ZERO_TO_ONE, Vector2(.5f,0.f), Vector2::ONE);
+	m_sprite = new Sprite(m_animSet->GetCurrentTexture(), AABB2::ZERO_TO_ONE, Vector2(.5f,0.f), Vector2::ONE);
 
 
 	m_spinDegreesPerSecond = 45.f;
@@ -22,6 +23,7 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 
 	m_noClipMode = false;
 
+	
 
 	m_rateOfAttack = StopWatch();
 	m_rateOfAttack.SetTimer(.3f);
@@ -45,6 +47,8 @@ Player::Player(GameState_Playing* playState, Vector3 position)
 
 	SetPosition(position);
 	SetScale(Vector3(size,size,size));
+
+
 }
 
 Player::~Player()
@@ -64,6 +68,8 @@ void Player::Update()
 	
 	SetWorldPosition();
 
+	UpdateAnimation();
+
 	m_cameraTarget->SetLocalPosition(GetPosition() + GetUp() * .25f);
 }
 
@@ -71,20 +77,22 @@ void Player::Render()
 {
 	Entity::Render();
 	
-	g_theGame->m_debugRenderSystem->MakeDebugRenderLineSegment(GetPosition() + UP - FORWARD, GetPosition() + m_facing + UP - FORWARD, RGBA::WHITE, RGBA::YELLOW, 0.0f);
 }
 
 void Player::HandleInput()
 {
-	HandleMovementInput();
+	if (m_animState != ANIM_STATE_ATTACK && m_animState != ANIM_STATE_RELOAD)
+	{
+		HandleMovementInput();
+	}
 	HandleActionInput();
 
 }
 
-void Player::Damage()
+void Player::TakeDamage()
 {
 	if (!g_theGame->m_godMode){
-		m_health-=1.f;
+		m_health-= HIT_HEALTH_COST;
 		if (m_health <= 0.f){
 			m_aboutToBeDeleted = true;
 		}
@@ -106,7 +114,15 @@ float Player::GetPercentageOfHealth() const
 
 
 
-static Vector2 gPos = Vector2(0.0f, 0.0f); 
+//static Vector2 gPos = Vector2(0.0f, 0.0f); 
+
+
+void Player::UpdateAnimation()
+{
+
+	Entity::UpdateAnimation();
+	
+}
 
 void Player::HandleMovementInput()
 {
@@ -132,7 +148,7 @@ void Player::HandleMovementInput()
 	Vector2 mouseMovement = g_theInput->GetMouseDirection()  * .2f;
 	camRotation += Vector3(-mouseMovement.y, mouseMovement.x, 0.f);
 
-	m_cameraTarget->RotateByEuler(camRotation * m_cameraDegPerSeconds * ds);
+	//m_cameraTarget->RotateByEuler(camRotation * m_cameraDegPerSeconds * ds);
 
 
 	float movement = 0.0f;
@@ -150,6 +166,16 @@ void Player::HandleMovementInput()
 	Vector2 controllerTranslation = g_theInput->GetController(0)->GetLeftThumbstickCoordinates();
 
 	movement += (controllerTranslation.x * ds * m_speed);
+
+	if (movement != 0.0f)
+	{
+		m_animState = ANIM_STATE_WALK;
+	}
+	else
+	{
+		m_animState = ANIM_STATE_IDLE;
+	}
+
 
 	if (movement < 0.0f)
 	{
@@ -175,7 +201,8 @@ void Player::HandleActionInput()
 	if (g_theInput->IsKeyDown(VK_SPACE) || g_theInput->IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 		if (m_rateOfAttack.CheckAndReset()) {
 			g_theAudio->PlayOneOffSoundFromGroup("laser1");
-			Attack();
+			BeginAttack();
+			//ExecuteAttack();
 		}
 	}
 
@@ -213,7 +240,12 @@ void Player::RecoverHealth()
 	}
 }
 
-void Player::Attack()
+void Player::BeginAttack()
+{
+	m_animState = ANIM_STATE_ATTACK;
+}
+
+void Player::ExecuteAttack()
 {
 	float attackRangeX = m_facing.x * 2.f;
 	float myX = GetPosition().x;
@@ -223,7 +255,7 @@ void Player::Attack()
 		if (AreSameSign(xDistance, attackRangeX) && (fabs(xDistance) < 2.f))
 		{
 			//damage the enemy;
-			enemy->Damage();
+			enemy->TakeDamage();
 		}
 	}
 }

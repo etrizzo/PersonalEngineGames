@@ -1,8 +1,7 @@
 #pragma once
 #include "Game/Entity.hpp"
 
-constexpr float PLAYER_MAX_HEALTH = 6.f;
-constexpr float RELOAD_HEALTH_COST = 2.f;
+
 
 class Player :public Entity{
 public:
@@ -15,31 +14,36 @@ public:
 
 
 	
-	void Damage();
+	void TakeDamage() override;
 	void Respawn();
 
 	float GetPercentageOfHealth() const;
 
 
 	float m_health			= PLAYER_MAX_HEALTH;
-	float m_speed			= 5.f;
-	float m_regenerationSpeed = .5f;
+	float m_speed			= 8.f;
+	float m_regenerationSpeed = PLAYER_REGEN_RATE;
 	float m_cameraDegPerSeconds = 60.0f;
 	StopWatch m_rateOfAttack;
 	Transform* m_cameraTarget;
 	Transform* m_shadowCameraTransform;
 	Vector3 m_shadowCameraOffset;
 
+	//SpriteAnimSet* m_animSet = nullptr;
 protected:
+	void UpdateAnimation() override;
 	void HandleMovementInput();
 	void HandleActionInput();
 	void TryToLoadCannon();
 	void RecoverHealth();
-	void Attack();
+	void BeginAttack();
+	void ExecuteAttack();
+
+	//bool m_isMoving = false;
+	//bool m_isAttacking = false;
 
 	Vector2 m_positionXY;
 	Vector3 m_worldPos;
-	Vector3 m_facing = Vector3::X_AXIS;
 	void SetWorldPosition();
 	void MoveTurretTowardTarget();
 

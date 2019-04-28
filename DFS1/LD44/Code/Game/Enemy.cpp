@@ -8,12 +8,17 @@
 
 Enemy::Enemy( const Vector3& position, Entity* target)
 {
+	m_animSet = new SpriteAnimSet(g_theGame->m_playState->m_enemyAnimDefinition);
 	m_targetEntity = target;
 	float size = .5f;
 	m_collider = Sphere(Vector3::ZERO, size);
+	m_percThroughAnimationToExecuteAttack = .8f;
+
+	//distance which the enemy will stop and start attacking
+	m_stopDistanceSquared = GetRandomFloatInRange(.5f, 1.0f);
 
 
-	m_sprite = new Sprite(g_theRenderer->CreateOrGetTexture("minion.png"), AABB2::ZERO_TO_ONE, Vector2(.5f, 0.f), Vector2::ONE * size);
+	m_sprite = new Sprite(m_animSet->GetCurrentTexture(), AABB2::ZERO_TO_ONE, Vector2(.5f, 0.f), Vector2::ONE * size);
 
 	m_ageInSeconds = 0.f;
 	m_aboutToBeDeleted = false;
@@ -22,7 +27,7 @@ Enemy::Enemy( const Vector3& position, Entity* target)
 
 
 	m_rateOfAttack = StopWatch();
-	m_rateOfAttack.SetTimer(.3f);
+	m_rateOfAttack.SetTimer(ENEMY_RATE_OF_ATTACK);
 
 	m_positionXY = position.XZ();
 
@@ -46,31 +51,36 @@ void Enemy::Update()
 	float ds = g_theGame->GetDeltaSeconds();
 	m_ageInSeconds += ds;
 
-	Vector3 displacement = m_targetEntity->GetPosition() - GetPosition();
-	if (displacement.GetLengthSquared() > (.5f))
-	{
-		Vector3 direction = displacement.GetNormalized();
-		direction.z = 0.f;
+	UpdateBehavior();
 
-		Translate(direction * m_speed * GetMasterClock()->GetDeltaSeconds());
+	switch (m_currentBehavior) 
+	{
+	case BEHAVIOR_FOLLOW_TARGET:
+		RunBehaviorFollow();
+		break;
+	case BEHAVIOR_ATTACK:
+		RunBehaviorAttack();
+		break;
 	}
 
-
-	//float newX = m_positionXY.x + movement;
-	//float radius = g_theGame->m_currentMap->m_collider.m_radius;
-	//m_positionXY.x = ClampFloat(newX, -radius * WALKABLE_AREA_AS_PERCENTAGE_OF_RADIUS, radius * WALKABLE_AREA_AS_PERCENTAGE_OF_RADIUS);
-	//m_positionXY.y = GetHeightAtCurrentPos();
+	UpdateAnimation();
 
 	SetWorldPosition();
 
 }
 
-void Enemy::Damage()
+void Enemy::TakeDamage()
 {
 	m_health -= 1.f;
 	if (m_health <= 0.f) {
 		m_aboutToBeDeleted = true;
 	}
+}
+
+void Enemy::ExecuteAttack()
+{
+	m_targetEntity->TakeDamage();
+	g_theAudio->PlayOneOffSoundFromGroup("minion");
 }
 
 
@@ -95,5 +105,46 @@ void Enemy::SetWorldPosition()
 float Enemy::GetHeightAtCurrentPos()
 {
 	return g_theGame->m_currentMap->GetHeightFromXPosition(GetPosition().x);
+}
+
+void Enemy::UpdateBehavior()
+{
+	Vector3 displacement = m_targetEntity->GetPosition() - GetPosition();
+	float displacementLengthSquared = displacement.GetLengthSquared();
+	if (m_currentBehavior != BEHAVIOR_FOLLOW_TARGET && (displacementLengthSquared > m_attackRange))
+	{
+		m_currentBehavior = BEHAVIOR_FOLLOW_TARGET;
+
+	}
+	else if (m_currentBehavior == BEHAVIOR_FOLLOW_TARGET && displacementLengthSquared <= m_stopDistanceSquared)
+	{
+		m_currentBehavior = BEHAVIOR_ATTACK;
+	}
+}
+
+void Enemy::RunBehaviorFollow()
+{
+	Vector3 displacement = m_targetEntity->GetPosition() - GetPosition();
+	Vector3 direction = displacement.GetNormalized();
+	direction.z = 0.f;
+	m_facing = direction;
+	if (displacement.GetLengthSquared() > m_stopDistanceSquared)
+	{
+		m_animState = ANIM_STATE_WALK;
+	}
+	else
+	{
+		m_animState = ANIM_STATE_IDLE;
+	}
+
+	Translate(direction * m_speed * GetMasterClock()->GetDeltaSeconds());
+}
+
+void Enemy::RunBehaviorAttack()
+{
+	if (m_targetEntity != nullptr && m_rateOfAttack.CheckAndReset())
+	{
+		BeginAttack();
+	}
 }
 

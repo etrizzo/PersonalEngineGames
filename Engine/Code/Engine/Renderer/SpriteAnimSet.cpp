@@ -64,6 +64,11 @@ bool SpriteAnimSet::IsCurrentAnimFinished()
 	return m_currentAnim->IsFinished();
 }
 
+float SpriteAnimSet::GetPercentageThroughCurrentAnim() const
+{
+	return m_currentAnim->GetFractionElapsed();
+}
+
 void SpriteAnimSet::LoadAnims()
 {
 	//make animations based on definition

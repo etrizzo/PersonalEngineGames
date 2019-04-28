@@ -1,0 +1,35 @@
+<SpriteAnimSet name="tactics" spriteSheet="tacticsspritesheet.png" spriteLayout="7,4" fps="6" defaultAnim ="IdleLeft">
+      <SpriteAnim name="MoveLeft"     spriteIndexes="0~3"  />
+      <SpriteAnim name="MoveRight"     spriteIndexes="7~10" />
+  
+      <SpriteAnim name="IdleLeft"     spriteIndexes="0"   />
+      <SpriteAnim name="IdleRight"     spriteIndexes="7"    />
+  
+      <SpriteAnim name="AttackLeft"   spriteIndexes="24~26" fps="6" playbackMode="0" />
+      <SpriteAnim name="AttackRight"  spriteIndexes="17~19"  fps="6" playbackMode="0" />
+      
+</SpriteAnimSet>
+
+
+<SpriteAnimSet name="enemy" spriteSheet="enemy.png" spriteLayout="3,4" fps="6" defaultAnim ="IdleLeft">
+      <SpriteAnim name="MoveLeft"     spriteIndexes="0~3"  />
+      <SpriteAnim name="MoveRight"     spriteIndexes="3~6" />
+  
+      <SpriteAnim name="IdleLeft"     spriteIndexes="0"   />
+      <SpriteAnim name="IdleRight"     spriteIndexes="3"    />
+  
+      <SpriteAnim name="AttackLeft"   spriteIndexes="9~12" fps="6" playbackMode="0" />
+      <SpriteAnim name="AttackRight"  spriteIndexes="6~9"  fps="6" playbackMode="0" />
+      
+</SpriteAnimSet>
+
+
+<SpriteAnimSet name="turret" spriteSheet="turret.png" spriteLayout="5,5" fps="6" defaultAnim ="IdleLeft">
+      <SpriteAnim name="IdleLeft"     spriteIndexes="0~2" fps="3"  />
+  
+      <SpriteAnim name="AttackLeft"   spriteIndexes="10~15" fps="6" playbackMode="0" />
+
+      <SpriteAnim name="ReloadLeft"   spriteIndexes="20~25" fps="6" playbackMode="0" />
+      
+      <SpriteAnim name="DeathLeft"   spriteIndexes="5~8" fps="6" playbackMode="0" />
+</SpriteAnimSet>

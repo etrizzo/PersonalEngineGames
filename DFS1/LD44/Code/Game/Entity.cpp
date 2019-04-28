@@ -6,6 +6,8 @@
 #include "Engine/Renderer/Sprite.hpp"
 #include "Game/DebugRenderSystem.hpp"
 
+
+
 Entity::~Entity()
 {
 	delete m_sprite;
@@ -54,7 +56,91 @@ void Entity::RenderDevMode()
 
 }
 
-bool Entity::IsAboutToBeDeleted()
+void Entity::TakeDamage()
+{
+}
+
+void Entity::UpdateAnimation()
+{
+	
+	std::string animName = GetAnimName();
+	m_animSet->SetCurrentAnim(animName);
+
+	//get percentage before update
+	float tBefore = m_animSet->GetPercentageThroughCurrentAnim();
+
+	m_animSet->Update(GetMasterClock()->GetDeltaSeconds());
+	m_sprite->m_uvs = m_animSet->GetCurrentUVs();
+
+	//get percentage after update
+	float tAfter = m_animSet->GetPercentageThroughCurrentAnim();
+
+	//if attacking, execute the attack
+	if (m_animState == ANIM_STATE_ATTACK)
+	{
+		if (tBefore < .5f && tAfter >= .5f)
+		{
+			//execute attack halfway through anim
+
+			//m_isAttacking = false;
+			ExecuteAttack();
+		}
+		if (m_animSet->IsCurrentAnimFinished())
+		{
+			m_animState = ANIM_STATE_IDLE;
+		}
+	}
+
+}
+
+std::string Entity::GetAnimName() const
+{
+	float dir = m_facing.x;
+	std::string direction = "Right";
+	if (dir >= 0.f) {
+		direction = "Right";
+	}
+	else {
+		direction = "Left";
+	}
+
+	std::string action = "Idle";
+	switch (m_animState)
+	{
+	case ANIM_STATE_IDLE:
+		action = "Idle";
+		break;
+	case ANIM_STATE_WALK:
+		action = "Move";
+		break;
+	case ANIM_STATE_ATTACK:
+		action = "Attack";
+		break;
+	case ANIM_STATE_DEATH:
+		action = "Death";
+		break;
+	case ANIM_STATE_RELOAD:
+		action = "Reload";
+		break;
+	}
+	return action + direction;
+}
+
+void Entity::BeginAttack()
+{
+	m_animState = ANIM_STATE_ATTACK;
+}
+
+void Entity::ExecuteAttack()
+{
+}
+
+void Entity::BeginDeath()
+{
+	m_animState = ANIM_STATE_DEATH;
+}
+
+bool Entity::IsDead() const
 {
 	return m_aboutToBeDeleted;
 }

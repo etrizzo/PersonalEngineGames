@@ -10,6 +10,7 @@
 #include "Game/EnemySpawner.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
+#include "Engine/Renderer/SpriteAnimSetDef.hpp"
 
 
 GameState_Playing::GameState_Playing()
@@ -30,6 +31,11 @@ GameState_Playing::GameState_Playing()
 	m_scene->AddCamera(g_theGame->m_currentCamera);
 	//g_theGame->m_mainCamera->AddSkybox("galaxy2.png", RIGHT, UP, FORWARD);
 	m_renderPath->SetFogColor(RGBA(40, 10, 90));
+
+	m_playerAnimDefinition = SpriteAnimSetDef::GetSpriteAnimSetDef("tactics");
+	m_enemyAnimDefinition = SpriteAnimSetDef::GetSpriteAnimSetDef("enemy");
+	m_flowerAnimDefinition = SpriteAnimSetDef::GetSpriteAnimSetDef("turret");
+	m_resupplyAnimDefinition = SpriteAnimSetDef::GetSpriteAnimSetDef("resupply");
 }
 
 void GameState_Playing::EnterState()
@@ -294,7 +300,7 @@ void GameState_Playing::Startup()
 	//m_orbitLight = (SpotLight*) m_scene->m_lights[1];
 
 	m_asteroidSpawnClock = StopWatch();
-	m_asteroidSpawnClock.SetTimer(1.f);
+	m_asteroidSpawnClock.SetTimer(ASTEROID_SPAWN_RATE);
 
 	SpawnPlayer(Vector3::ZERO);
 	
@@ -305,8 +311,8 @@ void GameState_Playing::Startup()
 	SpawnFlowerPot(RangeMapFloat(.75f, 0.f, 1.f, -walkingRadius, walkingRadius));
 
 	float mapRadius = g_theGame->GetMap()->GetRadius();
-	CreateSpawner(Vector3(-mapRadius, g_theGame->GetMap()->GetHeightFromXPosition(-mapRadius), g_theGame->GetMap()->GetCenter().z));
-	CreateSpawner(Vector3(mapRadius, g_theGame->GetMap()->GetHeightFromXPosition(-mapRadius), g_theGame->GetMap()->GetCenter().z));
+	CreateSpawner(Vector3(-mapRadius, g_theGame->GetMap()->GetHeightFromXPosition(-mapRadius), g_theGame->GetMap()->GetCenter().z - .05f));
+	CreateSpawner(Vector3(mapRadius, g_theGame->GetMap()->GetHeightFromXPosition(-mapRadius), g_theGame->GetMap()->GetCenter().z - .05f));
 }
 
 void GameState_Playing::RenderPlayerHealthBar(const AABB2 & uiBounds)
@@ -345,8 +351,28 @@ void GameState_Playing::CheckForVictory()
 void GameState_Playing::CheckForDefeat()
 {
 	if (!m_gameLost){
+		//if player is killed
+		bool playerLoss = false;
 		if (m_player->m_aboutToBeDeleted){
-			m_gameLost = true;
+			playerLoss = true;
+			
+		}
+		bool potLoss = true;
+		//if all pots are out of bullets
+		for (FlowerPot* pot : m_flowerPots)
+		{
+			if (!pot->IsDead())
+			{
+				potLoss = false;
+			}
+		}
+
+		m_gameLost = (playerLoss || potLoss);
+
+
+		//trigger defeat state
+		if (m_gameLost)
+		{
 			g_theGame->TransitionToState(new GameState_Defeat(this));
 		}
 	}
@@ -361,7 +387,8 @@ void GameState_Playing::SpawnPlayer(Vector3 pos)
 
 	
 	g_theGame->m_mainCamera->m_transform.SetParent(m_player->m_cameraTarget);
-	g_theGame->m_mainCamera->m_transform.SetLocalPosition(Vector3(0.f, 2.f, -12.f));
+	g_theGame->m_mainCamera->LookAt(Vector3(0.f, 1.f, -10.f), m_player->m_cameraTarget->GetLocalPosition());
+	//g_theGame->m_mainCamera->m_transform.SetLocalPosition(Vector3(0.f, 1.f, -8.f));
 }
 
 void GameState_Playing::SpawnFlowerPot(float xPosition)

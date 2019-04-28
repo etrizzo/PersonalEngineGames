@@ -17,6 +17,25 @@
 #define MAX_STEPS 16
 
 constexpr unsigned int MAX_ENEMIES_SPAWNED = 50;
+constexpr float MIN_ENEMY_SPAWN_TIMER = 4.5f;
+constexpr float MAX_ENEMY_SPAWN_TIMER = 6.5f;
+constexpr float ENEMY_RATE_OF_ATTACK = 2.f;
+constexpr float ASTEROID_SPAWN_RATE = 2.f;
+
+
+constexpr float PLAYER_MAX_HEALTH = 6.f;
+constexpr float RELOAD_HEALTH_COST = 2.f;
+constexpr float HIT_HEALTH_COST = .5f;
+
+constexpr float PLAYER_REGEN_RATE = 1.f;
+constexpr float TURRET_RATE_OF_FIRE = 4.f;
+
+enum eEnemyBehavior
+{
+	BEHAVIOR_FOLLOW_TARGET,
+	BEHAVIOR_ATTACK,
+	NUM_BEHAVIORS
+};
 
 class Renderer;
 class InputSystem;

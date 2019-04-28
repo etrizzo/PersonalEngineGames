@@ -18,5 +18,5 @@ protected:
 
 	Asteroid* m_target = nullptr;
 	Light* m_light = nullptr;
-	float m_speed = 15.f;
+	float m_speed = 20.f;
 };

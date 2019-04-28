@@ -18,27 +18,31 @@ public:
 	void Update() override;
 	void Render() override;
 
+	void TakeDamage() override;
+
 	void Reload(int numToReload = 1);
+
+	bool IsDead() const override;
 
 private:
 	//update loop
 	void FindNewTarget();
 	void TurnTowardsTarget();
-	void FireAtTarget();
+	void BeginAttack() override;
+	void ExecuteAttack() override;
 
 
 
-
-	//general shit
-	void TakeDamage(int amount = 1);
 
 
 
 public:
-	int m_numBullets = 20;
-	int m_health = FLOWER_POT_HEALTH;
+	int m_numBullets = FLOWER_POT_HEALTH;
+	//int m_health = FLOWER_POT_HEALTH;
 
 private:
+	void UpdateFlowerAnimation();
+
 	StopWatch m_rateOfFire;
 	Asteroid* m_target = nullptr;
 
@@ -47,4 +51,6 @@ private:
 	
 	//renderable for the pot
 	Renderable* m_flowerPotRenderable = nullptr;
+
+	SpriteAnimSet* m_flowerSpriteAnimSet = nullptr;
 };

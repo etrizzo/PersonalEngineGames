@@ -32,14 +32,15 @@ Map::Map(Vector3 position, float radius)
 	m_waterRenderable = new Renderable();
 	MeshBuilder watermb = MeshBuilder();
 	watermb.Begin(PRIMITIVE_TRIANGLES, true);
-	watermb.AppendPlane(Vector3::ZERO, FORWARD, RIGHT, Vector2(-100.f, 100.f), RGBA::WHITE.GetColorWithAlpha(200), Vector2::ZERO, (Vector2::ONE * 128));
+	watermb.AppendPlane(Vector3(0.f,0.f,radius), FORWARD, RIGHT, Vector2(-radius * 4.f, radius * 5.f), RGBA::WHITE.GetColorWithAlpha(200), Vector2::ZERO, (Vector2::ONE * 128));
 	watermb.End();
 	m_waterRenderable->SetMesh(watermb.CreateMesh());
 	m_waterRenderable->SetMaterial(Material::GetMaterial("water"));
 	m_waterRenderable->SetPosition(Vector3(0.f, waterHeight, 0.0f));
 	g_theGame->m_playState->m_scene->AddRenderable(m_waterRenderable);
 
-
+	//set up background
+	GenerateBackgroundTerrain();
 }
 
 
@@ -133,6 +134,78 @@ float Map::GetWalkableRadius() const
 {
 	return m_collider.m_radius * WALKABLE_AREA_AS_PERCENTAGE_OF_RADIUS;
 }
+
+void Map::GenerateBackgroundTerrain()
+{
+
+	float x = m_collider.m_radius * 2.f;
+	float y = m_collider.m_radius;
+	dimensions = IntVector2((int)x * 2.f, (int)y * 2.f);
+	float radius = m_collider.m_radius;
+	float tileSize = 1.f;
+
+	//get the heights/normals
+	heights.resize(dimensions.x * dimensions.y);
+	//read vertex heights from image data
+	for (int x = 0; x < dimensions.x; x++) {
+		for (int y = 0; y < dimensions.y; y++) {
+			//Vector2 xzPos = Vector2(x * tileSize, y * tileSize);
+			float height = Compute2dPerlinNoise(x, y, 20.f, 1);
+			int idx = GetIndexFromCoordinates(x, y, dimensions.x, dimensions.y);
+			heights[idx] = RangeMapFloat(height,-1.f, 1.f, 0.f, radius * .8f);
+		}
+	}
+
+
+
+
+	MeshBuilder mb = MeshBuilder();
+	Material* terrainMat = Material::GetMaterial("default_lit");
+	//generate mesh
+	mb.Clear();
+	mb.Begin(PRIMITIVE_TRIANGLES, true);
+
+	for (int x = 0; x < dimensions.x; x++) {
+		for (int y = 0; y < dimensions.y; y++) {
+			//for each vertex, append plane (as bottom right)
+
+
+			Vector3 blPos = GetVertexWorldPos(x, y);
+			Vector3 brPos = GetVertexWorldPos(x + 1, y);
+			Vector3 tlPos = GetVertexWorldPos(x, y + 1);
+			Vector3 trPos = GetVertexWorldPos(x + 1, y + 1);
+
+			Vector3 right = (brPos - blPos).GetNormalized();
+			Vector3 up = (tlPos - blPos).GetNormalized();
+			int idx = GetIndexFromCoordinates(x, y, dimensions.x, dimensions.y);
+			if ((x + 1) < dimensions.x && (y + 1) < dimensions.y) {
+				mb.AppendPlane(blPos, brPos, tlPos, trPos, RGBA::GREEN, Vector2::ZERO, Vector2::ONE);
+			}
+		}
+	}
+	mb.End();
+	m_background = new Renderable();
+	m_background->SetMesh(mb.CreateMesh());
+	m_background->SetMaterial(terrainMat);
+
+	m_background->m_transform.TranslateLocal(Vector3(0.f, radius * .1f, radius * .7f));
+	m_background->m_transform.RotateByEuler(0.f, 15.f, 0.f);
+	g_theGame->m_playState->m_scene->AddRenderable(m_background);
+}
+
+Vector3 Map::GetVertexWorldPos(int x, int y) const
+{
+	Vector2 xyPos =(Vector2( x - (dimensions.x * .5f),  y));
+	//float height = GetHeightForVertex(x, y);
+	float height = 0.f;
+	int index = GetIndexFromCoordinates(x, y, dimensions.x, dimensions.y);
+	if (index >= 0) {
+		height = heights[index];
+	}
+
+	return Vector3(xyPos.x, height, xyPos.y);
+}
+
 
 
 

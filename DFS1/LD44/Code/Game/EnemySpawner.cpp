@@ -2,11 +2,11 @@
 #include "Game/Game.hpp"
 #include "Game/DebugRenderSystem.hpp"
 
-EnemySpawner::EnemySpawner(Vector3 position)
+EnemySpawner::EnemySpawner(const Vector3& position)
 {
 	SetPosition(position);
 	m_spawnTimer = StopWatch();
-	m_spawnTimer.SetTimer(GetRandomFloatInRange(1.7f, 2.4f));
+	m_spawnTimer.SetTimer(GetRandomFloatInRange(MIN_ENEMY_SPAWN_TIMER, MAX_ENEMY_SPAWN_TIMER));
 }
 
 void EnemySpawner::Update()
@@ -15,6 +15,7 @@ void EnemySpawner::Update()
 	if (m_spawnTimer.CheckAndReset() && g_theGame->m_playState->m_enemies.size() < MAX_ENEMIES_SPAWNED)
 	{
 		g_theGame->m_playState->SpawnEnemy(m_transform.GetWorldPosition());
+		m_spawnTimer.SetTimer(GetRandomFloatInRange(MIN_ENEMY_SPAWN_TIMER, MAX_ENEMY_SPAWN_TIMER));
 	}
 }
 

@@ -4,8 +4,10 @@
 
 class EnemySpawner : public Entity
 {
+	float m_minSpawnRate = MIN_ENEMY_SPAWN_TIMER;
+	float m_maxSpawnRate = MAX_ENEMY_SPAWN_TIMER;
 public:
-	EnemySpawner(Vector3 position);
+	EnemySpawner(const Vector3& position);
 
 	void Update() override;
 	void Render() override;

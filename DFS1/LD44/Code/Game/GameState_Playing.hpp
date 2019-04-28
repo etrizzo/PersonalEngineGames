@@ -19,6 +19,7 @@ class Asteroid;
 class Missile;
 class Enemy;
 class EnemySpawner;
+class SpriteAnimSetDef;
 
 class GameState_Playing: public GameState{
 public:
@@ -74,6 +75,11 @@ public:
 	bool m_playing = false;
 	Light* m_sun;
 
+
+	SpriteAnimSetDef* m_playerAnimDefinition	= nullptr;
+	SpriteAnimSetDef* m_enemyAnimDefinition		= nullptr;
+	SpriteAnimSetDef* m_flowerAnimDefinition	= nullptr;
+	SpriteAnimSetDef* m_resupplyAnimDefinition	= nullptr;
 
 protected:
 

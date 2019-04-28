@@ -35,8 +35,13 @@ public:
 
 	Renderable* m_renderable;
 	Renderable* m_waterRenderable;
+	Renderable* m_background;
 
 private:
+	std::vector<float> heights = std::vector<float>();
+	IntVector2 dimensions;
+	void GenerateBackgroundTerrain();
+	Vector3 GetVertexWorldPos(int x, int y) const;
 
 };
 

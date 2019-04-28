@@ -8,7 +8,7 @@
 FlowerPot::FlowerPot(float xPosition)
 {
 	m_rateOfFire = StopWatch();
-	m_rateOfFire.SetTimer(3.f);
+	m_rateOfFire.SetTimer(TURRET_RATE_OF_FIRE);
 
 	float zOfMap = g_theGame->m_currentMap->m_collider.m_center.z;
 
@@ -30,7 +30,9 @@ FlowerPot::FlowerPot(float xPosition)
 	m_flowerPotRenderable->SetPosition(position);
 	g_theGame->m_playState->m_scene->AddRenderable(m_flowerPotRenderable);
 
-	m_flowerSprite = new Sprite(g_theRenderer->CreateOrGetTexture("turret.png"), AABB2::ZERO_TO_ONE, Vector2(.5f, 0.0f), Vector2::ONE * FLOWERPOT_WIDTH * .8f, Vector2::ONE);
+	m_facing = Vector3::X_AXIS * -1.f;
+	m_flowerSpriteAnimSet = new SpriteAnimSet(g_theGame->m_playState->m_flowerAnimDefinition);
+	m_flowerSprite = new Sprite(m_flowerSpriteAnimSet->GetCurrentTexture(), AABB2::ZERO_TO_ONE, Vector2(.5f, 0.0f), Vector2::ONE * FLOWERPOT_WIDTH, Vector2::ONE);
 	//this is the resupply point sprite
 	m_sprite = new Sprite(g_theRenderer->CreateOrGetTexture("bucket.png"), AABB2::ZERO_TO_ONE, Vector2(.5f, 0.0f), Vector2::ONE * .9f);
 }
@@ -50,17 +52,35 @@ void FlowerPot::Update()
 		FindNewTarget();
 	} else {
 		TODO("Turn towards target first");
-		FireAtTarget();
+		BeginAttack();
 	}
+
+	if (m_numBullets <= 0)
+	{
+		BeginDeath();
+	}
+
+	//UpdateAnimation();
+	UpdateFlowerAnimation();
+
+
 }
 
 void FlowerPot::Render()
 {
 	Entity::Render();
-	Vector3 spritePos = m_flowerPotRenderable->GetPosition() + (Vector3::Y_AXIS * FLOWERPOT_WIDTH);
+	Vector3 spritePos = m_flowerPotRenderable->GetPosition() + (Vector3::Y_AXIS * FLOWERPOT_WIDTH * .5f);
 	g_theRenderer->DrawSprite(spritePos, m_flowerSprite, g_theGame->m_mainCamera->GetRight(), Vector3::Y_AXIS);
 
-	g_theGame->m_debugRenderSystem->MakeDebugRender3DText(std::to_string(m_numBullets), 0.0f, m_flowerPotRenderable->GetPosition(), 2.f, UP, RIGHT, RGBA::CYAN, RGBA::CYAN, DEBUG_RENDER_XRAY);
+	g_theGame->m_debugRenderSystem->MakeDebugRender3DText(std::to_string(m_numBullets), 0.0f, m_flowerPotRenderable->GetPosition() + (Vector3::ONE * FLOWERPOT_WIDTH), 1.f, UP, RIGHT, RGBA::CYAN, RGBA::CYAN);
+}
+
+void FlowerPot::TakeDamage()
+{
+	if (m_numBullets > 0)
+	{
+		m_numBullets--;
+	}
 }
 
 void FlowerPot::FindNewTarget()
@@ -87,20 +107,73 @@ void FlowerPot::FindNewTarget()
 	}
 }
 
-void FlowerPot::FireAtTarget()
+void FlowerPot::BeginAttack()
 {
 	if (m_target != nullptr && m_numBullets > 0)
 	{
 		if (m_rateOfFire.CheckAndReset())
 		{
-			g_theGame->m_playState->SpawnMissile(m_flowerPotRenderable->GetPosition(), m_target);
-			m_target = nullptr;
-			m_numBullets--;
+			m_animState = ANIM_STATE_ATTACK;
+
 		}
 	}
+}
+
+void FlowerPot::ExecuteAttack()
+{
+	g_theGame->m_playState->SpawnMissile(m_flowerPotRenderable->GetPosition(), m_target);
+	m_target = nullptr;
+	m_numBullets--;
+}
+
+void FlowerPot::UpdateFlowerAnimation()
+{
+	std::string animName = GetAnimName();
+	m_flowerSpriteAnimSet->SetCurrentAnim(animName);
+
+	//get percentage before update
+	float tBefore = m_flowerSpriteAnimSet->GetPercentageThroughCurrentAnim();
+
+	m_flowerSpriteAnimSet->Update(GetMasterClock()->GetDeltaSeconds());
+	m_flowerSprite->m_uvs = m_flowerSpriteAnimSet->GetCurrentUVs();
+
+	//get percentage after update
+	float tAfter = m_flowerSpriteAnimSet->GetPercentageThroughCurrentAnim();
+
+	//if attacking, execute the attack
+	if (m_animState == ANIM_STATE_ATTACK)
+	{
+		if (tBefore < .5f && tAfter >= .5f)
+		{
+			//execute attack halfway through anim
+
+			//m_isAttacking = false;
+			ExecuteAttack();
+		}
+		if (m_flowerSpriteAnimSet->IsCurrentAnimFinished())
+		{
+			m_animState = ANIM_STATE_IDLE;
+		}
+	}
+
+
+	if (m_animState == ANIM_STATE_RELOAD)
+	{
+		if (m_flowerSpriteAnimSet->IsCurrentAnimFinished())
+		{
+			m_animState = ANIM_STATE_IDLE;
+		}
+	}
+
 }
 
 void FlowerPot::Reload(int numToReload)
 {
 	m_numBullets += numToReload;
+	m_animState = ANIM_STATE_RELOAD;
+}
+
+bool FlowerPot::IsDead() const
+{
+	return m_numBullets <= 0;
 }

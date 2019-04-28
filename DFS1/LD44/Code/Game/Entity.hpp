@@ -4,9 +4,20 @@
 #include "Engine/Renderer/Renderable.hpp"
 #include "Engine/Renderer/PerspectiveCamera.hpp"
 #include "Engine/Renderer/Sprite.hpp"
+#include "Engine/Renderer/SpriteAnimSet.hpp"
 
 class Map;
 class GameState_Playing;
+
+enum eAnimState
+{
+	ANIM_STATE_IDLE,
+	ANIM_STATE_WALK,
+	ANIM_STATE_ATTACK,
+	ANIM_STATE_RELOAD,
+	ANIM_STATE_DEATH,
+	NUM_ANIM_STATES
+};
 
 class Entity{
 public:
@@ -17,8 +28,20 @@ public:
 	virtual void Render();
 	virtual void RenderDevMode();
 
+	virtual void TakeDamage();
 
-	virtual bool IsAboutToBeDeleted();
+	//sprite utils
+	virtual void UpdateAnimation();
+	virtual std::string GetAnimName() const;
+	virtual void BeginAttack();
+	virtual void ExecuteAttack();
+	eAnimState m_animState = ANIM_STATE_IDLE;
+	SpriteAnimSet* m_animSet = nullptr;
+	Sprite* m_sprite = nullptr;
+	float m_percThroughAnimationToExecuteAttack = .5f;
+
+	virtual void BeginDeath();
+	virtual bool IsDead() const;
 
 	virtual void RunCorrectivePhysics();
 	virtual void RunWorldPhysics();
@@ -57,7 +80,8 @@ public:
 	bool m_aboutToBeDeleted;
 	bool m_noClipMode;
 
-	Sprite* m_sprite;
+	Vector3 m_facing;
+
 	//GameState_Playing* m_playState;
 
 };
