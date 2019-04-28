@@ -200,7 +200,7 @@ void Player::HandleActionInput()
 {
 	if (g_theInput->IsKeyDown(VK_SPACE) || g_theInput->IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 		if (m_rateOfAttack.CheckAndReset()) {
-			g_theAudio->PlayOneOffSoundFromGroup("laser1");
+			g_theAudio->PlayOneOffSoundFromGroup("attack");
 			BeginAttack();
 			//ExecuteAttack();
 		}

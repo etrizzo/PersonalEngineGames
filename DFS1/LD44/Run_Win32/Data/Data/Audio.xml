@@ -1,24 +1,24 @@
 <AudioGroups>
-	<AudioGroup name="laser1">
+	<AudioGroup name="attack">
 		<Sound file="laser_g1_1.wav" />
 		<Sound file="laser_g1_2.wav" />
 		<Sound file="laser_g1_3.wav" />
 	</AudioGroup>
 
-	<AudioGroup name="laser2">
+	<AudioGroup name="reload">
 		<Sound file="laser_g2_1.wav" />
 		<Sound file="laser_g2_2.wav" />
 		<Sound file="laser_g2_3.wav" />
 	</AudioGroup>
 
-	<AudioGroup name="explosion">
+	<AudioGroup name="flowerdeath">
 		<Sound file="boom1.wav" />
 		<Sound file="boom4.wav" />
 		<Sound file="boom7.wav" />
 	</AudioGroup>
 
 
-	<AudioGroup name="minion">
+	<AudioGroup name="enemyattack">
 		<Sound file="goblin-1.wav" />
 		<Sound file="goblin-2.wav" />
 		<Sound file="goblin-3.wav" />

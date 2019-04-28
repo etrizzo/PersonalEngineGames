@@ -14,14 +14,14 @@ FlowerPot::FlowerPot(float xPosition)
 
 	float yPos = g_theGame->m_currentMap->GetHeightFromXPosition(xPosition);
 	m_collider = Sphere(Vector3(xPosition, yPos, zOfMap), .9f);
-	float renderableY = yPos * .95f;		//lower the actual renderable a little bit
+	float renderableY = yPos - (FLOWERPOT_WIDTH * .5f);		//lower the actual renderable a little bit
 	m_transform.SetLocalPosition(Vector3(xPosition, yPos, zOfMap + .1f));
 	Vector3 position = Vector3(xPosition, renderableY, FLOWERPOT_DEPTH);
 
 	//set up flowerpot renderable
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendCube(Vector3::ZERO, Vector3::ONE * FLOWERPOT_WIDTH, RGBA::WHITE, Vector3::X_AXIS, Vector3::Y_AXIS, Vector3::Z_AXIS);
+	mb.AppendCube(Vector3::ZERO, Vector3(FLOWERPOT_WIDTH, FLOWERPOT_WIDTH * 2.f, FLOWERPOT_WIDTH) , RGBA::WHITE, Vector3::X_AXIS, Vector3::Y_AXIS, Vector3::Z_AXIS);
 	mb.End();
 
 	m_flowerPotRenderable = new Renderable();
@@ -55,9 +55,10 @@ void FlowerPot::Update()
 		BeginAttack();
 	}
 
-	if (m_numBullets <= 0)
+	if (!IsDead() && m_numBullets <= 0)
 	{
 		BeginDeath();
+		g_theAudio->PlayOneOffSoundFromGroup("flowerdeath");
 	}
 
 	//UpdateAnimation();
@@ -69,7 +70,7 @@ void FlowerPot::Update()
 void FlowerPot::Render()
 {
 	Entity::Render();
-	Vector3 spritePos = m_flowerPotRenderable->GetPosition() + (Vector3::Y_AXIS * FLOWERPOT_WIDTH * .5f);
+	Vector3 spritePos = m_flowerPotRenderable->GetPosition() + (Vector3::Y_AXIS * FLOWERPOT_WIDTH);
 	g_theRenderer->DrawSprite(spritePos, m_flowerSprite, g_theGame->m_mainCamera->GetRight(), Vector3::Y_AXIS);
 
 	g_theGame->m_debugRenderSystem->MakeDebugRender3DText(std::to_string(m_numBullets), 0.0f, m_flowerPotRenderable->GetPosition() + (Vector3::ONE * FLOWERPOT_WIDTH), 1.f, UP, RIGHT, RGBA::CYAN, RGBA::CYAN);
@@ -121,7 +122,7 @@ void FlowerPot::BeginAttack()
 
 void FlowerPot::ExecuteAttack()
 {
-	g_theGame->m_playState->SpawnMissile(m_flowerPotRenderable->GetPosition(), m_target);
+	g_theGame->m_playState->SpawnMissile(m_flowerPotRenderable->GetPosition() + (UP * FLOWERPOT_WIDTH * 1.25f), m_target);
 	m_target = nullptr;
 	m_numBullets--;
 }
@@ -165,12 +166,19 @@ void FlowerPot::UpdateFlowerAnimation()
 		}
 	}
 
+
+	if (IsDead())
+	{
+		m_animState = ANIM_STATE_DEATH;
+	}
+
 }
 
 void FlowerPot::Reload(int numToReload)
 {
 	m_numBullets += numToReload;
 	m_animState = ANIM_STATE_RELOAD;
+	g_theAudio->PlayOneOffSoundFromGroup("reload");
 }
 
 bool FlowerPot::IsDead() const

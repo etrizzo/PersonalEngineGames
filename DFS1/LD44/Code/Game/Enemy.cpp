@@ -80,7 +80,7 @@ void Enemy::TakeDamage()
 void Enemy::ExecuteAttack()
 {
 	m_targetEntity->TakeDamage();
-	g_theAudio->PlayOneOffSoundFromGroup("minion");
+	g_theAudio->PlayOneOffSoundFromGroup("enemyattack");
 }
 
 
