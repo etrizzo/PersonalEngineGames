@@ -32,10 +32,10 @@ GameState_Playing::GameState_Playing()
 	//g_theGame->m_mainCamera->AddSkybox("galaxy2.png", RIGHT, UP, FORWARD);
 	m_renderPath->SetFogColor(RGBA(40, 10, 90));
 
-	m_playerAnimDefinition = SpriteAnimSetDef::GetSpriteAnimSetDef("tactics");
+	m_playerAnimDefinition = SpriteAnimSetDef::GetSpriteAnimSetDef("player");
 	m_enemyAnimDefinition = SpriteAnimSetDef::GetSpriteAnimSetDef("enemy");
 	m_flowerAnimDefinition = SpriteAnimSetDef::GetSpriteAnimSetDef("turret");
-	m_resupplyAnimDefinition = SpriteAnimSetDef::GetSpriteAnimSetDef("resupply");
+	m_resupplyAnimDefinition = SpriteAnimSetDef::GetSpriteAnimSetDef("root");
 }
 
 void GameState_Playing::EnterState()

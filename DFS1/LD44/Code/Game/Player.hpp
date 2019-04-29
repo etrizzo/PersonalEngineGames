@@ -1,7 +1,7 @@
 #pragma once
 #include "Game/Entity.hpp"
 
-
+class FlowerPot;
 
 class Player :public Entity{
 public:
@@ -36,8 +36,11 @@ protected:
 	void HandleActionInput();
 	void TryToLoadCannon();
 	void RecoverHealth();
-	void BeginAttack();
-	void ExecuteAttack();
+	void BeginAttack() override;
+	void ExecuteAttack() override;
+	void ExecuteReload() override;
+
+	FlowerPot* m_reloadPot = nullptr;
 
 	//bool m_isMoving = false;
 	//bool m_isAttacking = false;

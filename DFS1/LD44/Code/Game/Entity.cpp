@@ -78,12 +78,27 @@ void Entity::UpdateAnimation()
 	//if attacking, execute the attack
 	if (m_animState == ANIM_STATE_ATTACK)
 	{
-		if (tBefore < .5f && tAfter >= .5f)
+		if (tBefore < m_percThroughAnimationToExecuteAttack && tAfter >= m_percThroughAnimationToExecuteAttack)
 		{
 			//execute attack halfway through anim
 
 			//m_isAttacking = false;
 			ExecuteAttack();
+		}
+		if (m_animSet->IsCurrentAnimFinished())
+		{
+			m_animState = ANIM_STATE_IDLE;
+		}
+	}
+
+	if (m_animState == ANIM_STATE_RELOAD)
+	{
+		if (tBefore < m_percThroughAnimationToReload && tAfter >= m_percThroughAnimationToReload)
+		{
+			//execute attack halfway through anim
+
+			//m_isAttacking = false;
+			ExecuteReload();
 		}
 		if (m_animSet->IsCurrentAnimFinished())
 		{
@@ -132,6 +147,15 @@ void Entity::BeginAttack()
 }
 
 void Entity::ExecuteAttack()
+{
+}
+
+void Entity::BeginReload()
+{
+	m_animState = ANIM_STATE_RELOAD;
+}
+
+void Entity::ExecuteReload()
 {
 }
 

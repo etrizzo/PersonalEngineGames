@@ -13,7 +13,7 @@ FlowerPot::FlowerPot(float xPosition)
 	float zOfMap = g_theGame->m_currentMap->m_collider.m_center.z;
 
 	float yPos = g_theGame->m_currentMap->GetHeightFromXPosition(xPosition);
-	m_collider = Sphere(Vector3(xPosition, yPos, zOfMap), .9f);
+	m_collider = Sphere(Vector3(xPosition, yPos, zOfMap), 1.5f);
 	float renderableY = yPos - (FLOWERPOT_WIDTH * .5f);		//lower the actual renderable a little bit
 	m_transform.SetLocalPosition(Vector3(xPosition, yPos, zOfMap + .1f));
 	Vector3 position = Vector3(xPosition, renderableY, FLOWERPOT_DEPTH);
@@ -34,7 +34,8 @@ FlowerPot::FlowerPot(float xPosition)
 	m_flowerSpriteAnimSet = new SpriteAnimSet(g_theGame->m_playState->m_flowerAnimDefinition);
 	m_flowerSprite = new Sprite(m_flowerSpriteAnimSet->GetCurrentTexture(), AABB2::ZERO_TO_ONE, Vector2(.5f, 0.0f), Vector2::ONE * FLOWERPOT_WIDTH, Vector2::ONE);
 	//this is the resupply point sprite
-	m_sprite = new Sprite(g_theRenderer->CreateOrGetTexture("bucket.png"), AABB2::ZERO_TO_ONE, Vector2(.5f, 0.0f), Vector2::ONE * .9f);
+	m_animSet = new SpriteAnimSet(g_theGame->m_playState->m_resupplyAnimDefinition);
+	m_sprite = new Sprite(m_animSet->GetCurrentTexture() , AABB2::ZERO_TO_ONE, Vector2(.5f, 0.0f), Vector2::ONE * .9f);
 }
 
 FlowerPot::~FlowerPot()
@@ -61,7 +62,7 @@ void FlowerPot::Update()
 		g_theAudio->PlayOneOffSoundFromGroup("flowerdeath");
 	}
 
-	//UpdateAnimation();
+	UpdateAnimation();
 	UpdateFlowerAnimation();
 
 
@@ -72,7 +73,7 @@ void FlowerPot::Render()
 	Entity::Render();
 	Vector3 spritePos = m_flowerPotRenderable->GetPosition() + (Vector3::Y_AXIS * FLOWERPOT_WIDTH);
 	g_theRenderer->DrawSprite(spritePos, m_flowerSprite, g_theGame->m_mainCamera->GetRight(), Vector3::Y_AXIS);
-
+	g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_collider.m_center, m_collider.m_radius, 10, 10, RGBA::RED.GetColorWithAlpha(60));
 	g_theGame->m_debugRenderSystem->MakeDebugRender3DText(std::to_string(m_numBullets), 0.0f, m_flowerPotRenderable->GetPosition() + (Vector3::ONE * FLOWERPOT_WIDTH), 1.f, UP, RIGHT, RGBA::CYAN, RGBA::CYAN);
 }
 

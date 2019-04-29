@@ -11,6 +11,21 @@
 </SpriteAnimSet>
 
 
+<SpriteAnimSet name="player" spriteSheet="playershort.png" spriteLayout="5,7" fps="6" defaultAnim ="IdleLeft">
+      <SpriteAnim name="IdleLeft"     spriteIndexes="20~22" fps="1" />
+      <SpriteAnim name="IdleRight"     spriteIndexes="22~24" fps="1" />
+  
+      <SpriteAnim name="MoveLeft"     spriteIndexes="2~5"  />
+      <SpriteAnim name="MoveRight"     spriteIndexes="6~10" />
+
+      <SpriteAnim name="AttackLeft"   spriteIndexes="10~15" fps="10" playbackMode="0" />
+      <SpriteAnim name="AttackRight"  spriteIndexes="15~20"  fps="10" playbackMode="0" />
+
+      <SpriteAnim name="ReloadLeft"   spriteIndexes="25~30" fps="6" playbackMode="0" />
+      <SpriteAnim name="ReloadRight"   spriteIndexes="30~35" fps="6" playbackMode="0" />
+</SpriteAnimSet>
+
+
 <SpriteAnimSet name="enemy" spriteSheet="enemy.png" spriteLayout="3,4" fps="6" defaultAnim ="IdleLeft">
       <SpriteAnim name="MoveLeft"     spriteIndexes="0~3"  />
       <SpriteAnim name="MoveRight"     spriteIndexes="3~6" />
@@ -32,4 +47,15 @@
       <SpriteAnim name="ReloadLeft"   spriteIndexes="20~25" fps="6" playbackMode="0" />
       
       <SpriteAnim name="DeathLeft"   spriteIndexes="5~8" fps="6" playbackMode="0" />
+</SpriteAnimSet>
+
+
+<SpriteAnimSet name="root" spriteSheet="root.png" spriteLayout="5,3" fps="6" defaultAnim ="IdleLeft">
+      <SpriteAnim name="IdleLeft"     spriteIndexes="0~3" fps="3"  />
+  
+      <SpriteAnim name="AttackLeft"   spriteIndexes="0~3" fps="3" playbackMode="0" />
+
+      <SpriteAnim name="ReloadLeft"   spriteIndexes="5~10" fps="6" playbackMode="0" />
+      
+      <SpriteAnim name="DeathLeft"   spriteIndexes="10~13" fps="6" playbackMode="0" />
 </SpriteAnimSet>

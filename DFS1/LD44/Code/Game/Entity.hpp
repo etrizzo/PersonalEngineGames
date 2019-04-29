@@ -35,10 +35,15 @@ public:
 	virtual std::string GetAnimName() const;
 	virtual void BeginAttack();
 	virtual void ExecuteAttack();
+
+	virtual void BeginReload();
+	virtual void ExecuteReload();
+
 	eAnimState m_animState = ANIM_STATE_IDLE;
 	SpriteAnimSet* m_animSet = nullptr;
 	Sprite* m_sprite = nullptr;
 	float m_percThroughAnimationToExecuteAttack = .5f;
+	float m_percThroughAnimationToReload = 1.f;
 
 	virtual void BeginDeath();
 	virtual bool IsDead() const;

@@ -17,11 +17,11 @@ Map::Map(Vector3 position, float radius)
 	//set up sphere
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendSphere(position, radius, 20, 20, RGBA::WHITE);
+	mb.AppendSphere(position, radius, 20, 20, RGBA(0, 128, 60));
 	mb.End();
 
 	m_renderable->SetMesh(mb.CreateMesh());
-	m_renderable->SetMaterial(Material::GetMaterial("terrain_grass"));
+	m_renderable->SetMaterial(Material::GetMaterial("default_lit"));
 	g_theGame->m_playState->m_scene->AddRenderable(m_renderable);
 
 

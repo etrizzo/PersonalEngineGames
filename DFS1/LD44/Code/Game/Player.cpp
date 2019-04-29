@@ -9,12 +9,13 @@
 
 Player::Player(GameState_Playing* playState, Vector3 position)
 {
+	m_percThroughAnimationToReload = .5f;
 	m_animSet = new SpriteAnimSet(g_theGame->m_playState->m_playerAnimDefinition);
 	float size = 1.f;
 	m_collider = Sphere(Vector3::ZERO, size);
 
 
-	m_sprite = new Sprite(m_animSet->GetCurrentTexture(), AABB2::ZERO_TO_ONE, Vector2(.5f,0.f), Vector2::ONE);
+	m_sprite = new Sprite(m_animSet->GetCurrentTexture(), AABB2::ZERO_TO_ONE, Vector2(.5f,0.f), Vector2::ONE * 1.5f);
 
 
 	m_spinDegreesPerSecond = 45.f;
@@ -121,7 +122,7 @@ void Player::UpdateAnimation()
 {
 
 	Entity::UpdateAnimation();
-	
+
 }
 
 void Player::HandleMovementInput()
@@ -220,8 +221,8 @@ void Player::TryToLoadCannon()
 		{
 			if (pot->m_collider.IsPointInside(GetPosition()))
 			{
-				pot->Reload();
-				m_health -= RELOAD_HEALTH_COST;
+				m_reloadPot = pot;
+				BeginReload();
 				break;
 			}
 		}
@@ -258,6 +259,13 @@ void Player::ExecuteAttack()
 			enemy->TakeDamage();
 		}
 	}
+}
+
+void Player::ExecuteReload()
+{
+	m_reloadPot->Reload();
+	m_health -= RELOAD_HEALTH_COST;
+	m_reloadPot = nullptr;
 }
 
 void Player::SetWorldPosition()
