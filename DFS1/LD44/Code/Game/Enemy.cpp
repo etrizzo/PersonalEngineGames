@@ -142,9 +142,20 @@ void Enemy::RunBehaviorFollow()
 
 void Enemy::RunBehaviorAttack()
 {
-	if (m_targetEntity != nullptr && m_rateOfAttack.CheckAndReset())
+	if (m_targetEntity != nullptr)
 	{
-		BeginAttack();
+
+		if (m_rateOfAttack.CheckAndReset())
+		{
+			BeginAttack();
+		}
+
+		if (m_targetEntity->IsDead())
+		{
+			m_targetEntity = g_theGame->m_playState->GetClosestAlliedEntity(GetPosition());
+		}
+
+		
 	}
 }
 

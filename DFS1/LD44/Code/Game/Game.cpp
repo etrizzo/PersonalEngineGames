@@ -38,7 +38,7 @@ Game::Game()
 	m_mainCamera->SetDepthStencilTarget( g_theRenderer->m_defaultDepthTarget );
 
 
-	m_mainCamera->SetPerspectiveOrtho(70.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.1f, 150.f);
+	m_mainCamera->SetPerspectiveOrtho(70.f, g_gameConfigBlackboard.GetValue("windowAspect", 1.f), 0.1f, 120.f);
 	//m_mainCamera->LookAt(Vector3(0.f, 2.f, -5.f), Vector3(0.f, 1.f, 0.f));
 
 	m_uiCamera = new Camera();
@@ -106,6 +106,8 @@ void Game::Render()
 {
 	PROFILE_PUSH_FUNCTION_SCOPE();
 	m_currentState->Render();
+
+	
 	//RenderGame();
 	RenderUI();
 }

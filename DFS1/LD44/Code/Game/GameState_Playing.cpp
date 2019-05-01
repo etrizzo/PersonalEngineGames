@@ -29,7 +29,7 @@ GameState_Playing::GameState_Playing()
 	//m_scene->SetShadowCameraTransform(m_sun->m_transform);
 
 	m_scene->AddCamera(g_theGame->m_currentCamera);
-	//g_theGame->m_mainCamera->AddSkybox("galaxy2.png", RIGHT, UP, FORWARD);
+	g_theGame->m_mainCamera->AddSkybox("galaxy2.png", RIGHT, UP, FORWARD);
 	m_renderPath->SetFogColor(RGBA(40, 10, 90));
 
 	m_playerAnimDefinition = SpriteAnimSetDef::GetSpriteAnimSetDef("player");
@@ -115,10 +115,19 @@ void GameState_Playing::RenderGame()
 	g_theRenderer->ReleaseTexture(1);
 	g_theRenderer->ReleaseShader();
 
+
+	Material* blurMat = Material::GetMaterial("blur");
+	g_theRenderer->ApplyEffect("blur");
+	//g_theRenderer->ApplyEffect(blurMat);
+	g_theRenderer->ReleaseTexture(4);
+	g_theRenderer->FinishEffects();
+
 	g_theGame->m_debugRenderSystem->UpdateAndRender();
 	g_theRenderer->EnableDepth( COMPARE_LESS, true ); 
-	
-}
+
+
+} 
+
 
 void GameState_Playing::RenderEntities()
 {
@@ -195,11 +204,14 @@ Entity * GameState_Playing::GetClosestAlliedEntity(const Vector3 & position)
 	float shortestDistance = 100000.f;
 	for (FlowerPot* pot : m_flowerPots)
 	{
-		float distance = GetDistanceSquared(position, pot->GetPosition());
-		if (distance < shortestDistance)
+		if (!pot->IsDead())
 		{
-			shortestDistance = distance;
-			target = (Entity*)pot;
+			float distance = GetDistanceSquared(position, pot->GetPosition());
+			if (distance < shortestDistance)
+			{
+				shortestDistance = distance;
+				target = (Entity*)pot;
+			}
 		}
 	}
 

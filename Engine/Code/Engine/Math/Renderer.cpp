@@ -1043,6 +1043,7 @@ void Renderer::ApplyEffect(Material * material, const AABB2& uvs)
 	BindMaterial(material);
 
 	BindTexture(*m_effectTarget, 0);
+	BindTexture(*m_defaultDepthTarget, 1);
 	//BindTexture(*m_defaultDepthTarget, 1);
 	DrawAABB2(AABB2(-1.f * Vector2::ONE, Vector2::ONE), RGBA::WHITE);
 

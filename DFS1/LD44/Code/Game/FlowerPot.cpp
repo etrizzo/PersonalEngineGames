@@ -73,13 +73,13 @@ void FlowerPot::Render()
 	Entity::Render();
 	Vector3 spritePos = m_flowerPotRenderable->GetPosition() + (Vector3::Y_AXIS * FLOWERPOT_WIDTH);
 	g_theRenderer->DrawSprite(spritePos, m_flowerSprite, g_theGame->m_mainCamera->GetRight(), Vector3::Y_AXIS);
-	g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_collider.m_center, m_collider.m_radius, 10, 10, RGBA::RED.GetColorWithAlpha(60));
+	//g_theGame->m_debugRenderSystem->MakeDebugRenderSphere(0.f, m_collider.m_center, m_collider.m_radius, 10, 10, RGBA::RED.GetColorWithAlpha(60));
 	g_theGame->m_debugRenderSystem->MakeDebugRender3DText(std::to_string(m_numBullets), 0.0f, m_flowerPotRenderable->GetPosition() + (Vector3::ONE * FLOWERPOT_WIDTH), 1.f, UP, RIGHT, RGBA::CYAN, RGBA::CYAN);
 }
 
 void FlowerPot::TakeDamage()
 {
-	if (m_numBullets > 0)
+	if (m_numBullets > 0 && !g_theGame->m_godMode)
 	{
 		m_numBullets--;
 	}
@@ -123,9 +123,15 @@ void FlowerPot::BeginAttack()
 
 void FlowerPot::ExecuteAttack()
 {
-	g_theGame->m_playState->SpawnMissile(m_flowerPotRenderable->GetPosition() + (UP * FLOWERPOT_WIDTH * 1.25f), m_target);
-	m_target = nullptr;
-	m_numBullets--;
+	if (m_target != nullptr)
+	{
+		g_theGame->m_playState->SpawnMissile(m_flowerPotRenderable->GetPosition() + (UP * FLOWERPOT_WIDTH * 1.25f), m_target);
+		m_target = nullptr;
+		if (!g_theGame->m_godMode)
+		{
+			m_numBullets--;
+		}
+	}
 }
 
 void FlowerPot::UpdateFlowerAnimation()
@@ -150,7 +156,7 @@ void FlowerPot::UpdateFlowerAnimation()
 			//execute attack halfway through anim
 
 			//m_isAttacking = false;
-			ExecuteAttack();
+			//ExecuteAttack();
 		}
 		if (m_flowerSpriteAnimSet->IsCurrentAnimFinished())
 		{

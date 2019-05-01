@@ -1,3 +1,4 @@
-tgm
-debug_detach_camera
 quit
+debug_detach_camera
+debug_startup
+tgm

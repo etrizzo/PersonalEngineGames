@@ -51,6 +51,7 @@ App::App(HINSTANCE applicationInstanceHandle)
 	g_theRenderer->LoadShadersFromFile("shaders.xml");
 	g_theRenderer->LoadMaterialsFromFile("materials.xml");
 	g_theRenderer->SetAmbientLight(RGBA(120,120,128,128));
+	g_theRenderer->SetWindowSize(g_Window);
 	
 	g_theInput = new InputSystem();
 	g_theAudio = new AudioSystem();

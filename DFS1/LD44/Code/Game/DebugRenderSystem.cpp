@@ -131,7 +131,7 @@ void DebugRenderSystem::HandleCameraInput()
 
 
 	//why are there 6 keys if there are only 4 directions
-	float speed = 4.f;
+	float speed = 10.f;
 	if (g_theInput->IsKeyDown('D')){
 		m_camera->Translate(m_camera->GetRight() * ds * speed);
 	}

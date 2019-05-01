@@ -64,6 +64,9 @@
     <ClCompile Include="EnemySpawner.cpp">
       <Filter>General\Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Grass.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -116,6 +119,9 @@
     </ClInclude>
     <ClInclude Include="EnemySpawner.hpp">
       <Filter>General\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Grass.hpp">
+      <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

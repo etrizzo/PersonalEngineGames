@@ -38,7 +38,7 @@ Vector3 SphericalToCartesian(float radius, float theta, float azimuth);
 
 Vector3 CartesianToSpherical(float x, float y, float z);
 
-
+Vector3 GetSphereTangentForVertex(Vector3 pos, float radius, float theta, float azimuth);
 
 //-------------------
 // RANDOM FUNCTIONS

@@ -88,6 +88,24 @@
 	<program id="cutout" />
 	<depth write="true" test="less"/>
 </shader>
+
+<shader name="grass" cull="none" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="grass" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="blur" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="blur" />
+	<depth write="true" test="less"/>
+</shader>
+
+<shader name="findedges" sort="0" cull="back" fill="solid" frontface="ccw" blend = "alpha">
+	<program id="findedges" />
+	<depth write="true" test="less"/>
+</shader>
+
+
+
 <shader name="cutout_lit" cull="back" fill="solid" frontface="ccw" blend = "alpha">
 	<program id="cutout_lit" />
 	<depth write="true" test="less"/>

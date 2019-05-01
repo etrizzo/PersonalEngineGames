@@ -79,6 +79,32 @@
 
 
 <!-- special mats -->
+<material name="grass" shader="grass">
+	<textures>
+		<texture type="diffuse" path="grass.png" />
+		<texture type="normal" path="flat" />
+		<texture index="4" path="gradient.png" />
+	</textures>
+
+	<properties>
+	</properties>
+</material>
+
+<material name="blur" shader="blur">
+	<textures>
+		<texture type="diffuse" path="white" />
+	</textures>
+
+</material>
+
+<material name="findedges" shader="findedges">
+	<textures>
+		<texture type="diffuse" path="white" />
+	</textures>
+
+</material>
+
+
 <material name="couch" shader="lit_fog">
 	<textures>
 		<texture type="diffuse" path="couch_albedo.png" />
@@ -114,6 +140,7 @@
 <material name="water" shader="water">
 	<textures>
 		<texture type="diffuse" path="water_2.png" />
+		<texture type="normal" path="flat" />
 	</textures>
 	<properties>
 		<property type="float" name="SPECULAR_AMOUNT" value="1.0" />

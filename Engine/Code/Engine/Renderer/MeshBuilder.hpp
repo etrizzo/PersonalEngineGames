@@ -78,8 +78,6 @@ private:
 	// get a template working #later
 	SubMesh* CreateSubMesh3DPCU();
 	SubMesh* CreateSubMeshLit();
-
-	Vector3 GetSphereTangentForVertex(Vector3 pos, float radius,float theta, float azimuth);
 };
 
 

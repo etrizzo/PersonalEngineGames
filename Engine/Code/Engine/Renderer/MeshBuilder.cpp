@@ -718,9 +718,4 @@ SubMesh * MeshBuilder::CreateSubMeshLit()
 	return mesh;
 }
 
-Vector3 MeshBuilder::GetSphereTangentForVertex(Vector3 pos, float radius, float theta, float azimuth)
-{
-	Vector3 rightPos = SphericalToCartesian(radius, theta + .01f, azimuth);
-	Vector3 leftPos = SphericalToCartesian(radius, theta - .01f, azimuth);
-	return (leftPos - rightPos).GetNormalized();
-}
+

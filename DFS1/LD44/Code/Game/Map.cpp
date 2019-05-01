@@ -1,11 +1,14 @@
 #include "Map.hpp"
 #include "Game.hpp"
 #include "DebugRenderSystem.hpp"
-
+#include "Game/Grass.hpp"
 
 Map::~Map()
 {
-
+	for (Grass* grass : m_grass)
+	{
+		delete grass;
+	}
 }
 
 Map::Map(Vector3 position, float radius)
@@ -17,13 +20,13 @@ Map::Map(Vector3 position, float radius)
 	//set up sphere
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendSphere(position, radius, 20, 20, RGBA(0, 128, 60));
+	mb.AppendSphere(position, radius, 40, 40, RGBA(0, 128, 60));
 	mb.End();
 
 	m_renderable->SetMesh(mb.CreateMesh());
 	m_renderable->SetMaterial(Material::GetMaterial("default_lit"));
 	g_theGame->m_playState->m_scene->AddRenderable(m_renderable);
-
+	//CreateSphereMesh();
 
 
 	//set up water
@@ -41,6 +44,9 @@ Map::Map(Vector3 position, float radius)
 
 	//set up background
 	GenerateBackgroundTerrain();
+
+
+	AddGrassToSphere();
 }
 
 
@@ -49,6 +55,7 @@ void Map::Render()
 {
 	//RenderTiles();
 	//RenderEntities();
+	
 	
 }
 
@@ -135,6 +142,113 @@ float Map::GetWalkableRadius() const
 	return m_collider.m_radius * WALKABLE_AREA_AS_PERCENTAGE_OF_RADIUS;
 }
 
+void Map::CreateSphereMesh()
+{
+	AABB2 uvs = AABB2::ZERO_TO_ONE;
+	int wedges = 30.f;
+	int slices = 30.f;
+	float radius = m_collider.m_radius;
+	Vector3 center = m_collider.m_center;
+	RGBA grassColor = RGBA(0, 128, 60);
+	RGBA pathColor = RGBA::BLANCHEDALMOND;
+
+	MeshBuilder mb;
+	mb.Begin(PRIMITIVE_TRIANGLES, true);
+
+	//Vector2 uvSize = Vector2(uvs.GetWidth() / (float) wedges, uvs.GetHeight() / (float) slices);
+	Vector2 uvWidth = Vector2(uvs.GetWidth() / (float)wedges, 0.f);
+	Vector2 uvHeight = Vector2(0.f, uvs.GetHeight() / (float)slices);
+	float xTheta = 360.f / (float)wedges;
+	float yTheta = 180.f / (float)slices;
+	unsigned int idx;
+	for (int y = 0; y < slices; y++) {
+		float azimuth = RangeMapFloat((float)y, 0.f, (float)slices, -90.f, 90.f);
+		for (int x = 0; x < wedges; x++) {
+			float rotation = RangeMapFloat((float)x, 0.f, (float)slices, 0.f, 360.f);
+
+			float nextAzimuth = ClampFloat(azimuth + yTheta, -90.f, 90.f);
+
+			Vector2 bl_uv = (uvWidth * (float)x) + (uvHeight * (float)y);
+			Vector3 botLeft = center + SphericalToCartesian(radius, rotation, azimuth);
+			//Vector3 bl_tan = Vector3(-cosA * sinR * radius, 0.f, cosA * cosR * radius);
+			Vector3 bl_tan = GetSphereTangentForVertex(botLeft, radius, rotation, azimuth);
+
+			Vector2 br_uv = bl_uv + uvWidth;
+			Vector3 botRight = center + SphericalToCartesian(radius, rotation + xTheta, azimuth);
+			Vector3 br_tan = GetSphereTangentForVertex(botLeft, radius, rotation + xTheta, azimuth);
+
+			Vector2 tl_uv = bl_uv + uvHeight;
+			Vector3 topLeft = center + SphericalToCartesian(radius, rotation, nextAzimuth);
+			Vector3 tl_tan = GetSphereTangentForVertex(botLeft, radius, rotation, nextAzimuth);
+
+			Vector2 tr_uv = bl_uv + uvWidth + uvHeight;
+			Vector3 topRight = center + SphericalToCartesian(radius, rotation + xTheta, nextAzimuth);
+			Vector3 tr_tan = GetSphereTangentForVertex(botLeft, radius, rotation + xTheta, nextAzimuth);
+
+
+
+			if (IsOnCenterPath(topLeft))
+			{
+				mb.SetColor(pathColor);
+			}
+			else {
+				mb.SetColor(grassColor);
+			}
+			mb.SetUV(tl_uv);
+			mb.SetNormal((topLeft - center).GetNormalized());
+			mb.SetTangent(tl_tan);
+			idx = mb.PushVertex(topLeft);
+
+			if (IsOnCenterPath(topRight))
+			{
+				mb.SetColor(pathColor);
+			}
+			else {
+				mb.SetColor(grassColor);
+			}
+			mb.SetUV(tr_uv);
+			mb.SetNormal((topRight - center).GetNormalized());
+			mb.SetTangent(tr_tan);
+			mb.PushVertex(topRight);
+
+			if (IsOnCenterPath(botLeft))
+			{
+				mb.SetColor(pathColor);
+			}
+			else {
+				mb.SetColor(grassColor);
+			}
+			mb.SetUV(bl_uv);
+			mb.SetNormal((botLeft - center).GetNormalized());
+			mb.SetTangent(bl_tan);
+			mb.PushVertex(botLeft);
+
+			if (IsOnCenterPath(botRight))
+			{
+				mb.SetColor(pathColor);
+			}
+			else {
+				mb.SetColor(grassColor);
+			}
+			mb.SetUV(br_uv);
+			mb.SetNormal((botRight - center).GetNormalized());
+			mb.SetTangent(br_tan);
+			mb.PushVertex(botRight);
+
+
+
+			mb.AddTriIndices(idx + 0, idx + 1, idx + 2);
+			mb.AddTriIndices(idx + 2, idx + 1, idx + 3);
+		}
+	}
+	mb.End();
+
+	m_renderable = new Renderable();
+	m_renderable->SetMesh(mb.CreateMesh());
+	m_renderable->SetMaterial(Material::GetMaterial("default_lit"));
+	g_theGame->m_playState->m_scene->AddRenderable(m_renderable);
+}
+
 void Map::GenerateBackgroundTerrain()
 {
 
@@ -204,6 +318,100 @@ Vector3 Map::GetVertexWorldPos(int x, int y) const
 	}
 
 	return Vector3(xyPos.x, height, xyPos.y);
+}
+
+void Map::AddGrassToSphere()
+{
+	m_grassBuilder;
+	m_grassBuilder.Begin(PRIMITIVE_TRIANGLES, true);
+	for (int i = 0; i < 1000; i++)
+	{
+		Vector3 pos = GetRandomGrassPosition();
+		AddGrassAtPosition(pos);
+		//Grass* grass = new Grass(pos, this);
+		//m_grass.push_back(grass);
+	}
+	m_grassBuilder.End();
+
+	Material* grassMat = Material::GetMaterial("grass");
+
+	m_grassRenderable = new Renderable();
+	m_grassRenderable->SetMesh(m_grassBuilder.CreateMesh());
+	m_grassRenderable->SetMaterial(grassMat);
+
+	g_theGame->m_playState->m_scene->AddRenderable(m_grassRenderable);
+}
+
+Vector3 Map::GetRandomGrassPosition() const
+{
+	float theta = GetRandomFloatInRange(0.f, 360.f);
+	float azimuth = GetRandomFloatInRange(90.f, 135.f);
+	Vector3 pos = SphericalToCartesian(m_collider.m_radius, theta, azimuth);
+	float minZ = m_collider.m_radius * CENTER_PATH_RATIO;
+
+	//push tufts off the central path
+	if (pos.z >= 0.f)
+	{
+		while (pos.z < minZ)
+		{
+			if (CheckRandomChance(.7f)) {
+				float theta = GetRandomFloatInRange(0.f, 360.f);
+				float azimuth = GetRandomFloatInRange(90.f, 135.f);
+				pos = SphericalToCartesian(m_collider.m_radius, theta, azimuth);
+			}
+			else
+			{
+				pos.z = minZ + GetRandomFloatInRange(0.f, .03f);
+			}
+		}
+	}
+	else
+	{
+		while (pos.z > -minZ)
+		{
+			if (CheckRandomChance(.7f)) {
+				float theta = GetRandomFloatInRange(0.f, 360.f);
+				float azimuth = GetRandomFloatInRange(90.f, 135.f);
+				pos = SphericalToCartesian(m_collider.m_radius, theta, azimuth);
+			}
+			else
+			{
+				pos.z = minZ + GetRandomFloatInRange(0.f, .03f);
+			}
+		}
+	}
+	return pos;
+}
+
+void Map::AddGrassAtPosition(const Vector3 & position)
+{
+	Vector3 normal = (position - GetCenter()).GetNormalized();
+	Vector3 center = position + (normal * GRASS_HEIGHT * .5f);
+
+	Vector3 someRight = Cross(normal, GetRandomNormalizedDirection());
+	someRight.NormalizeAndGetLength();
+	Vector3 otherRight = Cross(normal, someRight);
+	//create renderable at position - two quads pointing up along normal
+
+	m_grassBuilder.AppendPlane(center, normal, someRight, Vector2(GRASS_WIDTH, GRASS_HEIGHT), RGBA::WHITE, Vector2::ZERO, Vector2(1.f, .98f));
+	m_grassBuilder.AppendPlane(center, normal, otherRight, Vector2(GRASS_WIDTH, GRASS_HEIGHT), RGBA::WHITE, Vector2::ZERO, Vector2(1.f, .98f));
+}
+
+
+bool Map::IsOnCenterPath(const Vector3 & position) const
+{
+	float minZ = m_collider.m_radius * CENTER_PATH_RATIO;
+
+	if (position.z > 0.f && position.z < minZ)
+	{
+		return true;
+	}
+	if (position.z <= 0.f && position.z > minZ)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 
