@@ -1,3 +1,5 @@
+	<!-- num nodes: 6 -->
+
 	<EventNode name="ThreeFriends" progression="time" actname="OrdinaryWorld" actRange="1">
 		<Action text="Three friends live happily in a peaceful village." />
 		<Characters>

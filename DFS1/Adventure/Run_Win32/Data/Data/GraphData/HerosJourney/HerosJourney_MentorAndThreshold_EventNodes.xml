@@ -1,3 +1,5 @@
+	<!-- num nodes = 5 -->
+
 	<EventNode name="StrangerIsMentor" progression="time" actname="MentorAndThreshold" actRange="3">
 		<Action text="The next day, the stranger knocks at *0*'s door" />
 		<Characters>

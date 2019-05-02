@@ -1,3 +1,5 @@
+	<!-- num nodes: 4 -->
+
 	<EventNode name="CallFromStranger" progression="time" actname="CallToAdventure" actRange="2">
 		<Action text="The stranger tells *0* that they have a great destiny." />
 		<Characters>

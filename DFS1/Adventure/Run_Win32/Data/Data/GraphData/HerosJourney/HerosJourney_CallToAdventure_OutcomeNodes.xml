@@ -1,3 +1,5 @@
+	<!-- num nodes = 3 -->
+
 	<OutcomeNode name="CallFromStrangerOutcome" progression="choice" actRange="2">
 		<Characters>
 			<Character id = "*0*" name="Protagonist"/>

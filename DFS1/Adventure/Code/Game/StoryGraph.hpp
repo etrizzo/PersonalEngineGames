@@ -89,22 +89,13 @@ public:
 	bool AreAllActsFinished() const;
 	bool HavePlacedAllEndings() const;
 
-	//deprecated:
-	//void RunGenerationPairs(int numPairs);
-	//void RunGenerationPlotAndDetail(int numPlotNodes = 3, int desiredSize = 10);
-	//void RunGenerationByActs(int numPairsToAdd);		//targets edges with the largest act range
 
-
-	//void GenerateSkeleton(int numPlotNodes);
-	////void AddPlotNodes(int numPlotNodes);
-	//StoryNode* AddSingleEventNode();
 	StoryNode* AddEventNodeAtEdge(StoryEdge* edge);
 	void AddOutcomeNodesToEventNode(StoryNode* plotNode);
 	void AddDetailNodesToDesiredSize(int desiredSize = 10);
 	void GenerateStartAndEnd();
 	bool TryToAddOutcomeNodeAtEdge(StoryEdge* edge, int maxTries = 10);
 	bool FindEdgeForNewEventNodeAndAdd(StoryNode* newPlotNode);
-	//bool AddOutcomeNode(StoryNode* newDetailNode);
 	bool CreateAndAddOutcomeNodeAtEdge(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode, bool onlyAddEndings = false);
 	StoryNode* CreateAndAddEventNodeAtEdge(StoryDataDefinition* dataDefinition, StoryEdge* edgeToAddAt, std::vector<Character*> charactersForNode);
 	bool AddBranchAroundNode(StoryNode* existingNode, StoryNode* nodeToAdd, bool branchToFutureNodesIfNecessary);

@@ -1,3 +1,4 @@
+	<!-- num nodes : 4 -->
 	<OutcomeNode name="StrangerMentorOutcome" actRange="3">
 		<Characters>
 			<Character id = "*0*" name="Protagonist"/>
