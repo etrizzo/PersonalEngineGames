@@ -364,6 +364,8 @@
     <ClCompile Include="Core\Heatmap.cpp" />
     <ClCompile Include="Core\Image.cpp" />
     <ClCompile Include="Core\LogSystem.cpp" />
+    <ClCompile Include="Core\NamedProperties.cpp" />
+    <ClCompile Include="Core\NamedPropertyBase.cpp" />
     <ClCompile Include="Core\Profiler.cpp" />
     <ClCompile Include="Core\ProfilerReport.cpp" />
     <ClCompile Include="Core\ProfilerVisualizer.cpp" />
@@ -492,6 +494,8 @@
     <ClInclude Include="Core\Heatmap.hpp" />
     <ClInclude Include="Core\Image.hpp" />
     <ClInclude Include="Core\LogSystem.hpp" />
+    <ClInclude Include="Core\NamedProperties.hpp" />
+    <ClInclude Include="Core\NamedPropertyBase.hpp" />
     <ClInclude Include="Core\Profiler.hpp" />
     <ClInclude Include="Core\ProfilerReport.hpp" />
     <ClInclude Include="Core\ProfilerVisualizer.hpp" />

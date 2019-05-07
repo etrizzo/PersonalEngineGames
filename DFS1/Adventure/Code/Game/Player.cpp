@@ -38,7 +38,7 @@ void Player::Update(float deltaSeconds)
 		UpdateRenderable();
 
 
-		if (m_isFiring){
+		if (m_isAttacking){
 			if (m_animSet->IsCurrentAnimFinished()){
 				FireArrow();
 			}
@@ -123,7 +123,7 @@ void Player::RenderDistanceMap() const
 
 void Player::HandleInput()
 {
-	if (!m_isFiring){
+	if (!m_isAttacking){
 		if (!m_map->IsDialogueOpen()){
 			Actor::UpdateWithController(g_theGame->GetDeltaSeconds());
 		}
@@ -190,7 +190,7 @@ std::string Player::GetAnimName()
 		//Vector2 dir = Vector2::MakeDirectionAtDegrees(controller->GetLeftThumbstickAngle()).GetNormalized();
 		action = "Move";
 	}
-	if (m_isFiring){
+	if (m_isAttacking){
 		action = "Bow";
 	}
 
@@ -227,7 +227,7 @@ void Player::UpdateDistanceMap()
 
 void Player::FireArrow()
 {
-	m_isFiring = false;
+	m_isAttacking = false;
 	Vector2 closestAngle = GetClosestAngle() * .5f;
 	m_map->SpawnNewProjectile("Arrow", GetPosition() + closestAngle, closestAngle.GetOrientationDegrees(), m_faction, m_stats.GetStat(STAT_STRENGTH));
 }

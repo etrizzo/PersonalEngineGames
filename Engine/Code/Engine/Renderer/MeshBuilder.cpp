@@ -209,10 +209,15 @@ void MeshBuilder::AppendPlane(const Vector3& center, const Vector3& up, const Ve
 
 	SetColor(color);
 
-	Vector3 nearBottomLeft	= center - (right * size.x * .5f)	- (up * size.y * .5f);
-	Vector3 nearBottomRight	= center + (right * size.x * .5f)	- (up * size.y * .5f);
-	Vector3 farTopRight		= center + (right * size.x * .5f)	+ (up * size.y * .5f);
-	Vector3 farTopLeft		= center - (right * size.x * .5f)	+ (up * size.y * .5f);
+	Vector2 halfDims = size * .5f;
+	
+	Vector3 halfRight = right * halfDims.x;
+	Vector3 halfUp = up * halfDims.y;
+
+	Vector3 nearBottomLeft	= center - halfRight - halfUp;
+	Vector3 nearBottomRight	= center + halfRight - halfUp;
+	Vector3 farTopRight		= center + halfRight + halfUp;
+	Vector3 farTopLeft		= center - halfRight + halfUp;
 
 	Vector3 normal = Cross(up, right).GetNormalized();
 

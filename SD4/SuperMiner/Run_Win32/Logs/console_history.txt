@@ -1,2 +1,3 @@
 debug_detach_camera
 profiler
+quit

@@ -94,7 +94,7 @@
 			 <Base texture="HUMANOIDS/BODY/body_human_f_3.png" portraitTint="186,132,84,255"/>
 			</Body>
 			<Weapons>
-				<Weapon texture="HUMANOIDS/WEAPON/recurvebow.png" />
+				<Weapon texture="HUMANOIDS/WEAPON/dagger.png" />
 			</Weapons>
 		</Bodys>
 

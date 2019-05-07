@@ -171,12 +171,37 @@ void GameState_Playing::Startup()
 	m_world = new World();
 	SpawnPlayer(Vector3(-4.f,0.f, 120.0f));
 
-	//m_world->ActivateChunk(IntVector2(0,3));
-	//m_world->ActivateChunk(IntVector2(0,2));
-	//m_world->ActivateChunk(IntVector2(1,2));
-	//m_world->ActivateChunk(IntVector2(0,0));
-	//m_world->ActivateChunk(IntVector2(-1,2));
-	//m_world->ActivateChunk(IntVector2(1,1));
+	////playground:
+
+
+	//std::string lastName("Eiserloh");
+	//NamedProperties employmentInfoProperties;
+
+	//NamedProperties p;
+	//p.Set("FirstName", "Squirrel"); 	// Setting as c-string (const char*) data...
+	//p.Set("LastName", lastName);	// Setting as std::string data...
+	//p.Set("Height", 1.93f);
+	//p.Set("Age", 45);
+	//p.Set("IsMarried", true);
+	//p.Set("Position", Vector2(3.5f, 6.2f));
+	//p.Set("EyeColor", RGBA(77, 38, 23));
+	//p.Set("EmploymentInfo", employmentInfoProperties); // NamedProperties inside NamedProperties
+
+	//float health = p.Get("Height", 1.75f);
+
+	//// Note the subtleties in the Set, Get, and return types for each of the following examples:
+
+
+	//std::string first_name = p.Get("FirstName", "UNKNOWN");
+	//std::string last_name = p.Get("LastName", "UNKNOWN");
+
+	//first_name = p.Get("FirstName", first_name);
+	//last_name = p.Get("LastName", last_name);
+
+	//std::string color = p.Get("EyeColor", "green");
+	//p.Set("EyeColor", "Purple");
+	//color = p.Get("EyeColor", "green");
+	
 }
 
 void GameState_Playing::CheckForVictory()

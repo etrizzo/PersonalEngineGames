@@ -367,6 +367,12 @@
     <ClCompile Include="FileUtilities.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\NamedProperties.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\NamedPropertyBase.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -733,6 +739,12 @@
       <Filter>Networking</Filter>
     </ClInclude>
     <ClInclude Include="FileUtilities.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\NamedProperties.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\NamedPropertyBase.hpp">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>

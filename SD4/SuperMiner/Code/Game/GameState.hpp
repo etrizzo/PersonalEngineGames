@@ -51,6 +51,7 @@ class GameState_Attract: public GameState{
 public:
 	GameState_Attract();
 	Menu* m_mainMenu;
+	void EnterState() override;
 	void Update(float ds);
 	void RenderUI();
 	void HandleInput();

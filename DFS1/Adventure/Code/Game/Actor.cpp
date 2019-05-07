@@ -103,7 +103,7 @@ void Actor::Update(float deltaSeconds)
 		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, m_physicsDisc, true , DEBUG_RENDER_IGNORE_DEPTH, RGBA::MAGENTA, RGBA::MAGENTA);
 		g_theGame->m_debugRenderSystem->MakeDebugRenderCircle(0.f, GetPosition(), m_localDrawingBox.GetHeight() * .5f, true, DEBUG_RENDER_IGNORE_DEPTH, RGBA::YELLOW);
 	}
-	if (m_isFiring){
+	if (m_isAttacking){
 		if (m_animSet->IsCurrentAnimFinished()){
 			FireArrow();
 		}
@@ -126,7 +126,7 @@ void Actor::Render()
 
 void Actor::HandleInput()
 {
-	if (m_isPlayer && !m_isFiring){
+	if (m_isPlayer && !m_isAttacking){
 		if (!m_map->IsDialogueOpen()){
 			UpdateWithController(g_theGame->GetDeltaSeconds());
 		}
@@ -328,8 +328,8 @@ std::string Actor::GetAnimName()
 		//Vector2 dir = Vector2::MakeDirectionAtDegrees(controller->GetLeftThumbstickAngle()).GetNormalized();
 		action = "Move";
 	}
-	if (m_isFiring){
-		action = "Bow";
+	if (m_isAttacking){
+		action = "Sword";
 	}
 
 	return action + direction;
@@ -597,8 +597,8 @@ bool Actor::IsItemEquipped(Item * item) const
 void Actor::StartFiringArrow()
 {
 	if (m_isPlayer || m_ageInSeconds - m_lastAttacked > 2.f){
-		if (!m_isFiring){
-			m_isFiring = true;
+		if (!m_isAttacking){
+			m_isAttacking = true;
 		}
 	}
 }
@@ -833,7 +833,7 @@ void Actor::FireArrow()
 {
 
 	
-	m_isFiring = false;
+	m_isAttacking = false;
 	Vector2 facingScaled = m_facing * .5f;
 	m_map->SpawnNewProjectile("Arrow", GetPosition() + facingScaled, facingScaled.GetOrientationDegrees(), m_faction, m_stats.GetStat(STAT_STRENGTH));
 	m_lastAttacked = m_ageInSeconds;

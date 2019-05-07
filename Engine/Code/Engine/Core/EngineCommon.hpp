@@ -39,6 +39,8 @@
 
 #include "Engine/Core/BytePacker.hpp"
 
+#include "Engine/Core/NamedProperties.hpp"
+
 
 #include <vector>
 

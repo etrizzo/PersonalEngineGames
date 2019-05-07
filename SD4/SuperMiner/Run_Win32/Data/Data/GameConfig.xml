@@ -5,7 +5,7 @@
   windowHeight=".9"
   width="10"
 	isFullscreen="false"
-  activationRadius="150.0"
+  activationRadius="50.0"
   debugLighting ="false"
 	
 />

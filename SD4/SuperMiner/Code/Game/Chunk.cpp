@@ -54,7 +54,9 @@ void Chunk::CreateMesh()
 		AddVertsForBlockAtIndex(blockIndex);
 	}
 	m_cpuMesh.End();
+	PROFILE_PUSH("CreateMesh");
 	m_gpuMesh = m_cpuMesh.CreateMesh(VERTEX_TYPE_3DPCU);
+	PROFILE_POP();
 	m_isGPUMeshDirty = false;
 }
 
@@ -513,7 +515,6 @@ void Chunk::AppendBlocksToBufferRLE(std::vector<unsigned char>& buffer) const
 
 void Chunk::AddVertsForBlockAtIndex(int blockIndex)
 {
-	PROFILE_PUSH_FUNCTION_SCOPE();
 	unsigned char blockType = m_blocks[blockIndex].GetBlockID();
 	if (blockType == 0U)
 	{
@@ -546,42 +547,42 @@ void Chunk::AddVertsForBlockAtIndex(int blockIndex)
 			//Add verts for top (abfe)					//up	//right
 			tint = GetLightingTintForBlock(me.GetUp());
 			tint.b = 255;
-			m_cpuMesh.AppendPlane(center + topOffset, FORWARD, RIGHT, Vector2::HALF, tint, blockDef->m_topUVs.mins, blockDef->m_topUVs.maxs);
+			m_cpuMesh.AppendPlane(center + topOffset, FORWARD, RIGHT, Vector2::ONE, tint, blockDef->m_topUVs.mins, blockDef->m_topUVs.maxs);
 		}
 
 		if (!me.GetSouth().IsBlockFullyOpaque()){
 			//add verts for right (dhfb)
 			tint = GetLightingTintForBlock(me.GetSouth());
 			tint.b = 206;
-			m_cpuMesh.AppendPlane(center + rightOffset, UP, FORWARD, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+			m_cpuMesh.AppendPlane(center + rightOffset, UP, FORWARD, Vector2::ONE, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 
 		if (!me.GetNorth().IsBlockFullyOpaque()){
 			//add verts for left (gcae)
 			tint = GetLightingTintForBlock(me.GetNorth());
 			tint.b = 206;
-			m_cpuMesh.AppendPlane(center - rightOffset, UP, -FORWARD, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+			m_cpuMesh.AppendPlane(center - rightOffset, UP, -FORWARD, Vector2::ONE, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 
 		if (!me.GetEast().IsBlockFullyOpaque()){
 			//add verts for front (hgef)
 			tint = GetLightingTintForBlock(me.GetEast());
 			tint.b = 232;
-			m_cpuMesh.AppendPlane(center + forwardOffset, UP, -RIGHT, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+			m_cpuMesh.AppendPlane(center + forwardOffset, UP, -RIGHT, Vector2::ONE, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 
 		if (!me.GetWest().IsBlockFullyOpaque()){
 			//add verts for back (cdba)
 			tint = GetLightingTintForBlock(me.GetWest());
 			tint.b = 232;
-			m_cpuMesh.AppendPlane(center - forwardOffset, UP, RIGHT, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+			m_cpuMesh.AppendPlane(center - forwardOffset, UP, RIGHT, Vector2::ONE, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 
 		if (!me.GetDown().IsBlockFullyOpaque()){
 			//add verts for bottom (hgcd)
 			tint = GetLightingTintForBlock(me.GetDown());
 			tint.b = 255;
-			m_cpuMesh.AppendPlane(center - topOffset, FORWARD, -RIGHT, Vector2::HALF, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
+			m_cpuMesh.AppendPlane(center - topOffset, FORWARD, -RIGHT, Vector2::ONE, tint, blockDef->m_sideUVs.mins, blockDef->m_sideUVs.maxs);
 		}
 	}
 }

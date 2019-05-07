@@ -128,5 +128,5 @@ protected:
 	void GetRandomStatsFromDefinition();
 
 	void UpdateStats();
-	bool m_isFiring;
+	bool m_isAttacking;
 };

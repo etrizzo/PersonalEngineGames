@@ -77,6 +77,14 @@ GameState_Attract::GameState_Attract()
 	
 }
 
+void GameState_Attract::EnterState()
+{
+	GameState::EnterState();
+
+
+
+}
+
 void GameState_Attract::Update(float ds)
 {
 	m_timeInState+=ds;

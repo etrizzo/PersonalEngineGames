@@ -1,18 +1,23 @@
     <SpriteAnimSet name="humanoid" spriteSheet="HUMANOIDS/BODY/body_human_f_1.png" spriteLayout="13,21" fps="12" defaultAnim ="IdleSouth">
       <SpriteAnim name="MoveNorth"    spriteIndexes="105~112"   />
-      <SpriteAnim name="MoveWest"     spriteIndexes="117~125"  />
+      <SpriteAnim name="MoveWest"     spriteIndexes="118~125"  />
       <SpriteAnim name="MoveSouth"    spriteIndexes="131~138" />
-      <SpriteAnim name="MoveEast"     spriteIndexes="143~150" />
+      <SpriteAnim name="MoveEast"     spriteIndexes="144~150" />
   
-      <SpriteAnim name="IdleNorth"    spriteIndexes="105"  />
+      <SpriteAnim name="IdleNorth"    spriteIndexes="104"  />
       <SpriteAnim name="IdleWest"     spriteIndexes="117"   />
-      <SpriteAnim name="IdleSouth"    spriteIndexes="131" />
+      <SpriteAnim name="IdleSouth"    spriteIndexes="130" />
       <SpriteAnim name="IdleEast"     spriteIndexes="143"    />
   
       <SpriteAnim name="BowNorth"  spriteIndexes="208~220"  fps="24" playbackMode="0" />
       <SpriteAnim name="BowWest"   spriteIndexes="221~233" fps="24" playbackMode="0" />
       <SpriteAnim name="BowSouth"  spriteIndexes="234~246" fps="24" playbackMode="0" />
       <SpriteAnim name="BowEast"   spriteIndexes="247~259" fps="24" playbackMode="0" />
+
+      <SpriteAnim name="SwordNorth"  spriteIndexes="156~161" fps="12" playbackMode="0" />
+      <SpriteAnim name="SwordWest"   spriteIndexes="169~174" fps="12" playbackMode="0" />
+      <SpriteAnim name="SwordSouth"  spriteIndexes="182~187" fps="12" playbackMode="0" />
+      <SpriteAnim name="SwordEast"   spriteIndexes="195~200" fps="12" playbackMode="0" />
     </SpriteAnimSet>
 
 
