@@ -373,6 +373,12 @@
     <ClCompile Include="Core\NamedPropertyBase.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\EventSystem.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\EventSubscription.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -745,6 +751,12 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\NamedPropertyBase.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\EventSystem.hpp">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\EventSubscription.hpp">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>

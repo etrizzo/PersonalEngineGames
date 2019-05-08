@@ -172,6 +172,18 @@ void GameState_Playing::Startup()
 	SpawnPlayer(Vector3(-4.f,0.f, 120.0f));
 
 	////playground:
+	FireEvent("Sunrise");		//no one's listening, does nothing
+	SubscribeEventCallbackFunction("Sunrise", MyTestEventFunction);
+	FireEvent("Sunrise");		//now MyTestEventFunction fires
+	UnsubscribeEventCallbackFunction("Sunrise", MyTestEventFunction);
+	FireEvent("Sunrise");		//back to no friends, does nothing
+
+
+	SubscribeEventCallbackFunction("Test", MyTestEventFunction);
+	FireEvent("Test");
+	NamedProperties p;
+	p.Set("Health", 20.f);
+	FireEvent("Test", p);
 
 
 	//std::string lastName("Eiserloh");

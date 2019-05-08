@@ -361,6 +361,8 @@
     <ClCompile Include="Core\Endianness.cpp" />
     <ClCompile Include="Core\EngineCommon.cpp" />
     <ClCompile Include="Core\ErrorWarningAssert.cpp" />
+    <ClCompile Include="Core\EventSubscription.cpp" />
+    <ClCompile Include="Core\EventSystem.cpp" />
     <ClCompile Include="Core\Heatmap.cpp" />
     <ClCompile Include="Core\Image.cpp" />
     <ClCompile Include="Core\LogSystem.cpp" />
@@ -491,6 +493,8 @@
     <ClInclude Include="Core\Endianness.hpp" />
     <ClInclude Include="Core\EngineCommon.hpp" />
     <ClInclude Include="Core\ErrorWarningAssert.hpp" />
+    <ClInclude Include="Core\EventSubscription.hpp" />
+    <ClInclude Include="Core\EventSystem.hpp" />
     <ClInclude Include="Core\Heatmap.hpp" />
     <ClInclude Include="Core\Image.hpp" />
     <ClInclude Include="Core\LogSystem.hpp" />

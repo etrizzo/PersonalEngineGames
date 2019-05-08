@@ -1,3 +1,4 @@
+#pragma once
 #include "Engine/Core/NamedPropertyBase.hpp"
 
 class NamedProperties

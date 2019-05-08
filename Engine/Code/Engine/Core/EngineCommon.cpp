@@ -96,3 +96,24 @@ eCompare StringToDepthCompare(std::string text)
 	return COMPARE_LESS;		//default
 
 }
+
+void FireEvent(std::string name, NamedProperties & args)
+{
+	EventSystem::GetInstance()->FireEvent(name, args);
+}
+
+void FireEvent(std::string name)
+{
+	NamedProperties dummy;
+	EventSystem::GetInstance()->FireEvent(name, dummy);
+}
+
+void SubscribeEventCallbackFunction(std::string name, EventFunctionCallbackPtrType function)
+{
+	EventSystem::GetInstance()->SubscribeEventCallbackFunction(name, function);
+}
+
+void UnsubscribeEventCallbackFunction(std::string name, EventFunctionCallbackPtrType function)
+{
+	EventSystem::GetInstance()->UnsubscribeEventCallbackFunction(name, function);
+}

@@ -62,3 +62,12 @@ protected:
 
 
 };
+
+
+
+inline bool MyTestEventFunction(NamedProperties* args)
+{
+	ConsolePrintf("Testing!");
+	ConsolePrintf("args.health = %3.2f", args->Get("Health", 0.f));
+	return false;
+}

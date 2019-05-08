@@ -40,6 +40,7 @@
 #include "Engine/Core/BytePacker.hpp"
 
 #include "Engine/Core/NamedProperties.hpp"
+#include "Engine/Core/EventSystem.hpp"
 
 
 #include <vector>
@@ -283,6 +284,19 @@ bool Contains(std::vector<T*>& array, T* obj){
 	return false;
 }
 
+template <typename K, typename V>
+bool Contains(std::map<K,V> map, K key) {
+	auto contains = map.find(key);
+	if (contains != map.end())
+	{
+		return true;
+	}
+	else {
+		return false;
+	}
+	
+}
+
 template <typename T>
 void Shuffle(std::vector<T>& array, unsigned int numTimesToShuffle = 2)
 {
@@ -313,3 +327,12 @@ eFillMode	StringToFillMode	( std::string text);
 eWindOrder	StringToFrontFace	( std::string text);
 eBlendMode	StringToBlendMode	( std::string text);
 eCompare	StringToDepthCompare( std::string text);
+
+
+
+
+
+void FireEvent(std::string name, NamedProperties& args);
+void FireEvent(std::string name);
+void SubscribeEventCallbackFunction(std::string name, EventFunctionCallbackPtrType function);
+void UnsubscribeEventCallbackFunction(std::string name, EventFunctionCallbackPtrType function);
