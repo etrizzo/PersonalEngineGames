@@ -43,10 +43,10 @@ void EventSystem::UnsubscribeEventCallbackFunction(std::string name, EventFuncti
 {
 	auto hasSubscription = m_subscriptions.find(name);
 	if (hasSubscription != m_subscriptions.end()) {
-		std::vector<EventSubscription*> subList = hasSubscription->second;
-		for (int i = subList.size() - 1; i >= 0; i--)
+		//std::vector<EventSubscription*> subList = hasSubscription->second;
+		for (int i = m_subscriptions[name].size() - 1; i >= 0; i--)
 		{
-			EventFunctionSubscription* functionSub = dynamic_cast<EventFunctionSubscription*>(subList[i]);
+			EventFunctionSubscription* functionSub = dynamic_cast<EventFunctionSubscription*>(m_subscriptions[name][i]);
 			if (functionSub != nullptr)
 			{
 				//we have a function subscription, compare to the function we passed in
@@ -54,10 +54,10 @@ void EventSystem::UnsubscribeEventCallbackFunction(std::string name, EventFuncti
 				{
 					//it's subscribed - gotta delete it
 					//RemoveAtFast
-					if (subList.size() > 1) {
-						subList[i] = subList[subList.size() - 1];
+					if (m_subscriptions[name].size() > 1) {
+						m_subscriptions[name][i] = m_subscriptions[name][m_subscriptions[name].size() - 1];
 					}
-					subList.pop_back();
+					m_subscriptions[name].pop_back();
 				}
 			}
 		}

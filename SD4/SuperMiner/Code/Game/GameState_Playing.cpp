@@ -171,17 +171,18 @@ void GameState_Playing::Startup()
 	m_world = new World();
 	SpawnPlayer(Vector3(-4.f,0.f, 120.0f));
 
-	////playground:
-	FireEvent("Sunrise");		//no one's listening, does nothing
-	SubscribeEventCallbackFunction("Sunrise", MyTestEventFunction);
-	FireEvent("Sunrise");		//now MyTestEventFunction fires
-	UnsubscribeEventCallbackFunction("Sunrise", MyTestEventFunction);
-	FireEvent("Sunrise");		//back to no friends, does nothing
-
-
-	SubscribeEventCallbackFunction("Test", MyTestEventFunction);
-	FireEvent("Test");
 	NamedProperties p;
+	p.Set("Event", "Sunrise");
+	////playground:
+	FireEvent("Sunrise", p);		//no one's listening, does nothing
+	SubscribeEventCallbackFunction("Sunrise", MyTestEventFunction);
+	FireEvent("Sunrise", p);		//now MyTestEventFunction fires
+	UnsubscribeEventCallbackFunction("Sunrise", MyTestEventFunction);
+	FireEvent("Sunrise", p);		//back to no friends, does nothing
+
+	p.Set("Event", "Test");
+	SubscribeEventCallbackFunction("Test", MyTestEventFunction);
+	FireEvent("Test", p);
 	p.Set("Health", 20.f);
 	FireEvent("Test", p);
 

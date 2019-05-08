@@ -67,7 +67,7 @@ protected:
 
 inline bool MyTestEventFunction(NamedProperties* args)
 {
-	ConsolePrintf("Testing!");
+	ConsolePrintf("Testing Event: %s", args->Get("Event", "NO EVENT").c_str());
 	ConsolePrintf("args.health = %3.2f", args->Get("Health", 0.f));
 	return false;
 }
