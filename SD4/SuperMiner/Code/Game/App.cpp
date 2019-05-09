@@ -291,6 +291,8 @@ void App::Startup()
 	g_theInput->ShowCursor(false);
 }
 
+
+
 void CommandDebugRenderStartup(Command & cmd)
 {
 	UNUSED(cmd);

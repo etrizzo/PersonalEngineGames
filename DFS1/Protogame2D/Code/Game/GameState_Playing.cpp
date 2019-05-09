@@ -20,58 +20,60 @@ GameState_Playing::GameState_Playing()
 
 	m_player = new Player(Vector2(1.f,1.f));
 
-	//for (int i = 0; i < 28; i++)
-	//{
-	//	Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 7.f), Vector2::HALF * .5f, "white", RGBA::GetRandomEarthTone());
-	//	m_scene->AddRenderable(ent->m_renderable);
-	//}
+	//Earth tones
+	for (int i = 0; i < 28; i++)
+	{
+		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 7.f), Vector2::HALF, "white", RGBA::GetRandomEarthTone());
+		m_scene->AddRenderable(ent->m_renderable);
+	}
 
-	////Random HSV
-	//for (int i = 0; i < 28; i++)
-	//{
-	//	Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 6.f), Vector2::HALF * .5f, "white", RGBA::GetRGBAFromHSV(GetRandomFloatZeroToOne(), .5f, .75f));
-	//	m_scene->AddRenderable(ent->m_renderable);
-	//}
+	//Random HSV
+	for (int i = 0; i < 28; i++)
+	{
+		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 6.f), Vector2::HALF, "white", RGBA::GetRGBAFromHSV(GetRandomFloatZeroToOne(), .5f, .75f));
+		m_scene->AddRenderable(ent->m_renderable);
+	}
 
-	////sunflower
-	//RGBA goodYellow = RGBA(240, 200, 60);
-	//RGBA goodRed = RGBA(133, 24, 0);
-	//for (int i = 0; i < 28; i++)
-	//{
-	//	RGBA randomYellow = RGBA::GetRandomMixedColor(goodYellow, .8f);
-	//	RGBA randomRed = RGBA::GetRandomMixedColor(goodRed, .8f);
-	//	float perc = (float) i / 28.f;
-	//	float intValue = SmoothStep3(perc );
-	//	RGBA entColor = Interpolate(randomYellow, randomRed, intValue);
-	//	
-	//	Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 5.f), Vector2::HALF * .5f, "white", entColor);
-	//	m_scene->AddRenderable(ent->m_renderable);
-	//}
+	//sunflower
+	RGBA goodYellow = RGBA(240, 200, 60);
+	RGBA goodRed = RGBA(133, 24, 0);
+	for (int i = 0; i < 28; i++)
+	{
+		RGBA randomYellow = RGBA::GetRandomMixedColor(goodYellow, .8f);
+		RGBA randomRed = RGBA::GetRandomMixedColor(goodRed, .8f);
+		float perc = (float) i / 28.f;
+		float intValue = SmoothStep3(perc );
+		RGBA entColor = Interpolate(randomYellow, randomRed, intValue);
+		
+		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 5.f), Vector2::HALF , "white", entColor);
+		m_scene->AddRenderable(ent->m_renderable);
+	}
 
-	////golden ratio
-	//for (int i = 0; i < 28; i++)
-	//{
-	//	Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 4.f), Vector2::HALF * .5f, "white", RGBA::GetGoldenRatioColorSequence(.5f, .75f));
-	//	m_scene->AddRenderable(ent->m_renderable);
-	//}
+	//golden ratio
+	for (int i = 0; i < 28; i++)
+	{
+		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 4.f), Vector2::HALF , "white", RGBA::GetGoldenRatioColorSequence(.5f, .75f));
+		m_scene->AddRenderable(ent->m_renderable);
+	}
 
 	//pastels
-	/*for (int i = 0; i < 28; i++)
+	for (int i = 0; i < 28; i++)
 	{
-		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 3.f), Vector2::HALF * .5f, "white", RGBA::GetRandomMixedColor(RGBA(149,200,45), .8f));
+		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 3.f), Vector2::HALF, "white", RGBA::GetRandomMixedColor(RGBA(149,200,45), .8f));
 		m_scene->AddRenderable(ent->m_renderable);
-	}*/
+	}
 
-	//for (int i = 0; i < 28; i++)
-	//{
-	//	float perc = (float) i / 28.f;
-	//	Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 2.f), Vector2::HALF * .5f, "white", RGBA::GetRGBAFromHSV(perc, 1.f, 1.f));
-	//	m_scene->AddRenderable(ent->m_renderable);
-	//}
+	//rainbow
+	for (int i = 0; i < 28; i++)
+	{
+		float perc = (float) i / 28.f;
+		Entity* ent = new Entity(Vector2(1.75f + (i * .5f), 2.f), Vector2::HALF, "white", RGBA::GetRGBAFromHSV(perc, 1.f, 1.f));
+		m_scene->AddRenderable(ent->m_renderable);
+	}
 	
 
 	m_flower = new Flower(Vector2::ONE * 3.f, 4.f);
-	m_scene->AddRenderable(m_flower->m_renderable);
+	//m_scene->AddRenderable(m_flower->m_renderable);
 
 	m_scene->AddRenderable(m_player->m_renderable);
 

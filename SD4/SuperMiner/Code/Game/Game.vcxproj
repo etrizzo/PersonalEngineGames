@@ -432,7 +432,9 @@
     <ClInclude Include="World.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="..\..\Run_Win32\Data\Data\GameConfig.xml" />
+    <Xml Include="..\..\Run_Win32\Data\Data\GameConfig.xml">
+      <SubType>Designer</SubType>
+    </Xml>
     <Xml Include="..\..\Run_Win32\Data\Data\Maps.xml" />
     <Xml Include="..\..\Run_Win32\Data\Data\Tiles.xml" />
   </ItemGroup>

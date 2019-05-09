@@ -171,49 +171,64 @@ void GameState_Playing::Startup()
 	m_world = new World();
 	SpawnPlayer(Vector3(-4.f,0.f, 120.0f));
 
+
+	////playground:
+	ConsolePrintf(RGBA::GRAY, "Creating named properties p and calling p.Set(\"Event\", \"Sunrise\"");
 	NamedProperties p;
 	p.Set("Event", "Sunrise");
-	////playground:
+
+	
+	ConsolePrintf(RGBA::ORANGE, "Firing event \"Sunrise\" with p.Event = %s ", p.Get("Event", "NO_EVENT").c_str());
 	FireEvent("Sunrise", p);		//no one's listening, does nothing
+
+	ConsolePrintf(RGBA::BLANCHEDALMOND, "Subscribing MyTestFunction to event \"Sunrise\"");
 	SubscribeEventCallbackFunction("Sunrise", MyTestEventFunction);
+
+	ConsolePrintf(RGBA::ORANGE, "Firing event \"Sunrise\" with p.Event = %s ", p.Get("Event", "NO_EVENT").c_str());
 	FireEvent("Sunrise", p);		//now MyTestEventFunction fires
+
+	ConsolePrintf(RGBA::BLANCHEDALMOND, "UnSubscribing MyTestFunction to event \"Sunrise\"");
 	UnsubscribeEventCallbackFunction("Sunrise", MyTestEventFunction);
+
+	ConsolePrintf(RGBA::ORANGE, "Firing event \"Sunrise\" with p.Event = %s ", p.Get("Event", "NO_EVENT").c_str());
 	FireEvent("Sunrise", p);		//back to no friends, does nothing
 
+
+	ConsolePrintf(" ");
+
+
+	ConsolePrintf(RGBA::GRAY, "p.Set(\"Event\", \"Test\"");
 	p.Set("Event", "Test");
+	ConsolePrintf(RGBA::BLANCHEDALMOND, "Subscribing MyTestFunction to event \"Test\"");
 	SubscribeEventCallbackFunction("Test", MyTestEventFunction);
+
+	ConsolePrintf(RGBA::ORANGE, "Firing event \"Test\" with p.Event = %s ", p.Get("Event", "NO_EVENT").c_str());
 	FireEvent("Test", p);
+
+	ConsolePrintf(RGBA::GRAY, "p.Set(\"Health\", 20.f");
 	p.Set("Health", 20.f);
+	ConsolePrintf(RGBA::ORANGE, "Firing event \"Test\" with p.Event = %s ", p.Get("Event", "NO_EVENT").c_str());
 	FireEvent("Test", p);
 
 
-	//std::string lastName("Eiserloh");
-	//NamedProperties employmentInfoProperties;
-
-	//NamedProperties p;
-	//p.Set("FirstName", "Squirrel"); 	// Setting as c-string (const char*) data...
-	//p.Set("LastName", lastName);	// Setting as std::string data...
-	//p.Set("Height", 1.93f);
-	//p.Set("Age", 45);
-	//p.Set("IsMarried", true);
-	//p.Set("Position", Vector2(3.5f, 6.2f));
-	//p.Set("EyeColor", RGBA(77, 38, 23));
-	//p.Set("EmploymentInfo", employmentInfoProperties); // NamedProperties inside NamedProperties
-
-	//float health = p.Get("Height", 1.75f);
-
-	//// Note the subtleties in the Set, Get, and return types for each of the following examples:
+	ConsolePrintf(" ");
 
 
-	//std::string first_name = p.Get("FirstName", "UNKNOWN");
-	//std::string last_name = p.Get("LastName", "UNKNOWN");
+	ConsolePrintf(RGBA::GRAY, "p.Set(\"Health\", 20 (int), p.Set(\"Event\", \"TestMethods\"");
+	p.Set("Health", 20);
+	p.Set("Event", "TestMethods");
 
-	//first_name = p.Get("FirstName", first_name);
-	//last_name = p.Get("LastName", last_name);
+	ConsolePrintf(RGBA::BLANCHEDALMOND, "Subscribing g_theGame->EventTest to event \"TestMethods\"");
+	SubscribeEventCallbackObjectMethod( "TestMethods", g_theGame, &Game::EventTest );
 
-	//std::string color = p.Get("EyeColor", "green");
-	//p.Set("EyeColor", "Purple");
-	//color = p.Get("EyeColor", "green");
+	ConsolePrintf(RGBA::ORANGE, "Firing event \"TestMethods\" with p.Event = %s ", p.Get("Event", "NO_EVENT").c_str());
+	FireEvent("TestMethods", p);
+
+	ConsolePrintf(RGBA::BLANCHEDALMOND, "UnSubscribing g_theGame->EventTest to event \"TestMethods\"");
+	UnsubscribeEventCallbackObjectMethod("TestMethods", g_theGame, &Game::EventTest );
+
+	ConsolePrintf(RGBA::ORANGE, "Firing event \"TestMethods\" with p.Event = %s ", p.Get("Event", "NO_EVENT").c_str());
+	FireEvent("TestMethods", p);
 	
 }
 

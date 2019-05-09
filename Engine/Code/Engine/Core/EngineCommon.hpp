@@ -336,3 +336,15 @@ void FireEvent(std::string name, NamedProperties& args);
 void FireEvent(std::string name);
 void SubscribeEventCallbackFunction(std::string name, EventFunctionCallbackPtrType function);
 void UnsubscribeEventCallbackFunction(std::string name, EventFunctionCallbackPtrType function);
+
+template <typename T, typename METHOD>
+void SubscribeEventCallbackObjectMethod(std::string name, T* object, METHOD function)
+{
+	EventSystem::GetInstance()->SubscribeEventCallbackObjectMethod<T, METHOD>(name, object, function);
+}
+
+template <typename T, typename METHOD>
+void UnsubscribeEventCallbackObjectMethod(std::string name, T* object, METHOD function)
+{
+	EventSystem::GetInstance()->UnsubscribeEventCallbackObjectMethod<T, METHOD>(name, object, function);
+}

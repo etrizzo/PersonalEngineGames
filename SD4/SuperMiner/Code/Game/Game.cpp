@@ -292,6 +292,15 @@ RenderScene * Game::GetScene()
 
 
 
+bool Game::EventTest(NamedProperties* args)
+{
+	std::string eventName = args->Get("Event", "NO EVENT");
+	int health = args->Get("Health", 100);
+	ConsolePrintf("Game::EventTest executed: args.Event = %s, args.Health=%i", eventName.c_str(), health);
+	return false; // don't consume this event (let other subscribers receive it)
+
+}
+
 void Game::ReadBlocksFromFile(std::string blockXMLFile)
 {
 	tinyxml2::XMLDocument blockDefDoc;

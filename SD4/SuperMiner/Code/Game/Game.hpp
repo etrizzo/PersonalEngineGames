@@ -100,6 +100,9 @@ public:
 
 	bool m_godMode;
 
+
+	bool EventTest(NamedProperties* args);
+
 private:
 	
 	float m_fps = 60.f;
