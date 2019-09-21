@@ -76,16 +76,25 @@ void main()
    float depth = texture(gTexDepth, passUV).r;   //NEED TO BIND DEPTH BUFFER
    //depth *= depth;
 
-   vec3 position = 
+   //https://stackoverflow.com/questions/50209415/sampling-the-depth-buffer-and-normalizing-to-0-1-directx
+  float lineardepth = (2.0f * 0.1f) / (120.0f + 0.1f - depth * (120.0f - 0.1f));
 
 
    //player is at 0, camera is at -10
    // camera depth is 120
    //so the focal point should be at 1/12
    // .08 ish
-   depth -= .5f;
-   depth = AbsValue(depth);   //need to relinearize this shit
-   float sampleNumFloat = RangeMap(depth, 0.0f, 1.0f, 0.0f, 10.0f);   //change based on depth 0-5ish
+   float blurDepth = lineardepth - .15f;
+   if (blurDepth < 0.0f){
+   	   blurDepth *=2.0f;
+   }
+   blurDepth = AbsValue(blurDepth);   //need to relinearize this shit
+
+   blurDepth = SmoothStop2(blurDepth) * .85f;		//close to the camera blurs faster
+
+
+
+   float sampleNumFloat = RangeMap(blurDepth, 0.0f, 1.0f, 0.0f, 15.0f);   //change based on depth 0-5ish
    //sampleNumFloat = AbsValue(sampleNumFloat);
    //sampleNumFloat = clamp(sampleNumFloat, 0.0f, 6.0f);
     //float sampleNumFloat = smoothstep( 0.0f, 10.0f, depth ); 
@@ -105,8 +114,17 @@ void main()
 
           newUV.x = clamp(newUV.x, 0.0f, 1.0f);
           newUV.y = clamp(newUV.y, 0.0f, 1.0f);
+
+		   float sampleDepth = texture(gTexDepth, newUV).r;   //NEED TO BIND DEPTH BUFFER
+
+			float linearSampleDepth = (2.0f * 0.1f) / (120.0f + 0.1f - sampleDepth * (120.0f - 0.1f));
+
+			float sameDepthNess = 1.0 - AbsValue(linearSampleDepth - lineardepth);
+			sameDepthNess -= .2f;	//make the threshold a little smaller for being NOT close to each other
+			sameDepthNess = SmoothStep3(sameDepthNess);
           vec4 sampleColor = GetColor(newUV);
-          cumulativeColor+=sampleColor;
+		  vec4 addColor = mix(diffuse,sampleColor, sameDepthNess);
+          cumulativeColor+=addColor;
       }
    }
    cumulativeColor/=numSamples;

@@ -139,13 +139,13 @@
 
 <material name="water" shader="water">
 	<textures>
-		<texture type="diffuse" path="water_2.png" />
+		<texture type="diffuse" path="white" />
 		<texture type="normal" path="flat" />
 	</textures>
 	<properties>
 		<property type="float" name="SPECULAR_AMOUNT" value="1.0" />
 		<property type="float" name="SPECULAR_POWER" value="5" />
-		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+		<property type="RGBA" name="TINT" value="170,205,245,255"/>
 	</properties>
 </material>
 

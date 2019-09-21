@@ -11,6 +11,12 @@
     <Filter Include="General\Entities">
       <UniqueIdentifier>{82d03304-c50e-4d60-97ed-585a9e4ae3d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data\Shaders">
+      <UniqueIdentifier>{5afee77a-4b3b-47b6-a407-6b99d6c9ba7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Shaders\includes">
+      <UniqueIdentifier>{5fc18e08-d8a1-4568-ae32-adaefe8286e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main_Win32.cpp">
@@ -134,5 +140,172 @@
     <Xml Include="..\..\Run_Win32\Data\Data\Maps.xml">
       <Filter>Data</Filter>
     </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Data\Audio.xml">
+      <Filter>Data</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Data\materials.xml">
+      <Filter>Data</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Data\shaders.xml">
+      <Filter>Data</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Data\Sprites.xml">
+      <Filter>Data</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Run_Win32\Data\Shaders\bitangent.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\bitangent.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\blur.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\blur.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\cel_shaded.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\cel_shaded.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\cel_shaded_fog.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\cel_shaded_fog.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\cutout.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\cutout.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\cutout_lit.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\cutout_lit.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\default.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\default.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\diffuse.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\diffuse.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\error.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\error.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\findedges.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\findedges.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\grass.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\grass.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\invalid.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\invalid.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\inverse.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\inverse.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\lit.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\lit.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\lit_fog.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\lit_fog.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\normal.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\normal.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\normal_map.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\normal_map.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\recompileTest.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\recompileTest.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\scrolling.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\scrolling.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\skybox.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\skybox.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\specular.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\specular.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\tangent.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\tangent.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\world_normal.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\world_normal.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\water.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\water.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Includes\fog.glsl">
+      <Filter>Data\Shaders\includes</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Includes\lighting.glsl">
+      <Filter>Data\Shaders\includes</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Includes\mathutils.glsl">
+      <Filter>Data\Shaders\includes</Filter>
+    </None>
   </ItemGroup>
 </Project>

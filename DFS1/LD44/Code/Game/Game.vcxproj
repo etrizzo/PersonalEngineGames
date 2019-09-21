@@ -331,9 +331,66 @@
     <ClInclude Include="Player.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="..\..\Run_Win32\Data\Data\Audio.xml" />
     <Xml Include="..\..\Run_Win32\Data\Data\GameConfig.xml" />
     <Xml Include="..\..\Run_Win32\Data\Data\Maps.xml" />
+    <Xml Include="..\..\Run_Win32\Data\Data\materials.xml" />
+    <Xml Include="..\..\Run_Win32\Data\Data\shaders.xml" />
+    <Xml Include="..\..\Run_Win32\Data\Data\Sprites.xml" />
     <Xml Include="..\..\Run_Win32\Data\Data\Tiles.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Run_Win32\Data\Shaders\bitangent.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\bitangent.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\blur.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\blur.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\cel_shaded.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\cel_shaded.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\cel_shaded_fog.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\cel_shaded_fog.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\cutout.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\cutout.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\cutout_lit.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\cutout_lit.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\default.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\default.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\diffuse.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\diffuse.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\error.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\error.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\findedges.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\findedges.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\grass.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\grass.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\Includes\fog.glsl" />
+    <None Include="..\..\Run_Win32\Data\Shaders\Includes\lighting.glsl" />
+    <None Include="..\..\Run_Win32\Data\Shaders\Includes\mathutils.glsl" />
+    <None Include="..\..\Run_Win32\Data\Shaders\invalid.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\invalid.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\inverse.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\inverse.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\lit.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\lit.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\lit_fog.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\lit_fog.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\normal.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\normal.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\normal_map.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\normal_map.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\recompileTest.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\recompileTest.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\scrolling.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\scrolling.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\skybox.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\skybox.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\specular.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\specular.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\tangent.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\tangent.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\water.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\water.vs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\world_normal.fs" />
+    <None Include="..\..\Run_Win32\Data\Shaders\world_normal.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

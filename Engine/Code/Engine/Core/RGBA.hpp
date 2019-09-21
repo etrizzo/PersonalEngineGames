@@ -40,16 +40,20 @@ public:
 	float PercentAlpha() const;
 	RGBA GetColorWithAlpha(unsigned char alpha) const;
 
+	//trash omg
 	static RGBA GetRandomRainbowColor();
 	static RGBA GetRandomColor();
 	static RGBA GetRandomMutedColor();
+
 	//makes a random color and then mixes it with the start color
 	static RGBA GetRandomMixedColor(const RGBA& mixColor, float mixWeight = .5f);		
 	static RGBA GetRGBAFromHSVWhereHueIsDegrees(float hue0to360, float saturation, float value);
+	//hue is zero to one (where zero/one is red on the color wheel)
 	static RGBA GetRGBAFromHSV(float hue0to1, float saturation, float value);
 	static RGBA GetRandomEarthTone();
 	static RGBA GetRandomPastelColor(float lightness = .5f);
 
+	//uses golden ratio to calculate sequential hues (get "random" colors that are guaranteed to be different from the previous one)
 	static RGBA GetGoldenRatioColorSequence(float saturation, float value);
 
 	static float s_currentRatioNumber;
