@@ -307,5 +307,8 @@
     <None Include="..\..\Run_Win32\Data\Shaders\Includes\mathutils.glsl">
       <Filter>Data\Shaders\includes</Filter>
     </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\Includes\noise.glsl">
+      <Filter>Data\Shaders\includes</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -14,7 +14,7 @@ Material::Material()
 	SetProperty("TINT", RGBA::WHITE);
 }
 
-Material::Material(tinyxml2::XMLElement * matElement)
+Material::Material(tinyxml2::XMLElement * matElement, Renderer* renderer)
 {
 	m_name					= ParseXmlAttribute(*matElement, "name"		, "NO_NAME");
 	std::string shaderName	= ParseXmlAttribute(*matElement, "shader"	, "default");
@@ -27,12 +27,13 @@ Material::Material(tinyxml2::XMLElement * matElement)
 	if (textureElement != nullptr){
 		for (tinyxml2::XMLElement* texElement = textureElement->FirstChildElement("texture"); texElement != nullptr; texElement = texElement->NextSiblingElement("texture")){
 			int idx = ParseXmlAttribute(*texElement, "index", -1);
+			if (idx == -1){
+				std::string type = ParseXmlAttribute(*texElement, "type", "NO_TYPE");
+				idx = getTextureIndexByType(type);
+			}
 			std::string path = ParseXmlAttribute(*texElement, "path", "NO_PATH");
 			ASSERT_OR_DIE(path != "NO_PATH", "Must specify texture path in material data!!!!!");
-			if (idx == -1){
-				idx = (int) m_textures.size();
-			}
-			SetTexture(idx, Texture::CreateOrGetTexture(path, IMAGE_DIRECTORY));
+			SetTexture(idx, getTexture(path, renderer));
 		}
 	}
 
@@ -190,6 +191,27 @@ Material * Material::GetMaterial(std::string name)
 }
 
 
+
+int Material::getTextureIndexByType(const std::string& type)
+{
+	if (type == "diffuse"){
+		return DIFFUSE_BIND_POINT;
+	} else if (type == "normal"){
+		return NORMAL_BIND_POINT;
+	} else if (type == "depth"){
+		return DEPTH_BIND_POINT;
+	}
+	return (int) m_textures.size();
+}
+
+Texture* Material::getTexture(const std::string& path, Renderer* renderer)
+{
+	if (path == "depth"){
+		return renderer->m_defaultDepthTarget;
+	} else {
+		return Texture::CreateOrGetTexture(path, IMAGE_DIRECTORY);
+	}
+}
 
 MtlLoader::MtlLoader(std::string mtlFile)
 {

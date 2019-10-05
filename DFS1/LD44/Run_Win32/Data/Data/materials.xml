@@ -141,11 +141,17 @@
 	<textures>
 		<texture type="diffuse" path="white" />
 		<texture type="normal" path="flat" />
+    <texture index="3" path="water_ramp.png" />
+    <texture index="4" path="ripple_ramp.png" />
+    <texture index="5" path="Heightmap_2.png" />
+    <texture type="depth" path="depth" />
 	</textures>
 	<properties>
 		<property type="float" name="SPECULAR_AMOUNT" value="1.0" />
 		<property type="float" name="SPECULAR_POWER" value="5" />
-		<property type="RGBA" name="TINT" value="170,205,245,255"/>
+		<property type="RGBA" name="TINT" value="120,200,205,200"/>
+    <property type="RGBA" name="EDGE_COLOR" value="200,255,255,220"/>
+    <property type="float" name="DEPTH_FACTOR" value="3.0"/>
 	</properties>
 </material>
 

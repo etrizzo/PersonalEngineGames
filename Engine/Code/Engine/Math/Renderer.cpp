@@ -538,6 +538,8 @@ void Renderer::BindRendererUniforms()
 		glProgramUniform3fv(program_handle, pos_bind, 1, (GLfloat*)&pos);
 	}
 
+	BindTexture(*m_defaultDepthTarget, DEPTH_BIND_POINT);
+
 	BindAmbientLight();
 }
 
@@ -1042,8 +1044,8 @@ void Renderer::ApplyEffect(Material * material, const AABB2& uvs)
 	SetCamera(m_effectCamera);
 	BindMaterial(material);
 
-	BindTexture(*m_effectTarget, 0);
-	BindTexture(*m_defaultDepthTarget, 1);
+	BindTexture(*m_effectTarget, DIFFUSE_BIND_POINT);
+	BindTexture(*m_defaultDepthTarget, DEPTH_BIND_POINT);
 	//BindTexture(*m_defaultDepthTarget, 1);
 	DrawAABB2(AABB2(-1.f * Vector2::ONE, Vector2::ONE), RGBA::WHITE);
 
@@ -1767,7 +1769,7 @@ void Renderer::LoadMaterialsFromFile(std::string fileName)
 	matDoc.LoadFile(filePath.c_str());
 
 	for (tinyxml2::XMLElement* matElement = matDoc.FirstChildElement("material"); matElement != NULL; matElement = matElement->NextSiblingElement("material")){
-		new Material(matElement);
+		new Material(matElement, this);
 	}
 }
 

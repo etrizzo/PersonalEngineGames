@@ -334,8 +334,12 @@
     <Xml Include="..\..\Run_Win32\Data\Data\Audio.xml" />
     <Xml Include="..\..\Run_Win32\Data\Data\GameConfig.xml" />
     <Xml Include="..\..\Run_Win32\Data\Data\Maps.xml" />
-    <Xml Include="..\..\Run_Win32\Data\Data\materials.xml" />
-    <Xml Include="..\..\Run_Win32\Data\Data\shaders.xml" />
+    <Xml Include="..\..\Run_Win32\Data\Data\materials.xml">
+      <SubType>Designer</SubType>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Data\shaders.xml">
+      <SubType>Designer</SubType>
+    </Xml>
     <Xml Include="..\..\Run_Win32\Data\Data\Sprites.xml" />
     <Xml Include="..\..\Run_Win32\Data\Data\Tiles.xml" />
   </ItemGroup>
@@ -365,6 +369,7 @@
     <None Include="..\..\Run_Win32\Data\Shaders\Includes\fog.glsl" />
     <None Include="..\..\Run_Win32\Data\Shaders\Includes\lighting.glsl" />
     <None Include="..\..\Run_Win32\Data\Shaders\Includes\mathutils.glsl" />
+    <None Include="..\..\Run_Win32\Data\Shaders\Includes\noise.glsl" />
     <None Include="..\..\Run_Win32\Data\Shaders\invalid.fs" />
     <None Include="..\..\Run_Win32\Data\Shaders\invalid.vs" />
     <None Include="..\..\Run_Win32\Data\Shaders\inverse.fs" />

@@ -4,6 +4,7 @@
 
 const int DIFFUSE_BIND_POINT = 0;
 const int NORMAL_BIND_POINT = 1;
+const int DEPTH_BIND_POINT = 6;
 
 const float DEFAULT_SPEC_AMOUNT = .5f;
 const float DEFAULT_SPEC_POWER = 3.f;
@@ -15,7 +16,7 @@ const std::string MAT_DIRECTORY = "Data/Models/";
 class Material{
 public:
 	Material();
-	Material(tinyxml2::XMLElement* matElement);
+	Material(tinyxml2::XMLElement* matElement, Renderer* renderer);
 	Material(std::string name);
 	Material(std::string name, std::string shaderPath);
 
@@ -51,6 +52,10 @@ public:
 	static Strings LoadMaterials(std::string matFile);
 	static std::map<std::string, Material*> s_materials;
 	static Material* GetMaterial(std::string name);
+
+private:
+	int getTextureIndexByType(const std::string& type);
+	Texture* getTexture(const std::string& path, Renderer* renderer);
 
 public:
 	std::string m_name;

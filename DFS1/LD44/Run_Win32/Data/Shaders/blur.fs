@@ -4,7 +4,7 @@
 // create a uniform for our sampler2D.
 // layout binding = 0 is us binding it to texture slot 0.  
 layout(binding = 0) uniform sampler2D gTexDiffuse;
-layout(binding = 1) uniform sampler2D gTexDepth;
+layout(binding = 6) uniform sampler2D gTexDepth;
 
 in vec4 passColor;
 in vec2 passUV; 
@@ -90,14 +90,11 @@ void main()
    }
    blurDepth = AbsValue(blurDepth);   //need to relinearize this shit
 
-   blurDepth = SmoothStop2(blurDepth) * .85f;		//close to the camera blurs faster
+   blurDepth = SmoothStop2(blurDepth) * .75f;		//close to the camera blurs faster
 
 
 
    float sampleNumFloat = RangeMap(blurDepth, 0.0f, 1.0f, 0.0f, 15.0f);   //change based on depth 0-5ish
-   //sampleNumFloat = AbsValue(sampleNumFloat);
-   //sampleNumFloat = clamp(sampleNumFloat, 0.0f, 6.0f);
-    //float sampleNumFloat = smoothstep( 0.0f, 10.0f, depth ); 
 
    int sampleNum = int(sampleNumFloat);
    vec2 texelSize = vec2(TEXEL_SIZE_X, TEXEL_SIZE_Y);

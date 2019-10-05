@@ -35,7 +35,26 @@ Map::Map(Vector3 position, float radius)
 	m_waterRenderable = new Renderable();
 	MeshBuilder watermb = MeshBuilder();
 	watermb.Begin(PRIMITIVE_TRIANGLES, true);
-	watermb.AppendPlane(Vector3(0.f,0.f,radius), FORWARD, RIGHT, Vector2(-radius * 4.f, radius * 5.f), RGBA::WHITE.GetColorWithAlpha(200), Vector2::ZERO, (Vector2::ONE * 128));
+	RGBA color = RGBA::WHITE.GetColorWithAlpha(200);
+	Vector2 planeSize = Vector2(1.0f,1.0f);
+	int numPlanes = 60;
+	float numPlanesF = (float) numPlanes;
+	float halfnumPlanes = numPlanes * .5f;
+	for (int x = -numPlanes; x < numPlanes; x++){
+		for (int y = -numPlanes; y < numPlanes; y++){
+			float xPos = ((float) x * planeSize.x) + (planeSize.x * .5f);
+			float yPos = ((float) y * planeSize.y) + (planeSize.y * .5f);
+
+			float xPerc = ((float)x + halfnumPlanes) / numPlanesF;
+			float yPerc = ((float)y + halfnumPlanes) / numPlanesF;
+			float nextxPerc = ((float)x + 1.f + halfnumPlanes) / numPlanesF;
+			float nextyPerc = ((float)y + 1.f + halfnumPlanes) / numPlanesF;
+
+			watermb.AppendPlane(Vector3(xPos, 0.0f, yPos), FORWARD, RIGHT, planeSize, color, Vector2(xPerc, yPerc), Vector2(nextxPerc, nextyPerc));
+		}
+		//watermb.AppendPlane(Vector3(0.f,0.f,radius), FORWARD, RIGHT, Vector2(-radius * 4.f, radius * 5.f), color, Vector2::ZERO, (Vector2::ONE * 128));
+	}
+	
 	watermb.End();
 	m_waterRenderable->SetMesh(watermb.CreateMesh());
 	m_waterRenderable->SetMaterial(Material::GetMaterial("water"));
@@ -344,8 +363,10 @@ void Map::AddGrassToSphere()
 
 Vector3 Map::GetRandomGrassPosition() const
 {
+	float minAzimuth = 90.f;
+	float maxAzimuth = 124.f;
 	float theta = GetRandomFloatInRange(0.f, 360.f);
-	float azimuth = GetRandomFloatInRange(90.f, 135.f);
+	float azimuth = GetRandomFloatInRange(minAzimuth, maxAzimuth);
 	Vector3 pos = SphericalToCartesian(m_collider.m_radius, theta, azimuth);
 	float minZ = m_collider.m_radius * CENTER_PATH_RATIO;
 
@@ -356,7 +377,7 @@ Vector3 Map::GetRandomGrassPosition() const
 		{
 			if (CheckRandomChance(.7f)) {
 				float theta = GetRandomFloatInRange(0.f, 360.f);
-				float azimuth = GetRandomFloatInRange(90.f, 135.f);
+				float azimuth = GetRandomFloatInRange(minAzimuth, maxAzimuth);
 				pos = SphericalToCartesian(m_collider.m_radius, theta, azimuth);
 			}
 			else
@@ -371,7 +392,7 @@ Vector3 Map::GetRandomGrassPosition() const
 		{
 			if (CheckRandomChance(.7f)) {
 				float theta = GetRandomFloatInRange(0.f, 360.f);
-				float azimuth = GetRandomFloatInRange(90.f, 135.f);
+				float azimuth = GetRandomFloatInRange(minAzimuth, maxAzimuth);
 				pos = SphericalToCartesian(m_collider.m_radius, theta, azimuth);
 			}
 			else

@@ -112,7 +112,7 @@
 </shader>
 
 <shader name="water" sort="1" cull="none" fill="solid" frontface="ccw" blend="alpha">
-	<program id="scrolling" />
+	<program id="water" />
 	<depth write="false" text="less" />
 </shader>
 
