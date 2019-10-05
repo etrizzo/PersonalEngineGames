@@ -1,0 +1,4 @@
+quit
+recompile_shaders
+debug_detach_camera
+debug_reattach_camera

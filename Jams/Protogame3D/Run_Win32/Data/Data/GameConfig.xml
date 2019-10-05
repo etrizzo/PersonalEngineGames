@@ -1,0 +1,10 @@
+<GameConfig
+	
+  appName="Protogame3D"
+	windowAspect="1.7"
+  windowHeight=".9"
+  width="10"
+	isFullscreen="false"
+  
+	
+/>

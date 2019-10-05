@@ -1,0 +1,40 @@
+Command: "quit" already registered
+  Registered help text: "exits application"
+Command: "sum" already registered
+  Registered help text: "sums 2 arguments as integers"
+> help
+quit: exits application
+sum: (sum <int> <int>) sums 2 arguments as integers
+help: prints all known commands
+clear: clears output of dev console
+echo_with_color: (echo_with_color (<r>, <g>, <b>, <optional a>) "<string>") prints <str> with color (<r>, <g>, <b>)
+save_log: (save_log <filename.txt>) Saves log to Logs/<filename.txt>
+> help
+quit: exits application
+sum: (sum <int> <int>) sums 2 arguments as integers
+help: prints all known commands
+clear: clears output of dev console
+echo_with_color: (echo_with_color (<r>, <g>, <b>, <optional a>) "<string>") prints <str> with color (<r>, <g>, <b>)
+save_log: (save_log <filename.txt>) Saves log to Logs/<filename.txt>
+> help
+quit: exits application
+sum: (sum <int> <int>) sums 2 arguments as integers
+help: prints all known commands
+clear: clears output of dev console
+echo_with_color: (echo_with_color (<r>, <g>, <b>, <optional a>) "<string>") prints <str> with color (<r>, <g>, <b>)
+save_log: (save_log <filename.txt>) Saves log to Logs/<filename.txt>
+> help
+quit: exits application
+sum: (sum <int> <int>) sums 2 arguments as integers
+help: prints all known commands
+clear: clears output of dev console
+echo_with_color: (echo_with_color (<r>, <g>, <b>, <optional a>) "<string>") prints <str> with color (<r>, <g>, <b>)
+save_log: (save_log <filename.txt>) Saves log to Logs/<filename.txt>
+> ouch
+   "ouch"
+   is not a recognized command.
+   type "help" for information
+> echo_with_color 255,255,128,128 "Hello world"
+Hello world
+> save_log
+

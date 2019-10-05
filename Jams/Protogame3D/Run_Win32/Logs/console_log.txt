@@ -1,0 +1,50 @@
+Game::PostStartup took: 1074.6332 ms
+> profiler
+> profiler_report flat
+frame                                                            0        0.00%    0.0000ms     0.00%    0.0000ms    
+ APP::BEGINFRAME                                                 1        0.81%    0.2885ms     0.81%    0.2885ms    
+ App::Update                                                     1        1.07%    0.3833ms     0.10%    0.0376ms    
+ Game::Update                                                    1        0.96%    0.3453ms     0.00%    0.0015ms    
+ GameState_Playing::Update                                       1        0.96%    0.3439ms     0.08%    0.0295ms    
+ Spawner::Update                                                 3        0.00%    0.0011ms     0.00%    0.0011ms    
+ Enemy::Update                                                   75       0.87%    0.3133ms     0.87%    0.3133ms    
+ App::HandleInput                                                1        0.00%    0.0004ms     0.00%    0.0004ms    
+ App::Render                                                     1        94.69%   33.9123ms    0.01%    0.0029ms    
+ Game::Render                                                    1        17.86%   6.3956ms     1.05%    0.3756ms    
+ GameState_Playing::RenderGame                                   1        16.81%   6.0200ms     0.84%    0.3023ms    
+ ForwardRenderPath::SetShadows                                   1        2.85%    1.0207ms     0.00%    0.0004ms    
+ ForwardRenderPath::RenderShadowsForLight                        1        2.85%    1.0204ms     2.83%    1.0138ms    
+ ForwardRenderPath::SortDrawCalls                                2        0.08%    0.0270ms     0.08%    0.0270ms    
+ ForwardRenderPath::ComputeMostContributingLights                183      0.05%    0.0197ms     0.05%    0.0197ms    
+ ForwardRenderPath::Draw                                         1        13.00%   4.6569ms     13.00%   4.6569ms    
+ RenderProfiler                                                  2        76.83%   27.5138ms    76.83%   27.5138ms   
+ APP::ENDFRAME                                                   1        1.71%    0.6141ms     0.01%    0.0022ms    
+ Audio::EndFrame                                                 1        0.00%    0.0004ms     0.00%    0.0004ms    
+ Input::EndFrame                                                 1        0.08%    0.0292ms     0.08%    0.0292ms    
+ Renderer::EndFrame                                              1        1.63%    0.5824ms     1.63%    0.5824ms    
+> save_log
+Log saved to: Logs/console_log.txt
+> profiler_report tree
+frame                                                            1        100.00%  51.5526ms    0.36%    0.1853ms    
+ APP::BEGINFRAME                                                 1        0.35%    0.1794ms     0.35%    0.1794ms    
+ App::Update                                                     1        0.96%    0.4941ms     0.08%    0.0419ms    
+  Game::Update                                                   1        0.88%    0.4515ms     0.00%    0.0007ms    
+   GameState_Playing::Update                                     1        0.87%    0.4507ms     0.10%    0.0518ms    
+    Spawner::Update                                              3        0.00%    0.0015ms     0.00%    0.0015ms    
+    Enemy::Update                                                75       0.77%    0.3975ms     0.77%    0.3975ms    
+  App::HandleInput                                               1        0.00%    0.0007ms     0.00%    0.0007ms    
+ App::Render                                                     1        97.85%   50.4466ms    0.00%    0.0015ms    
+  Game::Render                                                   1        15.04%   7.7533ms     0.44%    0.2246ms    
+   GameState_Playing::RenderGame                                 1        14.60%   7.5287ms     0.64%    0.3278ms    
+    ForwardRenderPath::SetShadows                                1        2.48%    1.2793ms     0.00%    0.0011ms    
+     ForwardRenderPath::RenderShadowsForLight                    1        2.48%    1.2782ms     2.47%    1.2712ms    
+      ForwardRenderPath::SortDrawCalls                           1        0.01%    0.0069ms     0.01%    0.0069ms    
+    ForwardRenderPath::ComputeMostContributingLights             183      0.05%    0.0241ms     0.05%    0.0241ms    
+    ForwardRenderPath::SortDrawCalls                             1        0.05%    0.0263ms     0.05%    0.0263ms    
+    ForwardRenderPath::Draw                                      1        11.39%   5.8712ms     11.39%   5.8712ms    
+  RenderProfiler                                                 2        82.81%   42.6918ms    82.81%   42.6918ms   
+ APP::ENDFRAME                                                   1        0.48%    0.2472ms     0.00%    0.0007ms    
+  Audio::EndFrame                                                1        0.00%    0.0007ms     0.00%    0.0007ms    
+  Input::EndFrame                                                1        0.05%    0.0263ms     0.05%    0.0263ms    
+  Renderer::EndFrame                                             1        0.43%    0.2195ms     0.43%    0.2195ms    
+> save_log
