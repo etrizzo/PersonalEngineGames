@@ -51,6 +51,7 @@ bool ShaderProgram::LoadFromFile(const char * vs, const char * fs)
 	} else {
 		// Link the program
 		// program_handle is a member GLuint. 
+
 		m_programHandle = CreateAndLinkProgram( vert_shader, frag_shader ); 
 		glDeleteShader( vert_shader ); 
 		glDeleteShader( frag_shader ); 

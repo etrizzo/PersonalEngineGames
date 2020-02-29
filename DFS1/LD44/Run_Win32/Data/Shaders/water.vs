@@ -9,8 +9,8 @@ uniform vec4 TINT = vec4(.5, .75, 1.0, 8.0);
 uniform vec4 EDGE_COLOR = vec4(.8, 1.0, 1.0, 1.0);
 uniform float DEPTH_FACTOR = 5.0;
 
-uniform float WAVE_SPEED = 4;
-uniform float WAVE_AMP = .1f;
+uniform float WAVE_SPEED = 6;
+uniform float WAVE_AMP = .08f;
 
 layout(binding = 5) uniform sampler2D gTexNoise;
 

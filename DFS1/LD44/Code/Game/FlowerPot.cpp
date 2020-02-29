@@ -21,7 +21,7 @@ FlowerPot::FlowerPot(float xPosition)
 	//set up flowerpot renderable
 	MeshBuilder mb = MeshBuilder();
 	mb.Begin(PRIMITIVE_TRIANGLES, true);
-	mb.AppendCube(Vector3::ZERO, Vector3(FLOWERPOT_WIDTH, FLOWERPOT_WIDTH * 2.f, FLOWERPOT_WIDTH) , RGBA::WHITE, Vector3::X_AXIS, Vector3::Y_AXIS, Vector3::Z_AXIS);
+	mb.AppendCube(Vector3(0.f, -FLOWERPOT_WIDTH, 0.0f), Vector3(FLOWERPOT_WIDTH, FLOWERPOT_WIDTH * 4.0f, FLOWERPOT_WIDTH) , RGBA::WHITE, Vector3::X_AXIS, Vector3::Y_AXIS, Vector3::Z_AXIS);
 	mb.End();
 
 	m_flowerPotRenderable = new Renderable();

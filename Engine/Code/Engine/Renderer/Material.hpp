@@ -5,6 +5,7 @@
 const int DIFFUSE_BIND_POINT = 0;
 const int NORMAL_BIND_POINT = 1;
 const int DEPTH_BIND_POINT = 6;
+const int COLOR_BIND_POINT = 7;
 
 const float DEFAULT_SPEC_AMOUNT = .5f;
 const float DEFAULT_SPEC_POWER = 3.f;

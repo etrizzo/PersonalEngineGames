@@ -145,6 +145,7 @@
     <texture index="4" path="ripple_ramp.png" />
     <texture index="5" path="Heightmap_2.png" />
     <texture type="depth" path="depth" />
+    <texture type="color" path="color" />
 	</textures>
 	<properties>
 		<property type="float" name="SPECULAR_AMOUNT" value="1.0" />

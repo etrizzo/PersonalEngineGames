@@ -37,7 +37,7 @@ Map::Map(Vector3 position, float radius)
 	watermb.Begin(PRIMITIVE_TRIANGLES, true);
 	RGBA color = RGBA::WHITE.GetColorWithAlpha(200);
 	Vector2 planeSize = Vector2(1.0f,1.0f);
-	int numPlanes = 60;
+	int numPlanes = 80;
 	float numPlanesF = (float) numPlanes;
 	float halfnumPlanes = numPlanes * .5f;
 	for (int x = -numPlanes; x < numPlanes; x++){

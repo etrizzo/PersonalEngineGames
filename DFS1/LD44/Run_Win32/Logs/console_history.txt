@@ -1,5 +1,4 @@
 tgm
-quit
 recompile_shaders
 debug_detach_camera
-debug_startup
+debug_reattach_camera

@@ -4,7 +4,7 @@
 class Asteroid;
 
 #define FLOWER_POT_HEALTH (10)
-constexpr float FLOWERPOT_DEPTH = 15.f;
+constexpr float FLOWERPOT_DEPTH = 23.f;
 constexpr float FLOWERPOT_WIDTH = 3.f;
 constexpr float RESUPPLY_WIDH = .9f;
 

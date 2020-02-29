@@ -200,6 +200,8 @@ int Material::getTextureIndexByType(const std::string& type)
 		return NORMAL_BIND_POINT;
 	} else if (type == "depth"){
 		return DEPTH_BIND_POINT;
+	} else if (type == "color"){
+		return COLOR_BIND_POINT;
 	}
 	return (int) m_textures.size();
 }
@@ -208,6 +210,8 @@ Texture* Material::getTexture(const std::string& path, Renderer* renderer)
 {
 	if (path == "depth"){
 		return renderer->m_defaultDepthTarget;
+	} else if (path == "color"){
+		return renderer->m_defaultColorTarget;
 	} else {
 		return Texture::CreateOrGetTexture(path, IMAGE_DIRECTORY);
 	}
