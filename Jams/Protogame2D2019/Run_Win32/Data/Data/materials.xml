@@ -1,0 +1,127 @@
+<!--
+<material name="name" shader="shadername">
+	<textures>
+		//type is just for readability, might want to hard-map diffuse and normal
+		<tex type="diffuse" path="texturePath"/> 
+		<tex type="normal" path="texturePath"/> 
+		<tex type="maskorsomething" path="texturePath" index="2" /> 
+		<tex path="texturePath"/>
+		.
+		.
+		.
+	</textures> 
+	<properties>
+		<property type="float|RGBA" name="name" value="value" />
+		<property type="float|RGBA" name="name" value="value" />
+		<property type="float|RGBA" name="name" value="value" />
+		.
+		.
+		.
+	</properties>
+-->
+
+<!-- default mats -->
+
+<material name="default_lit" shader="default_lit">
+	<textures>
+		<texture type="diffuse" path="white" />
+		<texture type="normal" path="flat" />
+	</textures>
+	<properties>
+		<property type="float" name="SPECULAR_AMOUNT" value=".5" />
+		<property type="float" name="SPECULAR_POWER" value="3" />
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+<material name="default_unlit" shader="cutout">
+	<textures>
+		<texture type="diffuse" path="white" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+
+<material name="test" shader="cutout">
+	<textures>
+		<texture type="diffuse" path="TestTexture.png" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+
+<material name="wireframe" shader="wireframe">
+	<textures>
+		<texture type="diffuse" path="white" />
+		<texture type="normal" path="flat" />
+	</textures>
+	<properties>
+		<property type="float" name="SPECULAR_AMOUNT" value=".5" />
+		<property type="float" name="SPECULAR_POWER" value="3" />
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+
+<!-- special mats -->
+<material name="couch" shader="default_lit">
+	<textures>
+		<texture type="diffuse" path="couch_albedo.png" />
+		<texture type="normal" path="couch_normal.png" />
+	</textures>
+	<properties>
+		<property type="float" name="SPECULAR_AMOUNT" value="1.0" />
+		<property type="float" name="SPECULAR_POWER" value="5" />
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+<material name="terrain" shader="default_lit">
+	<textures>
+		<texture type="diffuse" path="grass_green_d.png" />
+		<texture type="normal" path="grass_green_n.png" />
+	</textures>
+	<properties>
+		<property type="float" name="SPECULAR_AMOUNT" value=".5" />
+		<property type="float" name="SPECULAR_POWER" value="2" />
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+
+<material name="particle" shader="unlit_alpha">
+	<textures>
+		<texture type="diffuse" path="particle.png" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+
+<material name="additive" shader="additive">
+	<textures>
+		<texture type="diffuse" path="couch_albedo.png" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
+
+
+
+<material name="skybox" shader="skybox">
+</material>
+
+<material name="additive" shader="additive">
+	<textures>
+		<texture type="diffuse" path="white" />
+	</textures>
+	<properties>
+		<property type="RGBA" name="TINT" value="255,255,255,255"/>
+	</properties>
+</material>
