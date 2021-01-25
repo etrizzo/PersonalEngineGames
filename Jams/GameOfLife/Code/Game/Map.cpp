@@ -2,6 +2,8 @@
 #include "Game.hpp"
 #include "Game/GameOfLife.hpp"
 
+#pragma optimize("", off)
+
 
 Map::~Map()
 {
@@ -15,7 +17,7 @@ Map::Map(std::vector<IntVector2> liveCells) :
 	m_autoTickWatch = StopWatch(GetMasterClock());
 	m_autoTickWatch.SetTimer(m_autoTickRate);
 
-	if (BOARD_BITS_X > 7) {
+	if (CHUNK_BITS_X > 7) {
 		m_renderBoard = false;
 	}
 }
@@ -44,12 +46,19 @@ void Map::RenderTiles()
 	tileVerts.clear();
 	Vector2 spacing = Vector2(1.f,1.f);
 	int cellIndex = 0;
-	for (int y = 0; y < BOARD_SIZE_X; y++) {
-		for (int x = 0; x < BOARD_SIZE_Y; x++) {
+	for (int y = 0; y < CHUNK_SIZE_X; y++) {
+		for (int x = 0; x < CHUNK_SIZE_Y; x++) {
 			//cellIndex = m_gameOfLife->GetCellIndex(x, y);
 			AABB2 bounds = AABB2(x, y, x + CELL_SIZE, y + CELL_SIZE);
 			bounds.AddPaddingToSides(-CELL_SIZE * .05f, -CELL_SIZE * .05f);		//shrink for space between tiles
-			RGBA color = m_gameOfLife->m_cells[cellIndex] ? RGBA::GREEN : RGBA::RED;
+			RGBA color;
+			if (m_gameOfLife->isCellAlive(x,y)) {
+				color = RGBA::GREEN;
+			}
+			else {
+				color = RGBA::RED;
+			}
+			//RGBA color = m_gameOfLife->m_chunk.isCellAlive(cellIndex) ? RGBA::GREEN : RGBA::RED;
 			mb.AppendPlane2D(bounds, color, AABB2::ZERO_TO_ONE, .01f);
 			cellIndex++;
 		}
@@ -100,7 +109,7 @@ void Map::Update(float deltaSeconds)
 int Map::GetWidth() const
 {
 	if (m_gameOfLife) {
-		return BOARD_SIZE_X;
+		return CHUNK_SIZE_X;
 	}
 	return 0;
 }
@@ -108,7 +117,7 @@ int Map::GetWidth() const
 int Map::GetHeight() const
 {
 	if (m_gameOfLife) {
-		return BOARD_SIZE_Y;
+		return CHUNK_SIZE_Y;
 	}
 	return 0;
 }

@@ -14,11 +14,11 @@ GameState_Playing::GameState_Playing()
 	m_renderScene = new RenderScene2D();
 
 	//straight line
-	/*m_currentMap = new Map(IntVector2(10, 10), std::vector<IntVector2>{
-		IntVector2(3, 5),
-		IntVector2(3, 6),
-		IntVector2(3, 7)
-	});*/
+	m_currentMap = new Map(std::vector<IntVector2>{
+		IntVector2(0, 0),
+		IntVector2(0, 1),
+		IntVector2(0, 2)
+	});
 
 	//glider
 	//m_currentMap = new Map(std::vector<IntVector2>{
@@ -30,13 +30,13 @@ GameState_Playing::GameState_Playing()
 	//});
 
 	//r-pentomino
-	m_currentMap = new Map(std::vector<IntVector2>{
-		IntVector2(3, 6),
-		IntVector2(3, 7),
-		IntVector2(2, 7),
-		IntVector2(3, 8),
-		IntVector2(4, 8)
-	});
+	//m_currentMap = new Map(std::vector<IntVector2>{
+	//	IntVector2(3, 6),
+	//	IntVector2(3, 7),
+	//	IntVector2(2, 7),
+	//	IntVector2(3, 8),
+	//	IntVector2(4, 8)
+	//});
 
 }
 
