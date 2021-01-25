@@ -87,6 +87,14 @@ Mesh::Mesh(eVertexType layout)
 	m_subMeshes = std::vector<SubMesh*>();
 }
 
+Mesh::~Mesh()
+{
+	for (SubMesh* subMesh : m_subMeshes) {
+		delete subMesh;
+	}
+	m_subMeshes.clear();
+}
+
 void Mesh::AddSubMesh(SubMesh * smesh)
 {
 	m_subMeshes.push_back(smesh);

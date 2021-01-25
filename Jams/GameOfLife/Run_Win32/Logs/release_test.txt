@@ -1,0 +1,4 @@
+
+> clear
+> save_log release_test.txt
+

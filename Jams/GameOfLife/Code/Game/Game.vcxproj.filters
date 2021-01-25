@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="General">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{b7f231c4-746f-428f-b8ea-c95ce95e27f3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main_Win32.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCommon.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="TileDefinition.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="MapDefinition.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGenStep.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugRenderTask.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugRenderSystem.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState_Playing.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOfLife.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="App.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCommon.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineBuildPreferences.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="TileDefinition.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="MapDefinition.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenStep.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugRenderTask.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugRenderSystem.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState_Playing.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOfLife.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\Run_Win32\Data\Data\GameConfig.xml">
+      <Filter>Data</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Data\Tiles.xml">
+      <Filter>Data</Filter>
+    </Xml>
+    <Xml Include="..\..\Run_Win32\Data\Data\Maps.xml">
+      <Filter>Data</Filter>
+    </Xml>
+  </ItemGroup>
+</Project>

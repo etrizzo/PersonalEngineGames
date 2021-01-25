@@ -61,6 +61,7 @@ private:
 class Mesh{
 public:
 	Mesh(eVertexType layout = VERTEX_TYPE_LIT);
+	~Mesh();
 	void AddSubMesh(SubMesh* smesh);
 	void SetSubMesh(SubMesh* smesh, int idx = 0);
 	void ClearSubMeshes();
