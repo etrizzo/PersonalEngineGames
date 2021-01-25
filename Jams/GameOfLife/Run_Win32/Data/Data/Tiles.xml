@@ -1,0 +1,41 @@
+<TileDefinitions>
+  <TileDefinition
+		  name="Grass"
+		  spriteCoords="1,1"
+		  spriteTint="180,255,180"
+		  allowsSight="true"
+		  allowsWalking="true"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+	  />
+  
+  <TileDefinition
+		  name="Stone"
+		  spriteCoords="1,2"
+		  spriteTint="180,180,180"
+		  allowsSight="false"
+		  allowsWalking="false"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+	  />
+
+  <TileDefinition
+		  name="Water"
+		  spriteCoords="5,7"
+		  allowsSight="true"
+		  allowsWalking="false"
+		  allowsFlying="true"
+		  allowsSwimming="true"
+	  />
+
+  <TileDefinition
+		  name="Lava"
+		  spriteCoords="7,7"
+		  allowsSight="true"
+		  allowsWalking="false"
+		  allowsFlying="true"
+		  allowsSwimming="false"
+	  />
+
+
+</TileDefinitions>
