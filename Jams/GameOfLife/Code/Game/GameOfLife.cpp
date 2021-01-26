@@ -4,11 +4,11 @@
 
 GameOfLife::GameOfLife(std::vector<IntVector2> liveCells)
 {
-	m_chunk = Chunk();
 	for (IntVector2 coordinates : liveCells) {
+		int chunkIndex = getChunkIndexForCellCoordinates(coordinates);
 		unsigned long int cellIndex = GetCellIndex(coordinates.x, coordinates.y);
 		ASSERT_OR_DIE(cellIndex != -1, "Input cell has out of bounds coordinates");
-		m_chunk.SetCell(cellIndex, true);
+		m_chunks[chunkIndex].SetCell(cellIndex, true);
 	}
 }
 
@@ -21,70 +21,95 @@ void GameOfLife::Tick()
 		m_debugLivingCellIndices.clear();
 	}
 
-	//clone temp board for reference
-	Chunk newCells = Chunk(m_chunk);
-	//update board
-	for (int i = 0; i < CELLS_PER_CHUNK; i++) {
-		int numLiveNeighbors = 0;
-		//check each neighbor and check live-ness
-		if (isCellAlive(GetNorthWestNeighborIndex(i)	)) { numLiveNeighbors++; }
-		if (isCellAlive(GetNorthNeighborIndex(i)		)) { numLiveNeighbors++; }
-		if (isCellAlive(GetNorthEastNeighborIndex(i)	)) { numLiveNeighbors++; }
-		if (isCellAlive(GetWestNeighborIndex(i)		)) { numLiveNeighbors++; }
-		if (isCellAlive(GetEastNeighborIndex(i)		)) { numLiveNeighbors++; }
-		if (isCellAlive(GetSouthWestNeighborIndex(i)	)) { numLiveNeighbors++; }
-		if (isCellAlive(GetSouthNeighborIndex(i)		)) { numLiveNeighbors++; }
-		if (isCellAlive(GetSouthEastNeighborIndex(i)	)) { numLiveNeighbors++; }
+	for (int chunkIndex = 0; chunkIndex < NUM_CHUNKS; chunkIndex++) {
+		//update this chunk
+			//TODO: skip chunks with no live cells in it or in Celling chunks
+		//clone temp board for reference
+		Chunk newCells = Chunk(m_chunks[chunkIndex]);
+		//update board
+		for (int i = 0; i < CELLS_PER_CHUNK; i++) {
+			int numLiveCells = 0;
+			//check each Cell and check live-ness
+			//new:
+			if (isNorthwestCellAlive(chunkIndex, i)) { numLiveCells++; }
+			if (isCellAlive(GetNorthWestCellIndex(i))) { numLiveCells++; }
+			if (isCellAlive(GetNorthCellIndex(i))) { numLiveCells++; }
+			if (isCellAlive(GetNorthEastCellIndex(i))) { numLiveCells++; }
+			if (isCellAlive(GetWestCellIndex(i))) { numLiveCells++; }
+			if (isCellAlive(GetEastCellIndex(i))) { numLiveCells++; }
+			if (isCellAlive(GetSouthWestCellIndex(i))) { numLiveCells++; }
+			if (isCellAlive(GetSouthCellIndex(i))) { numLiveCells++; }
+			if (isCellAlive(GetSouthEastCellIndex(i))) { numLiveCells++; }
 
-		//update new cell
-		if (numLiveNeighbors == 3) {
-			newCells.SetCell(i, true);
-			//newCells[i] = true;
+			//update new cell
+			if (numLiveCells == 3) {
+				newCells.SetCell(i, true);
+				//newCells[i] = true;
 
-			//update debug information
-			if (m_printDebugInformation) {
-				if (!m_chunk.isCellAlive(i)) {
-					m_debugNumCellsChanged++;
-				}
-				m_debugNumLiveCells++;
-				m_debugLivingCellIndices.push_back(i);
-			}
-		}
-		else if (numLiveNeighbors < 2 || numLiveNeighbors > 3) {
-			newCells.SetCell(i, false);
-
-			//update debug information
-			if (m_printDebugInformation) {
-				if (m_chunk.isCellAlive(i)) {
-					m_debugNumCellsChanged++;
-				}
-			}
-		}
-		else {
-			//exactly 2 neighbors alive, stays the same (update debug information)
-			if (m_printDebugInformation) {
-				if (m_chunk.isCellAlive(i)) {
+				//update debug information
+				if (m_printDebugInformation) {
+					if (!m_chunks[chunkIndex].isCellAlive(i)) {
+						m_debugNumCellsChanged++;
+					}
 					m_debugNumLiveCells++;
 					m_debugLivingCellIndices.push_back(i);
 				}
 			}
+			else if (numLiveCells < 2 || numLiveCells > 3) {
+				newCells.SetCell(i, false);
+
+				//update debug information
+				if (m_printDebugInformation) {
+					if (m_chunks[chunkIndex].isCellAlive(i)) {
+						m_debugNumCellsChanged++;
+					}
+				}
+			}
+			else {
+				//exactly 2 Cells alive, stays the same (update debug information)
+				if (m_printDebugInformation) {
+					if (m_chunks[chunkIndex].isCellAlive(i)) {
+						m_debugNumLiveCells++;
+						m_debugLivingCellIndices.push_back(i);
+					}
+				}
+			}
 		}
+
+		//update the cell array with the new vals
+		m_chunks[chunkIndex] = newCells;
 	}
-
-	//update the cell array with the new vals
-	m_chunk = newCells;
+	
 }
 
-bool GameOfLife::isCellAlive(int index)
+int GameOfLife::getChunkIndexForCellCoordinates(IntVector2 coords)
 {
-	//todo: get the correct chunk
-	return m_chunk.isCellAlive(index);
+	int chunkCoordsX = coords.x / CHUNK_SIZE_X;
+	int chunkCoordsY = coords.y / CHUNK_SIZE_Y;
+	int index = chunkCoordsX + (chunkCoordsY * NUM_CHUNKS_X);
+	return index;
 }
 
-bool GameOfLife::isCellAlive(int x, int y)
+//bool GameOfLife::isCellAlive(int index)
+//{
+//	//todo: get the correct chunk
+//	return m_chunk.isCellAlive(index);
+//}
+
+bool GameOfLife::isCellAlive(int worldX, int worldY)
 {
 	//TODO: get the correct chunk
-	return m_chunk.isCellAlive(x,y);
+	int chunkIndex = getChunkIndexForCellCoordinates(IntVector2(worldX, worldY));
+	int chunkCoordsX = worldX / CHUNK_SIZE_X;
+	int chunkCoordsY = worldY / CHUNK_SIZE_Y;
+	int cellCoordsX = worldX - (chunkCoordsX * CHUNK_SIZE_X);
+	int cellCoordsY = worldY - (chunkCoordsY * CHUNK_SIZE_Y);
+	return m_chunks[chunkIndex].isCellAlive(cellCoordsX,cellCoordsY);
+}
+
+bool GameOfLife::isCellAliveForChunk(int cellIndex, int chunkIndex)
+{
+	return m_chunks[chunkIndex].isCellAlive(cellIndex);
 }
 
 //Cell GameOfLife::CellAt(int x, int y)
@@ -123,7 +148,22 @@ std::string GameOfLife::GetDebugInformation() const
 	return info;
 }
 
-int GameOfLife::GetNorthNeighborIndex(int index) const
+bool GameOfLife::isNorthwestCellAlive(int chunkIndex, int cellIndex) const
+{
+	int cellIndex = GetNorthWestCellIndex(cellIndex);
+	if (IsOnNorthEdge(cellIndex)) {
+		if (IsOnWestEdge(cellIndex)) {
+			//get northwest chunk
+			
+		}
+		else {
+			//get north chunk
+		}
+	}
+	return false;
+}
+
+int GameOfLife::GetNorthCellIndex(int index) const
 {
 	if (IsOnNorthEdge(index)) {
 		//wrap around - the y component should go from max to 0
@@ -134,7 +174,7 @@ int GameOfLife::GetNorthNeighborIndex(int index) const
 	}
 }
 
-int GameOfLife::GetWestNeighborIndex(int index) const
+int GameOfLife::GetWestCellIndex(int index) const
 {
 	if (IsOnWestEdge(index)) {
 		//wrap around - the x component goes from 0 to max
@@ -145,7 +185,7 @@ int GameOfLife::GetWestNeighborIndex(int index) const
 	}
 }
 
-int GameOfLife::GetEastNeighborIndex(int index) const
+int GameOfLife::GetEastCellIndex(int index) const
 {
 	if (IsOnEastEdge(index)) {
 		//wrap around - the x component goes from max to 0
@@ -156,7 +196,7 @@ int GameOfLife::GetEastNeighborIndex(int index) const
 	}
 }
 
-int GameOfLife::GetSouthNeighborIndex(int index) const
+int GameOfLife::GetSouthCellIndex(int index) const
 {
 	if (IsOnSouthEdge(index)) {
 		//wrap around - the y component should go from max to 0
@@ -167,29 +207,29 @@ int GameOfLife::GetSouthNeighborIndex(int index) const
 	}
 }
 
-int GameOfLife::GetNorthWestNeighborIndex(int index) const
+int GameOfLife::GetNorthWestCellIndex(int index) const
 {
-	int north = GetNorthNeighborIndex(index);
-	return GetWestNeighborIndex(north);
+	int north = GetNorthCellIndex(index);
+	return GetWestCellIndex(north);
 }
 
-int GameOfLife::GetNorthEastNeighborIndex(int index) const
+int GameOfLife::GetNorthEastCellIndex(int index) const
 {
-	int north = GetNorthNeighborIndex(index);
-	return GetEastNeighborIndex(north);
+	int north = GetNorthCellIndex(index);
+	return GetEastCellIndex(north);
 }
 
 
-int GameOfLife::GetSouthWestNeighborIndex(int index) const
+int GameOfLife::GetSouthWestCellIndex(int index) const
 {
-	int south = GetSouthNeighborIndex(index);
-	return GetWestNeighborIndex(south);
+	int south = GetSouthCellIndex(index);
+	return GetWestCellIndex(south);
 }
 
-int GameOfLife::GetSouthEastNeighborIndex(int index) const
+int GameOfLife::GetSouthEastCellIndex(int index) const
 {
-	int south = GetSouthNeighborIndex(index);
-	return GetEastNeighborIndex(south);
+	int south = GetSouthCellIndex(index);
+	return GetEastCellIndex(south);
 }
 
 bool GameOfLife::IsOnNorthEdge(int index) const
